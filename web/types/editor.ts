@@ -46,3 +46,29 @@ export type PostEditorSqlParams = {
 export type PostEditorSqlRequest = {};
 
 export type GetEditorySqlParams = { con_uid: string; round: string | number };
+
+
+export interface EditorValueProps {
+  sql?: string;
+  thoughts?: string;
+  title?: string;
+  showcase?: string;
+}
+
+export interface RoundProps {
+  db_name: string;
+  round: number;
+  round_name: string;
+}
+
+
+
+export interface ITableTreeItem {
+  title: string;
+  key: string;
+  type: string;
+  default_value: string | null;
+  can_null: string;
+  comment: string | null;
+  children: Array<ITableTreeItem>;
+}
