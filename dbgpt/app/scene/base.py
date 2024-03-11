@@ -30,19 +30,19 @@ class ChatScene(Enum):
     ChatWithDbExecute = Scene(
         code="chat_with_db_execute",
         name="Chat Data",
-        describe="Dialogue with your private data through natural language.",
+        describe="通过自然语言对话对数据进行查询和分析",
         param_types=["DB Select"],
     )
     ExcelLearning = Scene(
         code="excel_learning",
         name="Excel Learning",
-        describe="Analyze and summarize your excel files.",
+        describe="统计分析您上传的Excel文件数据",
         is_inner=True,
     )
     ChatExcel = Scene(
         code="chat_excel",
         name="Chat Excel",
-        describe="Dialogue with your excel, use natural language.",
+        describe="通过自然语言对话分析Excel文件",
         param_types=["File Select"],
         prepare_scene_code="excel_learning",
     )
@@ -50,27 +50,27 @@ class ChatScene(Enum):
     ChatWithDbQA = Scene(
         code="chat_with_db_qa",
         name="Chat DB",
-        describe="Have a Professional Conversation with Metadata.",
+        describe="通过自然语言对话检索元数据",
         param_types=["DB Select"],
     )
     ChatExecution = Scene(
         code="chat_execution",
         name="Use Plugin",
-        describe="Use tools through dialogue to accomplish your goals.",
+        describe="使用内置插件",
         param_types=["Plugin Select"],
     )
 
     ChatAgent = Scene(
         code="chat_agent",
         name="Agent Chat",
-        describe="Use tools through dialogue to accomplish your goals.",
+        describe="使用对话代理工具",
         param_types=["Plugin Select"],
     )
 
     ChatFlow = Scene(
         code="chat_flow",
         name="Flow Chat",
-        describe="Have conversations with conversational Awel flow.",
+        describe="通过AWEL工作流编排实现业务目标",
         param_types=["Flow Select"],
     )
 
@@ -84,13 +84,13 @@ class ChatScene(Enum):
     ChatDashboard = Scene(
         "chat_dashboard",
         "Dashboard",
-        "Provide you with professional analysis reports through natural language.",
+        "基于自然语言对话生成数据报表、仪表板",
         ["DB Select"],
     )
     ChatKnowledge = Scene(
         "chat_knowledge",
         "Chat Knowledge",
-        "Dialogue through natural language and private documents and knowledge bases.",
+        "基于文档和知识库的自然语言对话",
         ["Knowledge Space Select"],
     )
     ExtractTriplet = Scene(
