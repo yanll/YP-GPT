@@ -16,7 +16,7 @@ user_service = UserService()
 
 
 def principal(token):
-    url = 'http://ycenc.yeepay.com:30422/yuia-service-boss/auth/principal'
+    url = 'http://yuia.service.boss.yp:30422/yuia-service-boss/auth/principal'
     headers = {
         'systemcode': 'iam-console',
         'yuiassotoken': token
