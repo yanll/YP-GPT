@@ -5,15 +5,18 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
 
 from dbgpt.app.openapi.api_view_model import Result
+from dbgpt.app.user.service import UserService
 
 ignored_exp = [
     "/apidoc",
     "/api/controller/heartbeat"
 ]
 
+user_service = UserService()
+
 
 def principal(token):
-    url = 'http://yuia.service.boss.yp:30422/yuia-service-boss/auth/principal'
+    url = 'http://ycenc.yeepay.com:30422/yuia-service-boss/auth/principal'
     headers = {
         'systemcode': 'iam-console',
         'yuiassotoken': token
@@ -44,6 +47,16 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
         if (resp['code'] != 200):
             print("认证信息已过期，请重新登录！", path)
             res = Result.failed(code="401", msg="认证信息已过期，请重新登录！")
+            return JSONResponse(status_code=200, content=res.dict())
+
+        user = resp['data']
+        loginuser = user['loginName']
+        # 校验用户清单
+        users = user_service.get_user()
+        usernames = [user.username for user in users]
+        if loginuser not in usernames:
+            print("您的账户暂未激活，请联系系统管理员！", loginuser, path)
+            res = Result.failed(code="ACCOUNT_INACTIVATED", msg="您的账户暂未激活，请联系系统管理员！！")
             return JSONResponse(status_code=200, content=res.dict())
         result = await call_next(request)
         return result
