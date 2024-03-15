@@ -73,6 +73,7 @@ def get_db_list():
         params: dict = {}
         params.update({"param": item["db_name"]})
         params.update({"type": item["db_type"]})
+        params.update({"comment": item["comment"]})
         db_params.append(params)
     return db_params
 
