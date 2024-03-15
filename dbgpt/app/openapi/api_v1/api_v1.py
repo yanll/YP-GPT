@@ -112,6 +112,7 @@ def knowledge_list():
     space_list = []
     for space in spaces:
         params: dict = {}
+        params.update({"comment": space.name})
         params.update({"param": space.name})
         params.update({"type": "space"})
         space_list.append(params)
