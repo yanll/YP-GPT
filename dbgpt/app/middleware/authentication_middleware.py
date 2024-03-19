@@ -8,8 +8,10 @@ from dbgpt.app.openapi.api_view_model import Result
 from dbgpt.app.user.service import UserService
 
 ignored_exp = [
+    "/favicon.ico",
     "/apidoc",
-    "/api/controller/heartbeat"
+    "/api/controller/heartbeat",
+    "/api/v1/awel/trigger"
 ]
 
 user_service = UserService()
@@ -35,7 +37,7 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next) -> Response:
         """ 认证信息 """
         path = request.url.path
-        if path in ignored_exp:
+        if any(path.startswith(exp) for exp in ignored_exp):
             return await call_next(request)
         token = request.headers.get("Authorization", "")
         if token == "":
