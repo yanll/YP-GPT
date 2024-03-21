@@ -40,7 +40,7 @@ from dbgpt.util.utils import (
     setup_logging,
 )
 
-import middleware
+from dbgpt.app.middleware import registerMiddlewareHandle
 
 
 ROOT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -58,7 +58,7 @@ app = FastAPI(
     openapi_tags=[],
 )
 
-middleware.registerMiddlewareHandle(app)
+registerMiddlewareHandle(app)
 
 
 # Use custom router to support priority
