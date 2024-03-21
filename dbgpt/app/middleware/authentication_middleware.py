@@ -11,7 +11,8 @@ ignored_exp = [
     "/favicon.ico",
     "/apidoc",
     "/api/controller/heartbeat",
-    "/api/v1/awel/trigger"
+    "/api/v1/awel/trigger",
+    "/_next/static"
 ]
 
 user_service = UserService()
