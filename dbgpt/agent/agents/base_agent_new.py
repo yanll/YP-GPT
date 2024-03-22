@@ -467,6 +467,9 @@ class ConversableAgent(Role, Agent):
             out_schema = ""
             if self.actions and len(self.actions) > 0:
                 out_schema = self.actions[0].ai_out_schema
+            print("预处理，请求AI的资源：", resource_prompt)
+            print("预处理，请求AI的内容：", context)
+            print("预处理，AI响应的格式：", out_schema)
             for message in self.oai_system_message:
                 new_content = message["content"].format(
                     resource_prompt=resource_prompt,

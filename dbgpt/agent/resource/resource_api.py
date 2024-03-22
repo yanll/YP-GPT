@@ -18,6 +18,7 @@ class ResourceType(Enum):
     ExcelFile = "excel_file"
     ImageFile = "image_file"
     AwelFlow = "awel_flow"
+    LarkApi = "lark_api"
 
 
 class AgentResource(BaseModel):

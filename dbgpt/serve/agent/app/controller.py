@@ -168,6 +168,8 @@ async def app_resources(
                 return Result.succ(None)
             case ResourceType.File.value:
                 return Result.succ(None)
+            case ResourceType.LarkApi.value:
+                return Result.succ(None)
         return Result.succ(results)
     except Exception as ex:
         return Result.failed(code="E000X", msg=f"query app resources error: {ex}")
