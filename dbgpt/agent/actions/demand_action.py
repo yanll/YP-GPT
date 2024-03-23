@@ -86,8 +86,18 @@ class DemandAction(Action[LarkInput]):
                     "There is no implementation class bound to database resource execution！"
                 )
             print("此处根据AI返回的结果执行下一步动作：调用外部接口", resource, param)
-            data_df = await resource_lark_client.a_query_to_df(resource.value, param)
-            view = await self.render_protocal.display(content=param, data_df=data_df)
+            result = await resource_lark_client.a_muti_table_add_record(
+                app_id="NorvbogbxaCD4VsMrLlcTzv0nTe",
+                table_id="tblG1alED3YxCJua",
+                record={
+                    "需求内容": param.demand,
+                    "紧急程度": param.urgency,
+                    "期望完成时间": param.pre_time,
+                    "创建人": "",
+                    "创建时间": ""
+                }
+            )
+            view = await self.render_protocal.display(content=param, add_result=result)
             return ActionOutput(
                 is_exe_success=True,
                 content=param.json(),

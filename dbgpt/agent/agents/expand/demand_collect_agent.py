@@ -1,13 +1,11 @@
 import json
 import logging
-from typing import Callable, Dict, List, Literal, Optional, Union
+from typing import Dict, List, Optional
 
 from dbgpt.agent.actions.action import ActionOutput
 from dbgpt.agent.actions.demand_action import DemandAction
 from dbgpt.agent.resource.resource_api import ResourceType
-from dbgpt.agent.resource.resource_db_api import ResourceDbClient
 from dbgpt.agent.resource.resource_lark_api import ResourceLarkClient
-
 from ..base_agent_new import ConversableAgent
 
 logger = logging.getLogger(__name__)
@@ -59,7 +57,7 @@ class ProductionAssistantAgent(ConversableAgent):
         if action_reply is None:
             return (
                 False,
-                f"No executable analysis SQL is generated,{message['content']}.",
+                f"No executable analysis Demand is generated,{message['content']}.",
             )
         action_out = ActionOutput.from_dict(action_reply)
         if action_out.is_exe_success == False:
@@ -81,14 +79,11 @@ class ProductionAssistantAgent(ConversableAgent):
                 )
             )
 
-            result = await resource_lark_client.a_muti_table_add_record(
-                app_id="NorvbogbxaCD4VsMrLlcTzv0nTe",
-                table_id="tblG1alED3YxCJua",
-                record={
-                    "需求内容": demand
-                }
+            result = await resource_lark_client.a_lark_after_notify(
+                receive_id="liangliang.yan@yeepay.com",
+                text="\n已将需求内容提交到飞书，请查看结果！\n\n需求内容：" + demand
             )
-            print('ProductionAssistantAgent执行添加表格结果：', result)
+            print('ProductionAssistantAgent处理结果：', result)
             if (result['code'] == 0):
                 logger.info("代理任务执行成功！")
                 return (

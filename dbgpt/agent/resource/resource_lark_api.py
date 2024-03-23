@@ -25,10 +25,10 @@ class ResourceLarkClient(ResourceClient):
     async def a_get_userinfo(self, db: str, question: Optional[str] = None) -> str:
         raise NotImplementedError("The run method should be implemented in a subclass.")
 
-    async def a_query_to_df(self, dbe: str, sql: str):
+    async def a_muti_table_add_record(self, app_id: str, table_id: str, record: dict) -> None:
         raise NotImplementedError("The run method should be implemented in a subclass.")
 
-    async def a_muti_table_add_record(self, app_id: str, table_id: str, record: dict) -> None:
+    async def a_lark_after_notify(self, receive_id: str, text: str):
         raise NotImplementedError("The run method should be implemented in a subclass.")
 
 
