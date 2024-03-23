@@ -95,7 +95,6 @@ class DemandAction(Action[LarkInput]):
                 resource_type=self.resource_need.value,
                 resource_value=resource.value,
             )
-            # return ActionOutput(is_exe_success=exit_success, content=content, view=view)
         except Exception as e:
             logger.exception("Check your answers, the sql run failed！")
             return ActionOutput(

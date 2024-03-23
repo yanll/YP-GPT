@@ -6,7 +6,7 @@ from dbgpt.agent.resource.resource_api import AgentResource, ResourceType
 from dbgpt.agent.resource.resource_lark_api import ResourceLarkClient
 from dbgpt.component import ComponentType
 from dbgpt.util.executor_utils import ExecutorFactory, blocking_func_to_async
-from dbgpt.util.tracer import root_tracer, trace
+from dbgpt.util.larkutil import muti_table_add_record
 
 CFG = Config()
 
@@ -26,22 +26,21 @@ class LarkLoadClient(ResourceLarkClient):
         # return conn.db_type
         return "lark"
 
+    # 执行AI前调用
     async def a_get_userinfo(self, db: str, question: Optional[str] = None) -> str:
         userinfo = {"username": "管理员", "email": "adm@adm.com"}
         return userinfo
 
+    # 获取AI结果后调用
     async def a_query_to_df(self, db: str, sql: str):
         # conn = CFG.local_db_manager.get_connector(db)
         # return conn.run_to_df(sql)
         print("这里开始执行外部调用，Endpoint a_query_to_df！", sql)
         return "飞书接口调用完成，结果：{}"
 
-    async def a_query(self, db: str, sql: str):
+    # 后置处理
+    async def a_muti_table_add_record(self, app_id: str, table_id: str, record: dict) -> None:
         # conn = CFG.local_db_manager.get_connector(db)
         # return conn.query_ex(sql)
-        print("这里开始执行外部调用，Endpoint a_query！", sql)
-
-    async def a_run_sql(self, db: str, sql: str):
-        # conn = CFG.local_db_manager.get_connector(db)
-        # return conn.run(sql)
-        print("这里开始执行外部调用，Endpoint a_run_sql！", sql)
+        print("这里开始执行外部调用，Endpoint a_query！", record)
+        return muti_table_add_record(app_id=app_id, table_id=table_id, record=record)

@@ -13,6 +13,18 @@ from ..base_agent_new import ConversableAgent
 logger = logging.getLogger(__name__)
 
 
+# a_generate_reply
+# ----a_act
+# --------a_run
+# ----a_verify
+# --------a_correctness_check
+# ------------a_muti_table_add_record
+
+# a_act: 组装大模型，返回结果。
+# a_run: 根据大模型结果调用外部，1、初步执行外部操作 2、调用展示组件。
+# a_verify: 校验大模型返回结果，最后调用a_correctness_check
+# a_correctness_check：后置处理
+
 class ProductionAssistantAgent(ConversableAgent):
     name = "Listen"
     profile: str = "ProductionAssistant"
@@ -69,27 +81,28 @@ class ProductionAssistantAgent(ConversableAgent):
                 )
             )
 
-            # columns, values = await resource_lark_client.a_query(
-            #     db=action_out.resource_value, sql=demand
-            # )
-            columns, values = (
-                [], []
+            result = await resource_lark_client.a_muti_table_add_record(
+                app_id="NorvbogbxaCD4VsMrLlcTzv0nTe",
+                table_id="tblG1alED3YxCJua",
+                record={
+                    "需求内容": demand
+                }
             )
-            print('执行调用：', columns, demand)
-            print('执行调用结果：', values)
-            if not values or len(values) <= 0:
+            print('ProductionAssistantAgent执行添加表格结果：', result)
+            if (result['code'] == 0):
+                logger.info("代理任务执行成功！")
                 return (
-                    False,
-                    "Please check your answer, the current SQL cannot find the data to determine whether filtered field values or inappropriate filter conditions are used.",
+                    True, None
                 )
             else:
-                logger.info(
-                    f"reply check success! There are {len(values)} rows of data"
+                logger.error("代理任务执行失败，请检查飞书接口调用日志！")
+                return (
+                    False,
+                    "请检查飞书接口调用日志！",
                 )
-                return True, None
         except Exception as e:
             logger.exception(f"DataScientist check exception！{str(e)}")
             return (
                 False,
-                f"SQL execution error, please re-read the historical information to fix this SQL. The error message is as follows:{str(e)}",
+                f"Lark execution error, please re-read the historical information to fix this API. The error message is as follows:{str(e)}",
             )
