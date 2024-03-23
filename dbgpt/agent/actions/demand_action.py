@@ -4,12 +4,10 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-from dbgpt.agent.actions.action import ActionOutput, T
+from dbgpt.agent.actions.action import ActionOutput
 from dbgpt.agent.resource.resource_api import AgentResource, ResourceType
-from dbgpt.agent.resource.resource_db_api import ResourceDbClient
 from dbgpt.agent.resource.resource_lark_api import ResourceLarkClient
-from dbgpt.vis.tags.vis_chart import Vis, VisChart
-
+from dbgpt.vis.tags.vis_demand import Vis, VisDemand
 from .action import Action
 
 logger = logging.getLogger(__name__)
@@ -17,21 +15,23 @@ logger = logging.getLogger(__name__)
 
 class LarkInput(BaseModel):
     display_type: str = Field(
-        ...,
         description="The chart rendering method selected for SQL. If you don’t know what to output, just output 'response_table' uniformly.",
     )
-    sql: str = Field(
-        ..., description="Executable sql generated for the current target/problem"
+    urgency: str = Field(
+        ..., description="提取的“紧急程度”信息"
     )
     demand: str = Field(
-        ..., description="飞书项目需要接收的需求内容"
+        ..., description="提取的“需求”信息"
+    )
+    pre_time: str = Field(
+        ..., description="提取的“期望完成时间”信息"
     )
     thought: str = Field(..., description="Summary of thoughts to the user")
 
 
 class DemandAction(Action[LarkInput]):
     def __init__(self):
-        self._render_protocal = VisChart()
+        self._render_protocal = VisDemand()
 
     @property
     def resource_need(self) -> Optional[ResourceType]:
@@ -53,9 +53,26 @@ class DemandAction(Action[LarkInput]):
             need_vis_render: bool = True,
     ) -> ActionOutput:
         try:
-            param: LarkInput = self._input_convert(ai_message, LarkInput)
+            aimdict = eval(ai_message)
+            if "display_type" not in aimdict:
+                aimdict["display_type"] = ""
+            if "urgency" not in aimdict:
+                aimdict["urgency"] = ""
+            if "demand" not in aimdict:
+                aimdict["demand"] = ""
+            if "pre_time" not in aimdict:
+                aimdict["pre_time"] = ""
+            if "thought" not in aimdict:
+                aimdict["thought"] = ""
+
+            if aimdict["demand"] == "":
+                return ActionOutput(
+                    is_exe_success=False,
+                    content="未识别到需求信息，请重新输入！",
+                )
+            param: LarkInput = self._input_convert(json.dumps(aimdict), LarkInput)
         except Exception as e:
-            logger.exception(f"str(e)! \n {ai_message}")
+            logger.exception(f"格式转换异常：str(e)! \n {ai_message}")
             return ActionOutput(
                 is_exe_success=False,
                 content="The requested correctly structured answer could not be found.",
@@ -69,10 +86,8 @@ class DemandAction(Action[LarkInput]):
                     "There is no implementation class bound to database resource execution！"
                 )
             print("此处根据AI返回的结果执行下一步动作：调用外部接口", resource, param)
-            data_df = await resource_db_client.a_query_to_df(resource.value, param.sql)
-            view = await self.render_protocal.display(
-                chart=json.loads(param.json()), data_df=data_df
-            )
+            data_df = await resource_db_client.a_query_to_df(resource.value, param)
+            view = await self.render_protocal.display(content=param, data_df=data_df)
             return ActionOutput(
                 is_exe_success=True,
                 content=param.json(),
@@ -80,6 +95,7 @@ class DemandAction(Action[LarkInput]):
                 resource_type=self.resource_need.value,
                 resource_value=resource.value,
             )
+            # return ActionOutput(is_exe_success=exit_success, content=content, view=view)
         except Exception as e:
             logger.exception("Check your answers, the sql run failed！")
             return ActionOutput(

@@ -33,14 +33,15 @@ class LarkLoadClient(ResourceLarkClient):
     async def a_query_to_df(self, db: str, sql: str):
         # conn = CFG.local_db_manager.get_connector(db)
         # return conn.run_to_df(sql)
-        print("这里开始执行外部调用，Endpoint a_query_to_df！")
+        print("这里开始执行外部调用，Endpoint a_query_to_df！", sql)
+        return "飞书接口调用完成，结果：{}"
 
     async def a_query(self, db: str, sql: str):
         # conn = CFG.local_db_manager.get_connector(db)
         # return conn.query_ex(sql)
-        print("这里开始执行外部调用，Endpoint a_query！")
+        print("这里开始执行外部调用，Endpoint a_query！", sql)
 
     async def a_run_sql(self, db: str, sql: str):
         # conn = CFG.local_db_manager.get_connector(db)
         # return conn.run(sql)
-        print("这里开始执行外部调用，Endpoint a_run_sql！")
+        print("这里开始执行外部调用，Endpoint a_run_sql！", sql)
