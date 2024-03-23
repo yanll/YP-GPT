@@ -36,6 +36,4 @@ def sk():
 
 
 def enabledsso():
-    return False
-
-
+    return True

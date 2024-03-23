@@ -26,9 +26,9 @@ class LarkLoadClient(ResourceLarkClient):
         # return conn.db_type
         return "lark"
 
-    async def a_get_schema_link(self, db: str, question: Optional[str] = None) -> str:
-        table_infos = [{"tablename": "用户表"}]
-        return table_infos
+    async def a_get_userinfo(self, db: str, question: Optional[str] = None) -> str:
+        userinfo = {"username": "管理员", "email": "adm@adm.com"}
+        return userinfo
 
     async def a_query_to_df(self, db: str, sql: str):
         # conn = CFG.local_db_manager.get_connector(db)

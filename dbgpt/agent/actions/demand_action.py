@@ -78,15 +78,15 @@ class DemandAction(Action[LarkInput]):
                 content="The requested correctly structured answer could not be found.",
             )
         try:
-            resource_db_client: ResourceLarkClient = (
+            resource_lark_client: ResourceLarkClient = (
                 self.resource_loader.get_resesource_api(self.resource_need)
             )
-            if not resource_db_client:
+            if not resource_lark_client:
                 raise ValueError(
                     "There is no implementation class bound to database resource execution！"
                 )
             print("此处根据AI返回的结果执行下一步动作：调用外部接口", resource, param)
-            data_df = await resource_db_client.a_query_to_df(resource.value, param)
+            data_df = await resource_lark_client.a_query_to_df(resource.value, param)
             view = await self.render_protocal.display(content=param, data_df=data_df)
             return ActionOutput(
                 is_exe_success=True,
