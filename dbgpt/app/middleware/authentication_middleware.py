@@ -20,7 +20,7 @@ user_service = UserService()
 
 
 def principal(token):
-    url = innerssourl() if False else ncssourl()
+    url = innerssourl() if True else ncssourl()
     headers = {
         'systemcode': 'iam-console',
         'yuiassotoken': token
