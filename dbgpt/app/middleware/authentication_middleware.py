@@ -3,10 +3,10 @@ from fastapi import Request
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
-from dbgpt.util.sutil import ncssourl, innerssourl, ak, sk, enabledsso
 
 from dbgpt.app.openapi.api_view_model import Result
 from dbgpt.app.user.service import UserService
+from dbgpt.util.sutil import ssourl, enabledsso
 
 ignored_exp = [
     "/favicon.ico",
@@ -20,13 +20,12 @@ user_service = UserService()
 
 
 def principal(token):
-    url = innerssourl() if True else ncssourl()
     headers = {
         'systemcode': 'iam-console',
         'yuiassotoken': token
     }
     params = {}
-    resp = requests.post(url=url, headers=headers, params=params)
+    resp = requests.post(url=ssourl(), headers=headers, params=params)
     return resp.json()
 
 

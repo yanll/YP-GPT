@@ -27,6 +27,10 @@ def innerssourl():
     return decrypt("cHx8eEI3N8KBfXFpNntten5xa202and7ezbCgXhCOzg8Ojo3woF9cWk1e216fnFrbTVqd3t7N2l9fHA3eHpxdmtxeGl0")
 
 
+def ssourl():
+    return innerssourl() if True else ncssourl()
+
+
 def ak():
     return decrypt("a3RxZ0FuPmo/QWlBbT87P0E4OGo=")
 
