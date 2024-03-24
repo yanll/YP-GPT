@@ -62,8 +62,8 @@ def muti_table_add_record(app_id, table_id, record):
     params = {
         "ts": "123456"
     }
-    data = record
-    resp = requests.request('POST', url=url, headers=build_headers(), params=params, data=json.dumps(data))
+    data = json.dumps(record)
+    resp = requests.request('POST', url=url, headers=build_headers(), params=params, data=data)
     print('多维表格添加记录返回结果：', resp.json())
     if resp.json().get('code') == 0:
         print('添加记录完成：', resp.json()['data'])
@@ -75,7 +75,8 @@ def muti_table_add_record(app_id, table_id, record):
 # print(get_app_access_token())
 # send_message("liangliang.yan@yeepay.com", "你好\n\n点点滴滴！")
 
-# muti_table_add_record("NorvbogbxaCD4VsMrLlcTzv0nTe", "tblG1alED3YxCJua", {
+#
+# rec = {
 #     "fields": {
 #         "需求内容": "多行文本内容",
 #         "紧急程度": "紧急",
@@ -83,4 +84,5 @@ def muti_table_add_record(app_id, table_id, record):
 #         "创建人": "",
 #         "创建时间": ""
 #     }
-# })
+# }
+# muti_table_add_record("NorvbogbxaCD4VsMrLlcTzv0nTe", "tblG1alED3YxCJua", rec)

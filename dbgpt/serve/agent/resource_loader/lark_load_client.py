@@ -33,8 +33,6 @@ class LarkLoadClient(ResourceLarkClient):
 
     # 获取AI结果后调用
     async def a_muti_table_add_record(self, app_id: str, table_id: str, record: dict) -> None:
-        # conn = CFG.local_db_manager.get_connector(db)
-        # return conn.query_ex(sql)
         print("这里开始执行外部调用，Endpoint a_query！", record)
         return muti_table_add_record(app_id=app_id, table_id=table_id, record=record)
 

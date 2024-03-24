@@ -90,11 +90,13 @@ class DemandAction(Action[LarkInput]):
                 app_id="NorvbogbxaCD4VsMrLlcTzv0nTe",
                 table_id="tblG1alED3YxCJua",
                 record={
-                    "需求内容": param.demand,
-                    "紧急程度": param.urgency,
-                    "期望完成时间": param.pre_time,
-                    "创建人": "",
-                    "创建时间": ""
+                    "fields": {
+                        "需求内容": param.demand,
+                        "紧急程度": param.urgency,
+                        "期望完成时间": param.pre_time,
+                        "创建人": "",
+                        "创建时间": ""
+                    }
                 }
             )
             view = await self.render_protocal.display(content=param, add_result=result)
