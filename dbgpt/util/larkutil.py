@@ -12,7 +12,19 @@ def get_tenant_access_token():
         'app_secret': sk()
     }
     resp = requests.post(url=url, headers=headers, params=params)
-    print('飞书令牌返回结果：', resp.json())
+    print('飞书租户令牌返回结果：', resp.json())
+    return resp.json()
+
+
+def get_app_access_token():
+    url = "https://open.feishu.cn/open-apis/auth/v3/app_access_token/internal"
+    headers = {}
+    params = {
+        'app_id': ak(),
+        'app_secret': sk()
+    }
+    resp = requests.post(url=url, headers=headers, params=params)
+    print('飞书应用令牌返回结果：', resp.json())
     return resp.json()
 
 
@@ -59,6 +71,8 @@ def muti_table_add_record(app_id, table_id, record):
         print('添加记录失败：', resp.json())
     return resp.json()
 
+# print(get_tenant_access_token())
+# print(get_app_access_token())
 # send_message("liangliang.yan@yeepay.com", "你好\n\n点点滴滴！")
 
 # muti_table_add_record("NorvbogbxaCD4VsMrLlcTzv0nTe", "tblG1alED3YxCJua", {
