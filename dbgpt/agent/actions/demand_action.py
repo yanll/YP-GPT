@@ -53,7 +53,10 @@ class DemandAction(Action[LarkInput]):
             need_vis_render: bool = True,
     ) -> ActionOutput:
         try:
-            aimdict = eval(ai_message)
+            print("AI回复：", ai_message)
+            aimdict = {}
+            if (ai_message.startswith("{")):
+                aimdict = eval(ai_message)
             if "display_type" not in aimdict:
                 aimdict["display_type"] = ""
             if "urgency" not in aimdict:
@@ -66,10 +69,9 @@ class DemandAction(Action[LarkInput]):
                 aimdict["thought"] = ""
 
             if aimdict["demand"] == "":
-                return ActionOutput(
-                    is_exe_success=False,
-                    content="未识别到需求信息，请重新输入！",
-                )
+                return ActionOutput(is_exe_success=False, content="未识别到需求内容，请输入！")
+            if aimdict["pre_time"] == "":
+                return ActionOutput(is_exe_success=False, content="未识别到期望完成时间，请输入！")
             param: LarkInput = self._input_convert(json.dumps(aimdict), LarkInput)
         except Exception as e:
             logger.exception(f"格式转换异常：str(e)! \n {ai_message}")
