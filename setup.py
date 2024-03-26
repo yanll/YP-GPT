@@ -390,16 +390,15 @@ def core_requires():
         "jinja2",
         "uvicorn",
         "shortuuid",
-        # change from fixed version 2.0.22 to variable version, because other
-        # dependencies are >=1.4, such as pydoris is <2
-        "SQLAlchemy>=1.4,<3",
+        # 2.0.29 not support duckdb now
+        "SQLAlchemy>=2.0.25,<2.0.29",
         # for cache
         "msgpack",
         # for cache
         # TODO: pympler has not been updated for a long time and needs to
         #  find a new toolkit.
         "pympler",
-        "duckdb==0.8.1",
+        "duckdb",
         "duckdb-engine",
         # lightweight python library for scheduling jobs
         "schedule",
@@ -562,7 +561,6 @@ def all_datasource_requires():
     setup_spec.extras["datasource"] = [
         # "sqlparse==0.4.4",
         "pymysql",
-        "psycopg2",
         # for doris
         # mysqlclient 2.2.x have pkg-config issue on 3.10+
         "mysqlclient==2.1.0",
@@ -570,6 +568,10 @@ def all_datasource_requires():
     setup_spec.extras["datasource_all"] = setup_spec.extras["datasource"] + [
         "pyspark",
         "pymssql",
+        # install psycopg2-binary when you are in a virtual environment
+        # pip install psycopg2-binary
+        "psycopg2",
+        # pydoris is too old, we should find a new package to replace it.
         "pydoris>=1.0.2,<2.0.0",
         "clickhouse-connect",
         "pyhive",
