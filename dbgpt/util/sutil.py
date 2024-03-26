@@ -1,4 +1,5 @@
 import base64
+import os
 
 
 def encrypt(text):
@@ -28,7 +29,8 @@ def innerssourl():
 
 
 def ssourl():
-    return innerssourl() if True else ncssourl()
+    url = ncssourl() if os.getenv("DEPLOY_ENV") == "LOCAL" else innerssourl()
+    return url
 
 
 def ak():
@@ -40,4 +42,4 @@ def sk():
 
 
 def enabledsso():
-    return True
+    return False if os.getenv("DEPLOY_ENV") == "LOCAL" else True
