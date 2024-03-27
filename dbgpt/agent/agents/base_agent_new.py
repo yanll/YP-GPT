@@ -239,6 +239,7 @@ class ConversableAgent(Role, Agent):
                             reply_message, sender, reviewer, request_reply=False
                         )
                     fail_reason = reason
+                    reply_message['content'] = reason
                 else:
                     break
             return is_sucess, reply_message

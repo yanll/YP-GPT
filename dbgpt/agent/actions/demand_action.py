@@ -1,6 +1,12 @@
 import json
 import logging
-from typing import Optional
+from typing import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Union,
+)
 
 from pydantic import BaseModel, Field
 
@@ -14,9 +20,6 @@ logger = logging.getLogger(__name__)
 
 
 class LarkInput(BaseModel):
-    display_type: str = Field(
-        description="The chart rendering method selected for SQL. If you don’t know what to output, just output 'response_table' uniformly.",
-    )
     urgency: str = Field(
         ..., description="提取的“紧急程度”信息"
     )
@@ -32,6 +35,16 @@ class LarkInput(BaseModel):
 class DemandAction(Action[LarkInput]):
     def __init__(self):
         self._render_protocal = VisDemand()
+
+    @property
+    def ai_out_schema(self) -> Union[Dict[str, Any], List[Dict[str, Any]]]:
+        if self.out_model_type is None:
+            return None
+
+        return f"""Please response in the following json format:
+                {json.dumps(self._create_example(self.out_model_type), indent=2, ensure_ascii=False)}
+            Make sure the response is correct json and can be parsed by Python json.loads. 
+            """
 
     @property
     def resource_need(self) -> Optional[ResourceType]:
@@ -53,25 +66,19 @@ class DemandAction(Action[LarkInput]):
             need_vis_render: bool = True,
     ) -> ActionOutput:
         try:
-            print("AI回复：", ai_message)
+            print("AI Response Message：", ai_message)
             aimdict = {}
             if (ai_message.startswith("{")):
                 aimdict = eval(ai_message)
-            if "display_type" not in aimdict:
-                aimdict["display_type"] = ""
-            if "urgency" not in aimdict:
-                aimdict["urgency"] = ""
-            if "demand" not in aimdict:
-                aimdict["demand"] = ""
-            if "pre_time" not in aimdict:
-                aimdict["pre_time"] = ""
-            if "thought" not in aimdict:
-                aimdict["thought"] = ""
+            else:
+                return ActionOutput(is_exe_success=False, content=ai_message)
 
             if aimdict["demand"] == "":
-                return ActionOutput(is_exe_success=False, content="未识别到需求内容，请输入！")
+                return ActionOutput(is_exe_success=False,
+                                    content="请输入需求信息！>>>> ai message: " + aimdict["thought"])
             if aimdict["pre_time"] == "":
-                return ActionOutput(is_exe_success=False, content="未识别到期望完成时间，请输入！")
+                return ActionOutput(is_exe_success=False,
+                                    content="请输入期望完成时间！>>>> ai message: " + aimdict["thought"])
             param: LarkInput = self._input_convert(json.dumps(aimdict), LarkInput)
         except Exception as e:
             logger.exception(f"格式转换异常：str(e)! \n {ai_message}")

@@ -32,10 +32,10 @@ class ProductionAssistantAgent(ConversableAgent):
         "请仔细理解用户输入，客观真实的识别，按照：{fields} 将用户输入的内容拆解出来。",
         "需求必须是有意义的内容，包含并不限于用户的痛点、槽点、需求、期望、愿景等。",
         "需求要明确客观，不随意编造内容。紧急程度根据用户的输入的语义判断级别，按照【“非常紧急”，“比较紧急”，“不紧急”】处理。期望完成时间尽量提取准确的时间信息。",
-        "如果没有提取到“需求内容”信息，按照“”处理并提醒用户输入中应该包含需求内容以便助手可以提取。",
-        "如果没有提取到“紧急程度”信息，按照“一般紧急”处理。",
-        "如果没有提取到“期望完成时间”信息，按照“排期推进”处理。",
         "如果用户输入的信息太少或没有提取到有用信息，提醒用户输入更详细的内容。",
+        "如果没有提取到“需求内容”信息，按照“”处理并提醒用户输入。",
+        "如果没有提取到“期望完成时间”信息，按照“”处理并提醒用户输入",
+        "如果没有提取到“紧急程度”信息，按照“一般紧急”处理。",
         "回复的内容不要包含情绪、主观思维信息。",
     ]
     desc: str = "提取用户输入中的 {fields} 信息”"
@@ -48,10 +48,9 @@ class ProductionAssistantAgent(ConversableAgent):
     def _init_reply_message(self, recive_message):
         reply_message = super()._init_reply_message(recive_message)
         reply_message["context"] = {
-            "display_type": "text",
             "fields": "[“需求内容”,“紧急程度”,“期望完成时间”]"
         }
-        print("需求收集代理回复消息：", reply_message)
+        print("需求收集代理回复消息模版内容：", reply_message)
         return reply_message
 
     async def a_correctness_check(self, message: Optional[Dict]):
