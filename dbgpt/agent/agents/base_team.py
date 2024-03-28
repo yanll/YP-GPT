@@ -115,7 +115,7 @@ class ManagerAgent(ConversableAgent, Team):
         Team.__init__(self, **kwargs)
 
     async def a_thinking(
-        self, messages: Optional[List[Dict]], prompt: Optional[str] = None
+        self, messages: Optional[List[Dict]], his_human_messages: Optional[List[Dict]] = None, prompt: Optional[str] = None
     ) -> Union[str, Dict, None]:
         # TeamManager, which is based on processes and plans by default, only needs to ensure execution and does not require additional thinking.
         if messages is None or len(messages) <= 0:

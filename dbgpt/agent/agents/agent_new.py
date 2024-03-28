@@ -51,7 +51,7 @@ class Agent(ABC):
         """
 
     async def a_thinking(
-        self, messages: Optional[List[Dict]]
+        self, messages: Optional[List[Dict]], his_human_messages: Optional[List[Dict]] = None
     ) -> Union[str, Dict, None]:
         """Based on the requirements of the current agent, reason about the current task goal through LLM
         Args:

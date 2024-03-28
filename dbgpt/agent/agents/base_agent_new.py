@@ -202,18 +202,19 @@ class ConversableAgent(Role, Agent):
                     )
 
                 # 1.Think about how to do things
-                his_messages = recive_message.get('current_message').messages
+                his_messages = recive_message.get('current_message').messages if recive_message.get('current_message') is not None else []
                 his_human_messages = []
                 for msg in his_messages:
-                    # if isinstance(msg, HumanMessage):
-                    his_human_messages.append({
-                        "role": "human",
-                        "content": msg.content,
-                        "context": None
-                    })
+                    if isinstance(msg, HumanMessage):
+                        his_human_messages.append({
+                            "role": "human",
+                            "content": msg.content,
+                            "context": None
+                        })
+                messages = self._load_thinking_messages(recive_message, sender, rely_messages)
                 llm_reply, model_name = await self.a_thinking(
-                    messages=self._load_thinking_messages(recive_message, sender, rely_messages),
-                    his_muman_messages=his_human_messages
+                    messages=messages,
+                    his_human_messages=his_human_messages
                 )
                 reply_message["model_name"] = model_name
                 reply_message["content"] = llm_reply
@@ -259,8 +260,9 @@ class ConversableAgent(Role, Agent):
             return False, {"content": str(e)}
 
     async def a_thinking(
-            self, messages: Optional[List[Dict]],
-            his_muman_messages: Optional[List[Dict]] = None,
+            self,
+            messages: Optional[List[Dict]],
+            his_human_messages: Optional[List[Dict]] = None,
             prompt: Optional[str] = None
     ) -> Union[str, Dict, None]:
         last_model = None

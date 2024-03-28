@@ -106,12 +106,15 @@ class ProductionAssistantAgent(ConversableAgent):
             )
 
     async def a_thinking(
-            self, messages: Optional[List[Dict]], his_muman_messages: Optional[List[Dict]], prompt: Optional[str] = None
+            self,
+            messages: Optional[List[Dict]],
+            his_human_messages: Optional[List[Dict]] = None,
+            prompt: Optional[str] = None
     ) -> Union[str, Dict, None]:
         last_model = None
         last_err = None
         retry_count = 0
-        messages = his_muman_messages
+        messages = his_human_messages if his_human_messages is not None and his_human_messages != [] else messages
         while retry_count < 3:
             llm_model = await self._a_select_llm_model(last_model)
             try:
