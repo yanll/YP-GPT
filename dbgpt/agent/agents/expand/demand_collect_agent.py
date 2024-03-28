@@ -1,11 +1,13 @@
+import asyncio
 import json
 import logging
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from dbgpt.agent.actions.action import ActionOutput
 from dbgpt.agent.actions.demand_action import DemandAction
 from dbgpt.agent.resource.resource_api import ResourceType
 from dbgpt.agent.resource.resource_lark_api import ResourceLarkClient
+from dbgpt.util.error_types import LLMChatError
 from ..base_agent_new import ConversableAgent
 
 logger = logging.getLogger(__name__)
@@ -35,11 +37,11 @@ class ProductionAssistantAgent(ConversableAgent):
         "如果用户输入的信息太少或没有提取到有用信息，提醒用户输入更详细的内容。",
         "如果没有提取到“需求内容”信息，按照“”处理并提醒用户输入。",
         "如果没有提取到“期望完成时间”信息，按照“”处理并提醒用户输入",
-        "如果没有提取到“紧急程度”信息，按照“一般紧急”处理。",
+        "如果没有提取到“紧急程度”信息，按照“比较紧急”处理。",
         "回复的内容不要包含情绪、主观思维信息。",
     ]
     desc: str = "提取用户输入中的 {fields} 信息”"
-    max_retry_count: int = 2
+    max_retry_count: int = 1
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -102,3 +104,36 @@ class ProductionAssistantAgent(ConversableAgent):
                 False,
                 f"Lark execution error, please re-read the historical information to fix this API. The error message is as follows:{str(e)}",
             )
+
+    async def a_thinking(
+            self, messages: Optional[List[Dict]], his_muman_messages: Optional[List[Dict]], prompt: Optional[str] = None
+    ) -> Union[str, Dict, None]:
+        last_model = None
+        last_err = None
+        retry_count = 0
+        messages = his_muman_messages
+        while retry_count < 3:
+            llm_model = await self._a_select_llm_model(last_model)
+            try:
+                if prompt:
+                    messages = self._new_system_message(prompt) + messages
+                else:
+                    messages = self.oai_system_message + messages
+
+                response = await self.llm_client.create(
+                    context=messages[-1].pop("context", None),
+                    messages=messages,
+                    llm_model=llm_model,
+                    max_new_tokens=self.agent_context.max_new_tokens,
+                    temperature=self.agent_context.temperature,
+                )
+                return response, llm_model
+            except LLMChatError as e:
+                logger.error(f"model:{llm_model} generate Failed!{str(e)}")
+                retry_count += 1
+                last_model = llm_model
+                last_err = str(e)
+                await asyncio.sleep(10)
+
+        if last_err:
+            raise ValueError(last_err)

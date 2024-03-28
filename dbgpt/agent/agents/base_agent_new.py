@@ -16,7 +16,7 @@ from dbgpt.agent.memory.base import GptsMessage
 from dbgpt.agent.memory.gpts_memory import GptsMemory
 from dbgpt.agent.resource.resource_api import AgentResource, ResourceClient
 from dbgpt.agent.resource.resource_loader import ResourceLoader
-from dbgpt.core.interface.message import ModelMessageRoleType
+from dbgpt.core.interface.message import ModelMessageRoleType, StorageConversation, HumanMessage
 from dbgpt.util.error_types import LLMChatError
 from dbgpt.util.utils import colored
 
@@ -59,8 +59,8 @@ class ConversableAgent(Role, Agent):
         # rource check
         for resource in self.resources:
             if (
-                self.resource_loader is None
-                or self.resource_loader.get_resesource_api(resource.type) is None
+                    self.resource_loader is None
+                    or self.resource_loader.get_resesource_api(resource.type) is None
             ):
                 raise ValueError(
                     f"Resource {resource.type}:{resource.value} missing resource loader implementation,unable to read resources!"
@@ -71,8 +71,8 @@ class ConversableAgent(Role, Agent):
             have_resource_types = [item.type for item in self.resources]
             for action in self.actions:
                 if (
-                    action.resource_need
-                    and action.resource_need not in have_resource_types
+                        action.resource_need
+                        and action.resource_need not in have_resource_types
                 ):
                     raise ValueError(
                         f"{self.name}[{self.profile}] Missing resources required for runtime！"
@@ -129,12 +129,12 @@ class ConversableAgent(Role, Agent):
         return self
 
     async def a_send(
-        self,
-        message: Union[Dict, str],
-        recipient: Agent,
-        reviewer: Optional[Agent] = None,
-        request_reply: Optional[bool] = True,
-        is_recovery: Optional[bool] = False,
+            self,
+            message: Union[Dict, str],
+            recipient: Agent,
+            reviewer: Optional[Agent] = None,
+            request_reply: Optional[bool] = True,
+            is_recovery: Optional[bool] = False,
     ) -> None:
         await recipient.a_receive(
             message=message,
@@ -145,13 +145,13 @@ class ConversableAgent(Role, Agent):
         )
 
     async def a_receive(
-        self,
-        message: Optional[Dict],
-        sender: Agent,
-        reviewer: Optional[Agent] = None,
-        request_reply: Optional[bool] = None,
-        silent: Optional[bool] = False,
-        is_recovery: Optional[bool] = False,
+            self,
+            message: Optional[Dict],
+            sender: Agent,
+            reviewer: Optional[Agent] = None,
+            request_reply: Optional[bool] = None,
+            silent: Optional[bool] = False,
+            is_recovery: Optional[bool] = False,
     ) -> None:
         await self._a_process_received_message(message, sender)
         if request_reply is False or request_reply is None:
@@ -168,11 +168,11 @@ class ConversableAgent(Role, Agent):
         return {}
 
     async def a_generate_reply(
-        self,
-        recive_message: Optional[Dict],
-        sender: Agent,
-        reviewer: Agent = None,
-        rely_messages: Optional[List[Dict]] = None,
+            self,
+            recive_message: Optional[Dict],
+            sender: Agent,
+            reviewer: Agent = None,
+            rely_messages: Optional[List[Dict]] = None,
     ):
         logger.info(
             f"generate agent reply!sender={sender}, rely_messages_len={rely_messages}"
@@ -202,8 +202,18 @@ class ConversableAgent(Role, Agent):
                     )
 
                 # 1.Think about how to do things
+                his_messages = recive_message.get('current_message').messages
+                his_human_messages = []
+                for msg in his_messages:
+                    # if isinstance(msg, HumanMessage):
+                    his_human_messages.append({
+                        "role": "human",
+                        "content": msg.content,
+                        "context": None
+                    })
                 llm_reply, model_name = await self.a_thinking(
-                    self._load_thinking_messages(recive_message, sender, rely_messages)
+                    messages=self._load_thinking_messages(recive_message, sender, rely_messages),
+                    his_muman_messages=his_human_messages
                 )
                 reply_message["model_name"] = model_name
                 reply_message["content"] = llm_reply
@@ -249,7 +259,9 @@ class ConversableAgent(Role, Agent):
             return False, {"content": str(e)}
 
     async def a_thinking(
-        self, messages: Optional[List[Dict]], prompt: Optional[str] = None
+            self, messages: Optional[List[Dict]],
+            his_muman_messages: Optional[List[Dict]] = None,
+            prompt: Optional[str] = None
     ) -> Union[str, Dict, None]:
         last_model = None
         last_err = None
@@ -282,16 +294,16 @@ class ConversableAgent(Role, Agent):
             raise ValueError(last_err)
 
     async def a_review(
-        self, message: Union[Dict, str], censored: Agent
+            self, message: Union[Dict, str], censored: Agent
     ) -> Tuple[bool, Any]:
         return True, None
 
     async def a_act(
-        self,
-        message: Optional[str],
-        sender: Optional[ConversableAgent] = None,
-        reviewer: Optional[ConversableAgent] = None,
-        **kwargs,
+            self,
+            message: Optional[str],
+            sender: Optional[ConversableAgent] = None,
+            reviewer: Optional[ConversableAgent] = None,
+            **kwargs,
     ) -> Optional[ActionOutput]:
         last_out = None
         for action in self.actions:
@@ -316,7 +328,7 @@ class ConversableAgent(Role, Agent):
         return True, None
 
     async def a_verify(
-        self, message: Optional[Dict], sender: Agent, reviewer: Agent, **kwargs
+            self, message: Optional[Dict], sender: Agent, reviewer: Agent, **kwargs
     ) -> Union[str, Dict, None]:
         ## Check approval results
         if "review_info" in message:
@@ -341,16 +353,19 @@ class ConversableAgent(Role, Agent):
         return await self.a_correctness_check(message)
 
     async def a_initiate_chat(
-        self,
-        recipient: "ConversableAgent",
-        reviewer: "Agent" = None,
-        clear_history: Optional[bool] = True,
-        **context,
+            self,
+            recipient: "ConversableAgent",
+            reviewer: "Agent" = None,
+            clear_history: Optional[bool] = True,
+            current_message: "StorageConversation" = None,
+            **context,
+
     ):
         await self.a_send(
             {
                 "content": context["message"],
                 "current_goal": context["message"],
+                "current_message": current_message
             },
             recipient,
             reviewer,
@@ -368,7 +383,7 @@ class ConversableAgent(Role, Agent):
                 self.actions.append(action())
 
     async def _a_append_message(
-        self, message: Optional[Dict], role, sender: Agent
+            self, message: Optional[Dict], role, sender: Agent
     ) -> bool:
         self.consecutive_auto_reply_counter = sender.consecutive_auto_reply_counter + 1
         oai_message = {
@@ -445,7 +460,7 @@ class ConversableAgent(Role, Agent):
         self._print_received_message(message, sender)
 
     async def _system_message_assembly(
-        self, qustion: Optional[str], context: Optional[Dict] = None
+            self, qustion: Optional[str], context: Optional[Dict] = None
     ):
         ## system message
         self.init_system_message()
@@ -480,10 +495,10 @@ class ConversableAgent(Role, Agent):
                 message["content"] = new_content
 
     def _excluded_models(
-        self,
-        all_models: Optional[List[str]],
-        order_llms: Optional[List[str]] = [],
-        excluded_models: Optional[List[str]] = [],
+            self,
+            all_models: Optional[List[str]],
+            order_llms: Optional[List[str]] = [],
+            excluded_models: Optional[List[str]] = [],
     ):
         can_uses = []
         if order_llms and len(order_llms) > 0:
@@ -499,7 +514,7 @@ class ConversableAgent(Role, Agent):
         return can_uses
 
     async def _a_select_llm_model(
-        self, excluded_models: Optional[List[str]] = None
+            self, excluded_models: Optional[List[str]] = None
     ) -> str:
         logger.info(f"_a_select_llm_model:{excluded_models}")
         try:
@@ -538,7 +553,7 @@ class ConversableAgent(Role, Agent):
         return new_message
 
     def _convert_to_ai_message(
-        self, gpts_messages: Optional[List[GptsMessage]]
+            self, gpts_messages: Optional[List[GptsMessage]]
     ) -> List[Dict]:
         oai_messages: List[Dict] = []
         # Based on the current agent, all messages received are user, and all messages sent are assistant.
@@ -559,9 +574,9 @@ class ConversableAgent(Role, Agent):
             if item.action_report:
                 action_out = ActionOutput.from_dict(json.loads(item.action_report))
                 if (
-                    action_out is not None
-                    and action_out.is_exe_success
-                    and action_out.content is not None
+                        action_out is not None
+                        and action_out.is_exe_success
+                        and action_out.content is not None
                 ):
                     content = action_out.content
             oai_messages.append(
@@ -576,10 +591,10 @@ class ConversableAgent(Role, Agent):
         return oai_messages
 
     def _load_thinking_messages(
-        self,
-        receive_message: Optional[Dict],
-        sender,
-        rely_messages: Optional[List[Dict]] = None,
+            self,
+            receive_message: Optional[Dict],
+            sender,
+            rely_messages: Optional[List[Dict]] = None,
     ) -> Optional[List[Dict]]:
         current_goal = receive_message.get("current_goal", None)
 

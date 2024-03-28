@@ -101,6 +101,7 @@ class MultiAgents(BaseComponent, ABC):
         user_query: str,
         user_code: str = None,
         sys_code: str = None,
+        current_message: StorageConversation = None
     ):
         gpt_app: GptsApp = self.gpts_app.app_detail(gpts_name)
 
@@ -124,7 +125,7 @@ class MultiAgents(BaseComponent, ABC):
 
         task = asyncio.create_task(
             multi_agents.agent_team_chat_new(
-                user_query, agent_conv_id, gpt_app, is_retry_chat
+                user_query, agent_conv_id, gpt_app, is_retry_chat, current_message
             )
         )
 
@@ -172,7 +173,7 @@ class MultiAgents(BaseComponent, ABC):
         try:
             agent_conv_id = conv_uid + "_" + str(current_message.chat_order)
             async for task, chunk in multi_agents.agent_chat(
-                agent_conv_id, gpts_name, user_query, user_code, sys_code
+                agent_conv_id, gpts_name, user_query, user_code, sys_code, current_message
             ):
                 agent_task = task
                 yield chunk
@@ -200,6 +201,7 @@ class MultiAgents(BaseComponent, ABC):
         conv_uid: str,
         gpts_app: GptsApp,
         is_retry_chat: bool = False,
+        current_message: StorageConversation = None
     ):
         employees: List[Agent] = []
         # Prepare resource loader
@@ -279,6 +281,7 @@ class MultiAgents(BaseComponent, ABC):
             await user_proxy.a_initiate_chat(
                 recipient=recipient,
                 message=user_query,
+                current_message=current_message
             )
         except Exception as e:
             logger.error(f"chat abnormal termination！{str(e)}", e)
