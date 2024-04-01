@@ -9,6 +9,8 @@ from dbgpt.agent.resource.resource_api import ResourceType
 from dbgpt.agent.resource.resource_lark_api import ResourceLarkClient
 from dbgpt.util.error_types import LLMChatError
 from ..base_agent_new import ConversableAgent
+from dbgpt.agent.memory.base import MyGptsConversation
+from dbgpt.serve.agent.db.gpts_conversations_db import GptsConversationsDao, GptsConversationsEntity
 
 logger = logging.getLogger(__name__)
 
@@ -32,13 +34,17 @@ class ProductionAssistantAgent(ConversableAgent):
     constraints: List[str] = [
         "注意你是一个需求收集助手，目标是提取信息，不用真的帮用户实现需求。",
         "请仔细理解用户输入，客观真实的识别，按照：{fields} 将用户输入的内容拆解出来。",
-        "需求必须是有意义的内容，包含并不限于用户的痛点、槽点、需求、期望、愿景等。",
+        "需求必须是有意义的内容，包含并不限于用户的痛点、槽点、需求、期望、愿景等,不要改变用户的需求内容。",
         "需求要明确客观，不随意编造内容。紧急程度根据用户的输入的语义判断级别，按照【“非常紧急”，“比较紧急”，“不紧急”】处理。期望完成时间尽量提取准确的时间信息。",
         "如果用户输入的信息太少或没有提取到有用信息，提醒用户输入更详细的内容。",
-        "如果没有提取到“需求内容”信息，按照“”处理并提醒用户输入。",
-        "如果没有提取到“期望完成时间”信息，按照“”处理并提醒用户输入",
-        "如果没有提取到“紧急程度”信息，按照“比较紧急”处理。",
+        "如果没有提取到“需求内容”信息，按照“”处理并提醒用户输入“需求内容”，不要胡乱编造需求。",
+        "提取的“需求内容”至少10个字以上，否则按照“”处理并提醒用户输入更详细的“需求内容”，不要胡乱处理。",
+        "如果没有提取到“期望完成时间”信息，按照“”处理并提醒用户输入“期望完成时间”，不要胡乱编造时间",
+        "如果没有提取到“紧急程度”信息，按照“比较紧急”处理，不要胡乱处理。",
+        "如果没有提取到“是否确认提交”信息，按照“”处理，不要胡乱处理，不用提醒用户输入。",
+        "“是否确认提交”要客观明确，根据上下文和用户输入的语义判断，不要随意编造结果，只能按照【“是”，“否”】处理。",
         "回复的内容不要包含情绪、主观思维信息。",
+
     ]
     desc: str = "提取用户输入中的 {fields} 信息”"
     max_retry_count: int = 1
@@ -50,7 +56,7 @@ class ProductionAssistantAgent(ConversableAgent):
     def _init_reply_message(self, recive_message):
         reply_message = super()._init_reply_message(recive_message)
         reply_message["context"] = {
-            "fields": "[“需求内容”,“紧急程度”,“期望完成时间”]"
+            "fields": "[“需求内容”,“紧急程度”,“期望完成时间”,“是否确认提交”]"
         }
         print("需求收集代理回复消息模版内容：", reply_message)
         return reply_message
@@ -89,6 +95,10 @@ class ProductionAssistantAgent(ConversableAgent):
             print('ProductionAssistantAgent处理结果：', result)
             if (result['code'] == 0):
                 logger.info("代理任务执行成功！")
+                # 删除最后一条确认消息（TODO-YLL-FIXME：删除全部会话）
+                delete_last: MyGptsConversation = self.memory.my_conversation_memory.disable_con_by_conv_id(
+                    conv_id=self.agent_context.conv_id
+                )
                 return (
                     True, None
                 )
@@ -114,7 +124,20 @@ class ProductionAssistantAgent(ConversableAgent):
         last_model = None
         last_err = None
         retry_count = 0
-        messages = his_human_messages if his_human_messages is not None and his_human_messages != [] else messages
+        conv_uid = self.agent_context.conv_id.split("_")[0]
+        convs = self.memory.my_conversation_memory.get_cons_by_conv_uid(
+            conv_uid=conv_uid
+        )
+        # 替换原有消息，将历史记录传入GPT
+        if True:
+            messages = []
+            for conv in convs:
+                messages.append({
+                    "role": 'human',
+                    "content": conv.user_goal,
+                    "context": None
+                })
+
         while retry_count < 3:
             llm_model = await self._a_select_llm_model(last_model)
             try:

@@ -29,7 +29,12 @@ class LarkInput(BaseModel):
     pre_time: str = Field(
         ..., description="提取的“期望完成时间”信息"
     )
-    thought: str = Field(..., description="Summary of thoughts to the user")
+    confirm: str = Field(
+        ..., description="提取的“是否确认提交”信息"
+    )
+    ai_message: str = Field(
+        ..., description="Summary of thoughts to the user"
+    )
 
 
 class DemandAction(Action[LarkInput]):
@@ -68,20 +73,36 @@ class DemandAction(Action[LarkInput]):
         try:
             print("AI Response Message：", ai_message)
             aimdict = {}
+
             if (ai_message.startswith("{")):
                 aimdict = eval(ai_message)
             else:
                 return ActionOutput(is_exe_success=False, content=ai_message)
 
+            if "ai_message" not in aimdict:
+                aimdict["ai_message"] = ""
+
+
+            info = ("#### ai_message：" + aimdict["ai_message"] + '\n\n' +
+                    '#### \n\n' +
+                    '需求内容：' + aimdict["demand"] + '\n\n' +
+                    '紧急程度：' + aimdict["urgency"] + '\n\n' +
+                    '期望完成时间：' + aimdict["pre_time"] + '\n\n' +
+                    '#### \n\n'
+                    )
+
             if aimdict["demand"] == "":
-                return ActionOutput(is_exe_success=False,
-                                    content="请输入需求信息！>>>> ai message: " + aimdict["thought"])
-            if aimdict["pre_time"] == "":
-                return ActionOutput(is_exe_success=False,
-                                    content="请输入期望完成时间！>>>> ai message: " + aimdict["thought"])
+                return ActionOutput(is_exe_success=False, content=info + '\n\n #### 请输入需求信息！')
+            elif aimdict["pre_time"] == "":
+                return ActionOutput(is_exe_success=False, content=info + '\n\n #### 请输入期望完成时间！')
+            if (aimdict["confirm"] != "是"):
+                return ActionOutput(
+                    is_exe_success=False,
+                    content=info + '\n\n #### 是否确认将以上信息提交到飞书？您也可以继续输入修改以上内容！'
+                )
             param: LarkInput = self._input_convert(json.dumps(aimdict), LarkInput)
         except Exception as e:
-            logger.exception(f"格式转换异常：str(e)! \n {ai_message}")
+            logger.exception(f"格式转换异常：str(e)! \n\n {ai_message}")
             return ActionOutput(
                 is_exe_success=False,
                 content="The requested correctly structured answer could not be found.",

@@ -4,8 +4,10 @@ from typing import List, Optional
 import pandas as pd
 
 from dbgpt.agent.common.schema import Status
+from dbgpt.serve.agent.db.gpts_conversations_db import GptsConversationsDao, GptsConversationsEntity
 
-from .base import GptsMessage, GptsMessageMemory, GptsPlan, GptsPlansMemory
+from .base import GptsMessage, GptsMessageMemory, MyGptsConversation, MyGptsConversationMemory, GptsPlan, \
+    GptsPlansMemory
 
 
 class DefaultGptsPlansMemory(GptsPlansMemory):
@@ -25,7 +27,7 @@ class DefaultGptsPlansMemory(GptsPlansMemory):
         return plans
 
     def get_by_conv_id_and_num(
-        self, conv_id: str, task_nums: List[int]
+            self, conv_id: str, task_nums: List[int]
     ) -> List[GptsPlan]:
         task_nums_int = [int(num) for num in task_nums]
         result = self.df.query(f"conv_id==@conv_id and sub_task_num in @task_nums_int")
@@ -46,23 +48,23 @@ class DefaultGptsPlansMemory(GptsPlansMemory):
 
     def complete_task(self, conv_id: str, task_num: int, result: str):
         condition = (self.df["conv_id"] == conv_id) & (
-            self.df["sub_task_num"] == task_num
+                self.df["sub_task_num"] == task_num
         )
         self.df.loc[condition, "state"] = Status.COMPLETE.value
         self.df.loc[condition, "result"] = result
 
     def update_task(
-        self,
-        conv_id: str,
-        task_num: int,
-        state: str,
-        retry_times: int,
-        agent: str = None,
-        model=None,
-        result: str = None,
+            self,
+            conv_id: str,
+            task_num: int,
+            state: str,
+            retry_times: int,
+            agent: str = None,
+            model=None,
+            result: str = None,
     ):
         condition = (self.df["conv_id"] == conv_id) & (
-            self.df["sub_task_num"] == task_num
+                self.df["sub_task_num"] == task_num
         )
         self.df.loc[condition, "state"] = state
         self.df.loc[condition, "retry_times"] = retry_times
@@ -96,11 +98,11 @@ class DefaultGptsMessageMemory(GptsMessageMemory):
         return messages
 
     def get_between_agents(
-        self,
-        conv_id: str,
-        agent1: str,
-        agent2: str,
-        current_goal: Optional[str] = None,
+            self,
+            conv_id: str,
+            agent1: str,
+            agent2: str,
+            current_goal: Optional[str] = None,
     ) -> Optional[List[GptsMessage]]:
         if current_goal:
             result = self.df.query(
@@ -123,3 +125,19 @@ class DefaultGptsMessageMemory(GptsMessageMemory):
             row_dict = dict(zip(self.df.columns, row))
             messages.append(GptsMessage.from_dict(row_dict))
         return messages
+
+
+class MyDefaultGptsConversationMemory(MyGptsConversationMemory):
+
+    def __init__(self):
+        self.gpts_conversation = GptsConversationsDao()
+
+    def get_cons_by_conv_uid(self, conv_uid: str) -> Optional[List[GptsConversationsEntity]]:
+        print('do get_cons_by_conv_uid')
+        messages = []
+        messages = self.gpts_conversation.get_cons_by_uid(conv_uid)
+        return messages
+
+    def disable_con_by_conv_id(self, conv_id: str):
+        print('do disable_con_by_conv_id')
+        return self.gpts_conversation.disable_by_conv_id(conv_id)

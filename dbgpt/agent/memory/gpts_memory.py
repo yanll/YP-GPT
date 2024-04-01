@@ -8,8 +8,8 @@ from dbgpt.agent.actions.action import ActionOutput
 from dbgpt.util.json_utils import EnhancedJSONEncoder
 from dbgpt.vis.client import VisAgentMessages, VisAgentPlans, vis_client
 
-from .base import GptsMessage, GptsMessageMemory, GptsPlansMemory
-from .default_gpts_memory import DefaultGptsMessageMemory, DefaultGptsPlansMemory
+from .base import GptsMessage, GptsMessageMemory, GptsPlansMemory, MyGptsConversationMemory
+from .default_gpts_memory import DefaultGptsMessageMemory, DefaultGptsPlansMemory, MyDefaultGptsConversationMemory
 
 NONE_GOAL_PREFIX: str = "none_goal_count_"
 
@@ -19,12 +19,16 @@ class GptsMemory:
         self,
         plans_memory: Optional[GptsPlansMemory] = None,
         message_memory: Optional[GptsMessageMemory] = None,
+        my_conversation_memory: Optional[MyGptsConversationMemory] = None,
     ):
         self._plans_memory: GptsPlansMemory = (
             plans_memory if plans_memory is not None else DefaultGptsPlansMemory()
         )
         self._message_memory: GptsMessageMemory = (
             message_memory if message_memory is not None else DefaultGptsMessageMemory()
+        )
+        self._my_conversation_memory: MyGptsConversationMemory = (
+            my_conversation_memory if my_conversation_memory is not None else MyDefaultGptsConversationMemory()
         )
 
     @property
@@ -34,6 +38,9 @@ class GptsMemory:
     @property
     def message_memory(self):
         return self._message_memory
+    @property
+    def my_conversation_memory(self):
+        return self._my_conversation_memory
 
     async def _message_group_vis_build(self, message_group):
         if not message_group:

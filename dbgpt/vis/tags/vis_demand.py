@@ -21,7 +21,8 @@ class VisDemand(Vis):
             "需求内容": kwargs["content"].demand,
             "紧急程度": kwargs["content"].urgency,
             "期望完成时间": kwargs["content"].pre_time,
-            "thought": kwargs["content"].thought
+            "confirm": kwargs["content"].confirm,
+            "ai_message": kwargs["content"].ai_message
         }
         return result
 

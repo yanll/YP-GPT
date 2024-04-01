@@ -5,7 +5,7 @@ import json
 import logging
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from dbgpt.agent.actions.action import Action, ActionOutput
 from dbgpt.agent.agents.agent_new import Agent, AgentContext
@@ -14,7 +14,7 @@ from dbgpt.agent.agents.llm.llm_client import AIWrapper
 from dbgpt.agent.agents.role import Role
 from dbgpt.agent.memory.base import GptsMessage
 from dbgpt.agent.memory.gpts_memory import GptsMemory
-from dbgpt.agent.resource.resource_api import AgentResource, ResourceClient
+from dbgpt.agent.resource.resource_api import AgentResource
 from dbgpt.agent.resource.resource_loader import ResourceLoader
 from dbgpt.core.interface.message import ModelMessageRoleType, StorageConversation, HumanMessage
 from dbgpt.util.error_types import LLMChatError
@@ -161,7 +161,9 @@ class ConversableAgent(Role, Agent):
             is_success, reply = await self.a_generate_reply(
                 recive_message=message, sender=sender, reviewer=reviewer
             )
+            print("XXXXXXXXXXXXXX", is_success, reply)
             if reply is not None:
+                print("YYYYYYYYYYYY", is_success, reply)
                 await self.a_send(reply, sender)
 
     def prepare_act_param(self) -> Optional[Dict]:
@@ -202,7 +204,8 @@ class ConversableAgent(Role, Agent):
                     )
 
                 # 1.Think about how to do things
-                his_messages = recive_message.get('current_message').messages if recive_message.get('current_message') is not None else []
+                his_messages = recive_message.get('current_message').messages if recive_message.get(
+                    'current_message') is not None else []
                 his_human_messages = []
                 for msg in his_messages:
                     if isinstance(msg, HumanMessage):

@@ -7,6 +7,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from dbgpt.agent.common.schema import Status
+from dbgpt.serve.agent.db import GptsConversationsEntity
 
 
 @dataclass
@@ -79,6 +80,42 @@ class GptsMessage:
             context=d["context"],
             review_info=d["review_info"],
             action_report=d["action_report"],
+            created_at=d["created_at"],
+            updated_at=d["updated_at"],
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        return dataclasses.asdict(self)
+
+
+@dataclass
+class MyGptsConversation:
+    """Gpts conversation"""
+
+    conv_id: str
+    user_goal: str
+    gpts_name: str
+    max_auto_reply_round: Optional[int]
+    auto_reply_count: Optional[int]
+    system_code: str = None
+    user_code: str = None
+    state: Optional[str] = None
+    team_mode: Optional[str] = None
+    created_at: datetime = datetime.utcnow
+    updated_at: datetime = datetime.utcnow
+
+    @staticmethod
+    def from_dict(d: Dict[str, Any]) -> MyGptsConversation:
+        return MyGptsConversation(
+            conv_id=d["conv_id"],
+            user_goal=d["user_goal"],
+            gpts_name=d["gpts_name"],
+            max_auto_reply_round=d["max_auto_reply_round"],
+            auto_reply_count=d["auto_reply_count"],
+            system_code=d["system_code"],
+            user_code=d["user_code"],
+            state=d["state"],
+            team_mode=d["team_mode"],
             created_at=d["created_at"],
             updated_at=d["updated_at"],
         )
@@ -225,6 +262,28 @@ class GptsMessageMemory(ABC):
         """
 
     def get_last_message(self, conv_id: str) -> Optional[GptsMessage]:
+        """
+        Query last message
+        Args:
+            conv_id:
+
+        Returns:
+
+        """
+
+
+class MyGptsConversationMemory(ABC):
+
+    def get_cons_by_conv_uid(self, conv_uid: str) -> Optional[List[GptsConversationsEntity]]:
+        """
+        Query messages by conv uid
+        Args:
+            conv_uid:
+
+        Returns:
+
+        """
+    def disable_con_by_conv_id(self, conv_id: str):
         """
         Query last message
         Args:

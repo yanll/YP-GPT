@@ -9,6 +9,7 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
     desc,
+    asc,
     func,
 )
 
@@ -29,6 +30,8 @@ class GptsConversationsEntity(Model):
         String(255), nullable=False, comment="The conversation team mode"
     )
     state = Column(String(255), nullable=True, comment="The gpts state")
+
+    ext_status = Column(String(255), nullable=True, comment="The gpts ext_status")
 
     max_auto_reply_round = Column(
         Integer, nullable=False, comment="max auto reply round"
@@ -54,6 +57,7 @@ class GptsConversationsEntity(Model):
 
 class GptsConversationsDao(BaseDao):
     def add(self, engity: GptsConversationsEntity):
+        engity.ext_status = 'ENABLED'
         session = self.get_raw_session()
         session.add(engity)
         session.commit()
@@ -90,6 +94,27 @@ class GptsConversationsDao(BaseDao):
         session.close()
         return result
 
+    def get_cons_by_uid(self, conv_uid: str = None):
+        session = self.get_raw_session()
+        gpts_conversations = session.query(GptsConversationsEntity)
+
+        if conv_uid:
+            gpts_conversations = gpts_conversations.filter(
+                GptsConversationsEntity.conv_id.startswith(conv_uid)
+            )
+        gpts_conversations = gpts_conversations.filter(
+            GptsConversationsEntity.ext_status != 'DISABLED'
+        )
+
+        result = (
+            gpts_conversations
+            .order_by(asc(GptsConversationsEntity.id))
+            .limit(20)
+            .all()
+        )
+        session.close()
+        return result
+
     def update(self, conv_id: str, state: str):
         session = self.get_raw_session()
         gpts_convs = session.query(GptsConversationsEntity)
@@ -99,3 +124,14 @@ class GptsConversationsDao(BaseDao):
         )
         session.commit()
         session.close()
+
+    def disable_by_conv_id(self, conv_id: str):
+        if conv_id is None:
+            raise Exception("conv_uid is None")
+        with self.session() as session:
+            conv = session.query(GptsConversationsEntity)
+            conv = conv.filter(GptsConversationsEntity.conv_id.startswith(conv_id.split("_")[0]))
+            conv.update(
+                {GptsConversationsEntity.ext_status: 'DISABLED'}, synchronize_session="fetch"
+            )
+        return 0
