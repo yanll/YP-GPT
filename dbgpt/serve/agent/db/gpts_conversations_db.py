@@ -109,7 +109,7 @@ class GptsConversationsDao(BaseDao):
         result = (
             gpts_conversations
             .order_by(asc(GptsConversationsEntity.id))
-            .limit(20)
+            .limit(50)
             .all()
         )
         session.close()
