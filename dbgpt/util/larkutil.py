@@ -276,11 +276,11 @@ calendar = create_calendar(token, calendar_id, {
     "description": "严亮亮日程描述",
     "need_notification": "false",
     "start_time": {
-        "timestamp": "1712008800",
+        "timestamp": "1712289600",
         "timezone": "Asia/Shanghai"
     },
     "end_time": {
-        "timestamp": "1712016000",
+        "timestamp": "1712293200",
         "timezone": "Asia/Shanghai"
     },
     "vchat": {
@@ -312,8 +312,7 @@ add_calendar_user(token, calendar_id, event_id, {
         {
             "type": "user",
             "is_optional": "true",
-            "user_id": "ou_1a32c82be0a5c6ee7bc8debd75c65e34",
-            "room_id": "omm_1898ce77b933009c84cc999a93aeefc4"
+            "user_id": "ou_1a32c82be0a5c6ee7bc8debd75c65e34"
         }
     ],
     "need_notification": "false",
@@ -333,4 +332,4 @@ add_calendar_room(token, calendar_id, event_id, {
 })
 
 select_room_free_busy(token, ["omm_4a260a86bc05a2d7dbb901c53bf5bc92", "omm_1898ce77b933009c84cc999a93aeefc4"],
-                      "2024-04-02T06:00:00+08:00", "2024-04-02T10:00:00+08:00")
+                      "2024-04-05T10:00:00+08:00", "2024-04-05T20:00:00+08:00")

@@ -161,9 +161,7 @@ class ConversableAgent(Role, Agent):
             is_success, reply = await self.a_generate_reply(
                 recive_message=message, sender=sender, reviewer=reviewer
             )
-            print("XXXXXXXXXXXXXX", is_success, reply)
             if reply is not None:
-                print("YYYYYYYYYYYY", is_success, reply)
                 await self.a_send(reply, sender)
 
     def prepare_act_param(self) -> Optional[Dict]:
