@@ -41,7 +41,7 @@ class CalendarAssistantAgent(ConversableAgent):
         "如果最终确定了会议室和时间，总结我选择的会议室和时间，务必按照我要求的格式输出结果。",
     ]
     desc: str = "引导用户预定合适的会议室"
-    max_retry_count: int = 1
+    max_retry_count: int = 2
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -81,7 +81,7 @@ class CalendarAssistantAgent(ConversableAgent):
 
             result = await resource_lark_client.a_lark_after_notify(
                 receive_id="liangliang.yan@yeepay.com",
-                text="\n已将日历提交到飞书，请查看结果！\n\n内容：" + action_out
+                text="\n已将日历提交到飞书，请查看结果！"
             )
             print('CalendarAssistantAgent处理结果：', result)
             if (result['code'] == 0):
