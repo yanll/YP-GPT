@@ -22,7 +22,6 @@ class CalendarAssistantAgent(ConversableAgent):
                  "1、这是全部会议室数据：\n\tall_meeting_rooms={all_meeting_rooms}\n\tall_meeting_rooms：{meeting_room_field_common}\n"
                  "2、当前系统时间是：{current_time}\n"
                  "3、常用时间描述的含义：上午代表10-12点，下午代表14-16点\n"
-                 # "4、当前会议室占用状态：\n\t{meeting_rooms_status}\n"
                  "")
 
     constraints: List[str] = [
