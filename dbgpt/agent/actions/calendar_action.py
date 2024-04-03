@@ -20,14 +20,23 @@ logger = logging.getLogger(__name__)
 
 
 class LarkInput(BaseModel):
-    urgency: str = Field(
-        ..., description="提取的“紧急程度”信息"
+    name: str = Field(
+        ..., description="会议室名字"
     )
-    pre_time: str = Field(
-        ..., description="提取的“期望完成时间”信息"
+    capacity: str = Field(
+        ..., description="会议室最大可容纳人数"
+    )
+    floor_name: str = Field(
+        ..., description="会议室所在楼层"
+    )
+    start_time: str = Field(
+        ..., description="会议开始时间"
+    )
+    end_time: str = Field(
+        ..., description="会议结束时间"
     )
     confirm: str = Field(
-        ..., description="提取的“是否确认提交”信息"
+        ..., description="提取的“是否确认预定”信息"
     )
     ai_message: str = Field(
         ..., description="Summary of thoughts to the user"
@@ -43,10 +52,10 @@ class CalendarAction(Action[LarkInput]):
         if self.out_model_type is None:
             return None
 
-        return f"""Please response in the following json format:
-                {json.dumps(self._create_example(self.out_model_type), indent=2, ensure_ascii=False)}
-            Make sure the response is correct json and can be parsed by Python json.loads. 
-            """
+        return f"""必须按照以下格式响应:
+                        {json.dumps(self._create_example(self.out_model_type), indent=2, ensure_ascii=False)}
+                    Make sure the response is correct json and can be parsed by Python json.loads. 
+                    """
 
     @property
     def resource_need(self) -> Optional[ResourceType]:
@@ -69,31 +78,12 @@ class CalendarAction(Action[LarkInput]):
     ) -> ActionOutput:
         try:
             print("AI Response Message：", ai_message)
-            aimdict = {}
 
             if (ai_message.startswith("{")):
                 aimdict = eval(ai_message)
             else:
                 return ActionOutput(is_exe_success=False, content=ai_message)
 
-            if "ai_message" not in aimdict:
-                aimdict["ai_message"] = ""
-
-
-            info = ("#### ai_message：" + aimdict["ai_message"] + '\n\n' +
-                    '#### \n\n' +
-                    '紧急程度：' + aimdict["urgency"] + '\n\n' +
-                    '期望完成时间：' + aimdict["pre_time"] + '\n\n' +
-                    '#### \n\n'
-                    )
-
-            if aimdict["pre_time"] == "":
-                return ActionOutput(is_exe_success=False, content=info + '\n\n #### 请输入期望完成时间！')
-            if (aimdict["confirm"] != "是"):
-                return ActionOutput(
-                    is_exe_success=False,
-                    content=info + '\n\n #### 是否确认将以上信息提交到飞书？您也可以继续输入修改以上内容！'
-                )
             param: LarkInput = self._input_convert(json.dumps(aimdict), LarkInput)
         except Exception as e:
             logger.exception(f"格式转换异常：str(e)! \n\n {ai_message}")
@@ -107,20 +97,22 @@ class CalendarAction(Action[LarkInput]):
             )
             if not resource_lark_client:
                 raise ValueError(
-                    "There is no implementation class bound to database resource execution！"
+                    "There is no implementation class bound to lark resource execution！"
                 )
             print("此处根据AI返回的结果执行下一步动作：调用外部接口", resource, param)
-            result = await resource_lark_client.a_muti_table_add_record(
-                app_id="NorvbogbxaCD4VsMrLlcTzv0nTe",
-                table_id="tblG1alED3YxCJua",
-                record={
-                    "fields": {
-                        "紧急程度": param.urgency,
-                        "期望完成时间": param.pre_time,
-                        "创建人": "",
-                        "创建时间": ""
-                    }
-                }
+            room_id = ''
+            all = json.loads(resource_lark_client.get_all_meeting_rooms())
+            for r in all:
+                if r['name'] == param.name:
+                    room_id = r['room_id']
+                    break
+
+            result = await resource_lark_client.create_calendar(
+                title="我的测试日程",
+                name=param.name,
+                room_id=room_id,
+                start_time=param.start_time,
+                end_time=param.end_time
             )
             view = await self.render_protocal.display(content=param, add_result=result)
             return ActionOutput(
@@ -131,8 +123,8 @@ class CalendarAction(Action[LarkInput]):
                 resource_value=resource.value,
             )
         except Exception as e:
-            logger.exception("Check your answers, the sql run failed！")
+            logger.exception("检查飞书日历接口执行！")
             return ActionOutput(
                 is_exe_success=False,
-                content=f"Check your answers, the sql run failed!Reason:{str(e)}",
+                content=f"Check your answers, the lark run failed!Reason:{str(e)}",
             )

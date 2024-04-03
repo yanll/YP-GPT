@@ -68,7 +68,32 @@ class ResourceClient(ABC):
         pass
 
     async def get_data_introduce(
-        self, resource: AgentResource, question: Optional[str] = None
+            self, resource: AgentResource, question: Optional[str] = None
+    ) -> str:
+        """
+        Get the content introduction prompt of the specified resource
+        Args:
+            value:
+
+        Returns:
+
+        """
+        return ""
+
+    def get_all_meeting_rooms(
+            self
+    ) -> str:
+        """
+        Get the content introduction prompt of the specified resource
+        Args:
+            value:
+
+        Returns:
+
+        """
+        return ""
+    def get_meeting_room_status(
+            self
     ) -> str:
         """
         Get the content introduction prompt of the specified resource
@@ -84,7 +109,7 @@ class ResourceClient(ABC):
         return ""
 
     async def get_resource_prompt(
-        self, conv_uid, resource: AgentResource, question: Optional[str] = None
+            self, conv_uid, resource: AgentResource, question: Optional[str] = None
     ) -> str:
         return resource.resource_prompt_template().format(
             data_type=self.get_data_type(resource),

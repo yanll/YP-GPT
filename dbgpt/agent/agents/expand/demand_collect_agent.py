@@ -100,7 +100,6 @@ class ProductionAssistantAgent(ConversableAgent):
             print('ProductionAssistantAgent处理结果：', result)
             if (result['code'] == 0):
                 logger.info("代理任务执行成功！")
-                # 删除最后一条确认消息（TODO-YLL-FIXME：删除全部会话）
                 delete_last: MyGptsConversation = self.memory.my_conversation_memory.disable_con_by_conv_id(
                     conv_id=self.agent_context.conv_id
                 )

@@ -1,5 +1,7 @@
 from dbgpt.util import larkutil
 import time
+from datetime import datetime
+
 
 def test_get_tenant_access_token():
     larkutil.get_tenant_access_token()
@@ -54,77 +56,95 @@ def test_select_rooms():
 
 
 def test_select_room_free_busy():
-
-    time.strftime('')
     token = larkutil.get_tenant_access_token()['tenant_access_token']
     larkutil.select_room_free_busy(
         token=token,
-        room_ids=["omm_4a260a86bc05a2d7dbb901c53bf5bc92", "omm_1898ce77b933009c84cc999a93aeefc4"],
-        time_min="2024-04-05T10:00:00+08:00",
-        time_max="2024-04-05T20:00:00+08:00"
+        room_ids=["omm_4a260a86bc05a2d7dbb901c53bf5bc92"],
+        time_min="2024-04-02T00:00:00+08:00",
+        time_max="2024-04-03T00:00:00+08:00"
     )
     assert True
 
-#
-# larkutil.grant_calendar(token, calendar_id, "writer", "ou_1a32c82be0a5c6ee7bc8debd75c65e34")
-#
-# calendar = larkutil.create_calendar(token, calendar_id, {
-#     "summary": "严亮亮日程标题",
-#     "description": "严亮亮日程描述",
-#     "need_notification": "false",
-#     "start_time": {
-#         "timestamp": "1712289600",
-#         "timezone": "Asia/Shanghai"
-#     },
-#     "end_time": {
-#         "timestamp": "1712293200",
-#         "timezone": "Asia/Shanghai"
-#     },
-#     "vchat": {
-#         "vc_type": "no_meeting",
-#         "icon_type": "default",
-#         "description": "",
-#         "meeting_url": "https://example.com",
-#         "meeting_settings": {
-#
-#         }
-#     },
-#     "visibility": "default",
-#     "attendee_ability": "can_modify_event",
-#     "free_busy_status": "busy",
-#     "color": 0,
-#     "reminders": [
-#         {
-#             "minutes": 5
-#         }
-#     ]
-# })
-#
-# event_id = calendar['data']['event']['event_id']
-#
-# # omm_4a260a86bc05a2d7dbb901c53bf5bc92 敢干
-# # omm_1898ce77b933009c84cc999a93aeefc4 敢败
-# larkutil.add_calendar_user(token, calendar_id, event_id, {
-#     "attendees": [
-#         {
-#             "type": "user",
-#             "is_optional": "true",
-#             "user_id": "ou_1a32c82be0a5c6ee7bc8debd75c65e34"
-#         }
-#     ],
-#     "need_notification": "false",
-#     "is_enable_admin": "false",
-#     "add_operator_to_attendee": "true"
-# })
-# larkutil.add_calendar_room(token, calendar_id, event_id, {
-#     "attendees": [
-#         {
-#             "type": "resource",
-#             "room_id": "omm_1898ce77b933009c84cc999a93aeefc4"
-#         }
-#     ],
-#     "need_notification": "false",
-#     "is_enable_admin": "false",
-#     "add_operator_to_attendee": "true"
-# })
-#
+
+def test_create_calendar_id():
+    token = larkutil.get_tenant_access_token()['tenant_access_token']
+    larkutil.create_calendar_id(token=token)
+    assert True
+
+
+def test_grant_calendar():
+    token = larkutil.get_tenant_access_token()['tenant_access_token']
+    calendar_id = larkutil.create_calendar_id(token=token)
+    larkutil.grant_calendar(token, calendar_id, "writer", "ou_1a32c82be0a5c6ee7bc8debd75c65e34")
+    assert True
+
+
+def test_create_calendar():
+    # omm_4a260a86bc05a2d7dbb901c53bf5bc92 敢干
+    # omm_1898ce77b933009c84cc999a93aeefc4 敢败
+    room_id = "omm_4a260a86bc05a2d7dbb901c53bf5bc92"
+    grant_user_open_id = "ou_1a32c82be0a5c6ee7bc8debd75c65e34"
+    summary = "严亮亮日程标题"
+    description = "严亮亮日程描述"
+    start_time = int(datetime.strptime("2024-04-02 12:00:00", "%Y-%m-%d %H:%M:%S").timestamp())
+    end_time = int(datetime.strptime("2024-04-02 20:00:00", "%Y-%m-%d %H:%M:%S").timestamp())
+
+    token = larkutil.get_tenant_access_token()['tenant_access_token']
+    calendar_id = larkutil.create_calendar_id(token=token)
+    larkutil.grant_calendar(token, calendar_id, "writer", grant_user_open_id)
+
+    calendar = larkutil.create_calendar(token, calendar_id, {
+        "summary": summary,
+        "description": description,
+        "need_notification": "false",
+        "start_time": {
+            "timestamp": str(start_time),
+            "timezone": "Asia/Shanghai"
+        },
+        "end_time": {
+            "timestamp": str(end_time),
+            "timezone": "Asia/Shanghai"
+        },
+        "visibility": "default",
+        "attendee_ability": "can_modify_event",
+        "free_busy_status": "busy",
+        "color": 0,
+        "reminders": [
+            {
+                "minutes": 5
+            }
+        ]
+    })
+
+    event_id = calendar['data']['event']['event_id']
+
+    larkutil.add_calendar_user(token, calendar_id, event_id, {
+        "attendees": [
+            {
+                "type": "user",
+                "is_optional": "true",
+                "user_id": grant_user_open_id
+            }
+        ],
+        "need_notification": "false",
+        "is_enable_admin": "false",
+        "add_operator_to_attendee": "true"
+    })
+    larkutil.add_calendar_room(token, calendar_id, event_id, {
+        "attendees": [
+            {
+                "type": "resource",
+                "room_id": room_id
+            }
+        ],
+        "need_notification": "false",
+        "is_enable_admin": "false",
+        "add_operator_to_attendee": "true"
+    })
+    assert True
+
+
+def test_lang():
+    start_time = int(datetime.strptime("2024-04-04 12:00:00", "%Y-%m-%d %H:%M:%S").timestamp())
+    print(start_time)
+    assert True

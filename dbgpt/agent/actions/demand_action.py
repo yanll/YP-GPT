@@ -138,8 +138,8 @@ class DemandAction(Action[LarkInput]):
                 resource_value=resource.value,
             )
         except Exception as e:
-            logger.exception("Check your answers, the sql run failed！")
+            logger.exception("Check your answers, the agent run failed！")
             return ActionOutput(
                 is_exe_success=False,
-                content=f"Check your answers, the sql run failed!Reason:{str(e)}",
+                content=f"Check your answers, the agent run failed!Reason:{str(e)}",
             )
