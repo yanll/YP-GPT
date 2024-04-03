@@ -41,7 +41,7 @@ class CalendarAssistantAgent(ConversableAgent):
         "如果最终确定了会议室和时间，总结我选择的会议室和时间，务必按照我要求的格式输出结果。",
     ]
     desc: str = "引导用户预定合适的会议室"
-    max_retry_count: int = 2
+    max_retry_count: int = 1
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
