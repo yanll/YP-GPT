@@ -1,30 +1,20 @@
 import asyncio
 import json
 import logging
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Tuple
 
+from dbgpt.agent import AgentMessage
 from dbgpt.agent.actions.action import ActionOutput
 from dbgpt.agent.actions.demand_action import DemandAction
 from dbgpt.agent.resource.resource_api import ResourceType
 from dbgpt.agent.resource.resource_lark_api import ResourceLarkClient
+from dbgpt.core import ModelMessageRoleType
 from dbgpt.util.error_types import LLMChatError
 from dbgpt.agent.core.base_agent import ConversableAgent
 from dbgpt.serve.agent.db.gpts_conversations_db import GptsConversationsDao, GptsConversationsEntity
 
 logger = logging.getLogger(__name__)
 
-
-# a_generate_reply
-# ----a_act
-# --------a_run
-# ----a_verify
-# --------a_correctness_check
-# ------------a_muti_table_add_record
-
-# a_act: 组装大模型，返回结果。
-# a_run: 根据大模型结果调用外部，1、初步执行外部操作 2、调用展示组件。
-# a_verify: 校验大模型返回结果，最后调用a_correctness_check
-# a_correctness_check：后置处理
 
 class ProductionAssistantAgent(ConversableAgent):
     name = "Listen"
@@ -119,12 +109,18 @@ class ProductionAssistantAgent(ConversableAgent):
             )
 
     async def thinking(
-            self,
-            prompt: Optional[str] = None
-    ) -> Union[str, Dict, None]:
+            self, messages: List[AgentMessage], prompt: Optional[str] = None
+    ) -> Tuple[Optional[str], Optional[str]]:
+        """Think and reason about the current task goal.
+
+        Args:
+            messages(List[AgentMessage]): the messages to be reasoned
+            prompt(str): the prompt to be reasoned
+        """
         last_model = None
         last_err = None
         retry_count = 0
+
         conv_uid = self.agent_context.conv_id.split("_")[0]
         convs = self.memory.my_conversation_memory.get_cons_by_conv_uid(
             conv_uid=conv_uid
@@ -139,20 +135,25 @@ class ProductionAssistantAgent(ConversableAgent):
                     "context": None
                 })
 
+        llm_messages = [message.to_llm_message() for message in messages]
+        # LLM inference automatically retries 3 times to reduce interruption
+        # probability caused by speed limit and network stability
         while retry_count < 3:
             llm_model = await self._a_select_llm_model(last_model)
             try:
                 if prompt:
-                    messages = self._new_system_message(prompt) + messages
+                    llm_messages = _new_system_message(prompt) + llm_messages
                 else:
-                    messages = self.oai_system_message + messages
+                    llm_messages = self.oai_system_message + llm_messages
 
+                if not self.llm_client:
+                    raise ValueError("LLM client is not initialized!")
                 response = await self.llm_client.create(
-                    context=messages[-1].pop("context", None),
-                    messages=messages,
+                    context=llm_messages[-1].pop("context", None),
+                    messages=llm_messages,
                     llm_model=llm_model,
-                    max_new_tokens=self.agent_context.max_new_tokens,
-                    temperature=self.agent_context.temperature,
+                    max_new_tokens=self.not_null_agent_context.max_new_tokens,
+                    temperature=self.not_null_agent_context.temperature,
                 )
                 return response, llm_model
             except LLMChatError as e:
@@ -164,3 +165,10 @@ class ProductionAssistantAgent(ConversableAgent):
 
         if last_err:
             raise ValueError(last_err)
+        else:
+            raise ValueError("LLM model inference failed!")
+
+
+def _new_system_message(content):
+    """Return the system message."""
+    return [{"content": content, "role": ModelMessageRoleType.SYSTEM}]

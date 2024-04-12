@@ -1,13 +1,15 @@
 import asyncio
 import logging
 import time
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Tuple
 
+from dbgpt.agent import AgentMessage
 from dbgpt.agent.actions.action import ActionOutput
 from dbgpt.agent.actions.calendar_action import CalendarAction
 from dbgpt.agent.core.base_agent import ConversableAgent
 from dbgpt.agent.resource.resource_api import ResourceType, ResourceClient
 from dbgpt.agent.resource.resource_lark_api import ResourceLarkClient
+from dbgpt.core import ModelMessageRoleType
 from dbgpt.util.error_types import LLMChatError
 
 logger = logging.getLogger(__name__)
@@ -48,7 +50,8 @@ class CalendarAssistantAgent(ConversableAgent):
         self._init_actions([CalendarAction])
 
     def _init_reply_message(self, received_message):
-        resource_api: ResourceClient = self.not_null_resource_loader.get_resource_api(resource_type=ResourceType.LarkApi)
+        resource_api: ResourceClient = self.not_null_resource_loader.get_resource_api(
+            resource_type=ResourceType.LarkApi)
         reply_message = super()._init_reply_message(received_message)
         reply_message.context = {
             "all_meeting_rooms": resource_api.get_all_meeting_rooms(),
@@ -106,13 +109,18 @@ class CalendarAssistantAgent(ConversableAgent):
             )
 
     async def thinking(
-            self,
-            messages: Optional[List[Dict]],
-            prompt: Optional[str] = None
-    ) -> Union[str, Dict, None]:
+            self, messages: List[AgentMessage], prompt: Optional[str] = None
+    ) -> Tuple[Optional[str], Optional[str]]:
+        """Think and reason about the current task goal.
+
+        Args:
+            messages(List[AgentMessage]): the messages to be reasoned
+            prompt(str): the prompt to be reasoned
+        """
         last_model = None
         last_err = None
         retry_count = 0
+
         conv_uid = self.agent_context.conv_id.split("_")[0]
         convs = self.memory.my_conversation_memory.get_cons_by_conv_uid(
             conv_uid=conv_uid
@@ -127,20 +135,25 @@ class CalendarAssistantAgent(ConversableAgent):
                     "context": None
                 })
 
+        llm_messages = [message.to_llm_message() for message in messages]
+        # LLM inference automatically retries 3 times to reduce interruption
+        # probability caused by speed limit and network stability
         while retry_count < 3:
             llm_model = await self._a_select_llm_model(last_model)
             try:
                 if prompt:
-                    messages = self._new_system_message(prompt) + messages
+                    llm_messages = _new_system_message(prompt) + llm_messages
                 else:
-                    messages = self.oai_system_message + messages
+                    llm_messages = self.oai_system_message + llm_messages
 
+                if not self.llm_client:
+                    raise ValueError("LLM client is not initialized!")
                 response = await self.llm_client.create(
-                    context=messages[-1].pop("context", None),
-                    messages=messages,
+                    context=llm_messages[-1].pop("context", None),
+                    messages=llm_messages,
                     llm_model=llm_model,
-                    max_new_tokens=self.agent_context.max_new_tokens,
-                    temperature=self.agent_context.temperature,
+                    max_new_tokens=self.not_null_agent_context.max_new_tokens,
+                    temperature=self.not_null_agent_context.temperature,
                 )
                 return response, llm_model
             except LLMChatError as e:
@@ -152,3 +165,10 @@ class CalendarAssistantAgent(ConversableAgent):
 
         if last_err:
             raise ValueError(last_err)
+        else:
+            raise ValueError("LLM model inference failed!")
+
+
+def _new_system_message(content):
+    """Return the system message."""
+    return [{"content": content, "role": ModelMessageRoleType.SYSTEM}]
