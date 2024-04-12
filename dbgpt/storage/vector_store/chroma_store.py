@@ -58,7 +58,7 @@ class ChromaStore(VectorStoreBase):
 
     def __init__(self, vector_store_config: ChromaVectorConfig) -> None:
         """Create a ChromaStore instance."""
-        from langchain.vectorstores import Chroma
+        from langchain_community.vectorstores import Chroma
 
         chroma_vector_config = vector_store_config.dict(exclude_none=True)
         chroma_path = chroma_vector_config.get(
