@@ -62,8 +62,8 @@ class CalendarAssistantAgent(ConversableAgent):
         print("日历消息模版内容：", reply_message)
         return reply_message
 
-    async def a_correctness_check(self, message: Optional[Dict]):
-        action_reply = message.get("action_report", None)
+    async def correctness_check(self, message: AgentMessage):
+        action_reply = message.action_report
         if action_reply is None:
             return (
                 False,
@@ -129,11 +129,7 @@ class CalendarAssistantAgent(ConversableAgent):
         if True:
             messages = []
             for conv in convs:
-                messages.append({
-                    "role": 'human',
-                    "content": conv.user_goal,
-                    "context": None
-                })
+                messages.append(AgentMessage(role="human", content=conv.user_goal))
 
         llm_messages = [message.to_llm_message() for message in messages]
         # LLM inference automatically retries 3 times to reduce interruption
