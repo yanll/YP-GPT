@@ -8,8 +8,7 @@ from dbgpt.agent.actions.demand_action import DemandAction
 from dbgpt.agent.resource.resource_api import ResourceType
 from dbgpt.agent.resource.resource_lark_api import ResourceLarkClient
 from dbgpt.util.error_types import LLMChatError
-from ..base_agent_new import ConversableAgent
-from dbgpt.agent.memory.base import MyGptsConversation
+from dbgpt.agent.core.base_agent import ConversableAgent
 from dbgpt.serve.agent.db.gpts_conversations_db import GptsConversationsDao, GptsConversationsEntity
 
 logger = logging.getLogger(__name__)
@@ -30,7 +29,7 @@ logger = logging.getLogger(__name__)
 class ProductionAssistantAgent(ConversableAgent):
     name = "Listen"
     profile: str = "ProductionAssistant"
-    goal: str = "提取我输入信息中的需求点并按字段要求拆解，最后将拆解后的信息按 {fields} 格式返回。"
+    goal: str = "提取我输入信息中的需求点并按字段要求拆解，最后将拆解后的信息按我要求的格式返回。"
     constraints: List[str] = [
         "必须按照我提供的格式返回。",
         "首先你具备通用AI助手的能力，不要作出奇怪的回答。",
@@ -58,9 +57,9 @@ class ProductionAssistantAgent(ConversableAgent):
         super().__init__(**kwargs)
         self._init_actions([DemandAction])
 
-    def _init_reply_message(self, recive_message):
-        reply_message = super()._init_reply_message(recive_message)
-        reply_message["context"] = {
+    def _init_reply_message(self, received_message):
+        reply_message = super()._init_reply_message(received_message)
+        reply_message.context = {
             "fields": "[“需求内容”,“紧急程度”,“期望完成时间”,“是否确认提交”]"
         }
         print("需求收集代理回复消息模版内容：", reply_message)
@@ -88,7 +87,7 @@ class ProductionAssistantAgent(ConversableAgent):
             )
         try:
             resource_lark_client: ResourceLarkClient = (
-                self.resource_loader.get_resesource_api(
+                self.not_null_resource_loader.get_resource_api(
                     ResourceType(action_out.resource_type)
                 )
             )
@@ -100,7 +99,7 @@ class ProductionAssistantAgent(ConversableAgent):
             print('ProductionAssistantAgent处理结果：', result)
             if (result['code'] == 0):
                 logger.info("代理任务执行成功！")
-                delete_last: MyGptsConversation = self.memory.my_conversation_memory.disable_con_by_conv_id(
+                delete_last = self.memory.my_conversation_memory.disable_con_by_conv_id(
                     conv_id=self.agent_context.conv_id
                 )
                 return (

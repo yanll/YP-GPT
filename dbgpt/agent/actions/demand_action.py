@@ -63,7 +63,7 @@ class DemandAction(Action[LarkInput]):
     def out_model_type(self):
         return LarkInput
 
-    async def a_run(
+    async def run(
             self,
             ai_message: str,
             resource: Optional[AgentResource] = None,
@@ -109,7 +109,7 @@ class DemandAction(Action[LarkInput]):
             )
         try:
             resource_lark_client: ResourceLarkClient = (
-                self.resource_loader.get_resesource_api(self.resource_need)
+                self.resource_loader.get_resource_api(self.resource_need)
             )
             if not resource_lark_client:
                 raise ValueError(

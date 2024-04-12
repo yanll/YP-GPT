@@ -6,8 +6,8 @@ from typing import Dict, List, Optional
 from dbgpt.vis.client import VisAgentMessages, VisAgentPlans, vis_client
 
 from ..actions.action import ActionOutput
-from .base import GptsMessage, GptsMessageMemory, GptsPlansMemory
-from .default_gpts_memory import DefaultGptsMessageMemory, DefaultGptsPlansMemory
+from .base import GptsMessage, GptsMessageMemory, GptsPlansMemory, MyGptsConversationMemory
+from .default_gpts_memory import DefaultGptsMessageMemory, DefaultGptsPlansMemory, MyDefaultGptsConversationMemory
 
 NONE_GOAL_PREFIX: str = "none_goal_count_"
 
@@ -19,6 +19,7 @@ class GptsMemory:
         self,
         plans_memory: Optional[GptsPlansMemory] = None,
         message_memory: Optional[GptsMessageMemory] = None,
+        my_conversation_memory: Optional[MyGptsConversationMemory] = None
     ):
         """Create a memory to store plans and messages."""
         self._plans_memory: GptsPlansMemory = (
@@ -26,6 +27,9 @@ class GptsMemory:
         )
         self._message_memory: GptsMessageMemory = (
             message_memory if message_memory is not None else DefaultGptsMessageMemory()
+        )
+        self._my_conversation_memory: MyGptsConversationMemory = (
+            my_conversation_memory if my_conversation_memory is not None else MyDefaultGptsConversationMemory()
         )
 
     @property

@@ -1,16 +1,14 @@
 import asyncio
-import json
 import logging
+import time
 from typing import Dict, List, Optional, Union
 
 from dbgpt.agent.actions.action import ActionOutput
 from dbgpt.agent.actions.calendar_action import CalendarAction
+from dbgpt.agent.core.base_agent import ConversableAgent
 from dbgpt.agent.resource.resource_api import ResourceType, ResourceClient
 from dbgpt.agent.resource.resource_lark_api import ResourceLarkClient
 from dbgpt.util.error_types import LLMChatError
-from ..base_agent_new import ConversableAgent
-from dbgpt.agent.memory.base import MyGptsConversation
-import time
 
 logger = logging.getLogger(__name__)
 
@@ -49,14 +47,14 @@ class CalendarAssistantAgent(ConversableAgent):
         super().__init__(**kwargs)
         self._init_actions([CalendarAction])
 
-    def _init_reply_message(self, recive_message):
-        resesource_api: ResourceClient = self.resource_loader.get_resesource_api(resource_type=ResourceType.LarkApi)
-        reply_message = super()._init_reply_message(recive_message)
-        reply_message["context"] = {
-            "all_meeting_rooms": resesource_api.get_all_meeting_rooms(),
+    def _init_reply_message(self, received_message):
+        resource_api: ResourceClient = self.not_null_resource_loader.get_resource_api(resource_type=ResourceType.LarkApi)
+        reply_message = super()._init_reply_message(received_message)
+        reply_message.context = {
+            "all_meeting_rooms": resource_api.get_all_meeting_rooms(),
             "meeting_room_field_common": '{"capacity": "会议室最大可容纳人数", "floor_name": "会议室所在楼层", "name": "会议室名字",  "room_id": "会议室ID"}',
             "current_time": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-            # "meeting_rooms_status": resesource_api.get_meeting_room_status(),
+            # "meeting_rooms_status": resource_api.get_meeting_room_status(),
         }
         print("日历消息模版内容：", reply_message)
         return reply_message
@@ -76,7 +74,7 @@ class CalendarAssistantAgent(ConversableAgent):
             )
         try:
             resource_lark_client: ResourceLarkClient = (
-                self.resource_loader.get_resesource_api(
+                self.not_null_resource_loader.get_resource_api(
                     ResourceType(action_out.resource_type)
                 )
             )
@@ -88,7 +86,7 @@ class CalendarAssistantAgent(ConversableAgent):
             print('CalendarAssistantAgent处理结果：', result)
             if (result['code'] == 0):
                 logger.info("代理任务执行成功！")
-                delete_last: MyGptsConversation = self.memory.my_conversation_memory.disable_con_by_conv_id(
+                delete_last = self.memory.my_conversation_memory.disable_con_by_conv_id(
                     conv_id=self.agent_context.conv_id
                 )
                 return (

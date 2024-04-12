@@ -19,6 +19,8 @@ from dbgpt.agent.memory.gpts_memory import GptsMemory
 from dbgpt.agent.plan.awel.team_awel_layout import DefaultAWELLayoutManager
 from dbgpt.agent.plan.team_auto_plan import AutoPlanChatManager
 from dbgpt.agent.resource.resource_loader import ResourceLoader
+from dbgpt.serve.agent.resource_loader.lark_load_client import LarkLoadClient
+
 from dbgpt.app.openapi.api_view_model import Result
 from dbgpt.app.scene.base import ChatScene
 from dbgpt.component import BaseComponent, ComponentType, SystemApp
@@ -208,6 +210,7 @@ class MultiAgents(BaseComponent, ABC):
         resource_loader.register_resource_api(datasource_loader)
         knowledge_space_loader = KnowledgeSpaceLoadClient()
         resource_loader.register_resource_api(knowledge_space_loader)
+        resource_loader.register_resource_api(LarkLoadClient())
         context: AgentContext = AgentContext(
             conv_id=conv_uid,
             gpts_app_name=gpts_app.app_name,

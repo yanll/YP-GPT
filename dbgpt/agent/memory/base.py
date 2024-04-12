@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from dbgpt.agent.core.schema import Status
+from dbgpt.serve.agent.db import GptsConversationsEntity
 
 
 @dataclasses.dataclass
@@ -246,4 +247,25 @@ class GptsMessageMemory(ABC):
 
         Returns:
             GptsMessage: The last message in the conversation
+        """
+
+class MyGptsConversationMemory(ABC):
+
+    def get_cons_by_conv_uid(self, conv_uid: str) -> Optional[List[GptsConversationsEntity]]:
+        """
+        Query messages by conv uid
+        Args:
+            conv_uid:
+
+        Returns:
+
+        """
+    def disable_con_by_conv_id(self, conv_id: str):
+        """
+        Query last message
+        Args:
+            conv_id:
+
+        Returns:
+
         """

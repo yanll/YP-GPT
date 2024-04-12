@@ -6,7 +6,8 @@ from typing import List, Optional
 import pandas as pd
 
 from ..core.schema import Status
-from .base import GptsMessage, GptsMessageMemory, GptsPlan, GptsPlansMemory
+from .base import GptsMessage, GptsMessageMemory, GptsPlan, GptsPlansMemory, MyGptsConversationMemory
+from dbgpt.serve.agent.db.gpts_conversations_db import GptsConversationsDao, GptsConversationsEntity
 
 
 class DefaultGptsPlansMemory(GptsPlansMemory):
@@ -147,3 +148,19 @@ class DefaultGptsMessageMemory(GptsMessageMemory):
     def get_last_message(self, conv_id: str) -> Optional[GptsMessage]:
         """Get the last message in the conversation."""
         return None
+
+
+class MyDefaultGptsConversationMemory(MyGptsConversationMemory):
+
+    def __init__(self):
+        self.gpts_conversation = GptsConversationsDao()
+
+    def get_cons_by_conv_uid(self, conv_uid: str) -> Optional[List[GptsConversationsEntity]]:
+        print('do get_cons_by_conv_uid')
+        messages = []
+        messages = self.gpts_conversation.get_cons_by_uid(conv_uid)
+        return messages
+
+    def disable_con_by_conv_id(self, conv_id: str):
+        print('do disable_con_by_conv_id')
+        return self.gpts_conversation.disable_by_conv_id(conv_id)

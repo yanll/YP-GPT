@@ -18,6 +18,7 @@ class ResourceType(Enum):
     ExcelFile = "excel_file"
     ImageFile = "image_file"
     AWELFlow = "awel_flow"
+    LarkApi = "lark_api"
 
 
 class AgentResource(BaseModel):
@@ -124,3 +125,13 @@ class ResourceClient(ABC):
             data_type=self.get_data_type(resource),
             data_introduce=await self.get_data_introduce(resource, question),
         )
+
+    def get_all_meeting_rooms(
+            self
+    ) -> str:
+        return ""
+
+    def get_meeting_room_status(
+            self
+    ) -> str:
+        return ""
