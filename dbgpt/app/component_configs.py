@@ -66,11 +66,11 @@ def _initialize_model_cache(system_app: SystemApp):
 
 
 def _initialize_awel(system_app: SystemApp, param: WebServerParameters):
-    from dbgpt.configs.model_config import _DAG_DEFINITION_DIR
+    from dbgpt.configs.model_config import _DAG_DEFINITION_DIR, _DAG_BUILD_IN_DEFINITION_DIR
     from dbgpt.core.awel import initialize_awel
 
     # Add default dag definition dir
-    dag_dirs = [_DAG_DEFINITION_DIR]
+    dag_dirs = [_DAG_DEFINITION_DIR, _DAG_BUILD_IN_DEFINITION_DIR]
     if param.awel_dirs:
         dag_dirs += param.awel_dirs.strip().split(",")
     dag_dirs = [x.strip() for x in dag_dirs]
