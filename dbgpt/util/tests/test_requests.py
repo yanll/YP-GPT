@@ -3,8 +3,8 @@ import json
 
 
 def test_select_userinfo():
-    url = "http://localhost:3000/api/v1/awel/trigger/lark_callback_endpoint"
-    headers = {'Content-Type': 'application/json; charset=utf-8'}
+    url = "https://atmgw.yeepay.com/gpt-nc/api/v1/awel/trigger/lark_callback_endpoint"
+    headers = {'Content-Type': 'application/json; charset=utf-8', 'Authorization': '123456'}
     data = {
         "context": {
             "conv_uid": "123456"
