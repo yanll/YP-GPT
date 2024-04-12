@@ -17,18 +17,24 @@
 import asyncio
 import os
 
-from dbgpt.agent.agents.agent import AgentContext
-from dbgpt.agent.agents.expand.data_scientist_agent import DataScientistAgent
-from dbgpt.agent.agents.llm.llm import LLMConfig
-from dbgpt.agent.agents.user_proxy_agent import UserProxyAgent
-from dbgpt.agent.memory.gpts_memory import GptsMemory
-from dbgpt.agent.resource.resource_api import AgentResource, ResourceType
-from dbgpt.agent.resource.resource_db_api import SqliteLoadClient
-from dbgpt.agent.resource.resource_loader import ResourceLoader
+from dbgpt.agent import (
+    AgentContext,
+    AgentResource,
+    GptsMemory,
+    LLMConfig,
+    ResourceLoader,
+    ResourceType,
+    UserProxyAgent,
+)
+from dbgpt.agent.expand.data_scientist_agent import DataScientistAgent
+from dbgpt.agent.resource import SqliteLoadClient
+from dbgpt.util.tracer import initialize_tracer
 
 current_dir = os.getcwd()
 parent_dir = os.path.dirname(current_dir)
 test_plugin_dir = os.path.join(parent_dir, "test_files")
+
+initialize_tracer("/tmp/agent_trace.jsonl", create_system_app=True)
 
 
 async def main():
@@ -47,7 +53,7 @@ async def main():
 
     resource_loader = ResourceLoader()
     sqlite_file_loader = SqliteLoadClient()
-    resource_loader.register_resesource_api(sqlite_file_loader)
+    resource_loader.register_resource_api(sqlite_file_loader)
 
     user_proxy = await UserProxyAgent().bind(default_memory).bind(context).build()
 
@@ -61,14 +67,14 @@ async def main():
         .build()
     )
 
-    await user_proxy.a_initiate_chat(
+    await user_proxy.initiate_chat(
         recipient=sql_boy,
         reviewer=user_proxy,
         message="当前库有那些表",
     )
 
     ## dbgpt-vis message infos
-    print(await default_memory.one_chat_competions("test456"))
+    print(await default_memory.one_chat_completions("test456"))
 
 
 if __name__ == "__main__":

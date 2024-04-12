@@ -147,9 +147,9 @@ def initialize_app(param: WebServerParameters = None, args: List[str] = None):
 
     model_name = param.model_name or CFG.LLM_MODEL
     param.model_name = model_name
-    param.port = param.port or CFG.WEB_SERVER_PORT
+    param.port = param.port or CFG.DBGPT_WEBSERVER_PORT
     if not param.port:
-        param.port = 5000
+        param.port = 5670
 
     print(param)
 
@@ -230,8 +230,8 @@ def run_webserver(param: WebServerParameters = None):
     if not param:
         param = _get_webserver_params()
     initialize_tracer(
-        system_app,
         os.path.join(LOGDIR, param.tracer_file),
+        system_app=system_app,
         tracer_storage_cls=param.tracer_storage_cls,
     )
 

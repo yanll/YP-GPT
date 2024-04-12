@@ -3,20 +3,21 @@ import json
 import logging
 import uuid
 from abc import ABC
-from collections import defaultdict
 from typing import Any, Dict, List, Optional, Type
 
 from fastapi import APIRouter, Body
 from fastapi.responses import StreamingResponse
 
 from dbgpt._private.config import Config
-from dbgpt.agent.agents.agent_new import Agent, AgentContext
-from dbgpt.agent.agents.agents_manage import agent_manage
-from dbgpt.agent.agents.base_agent_new import ConversableAgent
-from dbgpt.agent.agents.llm.llm import LLMConfig, LLMStrategyType
-from dbgpt.agent.agents.user_proxy_agent import UserProxyAgent
-from dbgpt.agent.common.schema import Status
+from dbgpt.agent.core.agent import Agent, AgentContext
+from dbgpt.agent.core.agent_manage import agent_manager
+from dbgpt.agent.core.base_agent import ConversableAgent
+from dbgpt.agent.core.llm.llm import LLMConfig, LLMStrategyType
+from dbgpt.agent.core.schema import Status
+from dbgpt.agent.core.user_proxy_agent import UserProxyAgent
 from dbgpt.agent.memory.gpts_memory import GptsMemory
+from dbgpt.agent.plan.awel.team_awel_layout import DefaultAWELLayoutManager
+from dbgpt.agent.plan.team_auto_plan import AutoPlanChatManager
 from dbgpt.agent.resource.resource_loader import ResourceLoader
 from dbgpt.app.openapi.api_view_model import Result
 from dbgpt.app.scene.base import ChatScene
@@ -25,19 +26,16 @@ from dbgpt.core.interface.message import StorageConversation
 from dbgpt.model.cluster import WorkerManagerFactory
 from dbgpt.model.cluster.client import DefaultLLMClient
 from dbgpt.serve.agent.model import PagenationFilter, PluginHubFilter
-from dbgpt.serve.agent.team.plan.team_auto_plan import AutoPlanChatManager
 from dbgpt.serve.conversation.serve import Serve as ConversationServe
 from dbgpt.util.json_utils import serialize
 
 from ..db.gpts_app import GptsApp, GptsAppDao, GptsAppQuery
 from ..db.gpts_conversations_db import GptsConversationsDao, GptsConversationsEntity
-from ..db.gpts_manage_db import GptsInstanceDao, GptsInstanceEntity
+from ..db.gpts_manage_db import GptsInstanceEntity
 from ..resource_loader.datasource_load_client import DatasourceLoadClient
-from ..resource_loader.lark_load_client import LarkLoadClient
 from ..resource_loader.knowledge_space_load_client import KnowledgeSpaceLoadClient
 from ..resource_loader.plugin_hub_load_client import PluginHubLoadClient
 from ..team.base import TeamMode
-from ..team.layout.team_awel_layout_new import AwelLayoutChatNewManager
 from .db_gpts_memory import MetaDbGptsMessageMemory, MetaDbGptsPlansMemory
 
 CFG = Config()
@@ -101,7 +99,6 @@ class MultiAgents(BaseComponent, ABC):
         user_query: str,
         user_code: str = None,
         sys_code: str = None,
-        current_message: StorageConversation = None
     ):
         gpt_app: GptsApp = self.gpts_app.app_detail(gpts_name)
 
@@ -125,7 +122,7 @@ class MultiAgents(BaseComponent, ABC):
 
         task = asyncio.create_task(
             multi_agents.agent_team_chat_new(
-                user_query, agent_conv_id, gpt_app, is_retry_chat, current_message
+                user_query, agent_conv_id, gpt_app, is_retry_chat
             )
         )
 
@@ -173,7 +170,7 @@ class MultiAgents(BaseComponent, ABC):
         try:
             agent_conv_id = conv_uid + "_" + str(current_message.chat_order)
             async for task, chunk in multi_agents.agent_chat(
-                agent_conv_id, gpts_name, user_query, user_code, sys_code, current_message
+                agent_conv_id, gpts_name, user_query, user_code, sys_code
             ):
                 agent_task = task
                 yield chunk
@@ -201,19 +198,16 @@ class MultiAgents(BaseComponent, ABC):
         conv_uid: str,
         gpts_app: GptsApp,
         is_retry_chat: bool = False,
-        current_message: StorageConversation = None
     ):
         employees: List[Agent] = []
         # Prepare resource loader
         resource_loader = ResourceLoader()
         plugin_hub_loader = PluginHubLoadClient()
-        resource_loader.register_resesource_api(plugin_hub_loader)
+        resource_loader.register_resource_api(plugin_hub_loader)
         datasource_loader = DatasourceLoadClient()
-        lark_loader = LarkLoadClient()
-        resource_loader.register_resesource_api(lark_loader)
-        resource_loader.register_resesource_api(datasource_loader)
+        resource_loader.register_resource_api(datasource_loader)
         knowledge_space_loader = KnowledgeSpaceLoadClient()
-        resource_loader.register_resesource_api(knowledge_space_loader)
+        resource_loader.register_resource_api(knowledge_space_loader)
         context: AgentContext = AgentContext(
             conv_id=conv_uid,
             gpts_app_name=gpts_app.app_name,
@@ -228,7 +222,7 @@ class MultiAgents(BaseComponent, ABC):
         self.llm_provider = DefaultLLMClient(worker_manager, auto_convert_message=True)
 
         for record in gpts_app.details:
-            cls: Type[ConversableAgent] = agent_manage.get_by_name(record.agent_name)
+            cls: Type[ConversableAgent] = agent_manager.get_by_name(record.agent_name)
             llm_config = LLMConfig(
                 llm_client=self.llm_provider,
                 llm_strategy=LLMStrategyType(record.llm_strategy),
@@ -253,7 +247,7 @@ class MultiAgents(BaseComponent, ABC):
             if TeamMode.AUTO_PLAN == team_mode:
                 manager = AutoPlanChatManager()
             elif TeamMode.AWEL_LAYOUT == team_mode:
-                manager = AwelLayoutChatNewManager(dag=gpts_app.team_context)
+                manager = DefaultAWELLayoutManager(dag=gpts_app.team_context)
             else:
                 raise ValueError(f"Unknown Agent Team Mode!{team_mode}")
             manager = (
@@ -278,10 +272,9 @@ class MultiAgents(BaseComponent, ABC):
             self.gpts_conversations.update(conv_uid, Status.RUNNING.value)
 
         try:
-            await user_proxy.a_initiate_chat(
+            await user_proxy.initiate_chat(
                 recipient=recipient,
                 message=user_query,
-                current_message=current_message
             )
         except Exception as e:
             logger.error(f"chat abnormal termination！{str(e)}", e)
@@ -307,7 +300,7 @@ class MultiAgents(BaseComponent, ABC):
                     ]
                     else False
                 )
-            message = await self.memory.one_chat_competions_v2(conv_id)
+            message = await self.memory.one_chat_completions_v2(conv_id)
             yield message
 
             if is_complete:
@@ -327,7 +320,7 @@ class MultiAgents(BaseComponent, ABC):
                 else False
             )
             if is_complete:
-                return await self.memory.one_chat_competions_v2(conv_id)
+                return await self.memory.one_chat_completions_v2(conv_id)
             else:
                 pass
                 # raise ValueError(
@@ -347,7 +340,7 @@ multi_agents = MultiAgents()
 async def agents_list():
     logger.info("agents_list!")
     try:
-        agents = agent_manage.all_agents()
+        agents = agent_manager.all_agents()
         return Result.succ(agents)
     except Exception as e:
         return Result.failed(code="E30001", msg=str(e))

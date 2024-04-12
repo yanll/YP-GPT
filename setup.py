@@ -19,7 +19,7 @@ with open("README.md", mode="r", encoding="utf-8") as fh:
 IS_DEV_MODE = os.getenv("IS_DEV_MODE", "true").lower() == "true"
 # If you modify the version, please modify the version in the following files:
 # dbgpt/_version.py
-DB_GPT_VERSION = os.getenv("DB_GPT_VERSION", "0.5.3")
+DB_GPT_VERSION = os.getenv("DB_GPT_VERSION", "0.5.4")
 
 BUILD_NO_CACHE = os.getenv("BUILD_NO_CACHE", "true").lower() == "true"
 LLAMA_CPP_GPU_ACCELERATION = (
@@ -423,10 +423,18 @@ def core_requires():
         "tomlkit",
         "rich",
     ]
+    # Agent dependencies
+    setup_spec.extras["agent"] = setup_spec.extras["cli"] + [
+        "termcolor",
+        # https://github.com/eosphoros-ai/DB-GPT/issues/551
+        # TODO: remove pandas dependency
+        "pandas==2.0.3",
+    ]
+
     # Just use by DB-GPT internal, we should find the smallest dependency set for run
     # we core unit test.
     # The dependency "framework" is too large for now.
-    setup_spec.extras["simple_framework"] = setup_spec.extras["cli"] + [
+    setup_spec.extras["simple_framework"] = setup_spec.extras["agent"] + [
         "jinja2",
         "uvicorn",
         "shortuuid",
@@ -456,8 +464,6 @@ def core_requires():
     setup_spec.extras["framework"] = setup_spec.extras["simple_framework"] + [
         "coloredlogs",
         "seaborn",
-        # https://github.com/eosphoros-ai/DB-GPT/issues/551
-        "pandas==2.0.3",
         "auto-gpt-plugin-template",
         "gTTS==2.3.1",
         "pymysql",
@@ -681,6 +687,8 @@ else:
             "dbgpt",
             "dbgpt._private",
             "dbgpt._private.*",
+            "dbgpt.agent",
+            "dbgpt.agent.*",
             "dbgpt.cli",
             "dbgpt.cli.*",
             "dbgpt.client",
@@ -705,6 +713,8 @@ else:
             "dbgpt.storage.*",
             "dbgpt.util",
             "dbgpt.util.*",
+            "dbgpt.vis",
+            "dbgpt.vis.*",
         ],
     )
 

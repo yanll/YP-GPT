@@ -10,6 +10,7 @@ from dbgpt.util.singleton import Singleton
 if TYPE_CHECKING:
     from auto_gpt_plugin_template import AutoGPTPluginTemplate
 
+    from dbgpt.agent.plugin import CommandRegistry
     from dbgpt.component import SystemApp
     from dbgpt.datasource.manages import ConnectorManager
 
@@ -25,7 +26,7 @@ class Config(metaclass=Singleton):
 
         # Gradio language version: en, zh
         self.LANGUAGE = os.getenv("LANGUAGE", "en")
-        self.WEB_SERVER_PORT = int(os.getenv("WEB_SERVER_PORT", 5000))
+        self.DBGPT_WEBSERVER_PORT = int(os.getenv("DBGPT_WEBSERVER_PORT", 5670))
 
         self.debug_mode = False
         self.skip_reprompt = False
@@ -117,6 +118,16 @@ class Config(metaclass=Singleton):
             os.environ["yi_proxyllm_proxy_api_base"] = os.getenv(
                 "YI_API_BASE", "https://api.lingyiwanwu.com/v1"
             )
+        # Moonshot proxy
+        self.moonshot_proxy_api_key = os.getenv("MOONSHOT_API_KEY")
+        if self.moonshot_proxy_api_key:
+            os.environ["moonshot_proxyllm_proxy_api_key"] = self.moonshot_proxy_api_key
+            os.environ["moonshot_proxyllm_proxyllm_backend"] = os.getenv(
+                "MOONSHOT_MODEL_VERSION", "moonshot-v1-8k"
+            )
+            os.environ["moonshot_proxyllm_api_base"] = os.getenv(
+                "MOONSHOT_API_BASE", "https://api.moonshot.cn/v1"
+            )
 
         self.proxy_server_url = os.getenv("PROXY_SERVER_URL")
 
@@ -145,7 +156,7 @@ class Config(metaclass=Singleton):
 
         self.prompt_template_registry = PromptTemplateRegistry()
         ### Related configuration of built-in commands
-        self.command_registry = []  # type: ignore
+        self.command_registry: Optional[CommandRegistry] = None
 
         disabled_command_categories = os.getenv("DISABLED_COMMAND_CATEGORIES")
         if disabled_command_categories:

@@ -1022,7 +1022,7 @@ def initialize_worker_manager_in_client(
     model_path: str = None,
     run_locally: bool = True,
     controller_addr: str = None,
-    local_port: int = 5000,
+    local_port: int = 5670,
     embedding_model_name: str = None,
     embedding_model_path: str = None,
     start_listener: Callable[["WorkerManager"], None] = None,
@@ -1126,8 +1126,8 @@ def run_worker_manager(
 
     system_app = SystemApp(app)
     initialize_tracer(
-        system_app,
         os.path.join(LOGDIR, worker_params.tracer_file),
+        system_app=system_app,
         root_operation_name="DB-GPT-WorkerManager-Entry",
         tracer_storage_cls=worker_params.tracer_storage_cls,
     )
