@@ -42,6 +42,10 @@ class GptsMemory:
         """Return the message memory."""
         return self._message_memory
 
+    @property
+    def my_conversation_memory(self):
+        return self._my_conversation_memory
+
     async def _message_group_vis_build(self, message_group):
         if not message_group:
             return ""

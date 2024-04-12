@@ -105,10 +105,9 @@ class CalendarAssistantAgent(ConversableAgent):
                 f"Lark execution error, please re-read the historical information to fix this API. The error message is as follows:{str(e)}",
             )
 
-    async def a_thinking(
+    async def thinking(
             self,
             messages: Optional[List[Dict]],
-            his_human_messages: Optional[List[Dict]] = None,
             prompt: Optional[str] = None
     ) -> Union[str, Dict, None]:
         last_model = None
