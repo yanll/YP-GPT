@@ -23,7 +23,7 @@ class RequestHandleOperator(MapOperator[Dict, str]):
             print(f"Receive input body: {input_body}")
             # 首次验证挑战码
             if "challenge" in input_body:
-                return json.dumps({"challenge": input_body["challenge"]})
+                return {"challenge": input_body["challenge"]}
 
             header = input_body["header"]
             event = input_body["event"]
