@@ -44,7 +44,11 @@ class RequestHandleOperator(MapOperator[Dict, str]):
                 )
                 chain = LLMChain(llm=llm, prompt=prompt)
                 ai_message = chain.invoke({"msg": content_text})
-                larkutil.send_message(sender_open_id, ai_message["text"], receive_id_type="open_id")
+                larkutil.send_message(
+                    receive_id=sender_open_id,
+                    text=content_text + "：\n" + ai_message["text"],
+                    receive_id_type="open_id"
+                )
             return json.dumps({"message": "OK"})
         except Exception as e:
             logging.exception("飞书事件处理异常！", e)
