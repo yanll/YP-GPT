@@ -3,13 +3,10 @@ import json
 
 
 def test_select_userinfo():
-    # url = "https://atmgw.yeepay.com/gpt-nc/api/v1/awel/trigger/lark_callback_endpoint"
-    url = "https://c57e-111-198-240-153.ngrok-free.app/api/v1/awel/trigger/lark_callback_endpoint"
+    url = "https://atmgw.yeepay.com/gpt-nc/api/v1/awel/trigger/lark_callback_endpoint"
+    # url = "https://c57e-111-198-240-153.ngrok-free.app/api/v1/awel/trigger/lark_callback_endpoint"
     headers = {'Content-Type': 'application/json; charset=utf-8', 'Authorization': '123456'}
     data = {
-        "context": {
-            "conv_uid": "123456"
-        },
         "message": "hello!",
         "challenge": "123456"
     }
