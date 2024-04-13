@@ -42,19 +42,19 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
         if any(path.startswith(exp) for exp in ignored_exp):
             return await call_next(request)
 
+        if (path.startswith("/api/v1/awel/trigger")):
+            credential = ""
+            # if (credential != "123456"):
+            #     print("应用访问令牌非法！", path)
+            #     res = Result.failed(code="401", msg="应用访问令牌非法！")
+            #     return JSONResponse(status_code=200, content=res.dict())
+            return await call_next(request)
+
         token = request.headers.get("Authorization", "")
         if token == "":
             print("认证信息为空，请重新认证！", path)
             res = Result.failed(code="401", msg="认证信息为空，请重新认证！")
             return JSONResponse(status_code=200, content=res.dict())
-
-        if (path.startswith("/api/v1/awel/trigger")):
-            if (token != "123456"):
-                print("应用访问令牌非法！", path)
-                res = Result.failed(code="401", msg="应用访问令牌非法！")
-                return JSONResponse(status_code=200, content=res.dict())
-            return await call_next(request)
-
         resp = principal(token)
         if (resp['code'] != 200):
             print("认证信息已过期，请重新认证！", path)

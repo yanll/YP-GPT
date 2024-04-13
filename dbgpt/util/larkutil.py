@@ -97,10 +97,10 @@ def select_room_free_busy(token, room_ids, time_min, time_max):
     return resp.json()
 
 
-def send_message(receive_id, text):
+def send_message(receive_id, text, receive_id_type: str = "email"):
     url = 'https://open.feishu.cn/open-apis/im/v1/messages'
     params = {
-        "receive_id_type": "email"
+        "receive_id_type": receive_id_type
     }
     msg = {
         "text": text

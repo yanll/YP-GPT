@@ -20,7 +20,7 @@ def test_select_userinfo():
 
 
 def test_send_message():
-    larkutil.send_message("liangliang.yan@yeepay.com", "你好\n\n点点滴滴！")
+    larkutil.send_message("ou_1a32c82be0a5c6ee7bc8debd75c65e34", "你好\n\n点点滴滴！", receive_id_type="open_id")
     assert True
 
 
