@@ -46,7 +46,7 @@ class RequestHandleOperator(MapOperator[Dict, str]):
                 ai_message = chain.invoke({"msg": content_text})
                 larkutil.send_message(
                     receive_id=sender_open_id,
-                    text=content_text + "：\n" + ai_message["text"],
+                    text=content_text + "：\n\n" + ai_message["text"],
                     receive_id_type="open_id"
                 )
             return json.dumps({"message": "OK"})
