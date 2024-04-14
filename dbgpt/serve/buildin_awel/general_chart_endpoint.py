@@ -1,4 +1,3 @@
-import json
 import os
 from typing import Dict
 
@@ -31,8 +30,7 @@ class RequestHandleOperator(MapOperator[Dict, str]):
             input_variables=["msg"]
         )
         chain = LLMChain(llm=self.llm, prompt=prompt)
-        ai_message = chain.invoke({"msg": "hello, who are you?"})
-        return json.dumps({"message": ai_message})
+        return chain.invoke({"msg": "hello, who are you?"})
 
 
 with DAG("dbgpt_awel_general_chat_endpoint") as dag:

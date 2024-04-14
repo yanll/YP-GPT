@@ -8,13 +8,11 @@ from langchain_core.prompts import PromptTemplate, ChatPromptTemplate
 from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
 from dbgpt.util import larkutil
 from langchain_openai import AzureChatOpenAI
-
+import asyncio
 
 
 class RequestHandleOperator(MapOperator[Dict, str]):
-
     llm = None
-
 
     def __init__(self, **kwargs):
         os.environ["OPENAI_API_VERSION"] = os.getenv("PROXY_API_VERSION")
@@ -43,18 +41,7 @@ class RequestHandleOperator(MapOperator[Dict, str]):
             content_text = content["text"]
 
             if message_type == "text" and sender_open_id != "" and content_text != "" and chat_type == "p2p":
-
-                prompt = PromptTemplate(
-                    template="{msg}",
-                    input_variables=["msg"]
-                )
-                chain = LLMChain(llm=self.llm, prompt=prompt)
-                ai_message = chain.invoke({"msg": content_text})
-                larkutil.send_message(
-                    receive_id=sender_open_id,
-                    text=content_text + "：\n\n" + ai_message["text"],
-                    receive_id_type="open_id"
-                )
+                asyncio.create_task(handle(self.llm, content_text, sender_open_id))
             return json.dumps({"message": "OK"})
         except Exception as e:
             logging.exception("飞书事件处理异常！", e)
@@ -69,3 +56,17 @@ with DAG("dbgpt_awel_lark_callback_endpoint") as dag:
     )
     map_node = RequestHandleOperator()
     trigger >> map_node
+
+
+async def handle(llm, sender_open_id, human_message):
+    prompt = PromptTemplate(
+        template="{msg}",
+        input_variables=["msg"]
+    )
+    chain = LLMChain(llm=llm, prompt=prompt)
+    ai_message = chain.invoke({"msg": human_message})
+    larkutil.send_message(
+        receive_id=sender_open_id,
+        text=human_message + "：\n\n" + ai_message["text"],
+        receive_id_type="open_id"
+    )
