@@ -41,7 +41,7 @@ class RequestHandleOperator(MapOperator[Dict, str]):
             content_text = content["text"]
 
             if message_type == "text" and sender_open_id != "" and content_text != "" and chat_type == "p2p":
-                asyncio.create_task(handle(self.llm, content_text, sender_open_id))
+                asyncio.create_task(handle(self.llm, sender_open_id, content_text))
             return json.dumps({"message": "OK"})
         except Exception as e:
             logging.exception("飞书事件处理异常！", e)
