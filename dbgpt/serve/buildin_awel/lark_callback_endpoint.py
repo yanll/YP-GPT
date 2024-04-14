@@ -9,13 +9,21 @@ from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
 from dbgpt.util import larkutil
 from langchain_openai import AzureChatOpenAI
 
-os.environ["OPENAI_API_VERSION"] = "2024-02-15-preview"
-os.environ["AZURE_OPENAI_ENDPOINT"] = "https://yp2401.openai.azure.com"
-os.environ["AZURE_OPENAI_API_KEY"] = "2fcbec6687ec42b481bede40fbfcca15"
 
 
 class RequestHandleOperator(MapOperator[Dict, str]):
+
+    llm = None
+
+
     def __init__(self, **kwargs):
+        os.environ["OPENAI_API_VERSION"] = os.getenv("PROXY_API_VERSION")
+        os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv("AZURE_OPENAI_ENDPOINT")
+        os.environ["AZURE_OPENAI_API_KEY"] = os.getenv("AZURE_OPENAI_KEY")
+
+        self.llm = AzureChatOpenAI(
+            deployment_name=os.getenv("API_AZURE_DEPLOYMENT")
+        )
         super().__init__(**kwargs)
 
     async def map(self, input_body: Dict) -> str:
@@ -35,14 +43,12 @@ class RequestHandleOperator(MapOperator[Dict, str]):
             content_text = content["text"]
 
             if message_type == "text" and sender_open_id != "" and content_text != "" and chat_type == "p2p":
-                llm = AzureChatOpenAI(
-                    deployment_name="YPgpt"
-                )
+
                 prompt = PromptTemplate(
                     template="{msg}",
                     input_variables=["msg"]
                 )
-                chain = LLMChain(llm=llm, prompt=prompt)
+                chain = LLMChain(llm=self.llm, prompt=prompt)
                 ai_message = chain.invoke({"msg": content_text})
                 larkutil.send_message(
                     receive_id=sender_open_id,
@@ -57,7 +63,7 @@ class RequestHandleOperator(MapOperator[Dict, str]):
 
 with DAG("dbgpt_awel_lark_callback_endpoint") as dag:
     trigger = HttpTrigger(
-        "/lark_callback_endpoint",
+        endpoint="/lark_callback_endpoint",
         methods="POST",
         request_body=Dict
     )

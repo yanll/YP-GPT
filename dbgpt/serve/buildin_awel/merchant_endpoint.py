@@ -1,4 +1,3 @@
-
 import os
 from typing import Optional, List
 import requests
@@ -18,10 +17,6 @@ from dbgpt._private.pydantic import BaseModel, Field
 from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
 from dbgpt.util.dmallutil import DmallClient
 
-os.environ["OPENAI_API_VERSION"] = "2024-02-15-preview"
-os.environ["AZURE_OPENAI_ENDPOINT"] = "https://yp2401.openai.azure.com"
-os.environ["AZURE_OPENAI_API_KEY"] = "2fcbec6687ec42b481bede40fbfcca15"
-
 
 class ReqContext(BaseModel):
     conv_uid: str = Field(..., description="会话标识")
@@ -35,7 +30,16 @@ class TriggerReqBody(BaseModel):
 
 
 class RequestHandleOperator(MapOperator[TriggerReqBody, str]):
+    llm = None
+
     def __init__(self, **kwargs):
+        os.environ["OPENAI_API_VERSION"] = os.getenv("PROXY_API_VERSION")
+        os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv("AZURE_OPENAI_ENDPOINT")
+        os.environ["AZURE_OPENAI_API_KEY"] = os.getenv("AZURE_OPENAI_KEY")
+
+        self.llm = AzureChatOpenAI(
+            deployment_name=os.getenv("API_AZURE_DEPLOYMENT")
+        )
         super().__init__(**kwargs)
 
     async def map(self, input_body: TriggerReqBody) -> str:
@@ -43,22 +47,18 @@ class RequestHandleOperator(MapOperator[TriggerReqBody, str]):
 
         tools = [ExtractMerchantNumberTool(), SearchMerchantDetailTool(), SummaryMerchantDetailTool()]
 
-        llm = AzureChatOpenAI(
-            deployment_name="YPgpt"
-        )
-
         prompt = PromptTemplate(
             template="{msg}",
             input_variables=["msg"]
         )
 
-        # chain = LLMChain(llm=llm, prompt=prompt)
+        # chain = LLMChain(llm=self.llm, prompt=prompt)
         # airs = chain.invoke(input_body.message)
         # print("调用LLM：", airs)
 
         # deprecated
         # dagent = initialize_agent(
-        #     tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True
+        #     tools, self.llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True
         # )
         # dagent.invoke(input_body.message)
 
@@ -92,7 +92,7 @@ class RequestHandleOperator(MapOperator[TriggerReqBody, str]):
         # ])
         react_agent = create_react_agent(
             tools=tools,
-            llm=llm,
+            llm=self.llm,
             prompt=chat_prompt
         )
         agent_executor = AgentExecutor(agent=react_agent, tools=tools, verbose=True)
@@ -109,7 +109,7 @@ class RequestHandleOperator(MapOperator[TriggerReqBody, str]):
 
 with DAG("dbgpt_awel_merchant_endpoint") as dag:
     trigger = HttpTrigger(
-        "/merchant_endpoint",
+        endpoint="/merchant_endpoint",
         methods="POST",
         request_body=TriggerReqBody
     )
@@ -123,16 +123,14 @@ class ExtractMerchantNumberTool(BaseTool):
     return_direct = False
 
     def _run(self, msg: str) -> str:
-        llm = AzureChatOpenAI(
-            deployment_name="YPgpt"
-        )
+
 
         prompt = PromptTemplate(
             template="从我输入的信息提取出类型是数字的商户编号，然后返回商户编号，不要回复多余内容。以下是我发送的消息：{msg}",
             input_variables=["msg"]
         )
 
-        chain = LLMChain(llm=llm, prompt=prompt)
+        chain = LLMChain(llm=self.llm, prompt=prompt)
         rs = chain.invoke({"msg": msg})
         print("商编提取结果：", rs)
         return rs
@@ -160,16 +158,14 @@ class SummaryMerchantDetailTool(BaseTool):
     return_direct = False
 
     def _run(self, merchant_info: str) -> str:
-        llm = AzureChatOpenAI(
-            deployment_name="YPgpt"
-        )
+
 
         prompt = PromptTemplate(
             template="将我输入的信息总结后输出。根据字段总结，不要编造和猜测字段的含义，不要丢失字段信息。以下是我发送的消息：{msg}",
             input_variables=["msg"]
         )
 
-        chain = LLMChain(llm=llm, prompt=prompt)
+        chain = LLMChain(llm=self.llm, prompt=prompt)
         rs = chain.invoke({"msg": merchant_info})
         print("商户信息总结结果：", rs)
         if "text" in rs:
