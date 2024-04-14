@@ -1,11 +1,13 @@
 import os
 
-from langchain.chains import LLMChain
-from langchain_core.prompts import PromptTemplate
+from langchain_core.messages import HumanMessage
 from langchain_openai import AzureChatOpenAI
+from langgraph.graph import END, MessageGraph
 
 
-def test_chain():
+
+
+def test_graph():
     os.environ["OPENAI_API_VERSION"] = os.getenv("PROXY_API_VERSION")
     os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv("AZURE_OPENAI_ENDPOINT")
     os.environ["AZURE_OPENAI_API_KEY"] = os.getenv("AZURE_OPENAI_KEY")
@@ -13,12 +15,16 @@ def test_chain():
     llm = AzureChatOpenAI(
         deployment_name=os.getenv("API_AZURE_DEPLOYMENT")
     )
-    prompt = PromptTemplate(
-        template="请问，{country}的首都是哪里 ?",
-        input_variables=["country"],
-    )
-    chain = LLMChain(llm=llm, prompt=prompt)
-    print("\n", chain.invoke("中国"))
 
-    print("\n\n")
+    graph = MessageGraph()
+
+    graph.add_node("oracle", llm)
+    graph.add_edge("oracle", END)
+
+    graph.set_entry_point("oracle")
+
+    runnable = graph.compile()
+
+    rs = runnable.invoke(HumanMessage("What is 1 + 1?"))
+    print("\n", rs)
     assert True
