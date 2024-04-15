@@ -16,6 +16,7 @@ from langchain.agents import create_react_agent
 from dbgpt._private.pydantic import BaseModel, Field
 from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
 from dbgpt.util.dmallutil import DmallClient
+from dbgpt.util.azure_util import create_azure_llm
 
 
 class ReqContext(BaseModel):
@@ -33,13 +34,7 @@ class RequestHandleOperator(MapOperator[TriggerReqBody, str]):
     llm = None
 
     def __init__(self, **kwargs):
-        os.environ["OPENAI_API_VERSION"] = os.getenv("PROXY_API_VERSION")
-        os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv("AZURE_OPENAI_ENDPOINT")
-        os.environ["AZURE_OPENAI_API_KEY"] = os.getenv("AZURE_OPENAI_KEY")
-
-        self.llm = AzureChatOpenAI(
-            deployment_name=os.getenv("API_AZURE_DEPLOYMENT")
-        )
+        self.llm = create_azure_llm()
         super().__init__(**kwargs)
 
     async def map(self, input_body: TriggerReqBody) -> str:
@@ -123,8 +118,6 @@ class ExtractMerchantNumberTool(BaseTool):
     return_direct = False
 
     def _run(self, msg: str) -> str:
-
-
         prompt = PromptTemplate(
             template="从我输入的信息提取出类型是数字的商户编号，然后返回商户编号，不要回复多余内容。以下是我发送的消息：{msg}",
             input_variables=["msg"]
@@ -158,8 +151,6 @@ class SummaryMerchantDetailTool(BaseTool):
     return_direct = False
 
     def _run(self, merchant_info: str) -> str:
-
-
         prompt = PromptTemplate(
             template="将我输入的信息总结后输出。根据字段总结，不要编造和猜测字段的含义，不要丢失字段信息。以下是我发送的消息：{msg}",
             input_variables=["msg"]
