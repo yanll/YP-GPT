@@ -59,6 +59,7 @@ with DAG("dbgpt_awel_lark_callback_endpoint") as dag:
 
 
 async def handle(llm, sender_open_id, human_message):
+    print("lark_callback_endpoint async handle：",human_message)
     prompt = PromptTemplate(
         template="{msg}",
         input_variables=["msg"]
