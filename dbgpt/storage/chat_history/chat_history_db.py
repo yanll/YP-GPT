@@ -1,6 +1,6 @@
 """Chat history database model."""
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from sqlalchemy import Column, DateTime, Index, Integer, String, Text, UniqueConstraint
 
@@ -123,3 +123,19 @@ class ChatHistoryDao(BaseDao):
         """Retrieve the chat history record by conv_uid."""
         with self.session(commit=False) as session:
             return session.query(ChatHistoryEntity).filter_by(conv_uid=conv_uid).first()
+
+
+class ChatHistoryMessageDao(BaseDao):
+    """Chat history message_dao."""
+
+    def get_his_messages_by_uid(
+            self, conv_uid: Optional[str]
+    ):
+        """Retrieve history message records."""
+        session = self.get_raw_session()
+        chat_message_history = session.query(ChatHistoryMessageEntity)
+        history = chat_message_history.filter(ChatHistoryMessageEntity.conv_uid == conv_uid)
+        history = chat_message_history.order_by(ChatHistoryEntity.id.desc())
+        result = chat_message_history.limit(50).all()
+        session.close()
+        return result
