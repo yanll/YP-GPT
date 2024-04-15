@@ -31,7 +31,7 @@ def test_card_send_message():
         content={
             "type": "template",
             "data": {
-                "template_id": "AAqkwmwOTohjy", "template_version_name": "1.0.4",
+                "template_id": "AAqkwmwOTohjy", "template_version_name": "1.0.7",
                 "template_variable": {
                     "ai_message": "请提供完整的信息！"
                 }

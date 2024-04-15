@@ -42,10 +42,10 @@ class RequestHandleOperator(MapOperator[Dict, str]):
 
             if message_type == "text" and sender_open_id != "" and content_text != "" and chat_type == "p2p":
                 asyncio.create_task(handle(self.llm, sender_open_id, content_text))
-            return json.dumps({"message": "OK"})
+            return {"message": "OK"}
         except Exception as e:
             logging.exception("飞书事件处理异常！", e)
-            return json.dumps({"message": "OK"})
+            return {"message": "OK"}
 
 
 with DAG("dbgpt_awel_lark_event_endpoint") as dag:

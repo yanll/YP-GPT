@@ -28,10 +28,28 @@ class RequestHandleOperator(MapOperator[Dict, str]):
             if "challenge" in input_body:
                 return {"challenge": input_body["challenge"]}
 
-            return json.dumps({"message": "OK"})
+            return {
+                "toast": {
+                    "type": "info",
+                    "content": "温馨提示",
+                    "i18n": {
+                        "zh_cn": "信息已提交，请查看结果！",
+                        "en_us": "submitted"
+                    }
+                },
+                "card": {
+                    "type": "template",
+                    "data": {
+                        "template_id": "AAqkwmwOTohjy", "template_version_name": "1.0.7",
+                        "template_variable": {
+                            "ai_message": "请提供完整的信息！"
+                        }
+                    }
+                }
+            }
         except Exception as e:
             logging.exception("飞书回调处理异常！", e)
-            return json.dumps({"message": "OK"})
+            return {"message": "OK"}
 
 
 with DAG("dbgpt_awel_lark_callback_endpoint") as dag:
