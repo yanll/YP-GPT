@@ -39,7 +39,8 @@ class LarkLoadClient(ResourceLarkClient):
 
     # 后置处理
     async def a_lark_after_notify(self, receive_id: str, text: str):
-        return larkutil.send_message(receive_id, text)
+        content = {"text": text}
+        return larkutil.send_message(receive_id, content)
 
     def get_meeting_room_status(self):
         if True:

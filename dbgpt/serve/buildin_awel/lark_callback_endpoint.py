@@ -59,15 +59,16 @@ with DAG("dbgpt_awel_lark_callback_endpoint") as dag:
 
 
 async def handle(llm, sender_open_id, human_message):
-    print("lark_callback_endpoint async handle：",human_message)
+    print("lark_callback_endpoint async handle：", human_message)
     prompt = PromptTemplate(
         template="{msg}",
         input_variables=["msg"]
     )
     chain = LLMChain(llm=llm, prompt=prompt)
     ai_message = chain.invoke({"msg": human_message})
+    content = {"text": human_message + "：\n\n" + ai_message["text"]}
     larkutil.send_message(
         receive_id=sender_open_id,
-        text=human_message + "：\n\n" + ai_message["text"],
+        content=content,
         receive_id_type="open_id"
     )

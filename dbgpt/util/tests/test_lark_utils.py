@@ -1,6 +1,7 @@
 from dbgpt.util import larkutil
 import time
 from datetime import datetime
+from .lark_cards import form
 
 
 def test_get_tenant_access_token():
@@ -20,7 +21,18 @@ def test_select_userinfo():
 
 
 def test_send_message():
-    larkutil.send_message("ou_1a32c82be0a5c6ee7bc8debd75c65e34", "你好\n\n点点滴滴！", receive_id_type="open_id")
+    content = {"text": "你好\n\n点点滴滴！"}
+    larkutil.send_message("ou_1a32c82be0a5c6ee7bc8debd75c65e34", content, receive_id_type="open_id")
+    assert True
+
+
+def test_card_send_message():
+    larkutil.send_message(
+        receive_id="ou_1a32c82be0a5c6ee7bc8debd75c65e34",
+        content=form.test_form_template(),
+        receive_id_type="open_id",
+        msg_type="interactive"
+    )
     assert True
 
 

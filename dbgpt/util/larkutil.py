@@ -1,4 +1,5 @@
 import json
+from typing import Dict
 
 import requests
 
@@ -13,7 +14,7 @@ def get_tenant_access_token():
         'app_secret': sk()
     }
     resp = requests.post(url=url, headers=headers, params=params)
-    print('飞书租户令牌返回结果：', resp.json())
+    print('\n飞书租户令牌返回结果：', resp.json())
     return resp.json()
 
 
@@ -97,18 +98,15 @@ def select_room_free_busy(token, room_ids, time_min, time_max):
     return resp.json()
 
 
-def send_message(receive_id, text, receive_id_type: str = "email"):
+def send_message(receive_id: str, content: Dict, receive_id_type: str = "email", msg_type: str = "text"):
     url = 'https://open.feishu.cn/open-apis/im/v1/messages'
     params = {
         "receive_id_type": receive_id_type
     }
-    msg = {
-        "text": text
-    }
     data = {
         "receive_id": receive_id,
-        "msg_type": "text",
-        "content": json.dumps(msg)
+        "msg_type": msg_type,
+        "content": json.dumps(content)
     }
     resp = requests.request('POST', url=url, headers=build_headers(), params=params, data=json.dumps(data))
     print('发送消息返回结果：', resp.json())
