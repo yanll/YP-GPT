@@ -50,6 +50,9 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
             #     return JSONResponse(status_code=200, content=res.dict())
             return await call_next(request)
 
+        if (path.startswith("/api/v2/chat/completions")):
+            return await call_next(request)
+
         token = request.headers.get("Authorization", "")
         if token == "":
             print("认证信息为空，请重新认证！", path)
