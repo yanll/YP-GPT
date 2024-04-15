@@ -1,146 +1,130 @@
-import os
-from typing import Optional, List
-import requests
 import json
-from langchain.agents.chat.base import ChatAgent
-
-from langchain.agents import AgentType, initialize_agent, AgentExecutor
+from typing import Dict, List
+import os
+import logging
 from langchain.chains.llm import LLMChain
-from langchain.tools import BaseTool
-from langchain_community.agent_toolkits.base import BaseToolkit
-from langchain_community.agent_toolkits.json.base import create_json_agent
-from langchain_community.agent_toolkits.json.toolkit import JsonToolkit
 from langchain_core.prompts import PromptTemplate, ChatPromptTemplate
-from langchain_openai import AzureChatOpenAI
-from langchain.agents import create_react_agent
-from dbgpt._private.pydantic import BaseModel, Field
+
+from dbgpt.core import SystemPromptTemplate, MessagesPlaceholder, HumanPromptTemplate, InMemoryStorage
 from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
-from dbgpt.util.dmallutil import DmallClient
+from dbgpt.core.interface.operators.composer_operator import ChatHistoryPromptComposerOperator
+from dbgpt.core.schema.api import ChatCompletionResponse
+from dbgpt.storage.chat_history import ChatHistoryMessageEntity
+from dbgpt.storage.chat_history.chat_history_db import ChatHistoryMessageDao
+from dbgpt.util import larkutil
+from langchain_openai import AzureChatOpenAI
+import asyncio
 from dbgpt.util.azure_util import create_azure_llm
+from langchain_core.messages import HumanMessage
+from langgraph.graph import END, MessageGraph
+from dbgpt.client import Client
 
 
-class ReqContext(BaseModel):
-    conv_uid: str = Field(..., description="会话标识")
-
-
-class TriggerReqBody(BaseModel):
-    message: str = Field(..., description="消息内容")
-    context: Optional[ReqContext] = Field(
-        default=None, description="The context of the model request."
-    )
-
-
-class RequestHandleOperator(MapOperator[TriggerReqBody, str]):
+class RequestHandleOperator(MapOperator[Dict, str]):
     llm = None
 
     def __init__(self, **kwargs):
+        self.chat_history_message_dao = ChatHistoryMessageDao()
         self.llm = create_azure_llm()
         super().__init__(**kwargs)
 
-    async def map(self, input_body: TriggerReqBody) -> str:
-        print(f"Receive input body: {input_body}")
+    async def map(self, input_body: Dict) -> str:
+        try:
+            print(f"Receive input body: {input_body}")
+            # 首次验证挑战码
+            if "challenge" in input_body:
+                return {"challenge": input_body["challenge"]}
 
-        tools = [ExtractParamsTool(), LarkTool()]
+            header = input_body["header"]
+            event = input_body["event"]
+            sender_open_id = event["sender"]["sender_id"]["open_id"]
+            message = event["message"]
+            message_type = message["message_type"]
+            chat_type = message["chat_type"]
+            content = json.loads(message["content"])
+            content_text = content["text"]
 
-        prompt = PromptTemplate(
-            template="{msg}",
-            input_variables=["msg"]
-        )
-
-        # chain = LLMChain(llm=self.llm, prompt=prompt)
-        # airs = chain.invoke(input_body.message)
-        # print("调用LLM：", airs)
-
-        # deprecated
-        # dagent = initialize_agent(
-        #     tools, self.llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True
-        # )
-        # dagent.invoke(input_body.message)
-
-        template = '''Answer the following questions as best you can. You have access to the following tools:
-
-                    {tools}
-
-                    Please answer in simplified Chinese.
-
-                    Use the following format:
-
-                    Question: the input question you must answer
-                    Thought: you should always think about what to do
-                    Action: the action to take, should be one of [{tool_names}]
-                    Action Input: the input to the action
-                    Observation: the result of the action
-                    ... (this Thought/Action/Action Input/Observation can repeat N times)
-                    Thought: I now know the final answer
-                    Final Answer: the final answer to the original input question
-
-                    Begin!
-
-                    Question: {input}
-                    Thought:{agent_scratchpad}'''
-
-        chat_prompt = PromptTemplate.from_template(template)
-
-        # chat_prompt = ChatPromptTemplate.from_messages([
-        #     ("system", "你是一个内容专家，请提取出我输入信息中的商户编号。"),
-        #     ("human", "{user_input}"),
-        # ])
-        react_agent = create_react_agent(
-            tools=tools,
-            llm=self.llm,
-            prompt=chat_prompt
-        )
-        agent_executor = AgentExecutor(agent=react_agent, tools=tools, verbose=True)
-
-        rs = agent_executor.invoke({
-            "input": input_body.message
-        })
-
-        out = rs['output']
-        if "text" in rs:
-            return out['text']
-        return out
+            if message_type == "text" and sender_open_id != "" and content_text != "" and chat_type == "p2p":
+                asyncio.create_task(handle(self.llm, self.chat_history_message_dao, sender_open_id, content_text))
+            return {"message": "OK"}
+        except Exception as e:
+            logging.exception("飞书事件处理异常！", e)
+            return {"message": "OK"}
 
 
 with DAG("dbgpt_awel_calendar_endpoint") as dag:
     trigger = HttpTrigger(
         endpoint="/calendar_endpoint",
         methods="POST",
-        request_body=TriggerReqBody
+        request_body=Dict
     )
+
     map_node = RequestHandleOperator()
     trigger >> map_node
 
 
-class ExtractParamsTool(BaseTool):
-    name = "ExtractParamsTool"
-    description = "提取预定会议室需要的参数"
-    return_direct = False
+async def handle(llm, chat_history_dao: ChatHistoryMessageDao, sender_open_id, human_message):
+    print("calendar_endpoint async handle：", human_message)
 
-    def _run(self, msg: str) -> str:
-        prompt = PromptTemplate(
-            template='按照{"会议时间":"","参数人数":"","会议室":""}格式从我输入的信息提取出对应的数据，然后按格式返回，不要回复多余内容。以下是我发送的消息：{msg}',
-            input_variables=["msg"]
+    graph = MessageGraph()
+    graph.add_node("extract_goal", call_extract_goal)
+    graph.add_edge("extract_goal", END)
+    graph.set_entry_point("extract_goal")
+    runnable = graph.compile()
+    messages = []
+    his: List[ChatHistoryMessageEntity] = chat_history_dao.get_his_messages_by_uid(sender_open_id)
+    his: List[ChatHistoryMessageEntity] = []
+    if his:
+        for m in his:
+            dict = json.loads(m.message_detail)
+            if dict["type"] == "human":
+                messages.append(HumanMessage(name=sender_open_id, content="human:" + dict["data"]["content"]))
+            if dict["type"] == "ai":
+                messages.append(HumanMessage(name=sender_open_id, content="ai:" + dict["data"]["content"]))
+    messages.append(HumanMessage(name=sender_open_id, content="human:" + human_message))
+    await runnable.ainvoke(messages)
+
+
+async def call_extract_goal(messages: List[HumanMessage]):
+    DBGPT_API_KEY = "dbgpt"
+    client = Client(api_key=DBGPT_API_KEY)
+    mess = [
+        "你是一个内容专家，请从用户和AI的对话信息中识别出用户的意图，当用户的意图是'会议室预定'或'创建日程'时，回复：'MEETING_ROOM_BINGO'，否则按照正常的AI助手回复。\n"
+        "以下是用户和AI的对话内容：\n"
+        "\n\n"
+    ]
+    conv_uid = messages[0].name
+    for m in messages:
+        mess.append(m.content + "\n")
+    res: ChatCompletionResponse = await client.chat(
+        model="proxyllm",
+        messages="".join(mess),
+        conv_uid=conv_uid
+    )
+    ai_message = res.choices[0].message.content
+    print("执行结果：", ai_message)
+    if (ai_message != "MEETING_ROOM_BINGO"):
+        larkutil.send_message(
+            receive_id=conv_uid,
+            content={"text": ai_message.replace("AI: ", "")},
+            receive_id_type="open_id"
         )
+    else:
+        larkutil.send_message(
+            receive_id="ou_1a32c82be0a5c6ee7bc8debd75c65e34",
+            content={
+                "type": "template",
+                "data": {
+                    "template_id": "AAqkwmwOTohjy", "template_version_name": "1.0.10",
+                    "template_variable": {
+                        "ai_message": "请提供完整的信息！"
+                    }
+                }
+            },
+            receive_id_type="open_id",
+            msg_type="interactive"
+        )
+    return res
 
-        chain = LLMChain(llm=self.llm, prompt=prompt)
-        rs = chain.invoke({"msg": msg})
-        print("参数提取结果：", rs)
-        return rs
 
 
-class LarkTool(BaseTool):
-    name = "LarkTool"
-    description = "执行预定"
-    return_direct = False
-
-    def _run(self, merchant_no: str) -> str:
-        # dmall_client = DmallClient()
-        # data = dmall_client.post(
-        #     api_name="query_merchant_info",
-        #     parameters={
-        #         "CUSTOMERNUMBER": merchant_no
-        #     }
-        # )
-        # return data.json()['data']['data']
-        pass
