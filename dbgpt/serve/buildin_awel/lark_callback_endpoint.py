@@ -40,7 +40,7 @@ class RequestHandleOperator(MapOperator[Dict, str]):
                 "card": {
                     "type": "template",
                     "data": {
-                        "template_id": "AAqkwmwOTohjy", "template_version_name": "1.0.7",
+                        "template_id": "AAqkwmwOTohjy", "template_version_name": "1.0.8",
                         "template_variable": {
                             "ai_message": "请提供完整的信息！"
                         }
