@@ -96,7 +96,7 @@ async def request_handle(apps, llm, chat_history_dao: ChatHistoryMessageDao, sen
     his: List[ChatHistoryMessageEntity] = []
     role_desc = (
         f"你是一个智能助手，现在有以下应用：\n"
-        f"{json.dumps(apps)}\n"
+        f"{json.dumps(apps, ensure_ascii=False)}\n"
         "请根据我输入的内容识别我的意图，根据意图匹配需要使用哪个应用，如果意图匹配成功则按照：{'app_code': 'the value of app_code', 'app_descpibe': 'the value of app_descpibe'}格式回复给我（不要回复多余内容），否则按照通用AI角色回复我的问题。\n"
         "\n"
     )
