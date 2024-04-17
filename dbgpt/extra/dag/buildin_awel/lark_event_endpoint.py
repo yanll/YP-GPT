@@ -1,14 +1,13 @@
+import asyncio
 import json
-from typing import Dict
-import os
 import logging
+from typing import Dict
+
 from langchain.chains.llm import LLMChain
-from langchain_core.prompts import PromptTemplate, ChatPromptTemplate
+from langchain_core.prompts import PromptTemplate
 
 from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
 from dbgpt.util import larkutil
-from langchain_openai import AzureChatOpenAI
-import asyncio
 from dbgpt.util.azure_util import create_azure_llm
 
 
@@ -34,6 +33,7 @@ class RequestHandleOperator(MapOperator[Dict, str]):
             chat_type = message["chat_type"]
             content = json.loads(message["content"])
             content_text = content["text"]
+
 
             if message_type == "text" and sender_open_id != "" and content_text != "" and chat_type == "p2p":
                 asyncio.create_task(handle(self.llm, sender_open_id, content_text))
