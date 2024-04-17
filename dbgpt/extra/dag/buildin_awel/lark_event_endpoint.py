@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+from types import NoneType
 from typing import Dict, List
 import re
 from langchain_core.messages import HumanMessage
@@ -128,7 +129,7 @@ async def call_extract_app(messages: List[HumanMessage]):
 
         code_key = "/router_app_code/" + conv_uid
         descpibe_key = "/router_app_descpibe/" + conv_uid
-        if strutured_message and strutured_message != "None":
+        if strutured_message and strutured_message != "None" and strutured_message != NoneType and strutured_message != "NoneType":
             print("开始加载strutured_message：", strutured_message)
             try:
                 strutured_message = strutured_message.replace("'", "\"")
