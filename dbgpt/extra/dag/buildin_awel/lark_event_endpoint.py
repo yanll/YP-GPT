@@ -143,8 +143,8 @@ async def call_extract_app(messages: List[HumanMessage]):
         dic = json.loads(strutured_message.replace("'", "\""))
         app_code = dic["app_code"]
         cli = RedisClient()
-        app_code = cli.set(code_key, app_code, 30 * 60)
-        app_name = cli.set(name_key, app_name, 30 * 60)
+        app_code = cli.set(code_key, app_code, 5 * 60)
+        app_name = cli.set(name_key, app_name, 5 * 60)
     else:
         cli = RedisClient()
         app_code = cli.get(code_key)
