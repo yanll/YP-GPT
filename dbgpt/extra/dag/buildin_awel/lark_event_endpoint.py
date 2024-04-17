@@ -93,6 +93,7 @@ async def request_handle(apps, llm, chat_history_dao: ChatHistoryMessageDao, sen
             if dict["type"] == "ai":
                 messages.append(HumanMessage(name=sender_open_id, content="ai:" + dict["data"]["content"]))
     messages.append(HumanMessage(name=sender_open_id, content="human:" + human_message))
+    print("开始执行路由：", messages)
     await runnable.ainvoke(messages)
 
 
@@ -104,6 +105,8 @@ async def call_extract_app(messages: List[HumanMessage]):
         conv_uid = messages[0].name
         for m in messages:
             mess.append(m.content + "\n")
+        print("开始识别路由：", messages)
+
         res: ChatCompletionResponse = await client.chat(
             model="proxyllm",
             messages="".join(mess),
