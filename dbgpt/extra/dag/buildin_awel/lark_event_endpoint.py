@@ -85,7 +85,7 @@ async def request_handle(apps, llm, chat_history_dao: ChatHistoryMessageDao, sen
     "\n\n"
 
     messages.append(HumanMessage(name=sender_open_id, content="system:" + role_desc))
-    if his:
+    if his and len(his) > 0:
         for m in his:
             dict = json.loads(m.message_detail)
             if dict["type"] == "human":
