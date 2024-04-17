@@ -141,6 +141,7 @@ async def call_extract_app(messages: List[HumanMessage]):
     code_key = "/router_app_code/" + conv_uid
     descpibe_key = "/router_app_descpibe/" + conv_uid
     if strutured_message and strutured_message != "None":
+        print("开始加载strutured_message：", strutured_message)
         dic = json.loads(strutured_message.replace("'", "\""))
         app_code = dic["app_code"]
         app_descpibe = dic["app_descpibe"]
@@ -201,7 +202,7 @@ async def call_extract_app(messages: List[HumanMessage]):
     else:
         larkutil.send_message(
             receive_id=conv_uid,
-            content={"text": ai_message.replace("AI: ", "")},
+            content={"text": ai_message},
             receive_id_type="open_id"
         )
     return res
