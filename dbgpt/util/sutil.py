@@ -44,6 +44,12 @@ def sk():
 def dmsk():
     return decrypt("woFcej1YXW1edT5bfw==")
 
+def reidspwd():
+    return decrypt(os.getenv("REDIS_SK"))
+
 
 def enabledsso():
     return False if os.getenv("DEPLOY_ENV") == "LOCAL" else True
+
+
+
