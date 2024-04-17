@@ -142,12 +142,16 @@ async def call_extract_app(messages: List[HumanMessage]):
     descpibe_key = "/router_app_descpibe/" + conv_uid
     if strutured_message and strutured_message != "None":
         print("开始加载strutured_message：", strutured_message)
-        dic = json.loads(strutured_message.replace("'", "\""))
-        app_code = dic["app_code"]
-        app_descpibe = dic["app_descpibe"]
-        cli = RedisClient()
-        app_code = cli.set(code_key, app_code, 5 * 60)
-        app_descpibe = cli.set(descpibe_key, app_descpibe, 5 * 60)
+        try:
+            strutured_message = strutured_message.replace("'", "\"")
+            dic = json.loads(strutured_message)
+            app_code = dic["app_code"]
+            app_descpibe = dic["app_descpibe"]
+            cli = RedisClient()
+            app_code = cli.set(code_key, app_code, 5 * 60)
+            app_descpibe = cli.set(descpibe_key, app_descpibe, 5 * 60)
+        except Exception as e:
+            print("解析应用失败:", e)
     else:
         cli = RedisClient()
         app_code = cli.get(code_key)
