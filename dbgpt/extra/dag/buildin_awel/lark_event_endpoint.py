@@ -17,30 +17,12 @@ from dbgpt.util import larkutil
 from dbgpt.util.azure_util import create_azure_llm
 
 
-class InitAppsOperator(MapOperator[Dict, str]):
-
-    def __init__(self, **kwargs):
-        self.apps = []
-        self.gpts_app_service = GptsAppService()
-        super().__init__(**kwargs)
-
-    def map(self, input_body: Dict):
-        try:
-            print(f"开始加载应用列表: ", input_body)
-            apps = self.gpts_app_service.get_gpts_app_list("singe_agent")
-            self.apps = apps
-            input_body['apps'] = self.apps
-            return input_body
-        except Exception as e:
-            logging.exception("加载应用列表异常", e)
-            return input_body
-
-
 class RequestHandleOperator(MapOperator[Dict, str]):
     llm = None
 
     def __init__(self, **kwargs):
         self.chat_history_message_dao = ChatHistoryMessageDao()
+        self.gpts_app_service = GptsAppService()
         self.llm = create_azure_llm()
         super().__init__(**kwargs)
 
@@ -51,7 +33,6 @@ class RequestHandleOperator(MapOperator[Dict, str]):
             if "challenge" in input_body:
                 return {"challenge": input_body["challenge"]}
 
-            apps = input_body["apps"]
             header = input_body["header"]
             event = input_body["event"]
             sender_open_id = event["sender"]["sender_id"]["open_id"]
@@ -60,7 +41,7 @@ class RequestHandleOperator(MapOperator[Dict, str]):
             chat_type = message["chat_type"]
             content = json.loads(message["content"])
             content_text = content["text"]
-
+            apps = self.gpts_app_service.get_gpts_app_list("singe_agent")
             if message_type == "text" and sender_open_id != "" and content_text != "" and chat_type == "p2p":
                 asyncio.create_task(
                     request_handle(apps, self.llm, self.chat_history_message_dao, sender_open_id, content_text)
@@ -78,9 +59,8 @@ with DAG("dbgpt_awel_lark_event_endpoint") as dag:
         request_body=Dict
     )
 
-    init_apps = InitAppsOperator()
     map_node = RequestHandleOperator()
-    trigger >> init_apps >> map_node
+    trigger >> map_node
 
 
 async def request_handle(apps, llm, chat_history_dao: ChatHistoryMessageDao, sender_open_id, human_message):
