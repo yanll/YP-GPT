@@ -177,7 +177,7 @@ async def call_extract_app(messages: List[HumanMessage]):
                 try:
 
                     content = data.choices[0].delta.content
-                    print("智能体响应结果：", data)
+                    print("智能体响应结果：", content)
                     agent_messages_json = content.split("```agent-messages\\n")[1].split("\\n```")[0]
                     agent_messages_json = agent_messages_json.replace("\\\"", "\"")
                     agent_messages = json.loads(agent_messages_json)
