@@ -44,10 +44,11 @@ class RequestHandleOperator(MapOperator[Dict, str]):
             apps = self.gpts_app_service.get_gpts_app_list("singe_agent")
             print("应用列表：", apps)
             if message_type == "text" and sender_open_id != "" and content_text != "" and chat_type == "p2p":
-                # asyncio.run(
+                # asyncio.create_task(request_handle(apps, self.llm, self.chat_history_message_dao, sender_open_id, content_text))
                 loop = asyncio.get_event_loop()
-                loop.run_until_completerequest_handle(apps, self.llm, self.chat_history_message_dao, sender_open_id, content_text)
-                # )
+                loop.run_until_complete(
+                    request_handle(apps, self.llm, self.chat_history_message_dao, sender_open_id, content_text)
+                )
             return {"message": "OK"}
         except Exception as e:
             logging.exception("飞书事件处理异常！", e)
@@ -108,7 +109,6 @@ async def call_extract_app(messages: List[HumanMessage]):
             mess.append(m.content + "\n")
         print("开始识别路由：", messages)
         print("\n\n\n\\n")
-
 
         res: ChatCompletionResponse = await client.chat(
             model="proxyllm",
