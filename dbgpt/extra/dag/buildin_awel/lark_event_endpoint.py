@@ -44,7 +44,7 @@ class RequestHandleOperator(MapOperator[Dict, str]):
             apps = self.gpts_app_service.get_gpts_app_list("singe_agent")
             print("应用列表：", apps)
             if message_type == "text" and sender_open_id != "" and content_text != "" and chat_type == "p2p":
-                asyncio.create_task(
+                asyncio.run(
                     request_handle(apps, self.llm, self.chat_history_message_dao, sender_open_id, content_text)
                 )
             return {"message": "OK"}
