@@ -24,10 +24,10 @@ class InitAppsOperator(MapOperator[Dict, str]):
         self.gpts_app_service = GptsAppService()
         super().__init__(**kwargs)
 
-    async def map(self, input_body: Dict):
+    def map(self, input_body: Dict):
         try:
             print(f"开始加载应用列表: ", input_body)
-            apps = await self.gpts_app_service.get_gpts_app_list("singe_agent")
+            apps = self.gpts_app_service.get_gpts_app_list("singe_agent")
             self.apps = apps
             input_body['apps'] = self.apps
             return input_body
