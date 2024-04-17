@@ -94,10 +94,10 @@ async def request_handle(apps, llm, chat_history_dao: ChatHistoryMessageDao, sen
                 messages.append(HumanMessage(name=sender_open_id, content="ai:" + dict["data"]["content"]))
     messages.append(HumanMessage(name=sender_open_id, content="human:" + human_message))
     print("开始执行路由：", messages)
-    await runnable.invoke(messages)
+    await runnable.ainvoke(messages)
 
 
-def call_extract_app(messages: List[HumanMessage]):
+async def call_extract_app(messages: List[HumanMessage]):
     try:
         DBGPT_API_KEY = ""
         client = Client(api_key=DBGPT_API_KEY)
@@ -106,6 +106,8 @@ def call_extract_app(messages: List[HumanMessage]):
         for m in messages:
             mess.append(m.content + "\n")
         print("开始识别路由：", messages)
+        print("\n\n\n\\n")
+
 
         res: ChatCompletionResponse = await client.chat(
             model="proxyllm",
