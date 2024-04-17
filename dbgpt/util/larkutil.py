@@ -110,7 +110,6 @@ def send_message(receive_id: str, content: Dict, receive_id_type: str = "email",
     }
     resp = requests.request('POST', url=url, headers=build_headers(), params=params, data=json.dumps(data))
     print('发送消息返回结果：', resp.json())
-    print('消息标识：', resp.json()['data']['message_id'])
     return resp.json()
 
 
