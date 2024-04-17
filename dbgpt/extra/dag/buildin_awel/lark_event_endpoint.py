@@ -148,14 +148,17 @@ async def call_extract_app(messages: List[HumanMessage]):
             app_code = dic["app_code"]
             app_descpibe = dic["app_descpibe"]
             cli = RedisClient()
-            app_code = cli.set(code_key, app_code, 5 * 60)
-            app_descpibe = cli.set(descpibe_key, app_descpibe, 5 * 60)
+            cli.set(code_key, app_code, 5 * 60)
+            cli.set(descpibe_key, app_descpibe, 5 * 60)
+            print("设置应用缓存：", code_key, app_code, app_descpibe)
         except Exception as e:
             print("解析应用失败:", e)
+            raise e
     else:
         cli = RedisClient()
         app_code = cli.get(code_key)
         app_descpibe = cli.get(descpibe_key)
+        print("查询应用缓存：", code_key, app_code, app_descpibe)
     print("当前应用：", app_descpibe)
     if app_code != None and app_code != "":
         dic = json.loads(strutured_message.replace("'", "\""))
@@ -187,22 +190,6 @@ async def call_extract_app(messages: List[HumanMessage]):
             receive_id_type="open_id"
         )
 
-    # if (ai_message.startswith("{'app_code'")):
-    #     larkutil.send_message(
-    #         receive_id=conv_uid,
-    #         content={
-    #             "type": "template",
-    #             "data": {
-    #                 "template_id": "AAqkwmwOTohjy", "template_version_name": "1.0.10",
-    #                 "template_variable": {
-    #                     "ai_message": "请提供完整的信息！"
-    #                 }
-    #             }
-    #         },
-    #         receive_id_type="open_id",
-    #         msg_type="interactive"
-    #     )
-
     else:
         larkutil.send_message(
             receive_id=conv_uid,
@@ -210,3 +197,19 @@ async def call_extract_app(messages: List[HumanMessage]):
             receive_id_type="open_id"
         )
     return res
+
+# if (ai_message.startswith("{'app_code'")):
+#     larkutil.send_message(
+#         receive_id=conv_uid,
+#         content={
+#             "type": "template",
+#             "data": {
+#                 "template_id": "AAqkwmwOTohjy", "template_version_name": "1.0.10",
+#                 "template_variable": {
+#                     "ai_message": "请提供完整的信息！"
+#                 }
+#             }
+#         },
+#         receive_id_type="open_id",
+#         msg_type="interactive"
+#     )
