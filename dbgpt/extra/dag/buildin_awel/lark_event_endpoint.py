@@ -94,10 +94,10 @@ async def request_handle(apps, llm, chat_history_dao: ChatHistoryMessageDao, sen
                 messages.append(HumanMessage(name=sender_open_id, content="ai:" + dict["data"]["content"]))
     messages.append(HumanMessage(name=sender_open_id, content="human:" + human_message))
     print("开始执行路由：", messages)
-    await runnable.ainvoke(messages)
+    await runnable.invoke(messages)
 
 
-async def call_extract_app(messages: List[HumanMessage]):
+def call_extract_app(messages: List[HumanMessage]):
     try:
         DBGPT_API_KEY = ""
         client = Client(api_key=DBGPT_API_KEY)
