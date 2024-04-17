@@ -137,16 +137,18 @@ async def call_extract_app(messages: List[HumanMessage]):
         strutured_message = match.group()
     print("路由解析结果：", strutured_message)
 
+    code_key = "/router_app_code/" + conv_uid
+    name_key = "/router_app_name/" + conv_uid
     if strutured_message:
         dic = json.loads(strutured_message.replace("'", "\""))
         app_code = dic["app_code"]
         cli = RedisClient()
-        app_code = cli.set("/router_app_code", app_code, 30 * 60)
-        app_name = cli.set("/router_app_name", app_name, 30 * 60)
+        app_code = cli.set(code_key, app_code, 30 * 60)
+        app_name = cli.set(name_key, app_name, 30 * 60)
     else:
         cli = RedisClient()
-        app_code = cli.get("/router_app_code")
-        app_name = cli.get("/router_app_name")
+        app_code = cli.get(code_key)
+        app_name = cli.get(name_key)
     print("当前应用：", app_name)
     if app_code != None and app_code != "":
         dic = json.loads(strutured_message.replace("'", "\""))
