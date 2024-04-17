@@ -92,7 +92,7 @@ async def request_handle(apps, llm, chat_history_dao: ChatHistoryMessageDao, sen
     graph.set_entry_point("call_extract_app")
     runnable = graph.compile()
     messages = []
-    his: List[ChatHistoryMessageEntity] = chat_history_dao.get_his_messages_by_uid(sender_open_id)
+    # his: List[ChatHistoryMessageEntity] = chat_history_dao.get_his_messages_by_uid(sender_open_id)
     his: List[ChatHistoryMessageEntity] = []
     role_desc = (
         f"你是一个智能助手，现在有以下应用：\n"
@@ -103,7 +103,7 @@ async def request_handle(apps, llm, chat_history_dao: ChatHistoryMessageDao, sen
     "以下是我和AI的对话内容：\n"
     "\n\n"
 
-    messages.append(HumanMessage(name=sender_open_id, content="human:" + role_desc))
+    messages.append(HumanMessage(name=sender_open_id, content="system:" + role_desc))
     if his:
         for m in his:
             dict = json.loads(m.message_detail)
