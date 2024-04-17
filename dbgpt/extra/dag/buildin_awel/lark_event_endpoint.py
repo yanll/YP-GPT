@@ -116,88 +116,93 @@ async def request_handle(apps, llm, chat_history_dao: ChatHistoryMessageDao, sen
 
 
 async def call_extract_app(messages: List[HumanMessage]):
-    DBGPT_API_KEY = ""
-    client = Client(api_key=DBGPT_API_KEY)
-    mess = []
-    conv_uid = messages[0].name
-    for m in messages:
-        mess.append(m.content + "\n")
-    res: ChatCompletionResponse = await client.chat(
-        model="proxyllm",
-        messages="".join(mess),
-        conv_uid=conv_uid
-    )
-    ai_message = res.choices[0].message.content
-    app_code = None
-    app_descpibe = None
-    print("路由识别结果：", ai_message)
-    match = re.search(r"\{.*?\}", ai_message)
-    response_text = ""
-    strutured_message = None
-    if match:
-        strutured_message = match.group()
-    print("路由解析结果：", strutured_message)
+    try:
+        DBGPT_API_KEY = ""
+        client = Client(api_key=DBGPT_API_KEY)
+        mess = []
+        conv_uid = messages[0].name
+        for m in messages:
+            mess.append(m.content + "\n")
+        res: ChatCompletionResponse = await client.chat(
+            model="proxyllm",
+            messages="".join(mess),
+            conv_uid=conv_uid
+        )
+        ai_message = res.choices[0].message.content
+        app_code = None
+        app_descpibe = None
+        print("路由识别结果：", ai_message)
+        match = re.search(r"\{.*?\}", ai_message)
+        response_text = ""
+        strutured_message = None
+        if match:
+            strutured_message = match.group()
+        print("路由解析结果：", strutured_message)
 
-    code_key = "/router_app_code/" + conv_uid
-    descpibe_key = "/router_app_descpibe/" + conv_uid
-    if strutured_message and strutured_message != "None":
-        print("开始加载strutured_message：", strutured_message)
-        try:
-            strutured_message = strutured_message.replace("'", "\"")
-            dic = json.loads(strutured_message)
-            app_code = dic["app_code"]
-            app_descpibe = dic["app_descpibe"]
-            cli = RedisClient()
-            cli.set(code_key, app_code, 5 * 60)
-            cli.set(descpibe_key, app_descpibe, 5 * 60)
-            print("设置应用缓存：", code_key, app_code, app_descpibe)
-        except Exception as e:
-            print("解析应用失败:", e)
-            raise e
-    else:
-        cli = RedisClient()
-        app_code = cli.get(code_key)
-        app_descpibe = cli.get(descpibe_key)
-        print("查询应用缓存：", code_key, app_code, app_descpibe)
-    print("当前应用：", app_descpibe)
-    if app_code != None and app_code != "":
-        dic = json.loads(strutured_message.replace("'", "\""))
-        app_code = dic["app_code"]
-        to_agent_message = messages[-1].content.replace("human:", "")
-        print("to_agent_message", to_agent_message)
-        async for data in client.chat_stream(
-                messages=to_agent_message,
-                model="proxyllm",
-                chat_mode="chat_app",
-                chat_param=app_code,
-                conv_uid=conv_uid
-
-        ):
+        code_key = "/router_app_code/" + conv_uid
+        descpibe_key = "/router_app_descpibe/" + conv_uid
+        if strutured_message and strutured_message != "None":
+            print("开始加载strutured_message：", strutured_message)
             try:
-                content = data.choices[0].delta.content
-                agent_messages_json = content.split("```agent-messages\\n")[1].split("\\n```")[0]
-                agent_messages_json = agent_messages_json.replace("\\\"", "\"")
-                agent_messages = json.loads(agent_messages_json)
-                markdown_text = agent_messages[0]['markdown']
-                response_text = markdown_text
-                print("循环响应结果：", response_text)
+                strutured_message = strutured_message.replace("'", "\"")
+                dic = json.loads(strutured_message)
+                app_code = dic["app_code"]
+                app_descpibe = dic["app_descpibe"]
+                cli = RedisClient()
+                cli.set(code_key, app_code, 5 * 60)
+                cli.set(descpibe_key, app_descpibe, 5 * 60)
+                print("设置应用缓存：", code_key, app_code, app_descpibe)
             except Exception as e:
-                print("Error extracting markdown text:", str(e))
-                continue
+                print("解析应用失败:", e)
+                raise e
+        else:
+            cli = RedisClient()
+            app_code = cli.get(code_key)
+            app_descpibe = cli.get(descpibe_key)
+            print("查询应用缓存：", code_key, app_code, app_descpibe)
+        print("当前应用：", app_descpibe)
+        if app_code != None and app_code != "":
+            dic = json.loads(strutured_message.replace("'", "\""))
+            app_code = dic["app_code"]
+            to_agent_message = messages[-1].content.replace("human:", "")
+            print("to_agent_message", to_agent_message)
+            async for data in client.chat_stream(
+                    messages=to_agent_message,
+                    model="proxyllm",
+                    chat_mode="chat_app",
+                    chat_param=app_code,
+                    conv_uid=conv_uid
 
-        larkutil.send_message(
-            receive_id=conv_uid,
-            content={"text": response_text},
-            receive_id_type="open_id"
-        )
+            ):
+                try:
+                    print("智能体响应结果：", data)
+                    content = data.choices[0].delta.content
+                    agent_messages_json = content.split("```agent-messages\\n")[1].split("\\n```")[0]
+                    agent_messages_json = agent_messages_json.replace("\\\"", "\"")
+                    agent_messages = json.loads(agent_messages_json)
+                    markdown_text = agent_messages[0]['markdown']
+                    response_text = markdown_text
+                    print("循环响应结果：", response_text)
+                except Exception as e:
+                    logging.exception("解析智能体视图异常：", e)
+                    continue
+            print("发送智能体回复的消息：", response_text)
+            larkutil.send_message(
+                receive_id=conv_uid,
+                content={"text": response_text},
+                receive_id_type="open_id"
+            )
 
-    else:
-        larkutil.send_message(
-            receive_id=conv_uid,
-            content={"text": ai_message},
-            receive_id_type="open_id"
-        )
-    return res
+        else:
+            larkutil.send_message(
+                receive_id=conv_uid,
+                content={"text": ai_message},
+                receive_id_type="open_id"
+            )
+    except Exception as e:
+        logging.exception("服务器异常：", e)
+        raise e
+    return "OK"
 
 # if (ai_message.startswith("{'app_code'")):
 #     larkutil.send_message(
