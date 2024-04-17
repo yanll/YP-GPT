@@ -163,9 +163,9 @@ async def call_extract_app(messages: List[HumanMessage]):
     if app_code != None and app_code != "":
         dic = json.loads(strutured_message.replace("'", "\""))
         app_code = dic["app_code"]
-
+        to_agent_message = messages[-1].content.replace("human:", "")
         async for data in client.chat_stream(
-                messages=messages[-1].content.replace("human:", ""),
+                messages=to_agent_message,
                 model="proxyllm",
                 chat_mode="chat_app",
                 chat_param=app_code,
