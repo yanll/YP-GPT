@@ -27,7 +27,7 @@ class InitAppsOperator(MapOperator[Dict, str]):
     async def map(self, input_body: Dict):
         try:
             print(f"开始加载应用列表: ", input_body)
-            apps = self.gpts_app_service.get_gpts_app_list("singe_agent")
+            apps = await self.gpts_app_service.get_gpts_app_list("singe_agent")
             self.apps = apps
             input_body['apps'] = self.apps
             return input_body
