@@ -9,6 +9,7 @@ from langgraph.graph import END, MessageGraph
 from dbgpt.client import Client
 from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
 from dbgpt.core.schema.api import ChatCompletionResponse
+from dbgpt.extra.cache.redis_cli import RedisClient
 from dbgpt.extra.dag.buildin_awel.app.service import GptsAppService
 from dbgpt.storage.chat_history import ChatHistoryMessageEntity
 from dbgpt.storage.chat_history.chat_history_db import ChatHistoryMessageDao
@@ -126,6 +127,8 @@ async def call_extract_app(messages: List[HumanMessage]):
         conv_uid=conv_uid
     )
     ai_message = res.choices[0].message.content
+    app_code = None
+    app_name = None
     print("路由识别结果：", ai_message)
     match = re.search(r"\{.*?\}", ai_message)
     response_text = ""
@@ -133,7 +136,19 @@ async def call_extract_app(messages: List[HumanMessage]):
     if match:
         strutured_message = match.group()
     print("路由解析结果：", strutured_message)
+
     if strutured_message:
+        dic = json.loads(strutured_message.replace("'", "\""))
+        app_code = dic["app_code"]
+        cli = RedisClient()
+        app_code = cli.set("/router_app_code", app_code, 30 * 60)
+        app_name = cli.set("/router_app_name", app_name, 30 * 60)
+    else:
+        cli = RedisClient()
+        app_code = cli.get("/router_app_code")
+        app_name = cli.get("/router_app_name")
+    print("当前应用：", app_name)
+    if app_code != None and app_code != "":
         dic = json.loads(strutured_message.replace("'", "\""))
         app_code = dic["app_code"]
 
