@@ -178,11 +178,12 @@ async def call_extract_app(messages: List[HumanMessage]):
 
                     content = data.choices[0].delta.content
                     print("智能体响应结果：", content)
-                    agent_messages_json = content.split("```agent-messages\\n")[1].split("\\n```")[0]
-                    agent_messages_json = agent_messages_json.replace("\\\"", "\"")
-                    agent_messages = json.loads(agent_messages_json)
-                    markdown_text = agent_messages[0]['markdown']
-                    response_text = markdown_text
+                    # agent_messages_json = content.split("```agent-messages\\n")[1].split("\\n```")[0]
+                    # agent_messages_json = agent_messages_json.replace("\\\"", "\"")
+                    # agent_messages = json.loads(agent_messages_json)
+                    # markdown_text = agent_messages[0]['markdown']
+                    # response_text = markdown_text
+                    response_text = content
                     print("循环响应结果：", response_text)
                 except Exception as e:
                     logging.exception("解析智能体视图异常：", e)
