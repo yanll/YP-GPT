@@ -139,7 +139,7 @@ async def call_extract_app(messages: List[HumanMessage]):
 
     code_key = "/router_app_code/" + conv_uid
     name_key = "/router_app_name/" + conv_uid
-    if strutured_message:
+    if strutured_message and strutured_message != "None":
         dic = json.loads(strutured_message.replace("'", "\""))
         app_code = dic["app_code"]
         cli = RedisClient()
