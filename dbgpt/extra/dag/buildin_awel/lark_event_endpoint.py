@@ -91,8 +91,8 @@ async def call_extract_app(llm, apps, conv_uid, human_message: str, his: List):
         prompt = ChatPromptTemplate.from_messages([
             ("system", "你是一个内容专家，现在有以下应用：\n"
                        "\t应用列表：{apps}\n"
-                       "\t请根据我输入的内容识别我的意图，根据意图匹配需要使用哪个应用。\n"
-                       "\t如果意图匹配成功：必须按照'{resp_template}'格式回复给我并且不要回复多余内容。\n"
+                       "\t请根据我输入的内容识别我的意图，不要胡乱猜测我的意图，根据意图告诉我需要使用哪个应用。\n"
+                       "\t如果意图匹配成功：按照'{resp_template}'格式回复给我并且不要回复多余内容。\n"
                        "\t如果识别不到我的意图：以普通AI助手的身份回答我的问题。\n"
              ),
             ("human", "{human_input}")
