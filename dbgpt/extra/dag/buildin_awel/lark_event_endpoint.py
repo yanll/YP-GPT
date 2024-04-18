@@ -70,23 +70,7 @@ async def request_handle(apps, llm, chat_history_dao: ChatHistoryMessageDao, sen
     print("lark_event_endpoint async handle：", human_message)
 
     his: List[ChatHistoryMessageEntity] = chat_history_dao.get_his_messages_by_uid(sender_open_id)
-    # role_desc = (
-    #     "你是一个内容专家，现在有以下应用：\n"
-    #     f"{json.dumps(apps, ensure_ascii=False)}\n"
-    #     "请根据我输入的内容识别我的意图，根据意图匹配需要使用哪个应用，如果意图匹配成功：按照{'app_code': 'the value of app_code', 'app_descpibe': 'the value of app_descpibe'}格式回复给我并且不要回复多余内容。\n"
-    #     "如果识别不到我的意图：以普通AI助手的身份回答我的问题。"
-    # )
-    # "以下是我和AI的对话内容：\n"
-    # "\n\n"
 
-    # messages.append(HumanMessage(content="system:" + role_desc))
-    # if his and len(his) > 0:
-    #     for m in his:
-    #         dict = json.loads(m.message_detail)
-    #         if dict["type"] == "human":
-    #             messages.append(HumanMessage(content="human:" + dict["data"]["content"]))
-    #         if dict["type"] == "ai":
-    #             messages.append(HumanMessage(content="ai:" + dict["data"]["content"]))
     await call_extract_app(llm, apps, sender_open_id, human_message, his)
 
 
@@ -119,11 +103,10 @@ async def call_extract_app(llm, apps, conv_uid, human_message: str, his: List):
         apps_str = json.dumps(apps, ensure_ascii=False)
         ai_resp = chain.invoke({"apps": apps_str, "resp_template": resp_template, "human_input": human_message})
         ai_message = ai_resp['text']
-        app_code = None
-        app_descpibe = None
+        app_code = ""
+        app_descpibe = ""
         print("路由识别结果：", ai_message)
         match = re.search(r"\{.*?\}", ai_message)
-        response_text = ""
         strutured_message = None
         if match:
             strutured_message = match.group()
