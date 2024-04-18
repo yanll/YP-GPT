@@ -3,7 +3,11 @@ import json
 import logging
 from typing import Dict, List
 import re
+
+from langchain.chains.llm import LLMChain
 from langchain_core.messages import HumanMessage
+from langchain_core.prompts import PromptTemplate, ChatPromptTemplate, SystemMessagePromptTemplate, \
+    HumanMessagePromptTemplate, MessagesPlaceholder
 from langgraph.graph import END, MessageGraph
 
 from dbgpt.client import Client
@@ -69,54 +73,58 @@ with DAG("dbgpt_awel_lark_event_endpoint") as dag:
 async def request_handle(apps, llm, chat_history_dao: ChatHistoryMessageDao, sender_open_id, human_message):
     print("lark_event_endpoint async handle：", human_message)
 
-    # graph = MessageGraph()
-    # graph.add_node("call_extract_app", call_extract_app)
-    # graph.add_edge("call_extract_app", END)
-    # graph.set_entry_point("call_extract_app")
-    # runnable = graph.compile()
-    messages = []
-    his_: List[ChatHistoryMessageEntity] = chat_history_dao.get_his_messages_by_uid(sender_open_id)
-    his: List[ChatHistoryMessageEntity] = []
-    role_desc = (
-        "你是一个内容专家，现在有以下应用：\n"
-        f"{json.dumps(apps, ensure_ascii=False)}\n"
-        "请根据我输入的内容识别我的意图，根据意图匹配需要使用哪个应用，如果意图匹配成功：按照{'app_code': 'the value of app_code', 'app_descpibe': 'the value of app_descpibe'}格式回复给我并且不要回复多余内容。\n"
-        "如果识别不到我的意图：以普通AI助手的身份回答我的问题。"
-    )
-    "以下是我和AI的对话内容：\n"
-    "\n\n"
+    his: List[ChatHistoryMessageEntity] = chat_history_dao.get_his_messages_by_uid(sender_open_id)
+    # role_desc = (
+    #     "你是一个内容专家，现在有以下应用：\n"
+    #     f"{json.dumps(apps, ensure_ascii=False)}\n"
+    #     "请根据我输入的内容识别我的意图，根据意图匹配需要使用哪个应用，如果意图匹配成功：按照{'app_code': 'the value of app_code', 'app_descpibe': 'the value of app_descpibe'}格式回复给我并且不要回复多余内容。\n"
+    #     "如果识别不到我的意图：以普通AI助手的身份回答我的问题。"
+    # )
+    # "以下是我和AI的对话内容：\n"
+    # "\n\n"
 
-    messages.append(HumanMessage(name=sender_open_id, content="system:" + role_desc))
-    if his and len(his) > 0:
-        for m in his:
-            dict = json.loads(m.message_detail)
-            if dict["type"] == "human":
-                messages.append(HumanMessage(name=sender_open_id, content="human:" + dict["data"]["content"]))
-            if dict["type"] == "ai":
-                messages.append(HumanMessage(name=sender_open_id, content="ai:" + dict["data"]["content"]))
-    messages.append(HumanMessage(name=sender_open_id, content="human:" + human_message))
-    print("开始执行路由：", messages)
-    # await runnable.ainvoke(messages)
-    await call_extract_app(messages)
+    # messages.append(HumanMessage(content="system:" + role_desc))
+    # if his and len(his) > 0:
+    #     for m in his:
+    #         dict = json.loads(m.message_detail)
+    #         if dict["type"] == "human":
+    #             messages.append(HumanMessage(content="human:" + dict["data"]["content"]))
+    #         if dict["type"] == "ai":
+    #             messages.append(HumanMessage(content="ai:" + dict["data"]["content"]))
+    await call_extract_app(llm, apps, sender_open_id, human_message, his)
 
 
-async def call_extract_app(messages: List[HumanMessage]):
+async def call_extract_app(llm, apps, conv_uid, human_message: str, his: List):
     try:
         DBGPT_API_KEY = ""
         client = Client(api_key=DBGPT_API_KEY)
-        mess = []
-        conv_uid = messages[0].name
-        for m in messages:
-            mess.append(m.content + "\n")
-        print("开始识别路由：", messages)
+
+        print("开始识别路由：", human_message)
         print("\n\n\n\\n")
 
-        res: ChatCompletionResponse = await client.chat(
-            model="proxyllm",
-            messages="".join(mess),
-            conv_uid=conv_uid
-        )
-        ai_message = res.choices[0].message.content
+        # 系统对话保存历史
+        # res: ChatCompletionResponse = await client.chat(
+        #     model="proxyllm",
+        #     messages=human_message,
+        #     conv_uid=conv_uid
+        # )
+        # ai_message = res.choices[0].message.content
+
+        prompt = ChatPromptTemplate.from_messages([
+            ("system", "你是一个内容专家，现在有以下应用：\n"
+                       "\t应用列表：{apps}\n"
+                       "\t请根据我输入的内容识别我的意图，根据意图匹配需要使用哪个应用。\n"
+                       "\t如果意图匹配成功：必须按照'{resp_template}'格式回复给我并且不要回复多余内容。\n"
+                       "\t如果识别不到我的意图：以普通AI助手的身份回答我的问题。\n"
+             ),
+            ("human", "{human_input}")
+        ])
+        resp_template = (json.dumps({"app_code": "the value of app_code", "app_descpibe": "the value of app_name"})
+                         .replace("'", "\""))
+        chain = LLMChain(llm=llm, prompt=prompt)
+        apps_str = json.dumps(apps, ensure_ascii=False)
+        ai_resp = chain.invoke({"apps": apps_str, "resp_template": resp_template, "human_input": human_message})
+        ai_message = ai_resp['text']
         app_code = None
         app_descpibe = None
         print("路由识别结果：", ai_message)
@@ -152,7 +160,7 @@ async def call_extract_app(messages: List[HumanMessage]):
         if app_code != None and app_code != "":
             dic = json.loads(strutured_message.replace("'", "\""))
             app_code = dic["app_code"]
-            to_agent_message = messages[-1].content.replace("human:", "")
+            to_agent_message = human_message
             print("to_agent_message", to_agent_message)
             async for data in client.chat_stream(
                     messages=to_agent_message,
@@ -166,11 +174,6 @@ async def call_extract_app(messages: List[HumanMessage]):
 
                     content = data.choices[0].delta.content
                     print("智能体响应结果：", content)
-                    # agent_messages_json = content.split("```agent-messages\\n")[1].split("\\n```")[0]
-                    # agent_messages_json = agent_messages_json.replace("\\\"", "\"")
-                    # agent_messages = json.loads(agent_messages_json)
-                    # markdown_text = agent_messages[0]['markdown']
-                    # response_text = markdown_text
                     response_text = content
                     print("循环响应结果：", response_text)
                 except Exception as e:
