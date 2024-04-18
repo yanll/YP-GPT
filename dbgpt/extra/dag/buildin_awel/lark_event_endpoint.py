@@ -97,7 +97,7 @@ async def request_handle(apps, llm, chat_history_dao: ChatHistoryMessageDao, sen
     messages.append(HumanMessage(name=sender_open_id, content="human:" + human_message))
     print("开始执行路由：", messages)
     # await runnable.ainvoke(messages)
-    call_extract_app(messages)
+    await call_extract_app(messages)
 
 
 async def call_extract_app(messages: List[HumanMessage]):
