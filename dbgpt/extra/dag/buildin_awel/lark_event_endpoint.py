@@ -1,7 +1,6 @@
 import asyncio
 import json
 import logging
-from types import NoneType
 from typing import Dict, List
 import re
 from langchain_core.messages import HumanMessage
@@ -70,11 +69,11 @@ with DAG("dbgpt_awel_lark_event_endpoint") as dag:
 async def request_handle(apps, llm, chat_history_dao: ChatHistoryMessageDao, sender_open_id, human_message):
     print("lark_event_endpoint async handle：", human_message)
 
-    graph = MessageGraph()
-    graph.add_node("call_extract_app", call_extract_app)
-    graph.add_edge("call_extract_app", END)
-    graph.set_entry_point("call_extract_app")
-    runnable = graph.compile()
+    # graph = MessageGraph()
+    # graph.add_node("call_extract_app", call_extract_app)
+    # graph.add_edge("call_extract_app", END)
+    # graph.set_entry_point("call_extract_app")
+    # runnable = graph.compile()
     messages = []
     his_: List[ChatHistoryMessageEntity] = chat_history_dao.get_his_messages_by_uid(sender_open_id)
     his: List[ChatHistoryMessageEntity] = []
@@ -97,7 +96,8 @@ async def request_handle(apps, llm, chat_history_dao: ChatHistoryMessageDao, sen
                 messages.append(HumanMessage(name=sender_open_id, content="ai:" + dict["data"]["content"]))
     messages.append(HumanMessage(name=sender_open_id, content="human:" + human_message))
     print("开始执行路由：", messages)
-    await runnable.ainvoke(messages)
+    # await runnable.ainvoke(messages)
+    call_extract_app(messages)
 
 
 async def call_extract_app(messages: List[HumanMessage]):
@@ -129,7 +129,7 @@ async def call_extract_app(messages: List[HumanMessage]):
 
         code_key = "/router_app_code/" + conv_uid
         descpibe_key = "/router_app_descpibe/" + conv_uid
-        if strutured_message and strutured_message != "None" and strutured_message != NoneType and strutured_message != "NoneType":
+        if strutured_message and strutured_message != "None" and strutured_message is not None and strutured_message != "NoneType":
             print("开始加载strutured_message：", strutured_message)
             try:
                 strutured_message = strutured_message.replace("'", "\"")
