@@ -135,7 +135,7 @@ async def call_extract_app(llm, apps, conv_uid, human_message: str, his: List):
             app_describe = cli.get(descpibe_key)
             print("查询应用缓存：", code_key, app_code, app_describe)
         print("当前应用：", app_code, app_describe, strutured_message)
-        if app_code != None and app_code != "":
+        if app_code and strutured_message and app_code != "":
             dic = json.loads(strutured_message.replace("'", "\""))
             app_code = dic["app_code"]
             to_agent_message = human_message
