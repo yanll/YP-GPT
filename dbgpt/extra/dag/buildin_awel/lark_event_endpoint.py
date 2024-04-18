@@ -1,18 +1,14 @@
 import asyncio
 import json
 import logging
-from typing import Dict, List
 import re
+from typing import Dict, List
 
 from langchain.chains.llm import LLMChain
-from langchain_core.messages import HumanMessage
-from langchain_core.prompts import PromptTemplate, ChatPromptTemplate, SystemMessagePromptTemplate, \
-    HumanMessagePromptTemplate, MessagesPlaceholder
-from langgraph.graph import END, MessageGraph
+from langchain_core.prompts import ChatPromptTemplate
 
 from dbgpt.client import Client
 from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
-from dbgpt.core.schema.api import ChatCompletionResponse
 from dbgpt.extra.cache.redis_cli import RedisClient
 from dbgpt.extra.dag.buildin_awel.app.service import GptsAppService
 from dbgpt.storage.chat_history import ChatHistoryMessageEntity
@@ -49,7 +45,8 @@ class RequestHandleOperator(MapOperator[Dict, str]):
             print("应用列表：", apps)
             if message_type == "text" and sender_open_id != "" and content_text != "" and chat_type == "p2p":
                 asyncio.create_task(
-                    request_handle(apps, self.llm, self.chat_history_message_dao, sender_open_id, content_text))
+                    request_handle(apps, self.llm, self.chat_history_message_dao, sender_open_id, content_text)
+                )
             return {"message": "OK"}
         except Exception as e:
             logging.exception("飞书事件处理异常！", e)
