@@ -96,8 +96,6 @@ async def request_handle(apps, llm, chat_history_dao: ChatHistoryMessageDao, sen
 
 async def call_extract_app(llm, apps, conv_uid, human_message: str, his: List):
     try:
-        DBGPT_API_KEY = ""
-        client = Client(api_key=DBGPT_API_KEY)
 
         print("开始识别路由：", human_message)
         print("\n\n\n\\n")
@@ -137,7 +135,7 @@ async def call_extract_app(llm, apps, conv_uid, human_message: str, his: List):
 
         code_key = "/router_app_code/" + conv_uid
         descpibe_key = "/router_app_descpibe/" + conv_uid
-        if strutured_message and strutured_message != "None" and strutured_message is not None and strutured_message != "NoneType":
+        if strutured_message and strutured_message != "None":
             print("开始加载strutured_message：", strutured_message)
             try:
                 strutured_message = strutured_message.replace("'", "\"")
@@ -156,29 +154,13 @@ async def call_extract_app(llm, apps, conv_uid, human_message: str, his: List):
             app_code = cli.get(code_key)
             app_descpibe = cli.get(descpibe_key)
             print("查询应用缓存：", code_key, app_code, app_descpibe)
-        print("当前应用：", app_descpibe)
+        print("当前应用：", app_code, app_descpibe)
         if app_code != None and app_code != "":
             dic = json.loads(strutured_message.replace("'", "\""))
             app_code = dic["app_code"]
             to_agent_message = human_message
             print("to_agent_message", to_agent_message)
-            async for data in client.chat_stream(
-                    messages=to_agent_message,
-                    model="proxyllm",
-                    chat_mode="chat_app",
-                    chat_param=app_code,
-                    conv_uid=conv_uid
-
-            ):
-                try:
-
-                    content = data.choices[0].delta.content
-                    print("智能体响应结果：", content)
-                    response_text = content
-                    print("循环响应结果：", response_text)
-                except Exception as e:
-                    logging.exception("解析智能体视图异常：", e)
-                    continue
+            response_text = await call_agent(conv_uid,app_code,to_agent_message)
             print("发送智能体回复的消息：", response_text)
             larkutil.send_message(
                 receive_id=conv_uid,
@@ -196,6 +178,30 @@ async def call_extract_app(llm, apps, conv_uid, human_message: str, his: List):
         logging.exception("服务器异常：", e)
         raise e
     return "OK"
+
+
+async def call_agent(conv_uid, app_code, msg):
+    response_text = ""
+    DBGPT_API_KEY = ""
+    client = Client(api_key=DBGPT_API_KEY)
+    async for data in client.chat_stream(
+            messages=msg,
+            model="proxyllm",
+            chat_mode="chat_app",
+            chat_param=app_code,
+            conv_uid=conv_uid
+
+    ):
+        try:
+            content = data.choices[0].delta.content
+            print("智能体响应结果：", content)
+            response_text = content
+            print("循环响应结果：", response_text)
+        except Exception as e:
+            logging.exception("解析智能体视图异常：", e)
+            continue
+    print("发送智能体回复的消息：", response_text)
+    return response_text
 
 # if (ai_message.startswith("{'app_code'")):
 #     larkutil.send_message(
