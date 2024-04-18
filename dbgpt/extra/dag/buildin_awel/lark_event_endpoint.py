@@ -123,8 +123,8 @@ async def call_extract_app(llm, apps, conv_uid, human_message: str, his: List):
                 app_code = dic["app_code"]
                 app_describe = dic["app_describe"]
                 cli = RedisClient()
-                cli.set(code_key, app_code, 5 * 60)
-                cli.set(descpibe_key, app_describe, 5 * 60)
+                cli.set(code_key, app_code, 15 * 60)
+                cli.set(descpibe_key, app_describe, 15 * 60)
                 print("设置应用缓存：", code_key, app_code, app_describe)
             except Exception as e:
                 print("解析应用失败:", e)
@@ -135,9 +135,7 @@ async def call_extract_app(llm, apps, conv_uid, human_message: str, his: List):
             app_describe = cli.get(descpibe_key)
             print("查询应用缓存：", code_key, app_code, app_describe)
         print("当前应用：", app_code, app_describe, strutured_message)
-        if app_code and strutured_message and app_code != "":
-            dic = json.loads(strutured_message.replace("'", "\""))
-            app_code = dic["app_code"]
+        if app_code and app_code != "":
             to_agent_message = human_message
             print("to_agent_message", to_agent_message)
             response_text = await call_agent(conv_uid, app_code, to_agent_message)
