@@ -97,14 +97,14 @@ async def call_extract_app(llm, apps, conv_uid, human_message: str, his: List):
              ),
             ("human", "{human_input}")
         ])
-        resp_template = (json.dumps({"app_code": "the value of app_code", "app_descpibe": "the value of app_name"})
+        resp_template = (json.dumps({"app_code": "the value of app_code", "app_describe": "the value of app_name"})
                          .replace("'", "\""))
         chain = LLMChain(llm=llm, prompt=prompt)
         apps_str = json.dumps(apps, ensure_ascii=False)
         ai_resp = chain.invoke({"apps": apps_str, "resp_template": resp_template, "human_input": human_message})
         ai_message = ai_resp['text']
         app_code = ""
-        app_descpibe = ""
+        app_describe = ""
         print("路由识别结果：", ai_message)
         match = re.search(r"\{.*?\}", ai_message)
         strutured_message = None
@@ -113,27 +113,27 @@ async def call_extract_app(llm, apps, conv_uid, human_message: str, his: List):
         print("路由解析结果：", strutured_message)
 
         code_key = "/router_app_code/" + conv_uid
-        descpibe_key = "/router_app_descpibe/" + conv_uid
+        descpibe_key = "/router_app_describe/" + conv_uid
         if strutured_message and strutured_message != "None":
             print("开始加载strutured_message：", strutured_message)
             try:
                 strutured_message = strutured_message.replace("'", "\"")
                 dic = json.loads(strutured_message)
                 app_code = dic["app_code"]
-                app_descpibe = dic["app_descpibe"]
+                app_describe = dic["app_describe"]
                 cli = RedisClient()
                 cli.set(code_key, app_code, 5 * 60)
-                cli.set(descpibe_key, app_descpibe, 5 * 60)
-                print("设置应用缓存：", code_key, app_code, app_descpibe)
+                cli.set(descpibe_key, app_describe, 5 * 60)
+                print("设置应用缓存：", code_key, app_code, app_describe)
             except Exception as e:
                 print("解析应用失败:", e)
                 raise e
         else:
             cli = RedisClient()
             app_code = cli.get(code_key)
-            app_descpibe = cli.get(descpibe_key)
-            print("查询应用缓存：", code_key, app_code, app_descpibe)
-        print("当前应用：", app_code, app_descpibe)
+            app_describe = cli.get(descpibe_key)
+            print("查询应用缓存：", code_key, app_code, app_describe)
+        print("当前应用：", app_code, app_describe)
         if app_code != None and app_code != "":
             dic = json.loads(strutured_message.replace("'", "\""))
             app_code = dic["app_code"]
