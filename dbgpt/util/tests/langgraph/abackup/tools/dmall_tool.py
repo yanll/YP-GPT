@@ -7,7 +7,6 @@ from langchain.tools import BaseTool
 from langchain_core.callbacks import CallbackManagerForToolRun
 from pydantic import BaseModel
 
-from .biz_exception import BizException
 from .dmall_search import DmallSearchAPIWrapper
 
 
