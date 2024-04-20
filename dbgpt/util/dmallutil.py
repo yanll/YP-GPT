@@ -6,9 +6,15 @@ from dbgpt.util.sutil import dmsk
 
 
 class DmallClient:
-    def post(self, api_name: str, parameters: Dict, api_version: str = "V1.0"):
+    def post(
+            self,
+            api_name: str,
+            parameters: Dict,
+            api_version: str = "V1.0",
+            endpoint: str = "https://dmall.yeepay.com/dev-api"
+    ):
         print("\n商店调用: ", api_name, " ", parameters)
-        url = "https://dmall.yeepay.com/dev-api/dataapi/output/postapi/" + api_name
+        url = endpoint + "/dataapi/output/postapi/" + api_name
         headers = {'Content-Type': 'application/json; charset=utf-8'}
         data = {
             "appname": "app",
