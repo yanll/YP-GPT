@@ -4,6 +4,7 @@ from typing import Any, Dict, List
 
 from langchain.agents import create_openai_functions_agent
 from langchain_core.agents import AgentFinish
+from langchain_core.messages import FunctionMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, SystemMessagePromptTemplate, \
     HumanMessagePromptTemplate, PromptTemplate
 from langgraph.graph import END, StateGraph
@@ -28,12 +29,15 @@ prompt = ChatPromptTemplate.from_messages(
             template="You are a helpful assistant\n"
                      "Answer the following questions as best you can.\n"
                      "You can access to the provided tools.\n"
-                     "The value of parameters in tools must be extract from human's message(It can be an empty string, but fabrication is not allowed).\n"
+                     "The value of parameters in tools must be extract from human's message, It can be an empty string, but fabrication is not allowed.\n"
                      ""
+        ),
+        SystemMessagePromptTemplate.from_template(
+            template="conv_id=\"{conv_id}\""
         ),
         MessagesPlaceholder(variable_name="chat_history", optional=True),
         HumanMessagePromptTemplate.from_template(template="{input}"),
-        MessagesPlaceholder(variable_name="agent_scratchpad")
+        MessagesPlaceholder(variable_name="agent_scratchpad"),
     ]
 )
 
@@ -48,6 +52,7 @@ def start_function_call_node(data):
     agent_runnable = create_openai_functions_agent(llm, tools_provider.general_tools, prompt)
     # 返回待下一步执行的Function
     function_call_outcome = agent_runnable.invoke(data)
+    print("工具解析结果：", function_call_outcome)
     return {"agent_outcome": function_call_outcome}
 
 
@@ -64,11 +69,14 @@ def do_execute_tools_node(data) -> Any:
     #     if "return_direct" in arguments:
     #         del arguments["return_direct"]
 
-    agent_action_ = ToolInvocation(
-        tool=tool_name,
-        tool_input=arguments,
-    )
-    output = tool_executor.invoke(agent_action_)
+    # agent_action_ = ToolInvocation(
+    #     tool=tool_name,
+    #     tool_input=arguments
+    # )
+    output = tool_executor.invoke(agent_action)
+
+    # function_message = FunctionMessage(content=str(output), name=agent_action_.tool)
+    print("工具执行结果：", output)
     return {"intermediate_steps": [(agent_action, str(output))]}
 
 
@@ -77,7 +85,7 @@ def should_continue(data):
     # 如果代理结果是AgentFinish，则返回`exit`字符串
     # 这将在设置图形以定义流程时使用
     steps = data["intermediate_steps"]
-    if len(steps) >= 5:
+    if len(steps) >= 2:
         return "end"
     if isinstance(data["agent_outcome"], AgentFinish):
         return "end"
@@ -126,7 +134,11 @@ workflow.add_edge(start_key="do_execute_tools_node", end_key="start_function_cal
 app: CompiledGraph = workflow.compile()
 converted_tools_info = tools_provider.converted_tools_info()
 print("工具列表：", converted_tools_info)
-human_input = "我需要在CREM系统中录入一个用户需求，需求内容是：‘商户后台导航支持二级菜单’。"
+# human_input = "我需要在CREM系统中录入一个用户需求"
+# human_input = "use tool named 'general_query_tool' answer my questions，the questions is：\n我需要在CREM系统中录入一个用户需求，需求内容是：‘商户后台导航支持二级菜单’，非常紧急，希望3天完成。"
+# human_input = "我需要在CREM系统中录入一个用户需求，需求内容是：‘商户后台导航支持二级菜单’。"
+# human_input = "我需要在CREM系统中录入一个用户需求，需求内容是：‘商户后台导航支持二级菜单’，非常紧急，希望3天完成。"
+human_input = "我需要在CREM系统中录入一个用户需求，需求内容是：‘商户后台导航支持二级菜单’，非常紧急。"
 # human_input = "马斯克是谁"
 # redis_key = "YLL_CHAT_HISTORY"
 # cli = RedisClient()
@@ -138,11 +150,12 @@ redis_data = []
 print("历史消息", redis_data)
 inputs: Dict = {
     "input": human_input,
-    "chat_history": redis_data
+    "chat_history": redis_data,
+    "conv_id": "123456"
 }
 for s in app.stream(inputs):
-    print(list(s.values())[0])
-    print("----")
+    print("\n---- ", list(s.values())[0])
+# s = app.invoke(inputs)
 redis_data.append({
     "role": "human",
     "content": human_input
