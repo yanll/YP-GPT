@@ -13,7 +13,7 @@ from langgraph.graph import END, StateGraph
 from langgraph.prebuilt import ToolExecutor
 
 from dbgpt.util.azure_util import create_azure_llm
-from dbgpt.util.tests.langgraph.tools.dmall_tool import DmallSearchResults
+from dbgpt.util.tests.langgraph.abackup.tools.dmall_tool import DmallSearchResults
 
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_API_KEY"] = "ls__19718564013e408d8d5ae23ad8dbdf29"

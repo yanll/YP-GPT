@@ -2,20 +2,18 @@
 
 from typing import Dict, List, Optional, Type, Union
 
-from langchain.pydantic_v1 import Field
 from langchain.tools import BaseTool
 from langchain_core.callbacks import CallbackManagerForToolRun
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from .dmall_search import DmallSearchAPIWrapper
 
 
 class DmallInput(BaseModel):
     """数据商店接口入参"""
-    # api_name: str = Field(description="数据商店接口名称", include=["query_merchant_info", "meeting_rooms"])
     api_name: str = Field(
         title="接口名称",
-        description="数据商店接口名称,must be in ['get_meeting_rooms','query_merchant_info']"
+        description="数据商店接口名称"
     )
     api_parameters: str = Field(
         title="接口参数", description="数据商店接口参数,must be from human"
@@ -47,8 +45,8 @@ class DmallSearchResults(BaseTool):
     ) -> Union[List[Dict], str]:
         """Use the tool."""
         try:
-            if True:
-                raise BaseException("请输入编号!")
+            # if True:
+            #     raise BaseException("请输入编号!")
             return []
             # return self.api_wrapper.results(
             #     api_name=api_name,
