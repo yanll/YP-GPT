@@ -22,30 +22,6 @@ os.environ["LANGCHAIN_API_KEY"] = "ls__19718564013e408d8d5ae23ad8dbdf29"
 llm = create_azure_llm()
 tools_provider = ToolsProvider()
 
-template = '''Answer the following questions as best you can. You have access to the following tools:
-
-                    {tools}
-
-                    Please answer in simplified Chinese.
-
-                    Use the following format:
-
-                    Question: the input question you must answer
-                    Thought: you should always think about what to do
-                    Action: the action to take, should be one of [{tool_names}]
-                    Action Input: the input to the action, must be extract from Question, fabrication is prohibited.
-                    Observation: the result of the action
-                    ... (this Thought/Action/Action Input/Observation can repeat 2 times)
-                    Thought: I now know the final answer
-                    Final Answer: the final answer to the original input question
-
-                    Begin!
-                    HistoryQuestion：{chat_history}：
-                    Question: {input}
-                    Thought:{agent_scratchpad}'''
-
-chat_prompt = ChatPromptTemplate.from_template(template)
-
 prompt = ChatPromptTemplate.from_messages(
     [
         SystemMessagePromptTemplate.from_template(
@@ -70,7 +46,6 @@ tool_executor = ToolExecutor(tools_provider.general_tools)
 def start_function_call_node(data):
     # 构建OpenAI函数代理
     agent_runnable = create_openai_functions_agent(llm, tools_provider.general_tools, prompt)
-    # agent_runnable = create_openai_functions_agent(llm, tools_provider.general_tools, chat_prompt)
     # 返回待下一步执行的Function
     function_call_outcome = agent_runnable.invoke(data)
     return {"agent_outcome": function_call_outcome}
@@ -85,7 +60,7 @@ def do_execute_tools_node(data) -> Any:
     tool_name = last_message.additional_kwargs["function_call"]["name"]
     arguments = json.loads(last_message.additional_kwargs["function_call"]["arguments"])
     # if tool_name == "requirement_collect":
-    #     arguments["expected_completion_time"] = "5days"
+    #     arguments["expected_completion_time"] = ""
     #     if "return_direct" in arguments:
     #         del arguments["return_direct"]
 
@@ -162,8 +137,6 @@ human_input = "我需要在CREM系统中录入一个用户需求，需求内容�
 redis_data = []
 print("历史消息", redis_data)
 inputs: Dict = {
-    # "tools": converted_tools_info,
-    # "tool_names": ["general_query_tool", "requirement_collect_tool"],
     "input": human_input,
     "chat_history": redis_data
 }

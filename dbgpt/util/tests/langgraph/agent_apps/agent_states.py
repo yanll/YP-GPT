@@ -7,8 +7,6 @@ from langchain_core.messages import BaseMessage
 
 class GeneralAgentState(TypedDict):
     input: str
-    tools: list
-    tool_names: list
     chat_history: list[BaseMessage]
     # 代理的调用结果
     # 需要将`None`作为有效类型，因为这将作为初始值
