@@ -70,6 +70,7 @@ async def request_handle(app_chat_service: AppChatService, sales_assistant: Sale
     # 开启新会话，归档历史消息。
     if (human_message == "new chat"):
         app_chat_service.disable_app_chat_his_message_by_uid(sender_open_id)
+        return None
 
     rs = sales_assistant._run(input=human_message, conv_uid=sender_open_id)
     resp_msg = str(rs)

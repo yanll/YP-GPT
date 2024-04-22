@@ -34,7 +34,7 @@ class CustomerVisitRecordCollectInput(BaseModel):
         default=""
     )
     visit_date: str = Field(
-        name="",
+        name="拜访日期",
         description="拜访日期",
         default=""
     )
@@ -60,7 +60,7 @@ class CustomerVisitRecordCollectTool(BaseTool):
             run_manager: Optional[CallbackManagerForToolRun] = None,
     ):
         """Use the tool."""
-        print("开始运行日报填写工具：", conv_id, customer_name, visit_content, visit_address, visit_date)
+        print("开始运行客户拜访填写工具：", conv_id, customer_name, visit_content, visit_address, visit_date)
         try:
             if customer_name == "":
                 resp = {"success": "false", "response_message": "the description of customer_name"}

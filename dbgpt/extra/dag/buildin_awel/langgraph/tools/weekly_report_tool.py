@@ -20,7 +20,7 @@ class WeeklyReportCollectInput(BaseModel):
     )
     weekly_report_content: str = Field(
         name="周报内容",
-        description="日报内容",
+        description="周报内容",
         default=""
     )
     create_date: str = Field(
@@ -48,7 +48,7 @@ class WeeklyReportCollectTool(BaseTool):
             run_manager: Optional[CallbackManagerForToolRun] = None,
     ):
         """Use the tool."""
-        print("开始运行日报填写工具：", conv_id, weekly_report_content, create_date)
+        print("开始运行周报填写工具：", conv_id, weekly_report_content, create_date)
         try:
             if weekly_report_content == "":
                 resp = {"success": "false", "response_message": "the description of weekly_report_content"}
