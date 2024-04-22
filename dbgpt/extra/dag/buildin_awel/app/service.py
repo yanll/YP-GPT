@@ -1,6 +1,7 @@
 import logging
-from typing import List
+from typing import List, Dict
 
+from dbgpt.extra.dag.buildin_awel.app.app_chat_db import AppChatDao
 from dbgpt.extra.dag.buildin_awel.app.gpts_app_db import GptsAppDao
 
 logger = logging.getLogger(__name__)
@@ -17,5 +18,23 @@ class GptsAppService:
             rs.append({
                 "app_code": row["app_code"],
                 "app_name": row["app_describe"]
+            })
+        return rs
+
+
+class AppChatService:
+    def __init__(self):
+        self.app_chat_dao = AppChatDao()
+
+    def add_app_chat_his_message(self, rec: Dict) -> int:
+        return self.app_chat_dao.add_app_chat_his_message(rec)
+
+    def get_app_chat_his_message(self, status: str = "ENABLED") -> List:
+        list = self.app_chat_dao.get_app_chat_his_message(status)
+        rs = []
+        for row in list:
+            rs.append({
+                "role": row["message_type"],
+                "content": row["content"]
             })
         return rs

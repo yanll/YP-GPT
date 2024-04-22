@@ -14,4 +14,4 @@ class GeneralAgentState(TypedDict):
     # 操作和相应观察结果的列表
     # 在此处我们使用`operator.add`进行注释，以指示对此状态的操作应该被添加到现有值中而不是覆盖它
     intermediate_steps: Annotated[list[tuple[AgentAction, str]], operator.add]
-    conv_id: str
+    conv_uid: str

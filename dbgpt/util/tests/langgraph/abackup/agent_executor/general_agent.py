@@ -1,7 +1,7 @@
 import json
 import operator
 import os
-from typing import TypedDict, Union, Annotated, Dict, Optional
+from typing import TypedDict, Union, Annotated, Dict
 
 from langchain.agents import create_openai_functions_agent
 from langchain_core.agents import AgentAction, AgentFinish
@@ -12,7 +12,7 @@ from langgraph.graph import END, StateGraph
 from langgraph.prebuilt import ToolExecutor
 
 from dbgpt.util.azure_util import create_azure_llm
-from dbgpt.util.tests.langgraph.tools.general_query_tool import GeneralQueryResults
+from dbgpt.extra.dag.buildin_awel.langgraph.tools.general_query_tool import GeneralQueryResults
 
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_API_KEY"] = "ls__19718564013e408d8d5ae23ad8dbdf29"

@@ -4,8 +4,10 @@ from langchain.tools import BaseTool
 from langchain_core.utils.function_calling import convert_to_openai_tool
 from pydantic import BaseModel
 
-from dbgpt.util.tests.langgraph.tools.general_query_tool import GeneralQueryTool
-from dbgpt.util.tests.langgraph.tools.requirement_tool import RequirementCollectTool
+from dbgpt.extra.dag.buildin_awel.langgraph.tools.customer_visit_record_tool import CustomerVisitRecordCollectTool
+from dbgpt.extra.dag.buildin_awel.langgraph.tools.daily_report_tool import DailyReportCollectTool
+from dbgpt.extra.dag.buildin_awel.langgraph.tools.requirement_tool import RequirementCollectTool
+from dbgpt.extra.dag.buildin_awel.langgraph.tools.weekly_report_tool import WeeklyReportCollectTool
 
 
 class ToolsProvider:
@@ -13,7 +15,10 @@ class ToolsProvider:
 
     def __init__(self, *args, **kwargs):
         self.general_tools = [
-            GeneralQueryTool(max_results=20),
+            # GeneralQueryTool(max_results=20),
+            DailyReportCollectTool(),
+            WeeklyReportCollectTool(),
+            CustomerVisitRecordCollectTool(),
             RequirementCollectTool()
         ]
         pass

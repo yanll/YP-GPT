@@ -66,7 +66,8 @@ class RequirementCollectTool(BaseTool):
                 resp = do_collect(
                     requirement_content=requirement_content,
                     expected_completion_time=expected_completion_time,
-                    emergency_level=emergency_level)
+                    emergency_level=emergency_level
+                )
             return resp
         except Exception as e:
             return repr(e)
@@ -77,18 +78,10 @@ def do_collect(
         expected_completion_time: str = "",
         emergency_level: str = ""
 ):
-    # print("开始执行需求收集：", requirement_content, emergency_level, expected_completion_time)
-    # resp = requests.request(
-    #     url=input_body["endpoint"],
-    #     method=input_body["method"],
-    #     headers=input_body["headers"],
-    #     params=input_body["params"],
-    #     data=input_body["data"]
-    # )
-    if False:
-        larkutil.send_message("liangliang.yan@yeepay.com", {"text": "hello!"})
     return {
-        "success": "true", "error_message": "", "data": {
+        "success": "true",
+        "error_message": "",
+        "data": {
             "requirement_content": requirement_content,
             "expected_completion_time": expected_completion_time,
             "emergency_level": emergency_level
