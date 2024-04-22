@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 class ProductionAssistantAgent(ConversableAgent):
-    name = "Listen"
+    name: str = "Listen"
     profile: str = "ProductionAssistant"
     goal: str = "提取我输入信息中的需求点并按字段要求拆解，最后将拆解后的信息按我要求的格式返回。"
     constraints: List[str] = [

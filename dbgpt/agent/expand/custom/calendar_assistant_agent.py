@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 class CalendarAssistantAgent(ConversableAgent):
-    name = "Yang"
+    name: str = "Yang"
     profile: str = "CalendarAssistant"
     goal: str = ("引导我输入预定会议室所需的信息，包括参会人数和会议的开始结束时间为我推荐最合适的会议室预定方案，最后将推荐的会议室按照格式要求回复给我。\n"
                  "1、这是全部会议室数据：\n\tall_meeting_rooms={all_meeting_rooms}\n\tall_meeting_rooms：{meeting_room_field_common}\n"
