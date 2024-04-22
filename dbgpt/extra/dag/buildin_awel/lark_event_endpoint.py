@@ -9,7 +9,7 @@ from langchain_core.agents import AgentFinish
 from dbgpt.client import Client
 from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
 from dbgpt.extra.cache.redis_cli import RedisClient
-from dbgpt.extra.dag.buildin_awel.app.service import GptsAppService
+from dbgpt.extra.dag.buildin_awel.app.service import GptsAppService, AppChatService
 from dbgpt.extra.dag.buildin_awel.langgraph.assistants.sales_assistant import SalesAssistant
 from dbgpt.storage.chat_history import ChatHistoryMessageEntity
 from dbgpt.storage.chat_history.chat_history_db import ChatHistoryMessageDao
@@ -21,6 +21,7 @@ class RequestHandleOperator(MapOperator[Dict, str]):
     def __init__(self, **kwargs):
         self.chat_history_message_dao = ChatHistoryMessageDao()
         self.gpts_app_service = GptsAppService()
+        self.app_chat_service = AppChatService()
         self.sales_assistant = SalesAssistant()
         super().__init__(**kwargs)
 
@@ -43,7 +44,7 @@ class RequestHandleOperator(MapOperator[Dict, str]):
             print("应用列表：", apps)
             if message_type == "text" and sender_open_id != "" and content_text != "" and chat_type == "p2p":
                 asyncio.create_task(
-                    request_handle(self.sales_assistant, sender_open_id, content_text)
+                    request_handle(self.app_chat_service, self.sales_assistant, sender_open_id, content_text)
                 )
             return {"message": "OK"}
         except Exception as e:
@@ -62,8 +63,14 @@ with DAG("dbgpt_awel_lark_event_endpoint") as dag:
     trigger >> map_node
 
 
-async def request_handle(sales_assistant: SalesAssistant, sender_open_id, human_message):
+async def request_handle(app_chat_service: AppChatService, sales_assistant: SalesAssistant, sender_open_id,
+                         human_message):
     print("lark_event_endpoint async handle：", human_message)
+
+    # 开启新会话，归档历史消息。
+    if (human_message == "new chat"):
+        app_chat_service.disable_app_chat_his_message_by_uid(sender_open_id)
+
     rs = sales_assistant._run(input=human_message, conv_uid=sender_open_id)
     resp_msg = str(rs)
     if (isinstance(rs, Dict)):

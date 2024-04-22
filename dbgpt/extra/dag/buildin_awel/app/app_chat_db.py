@@ -19,7 +19,19 @@ class AppChatDao(BaseDao):
         session.close()
         return 0
 
-    def get_app_chat_his_message(self, status: str = "ENABLED") -> List:
+    def disable_app_chat_his_message_by_uid(self, conv_uid: str) -> int:
+        session = self.get_raw_session()
+        statement = text(
+            """
+            update app_chat_history_message set status = 'DISABLED' where conv_uid = :conv_uid
+            """
+        )
+        session.execute(statement, {"conv_uid": conv_uid})
+        session.commit()
+        session.close()
+        return 0
+
+    def get_app_chat_his_messages(self, status: str = "ENABLED") -> List:
         session = self.get_raw_session()
         result = session.execute(
             statement=text(

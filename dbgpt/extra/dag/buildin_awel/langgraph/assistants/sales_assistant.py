@@ -206,7 +206,7 @@ class SalesAssistant:
         try:
             converted_tools_info = self.tools_provider.converted_tools_info()
             print("工具列表：", converted_tools_info)
-            his = self.app_chat_service.get_app_chat_his_message()
+            his = self.app_chat_service.get_app_chat_his_messages()
             print("历史消息", his)
             inputs: Dict = {
                 "input": input,
