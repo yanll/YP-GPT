@@ -41,7 +41,7 @@ class SalesAssistant:
         prompt = ChatPromptTemplate.from_messages(
             [
                 SystemMessagePromptTemplate.from_template(
-                    template="You are a helpful "
+                    template="You are a helpful ai assistant."
                              "\n"
                              "Answer the following questions as best you can.\n"
                              "You can access to the provided tools.\n"
