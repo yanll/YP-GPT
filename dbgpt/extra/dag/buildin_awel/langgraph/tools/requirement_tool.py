@@ -98,6 +98,12 @@ def do_collect(
         receive_id_type="open_id",
         msg_type="interactive"
     )
+    """
+    我要提交一个需求：
+    需求内容：在运营后台实现一个数据导出功能。
+    期望完成日期：2024-05-20
+    紧急程度：P0
+    """
 
 
     return {
