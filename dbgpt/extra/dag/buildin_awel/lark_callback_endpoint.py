@@ -1,16 +1,10 @@
 import asyncio
-import json
 import logging
-import os
 from typing import Dict
-
-from langchain_openai import AzureChatOpenAI
 
 from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_api_wrapper
 from dbgpt.util.azure_util import create_azure_llm
-from datetime import datetime
-from dbgpt.util import larkutil
 
 
 class RequestHandleOperator(MapOperator[Dict, str]):
@@ -52,28 +46,6 @@ with DAG("dbgpt_awel_lark_callback_endpoint") as dag:
 
 async def request_handle(input_body: Dict):
     print("lark_callback_endpoint async handle：", input_body)
-    form_value = input_body['event']['action']['form_value']
-    lark_api_wrapper.handle_lark_callback()
-    rs = {
-        "toast": {
-            "type": "info",
-            "content": "温馨提示",
-            "i18n": {
-                "zh_cn": "信息已提交，请查看结果！",
-                "en_us": "submitted"
-            }
-        },
-        "card": {
-            "type": "template",
-            "data": {
-                "template_id": "AAqkjMFhiuVwF", "template_version_name": "1.0.8",
-                "template_variable": {
-                    "requirement_content": "-",
-                    "expected_completion_date": "",
-                    "emergency_level": ""
-                }
-            }
-        }
-    }
+    rs = lark_api_wrapper.handle_lark_callback(input_body)
     print("LarkCallbackHandleResult:", "")
     return rs

@@ -1,10 +1,44 @@
-def handle_lark_callback():
-    pass
-
+from typing import Dict
 
 import requests
 import json
 import datetime
+
+
+def handle_lark_callback(input_body: Dict):
+    form_value = input_body['event']['action']['form_value']
+
+    result = create_and_send_work_item(
+        name=form_value['requirement_content'],
+        priority_label=form_value['emergency_level'],
+        expected_time=form_value['expected_completion_date']
+    )
+    print("飞书回调执行结果：", result)
+
+    pass
+
+
+rs = {
+    "toast": {
+        "type": "info",
+        "content": "温馨提示",
+        "i18n": {
+            "zh_cn": "信息已提交，请查看结果！",
+            "en_us": "submitted"
+        }
+    },
+    "card": {
+        "type": "template",
+        "data": {
+            "template_id": "AAqkjMFhiuVwF", "template_version_name": "1.0.10",
+            "template_variable": {
+                "requirement_content": "-",
+                "expected_completion_date": "",
+                "emergency_level": ""
+            }
+        }
+    }
+}
 
 
 def get_project_app_token():
@@ -36,7 +70,7 @@ def create_and_send_work_item(name, priority_label, expected_time):
         "待定": "99"
     }
     # 将日期对象转换为毫秒级时间戳
-    timestamp = int(datetime.datetime.strptime(expected_time, "%Y-%m-%d").timestamp() * 1000)
+    timestamp = int(datetime.datetime.strptime(expected_time.replace(" +0800", ""), "%Y-%m-%d").timestamp() * 1000)
     # 构建请求的数据结构
     data = {
         "work_item_type_key": "story",
