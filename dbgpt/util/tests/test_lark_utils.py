@@ -21,7 +21,7 @@ def test_select_userinfo():
 
 def test_send_message():
     content = {"text": "你好\n\n点点滴滴！"}
-    larkutil.send_message("ou_1a32c82be0a5c6ee7bc8debd75c65e34", content, receive_id_type="open_id")
+    larkutil.send_message("ou_8183ebf29633d5af91fa0b32a0c05bcf", content, receive_id_type="open_id")
     assert True
 
 

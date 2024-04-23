@@ -216,11 +216,11 @@ class SalesAssistant:
             }
             self.app_chat_service.add_app_chat_his_message(rec)
             rs = ""
-            # for s in self.app.stream(inputs):
-            #     row = list(s.values())[0]
-            #     # print("\n==== ", row)
-            #     rs = row
-            s = self.app.invoke(inputs)
+            for s in self.app.stream(inputs):
+                row = list(s.values())[0]
+                # print("\n==== ", row)
+                rs = row
+            # s = self.app.invoke(inputs)
             return rs
         except Exception as e:
             logging.error("销售助理运行异常：", e)

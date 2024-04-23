@@ -83,28 +83,38 @@ def do_collect(
         emergency_level: str = ""
 ):
     print("发送飞书需求提报卡片：", conv_id)
-    larkutil.send_message(
-        receive_id=conv_id,
-        content={
-            "type": "template",
-            "data": {
-                "template_id": "AAqkjMFhiuVwF", "template_version_name": "1.0.1",
-                "template_variable": {
-                    "requirement_content": requirement_content,
-                    "expected_completion_date": expected_completion_date
+    try:
+        """
+        我要提交一个需求：
+        需求内容：在运营后台实现一个数据导出功能。
+        期望完成日期：2024-05-20
+        紧急程度：P0
+        """
+        level = 0
+        if (emergency_level == "P0"):
+            level = 0
+        if (emergency_level == "P1"):
+            level = 1
+        if (emergency_level == "P2"):
+            level = 2
+        larkutil.send_message(
+            receive_id=conv_id,
+            content={
+                "type": "template",
+                "data": {
+                    "template_id": "AAqkjMFhiuVwF", "template_version_name": "1.0.3",
+                    "template_variable": {
+                        "requirement_content": requirement_content,
+                        "expected_completion_date": expected_completion_date,
+                        "emergency_level": level
+                    }
                 }
-            }
-        },
-        receive_id_type="open_id",
-        msg_type="interactive"
-    )
-    """
-    我要提交一个需求：
-    需求内容：在运营后台实现一个数据导出功能。
-    期望完成日期：2024-05-20
-    紧急程度：P0
-    """
-
+            },
+            receive_id_type="open_id",
+            msg_type="interactive"
+        )
+    except Exception as e:
+        logging.error("飞书需求提报卡片发送失败：", e)
 
     return {
         "success": "true",
