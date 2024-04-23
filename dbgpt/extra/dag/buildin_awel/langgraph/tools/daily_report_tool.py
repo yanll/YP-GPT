@@ -1,4 +1,5 @@
 from typing import Optional, Type
+from typing import List
 
 from langchain.tools import BaseTool
 from langchain_core.callbacks import (
@@ -19,13 +20,24 @@ class DailyReportCollectInput(BaseModel):
         default=""
     )
     daily_report_content: str = Field(
-        name="日报内容",
+        name="日报工作总结",
         description="日报内容",
         default=""
     )
+
     create_date: str = Field(
-        name="",
-        description="创建日期",
+        name="创建日期",
+        description="创建日期，格式：%Y-%m-%d",
+        default=""
+    )
+    daily_report_tomorrow_plans: List[str] = Field(
+        name="明日计划",
+        description="明日计划内容，可加多个，列表形式",
+        default=[]
+    )
+    senders_name: str = Field(
+        name="抄送人员",
+        description="抄送人员，抄送给谁",
         default=""
     )
 
@@ -45,10 +57,13 @@ class DailyReportCollectTool(BaseTool):
             conv_id: str = "",
             daily_report_content: str = "",
             create_date: str = "",
+            daily_report_tomorrow_plans: Optional[List[str]] = None,
+            senders_name: str = "",
             run_manager: Optional[CallbackManagerForToolRun] = None,
     ):
         """Use the tool."""
-        print("开始运行日报填写工具：", conv_id, daily_report_content, create_date)
+        print("开始运行日报填写工具：", conv_id, daily_report_content, create_date, daily_report_tomorrow_plans=None,
+              senders_name=None)
         try:
             if daily_report_content == "":
                 resp = {"success": "false", "response_message": "the description of daily_report_content"}
@@ -57,22 +72,53 @@ class DailyReportCollectTool(BaseTool):
             else:
                 resp = do_collect(
                     daily_report_content=daily_report_content,
-                    create_date=create_date
+                    create_date=create_date,
+                    daily_report_tomorrow_plans=daily_report_tomorrow_plans,
+                    senders_name=senders_name
                 )
             return resp
         except Exception as e:
             return repr(e)
 
 
+# def do_collect(
+#         daily_report_content: str = "",
+#         create_date: str = "",
+#
+# ):
+#     return {
+#         "success": "true",
+#         "error_message": "",
+#         "data": {
+#             "daily_report_content": daily_report_content,
+#             "create_date": create_date
+#         }
+#     }
+
+
 def do_collect(
         daily_report_content: str = "",
-        create_date: str = ""
+        create_date: str = "",
+        daily_report_tomorrow_plans: Optional[List[str]] = None,
+        senders_name: str = ""
 ):
+    """
+    处理并收集日报信息，返回收集结果。
+    """
+    # 处理明日计划，如果为空则返回特定的消息
+    if daily_report_tomorrow_plans is None:
+        plans_description = "无明日计划"
+    else:
+        plans_description = ", ".join(daily_report_tomorrow_plans) if daily_report_tomorrow_plans else "明日计划列表为空"
+
+    # 创建并返回结果字典
     return {
         "success": "true",
-        "error_message": "",
+        "error_message": "",  # 默认为空，可根据需要添加错误处理逻辑
         "data": {
             "daily_report_content": daily_report_content,
-            "create_date": create_date
+            "create_date": create_date,
+            "daily_report_tomorrow_plans": plans_description,
+            "senders_name": senders_name if senders_name else "匿名"
         }
     }
