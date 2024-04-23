@@ -24,9 +24,9 @@ class RequirementCollectInput(BaseModel):
         description="需求内容",
         default=""
     )
-    expected_completion_time: str = Field(
-        name="期望完成时间",
-        description="期望完成时间",
+    expected_completion_date: str = Field(
+        name="期望完成日期",
+        description="期望完成日期",
         default=""
     )
     emergency_level: str = Field(
@@ -50,23 +50,24 @@ class RequirementCollectTool(BaseTool):
             self,
             conv_id: str = "",
             requirement_content: str = "",
-            expected_completion_time: str = "",
+            expected_completion_date: str = "",
             emergency_level: str = "",
             run_manager: Optional[CallbackManagerForToolRun] = None,
     ):
         """Use the tool."""
-        print("开始运行需求收集工具：", conv_id, requirement_content, emergency_level, expected_completion_time)
+        print("开始运行需求收集工具：", conv_id, requirement_content, emergency_level, expected_completion_date)
         try:
             if requirement_content == "":
                 resp = {"success": "false", "response_message": "the description of requirement_content"}
-            elif expected_completion_time == "":
-                resp = {"success": "false", "response_message": "the description of expected_completion_time"}
+            elif expected_completion_date == "":
+                resp = {"success": "false", "response_message": "the description of expected_completion_date"}
             elif emergency_level == "":
                 resp = {"success": "false", "response_message": "the description of emergency_level"}
             else:
                 resp = do_collect(
+                    conv_id=conv_id,
                     requirement_content=requirement_content,
-                    expected_completion_time=expected_completion_time,
+                    expected_completion_date=expected_completion_date,
                     emergency_level=emergency_level
                 )
             return resp
@@ -76,16 +77,35 @@ class RequirementCollectTool(BaseTool):
 
 
 def do_collect(
+        conv_id: str = "",
         requirement_content: str = "",
-        expected_completion_time: str = "",
+        expected_completion_date: str = "",
         emergency_level: str = ""
 ):
+    print("发送飞书需求提报卡片：", conv_id)
+    larkutil.send_message(
+        receive_id=conv_id,
+        content={
+            "type": "template",
+            "data": {
+                "template_id": "AAqkjM4Ffisl2", "template_version_name": "1.0.1",
+                "template_variable": {
+                    "ai_message": "请提供完整的信息！"
+                }
+            }
+        },
+        receive_id_type="open_id",
+        msg_type="interactive"
+    )
+
+
     return {
         "success": "true",
         "error_message": "",
         "data": {
+            "conv_id": conv_id,
             "requirement_content": requirement_content,
-            "expected_completion_time": expected_completion_time,
+            "expected_completion_date": expected_completion_date,
             "emergency_level": emergency_level
         }
     }

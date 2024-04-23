@@ -108,14 +108,14 @@ def do_collect(
     else:
         plans_description = ", ".join(weekly_report_tomorrow_plans) if weekly_report_tomorrow_plans else ""
 
-    # 创建并返回结果字典,13
+    # 创建并返回结果字典
     return {
         "success": "true",
-        "error_message": "",  # 默认为空，可根据需要添加错误处理逻辑
+        "error_message": "",
         "data": {
             "daily_report_content": weekly_report_content,
             "create_date": create_date,
             "weekly_report_tomorrow_plans": plans_description,
-            "senders_name": senders_name if senders_name else "匿名"
+            "senders_name": senders_name
         }
     }
