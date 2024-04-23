@@ -66,7 +66,7 @@ async def request_handle(input_body: Dict):
         "card": {
             "type": "template",
             "data": {
-                "template_id": "AAqkjMFhiuVwF", "template_version_name": "1.0.7",
+                "template_id": "AAqkjMFhiuVwF", "template_version_name": "1.0.8",
                 "template_variable": {
                     "requirement_content": "-",
                     "expected_completion_date": "",
