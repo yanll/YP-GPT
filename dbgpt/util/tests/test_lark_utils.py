@@ -27,11 +27,11 @@ def test_send_message():
 
 def test_card_send_message():
     larkutil.send_message(
-        receive_id="ou_1a32c82be0a5c6ee7bc8debd75c65e34",
+        receive_id="ou_8183ebf29633d5af91fa0b32a0c05bcf",
         content={
             "type": "template",
             "data": {
-                "template_id": "AAqkwmwOTohjy", "template_version_name": "1.0.10",
+                "template_id": "AAqkjM4Ffisl2", "template_version_name": "1.0.1",
                 "template_variable": {
                     "ai_message": "请提供完整的信息！"
                 }
