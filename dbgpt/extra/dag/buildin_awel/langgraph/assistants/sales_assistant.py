@@ -193,16 +193,7 @@ class SalesAssistant:
     ) -> Any:
         """Use the tool."""
         print("开始运行销售助理：")
-        rec = {
-            "id": str(uuid.uuid1()),
-            "agent_name": "SalesAssistant",
-            "node_name": "",
-            "conv_uid": conv_uid,
-            "message_type": "human",
-            "content": input,
-            "message_detail": ""
-        }
-        self.app_chat_service.add_app_chat_his_message(rec)
+
         try:
             converted_tools_info = self.tools_provider.converted_tools_info()
             print("工具列表：", converted_tools_info)
@@ -213,10 +204,20 @@ class SalesAssistant:
                 "chat_history": his,
                 "conv_uid": conv_uid
             }
+            rec = {
+                "id": str(uuid.uuid1()),
+                "agent_name": "SalesAssistant",
+                "node_name": "",
+                "conv_uid": conv_uid,
+                "message_type": "human",
+                "content": input,
+                "message_detail": ""
+            }
+            self.app_chat_service.add_app_chat_his_message(rec)
             rs = ""
             for s in self.app.stream(inputs):
                 row = list(s.values())[0]
-                # print("\n---- ", row)
+                print("\n==== ", row)
                 rs = row
             # s = app.invoke(inputs)
             return rs

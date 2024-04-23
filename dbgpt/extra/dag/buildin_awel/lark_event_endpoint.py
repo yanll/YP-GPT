@@ -23,29 +23,60 @@ class RequestHandleOperator(MapOperator[Dict, str]):
         self.gpts_app_service = GptsAppService()
         self.app_chat_service = AppChatService()
         self.sales_assistant = SalesAssistant()
+        self.redis_client = RedisClient()
         super().__init__(**kwargs)
 
-    async def map(self, input_body: Dict) -> str:
+    async def map(self, input_body: Dict) -> Dict:
         try:
             print(f"接收飞书事件: {input_body}")
             # 首次验证挑战码
             if "challenge" in input_body:
                 return {"challenge": input_body["challenge"]}
+            headers = input_body["header"]
+            event_type = headers["event_type"]
+            event_id = headers["event_id"]
+            if (event_type not in ["im.message.receive_v1",
+                                   "p2p_chat_create",
+                                   "im.chat.member.bot.added_v1",
+                                   "im.chat.member.bot.deleted_v1"
+                                   ]):
+                return {"message": "OK"}
 
-            header = input_body["header"]
+            redis_key = "lark_event_id_for_no_repeat_" + event_id
+
+            exists: str = self.redis_client.get(redis_key)
+            if (exists == "true"):
+                print("飞书事件已经存在，跳过执行：", input_body)
+                return {"message": "OK"}
+            else:
+                self.redis_client.set(redis_key, "true", 12 * 60 * 60)
+
             event = input_body["event"]
+
+            if (event_type == "p2p_chat_create"):
+                print("机器人会话被创建", event)
+                return {"message": "OK"}
+            if (event_type == "im.chat.member.bot.added_v1"):
+                print("机器人进群了", event)
+                return {"message": "OK"}
+            if (event_type == "im.chat.member.bot.deleted_v1"):
+                print("机器人被群踢了", event)
+                return {"message": "OK"}
+
             sender_open_id = event["sender"]["sender_id"]["open_id"]
             message = event["message"]
             message_type = message["message_type"]
             chat_type = message["chat_type"]
             content = json.loads(message["content"])
             content_text = content["text"]
-            apps = self.gpts_app_service.get_gpts_app_list("singe_agent")
-            print("应用列表：", apps)
-            if message_type == "text" and sender_open_id != "" and content_text != "" and chat_type == "p2p":
+            # apps = self.gpts_app_service.get_gpts_app_list("singe_agent")
+            # print("应用列表：", apps)
+            if event_type == "im.message.receive_v1" and message_type == "text" and sender_open_id != "" and content_text != "" and chat_type == "p2p":
+                print("开始异步执行", event_id)
                 asyncio.create_task(
                     request_handle(self.app_chat_service, self.sales_assistant, sender_open_id, content_text)
                 )
+                print("执行日志", event_id)
             return {"message": "OK"}
         except Exception as e:
             logging.exception("飞书事件处理异常！", e)
@@ -83,4 +114,4 @@ async def request_handle(app_chat_service: AppChatService, sales_assistant: Sale
         content={"text": resp_msg},
         receive_id_type="open_id"
     )
-    print("AgentResult:", resp_msg)
+    print("LarkEventHandleResult:", resp_msg)
