@@ -88,9 +88,10 @@ def do_collect(
         content={
             "type": "template",
             "data": {
-                "template_id": "AAqkjM4Ffisl2", "template_version_name": "1.0.1",
+                "template_id": "AAqkjMFhiuVwF", "template_version_name": "1.0.1",
                 "template_variable": {
-                    "ai_message": "请提供完整的信息！"
+                    "requirement_content": requirement_content,
+                    "expected_completion_date": expected_completion_date
                 }
             }
         },
