@@ -217,7 +217,7 @@ class SalesAssistant:
             rs = ""
             for s in self.app.stream(inputs):
                 row = list(s.values())[0]
-                print("\n==== ", row)
+                # print("\n==== ", row)
                 rs = row
             # s = app.invoke(inputs)
             return rs
