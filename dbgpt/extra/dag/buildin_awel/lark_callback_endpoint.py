@@ -22,10 +22,9 @@ class RequestHandleOperator(MapOperator[Dict, str]):
                 return {"challenge": input_body["challenge"]}
 
             print("开始异步执行回调", input_body)
-            rs = {}
-            asyncio.create_task(
-                rs=await request_handle(input_body)
-            )
+            # asyncio.create_task(
+            rs = request_handle(input_body)
+            # )
             print("执行日志", input_body)
             return rs
 
@@ -44,7 +43,7 @@ with DAG("dbgpt_awel_lark_callback_endpoint") as dag:
     trigger >> map_node
 
 
-async def request_handle(input_body: Dict):
+def request_handle(input_body: Dict):
     print("lark_callback_endpoint async handle：", input_body)
     rs = lark_api_wrapper.handle_lark_callback(input_body)
     print("LarkCallbackHandleResult:", "")

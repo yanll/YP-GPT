@@ -10,7 +10,7 @@ def handle_lark_callback(input_body: Dict):
 
     result = create_and_send_work_item(
         name=form_value['requirement_content'],
-        priority_label=form_value['emergency_level'],
+        priority_value=form_value['emergency_level'],
         expected_time=form_value['expected_completion_date']
     )
     print("飞书回调执行结果：", result)
@@ -53,7 +53,7 @@ def get_project_app_token():
     return response.json()["data"]["token"]
 
 
-def create_and_send_work_item(name, priority_label, expected_time):
+def create_and_send_work_item(name, priority_value, expected_time):
     # 直接在函数内定义 API URL 和 headers
     url = 'https://project.feishu.cn/open_api/ypgptapi/work_item/create'
     headers = {
@@ -63,11 +63,11 @@ def create_and_send_work_item(name, priority_label, expected_time):
         'Content-Type': 'application/json'
     }
     # 将 label 映射到对应的 value
-    label_to_value = {
-        "P0": "0",
-        "P1": "1",
-        "P2": "2",
-        "待定": "99"
+    value_to_label = {
+        "0": "P0",
+        "1": "P1",
+        "2": "P2",
+        "99": "待定"
     }
     # 将日期对象转换为毫秒级时间戳
     timestamp = int(datetime.datetime.strptime(expected_time.replace(" +0800", ""), "%Y-%m-%d").timestamp() * 1000)
@@ -80,8 +80,8 @@ def create_and_send_work_item(name, priority_label, expected_time):
             {
                 "field_key": "priority",
                 "field_value": {
-                    "label": priority_label,
-                    "value": label_to_value[priority_label]
+                    "label": value_to_label[priority_value],
+                    "value": priority_value
                 }
             },
             {
@@ -96,12 +96,3 @@ def create_and_send_work_item(name, priority_label, expected_time):
     # 发送 POST 请求
     response = requests.post(url, headers=headers, data=json.dumps(data))
     return response.json()
-
-
-# 定义需要传递的参数
-name = "时间测试4111111111"
-priority_label = "P1"  # 可以是 'P0', 'P1', 'P2', 或 '待定'
-expected_time = "2024-04-27"  # 格式是 'YYYY-MM-DD'
-# 调用函数
-result = create_and_send_work_item(name, priority_label, expected_time)
-print(result)  # 打印API返回的数据
