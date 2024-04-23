@@ -32,8 +32,8 @@ class AppChatService:
     def disable_app_chat_his_message_by_uid(self, conv_uid: str) -> int:
         return self.app_chat_dao.disable_app_chat_his_message_by_uid(conv_uid)
 
-    def get_app_chat_his_messages_by_conv_uid(self, status: str = "ENABLED") -> List:
-        list = self.app_chat_dao.get_app_chat_his_messages_by_conv_uid(status)
+    def get_app_chat_his_messages_by_conv_uid(self, conv_uid, status: str = "ENABLED") -> List:
+        list = self.app_chat_dao.get_app_chat_his_messages_by_conv_uid(conv_uid, status)
         rs = []
         for row in list:
             rs.append({

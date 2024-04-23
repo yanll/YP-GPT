@@ -1,3 +1,4 @@
+import logging
 from typing import Optional, Type
 from typing import List
 
@@ -79,6 +80,7 @@ class DailyReportCollectTool(BaseTool):
                 )
             return resp
         except Exception as e:
+            logging.error("工具运行异常：", e)
             return repr(e)
 
 
