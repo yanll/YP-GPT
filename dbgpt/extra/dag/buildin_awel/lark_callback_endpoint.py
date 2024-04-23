@@ -7,6 +7,7 @@ from typing import Dict
 from langchain_openai import AzureChatOpenAI
 
 from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_api_wrapper
 from dbgpt.util.azure_util import create_azure_llm
 from datetime import datetime
 from dbgpt.util import larkutil
@@ -51,7 +52,7 @@ with DAG("dbgpt_awel_lark_callback_endpoint") as dag:
 async def request_handle(input_body: Dict):
     print("lark_callback_endpoint async handle：", input_body)
     form_value = input_body['event']['action']['form_value']
-
+    lark_api_wrapper.handle_lark_callback()
     rs = {
         "toast": {
             "type": "info",
