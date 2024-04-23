@@ -20,14 +20,14 @@ class DailyReportCollectInput(BaseModel):
         default=""
     )
     daily_report_content: str = Field(
-        name="日报工作总结",
+        name="日报内容",
         description="日报内容",
         default=""
     )
 
     create_date: str = Field(
-        name="创建日期",
-        description="创建日期，格式：%Y-%m-%d",
+        name="日报填写日期",
+        description="日报填写日期，格式：%Y-%m-%d",
         default=""
     )
     daily_report_tomorrow_plans: List[str] = Field(
@@ -71,6 +71,7 @@ class DailyReportCollectTool(BaseTool):
                 resp = {"success": "false", "response_message": "the description of create_date"}
             else:
                 resp = do_collect(
+                    conv_id=conv_id,
                     daily_report_content=daily_report_content,
                     create_date=create_date,
                     daily_report_tomorrow_plans=daily_report_tomorrow_plans,
@@ -97,15 +98,39 @@ def do_collect(
     else:
         plans_description = ", ".join(daily_report_tomorrow_plans) if daily_report_tomorrow_plans else "明日计划列表为空"
 
+    print("发送飞书日报卡片：", conv_id)
+    larkutil.send_message(
+        receive_id=conv_id,
+        content={
+            "type": "template",
+            "data": {
+                "template_id": "AAqkjM4Ffisl2", "template_version_name": "1.0.1",
+                "template_variable": {
+                    "ai_message": "请提供完整的信息！"
+                }
+            }
+        },
+        receive_id_type="open_id",
+        msg_type="interactive"
+    )
+
+    """
+    我要填写日报：
+    日报内容：今天完成了一次客户回访，进展正常。
+    填写日期：2024-04-22 00:00:00
+    明日计划：继续跟进
+    """
+
     # 创建并返回结果字典
     return {
         "success": "true",
-        "error_message": "",  # 默认为空，可根据需要添加错误处理逻辑
+        "error_message": "",
         "data": {
+            "next": "send_card_and_callback",
             "conv_id": conv_id,
             "daily_report_content": daily_report_content,
             "create_date": create_date,
             "daily_report_tomorrow_plans": plans_description,
-            "senders_name": senders_name if senders_name else "匿名"
+            "senders_name": senders_name
         }
     }

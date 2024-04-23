@@ -31,14 +31,14 @@ class AppChatDao(BaseDao):
         session.close()
         return 0
 
-    def get_app_chat_his_messages(self, status: str = "ENABLED") -> List:
+    def get_app_chat_his_messages_by_conv_uid(self, conv_uid: str = "#", status: str = "ENABLED") -> List:
         """最近30分钟的聊天记录"""
         session = self.get_raw_session()
         result = session.execute(
             statement=text(
-                "SELECT * FROM app_chat_history_message where created_time >=DATE_SUB(NOW(), INTERVAL 30 MINUTE) and message_type in ('human', 'ai') and status = :status order by created_time asc"
+                "SELECT * FROM app_chat_history_message where conv_uid = :conv_uid and created_time >=DATE_SUB(NOW(), INTERVAL 30 MINUTE) and message_type in ('human', 'ai') and status = :status order by created_time asc"
             ),
-            params={"status": status})
+            params={"conv_uid": conv_uid, "status": status})
         rs = []
         for row in result:
             dic = row._asdict()
