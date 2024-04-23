@@ -53,9 +53,9 @@ class RequestHandleOperator(MapOperator[Dict, str]):
             return {"message": "OK"}
 
 
-with DAG("dbgpt_awel_lark_event_endpoint_") as dag:
+with DAG("dbgpt_awel_lark_event_endpoint_backup") as dag:
     trigger = HttpTrigger(
-        endpoint="/lark_event_endpoint_",
+        endpoint="/lark_event_endpoint_backup",
         methods="POST",
         request_body=Dict
     )
