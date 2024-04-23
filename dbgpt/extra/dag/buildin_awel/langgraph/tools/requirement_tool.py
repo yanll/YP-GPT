@@ -102,7 +102,7 @@ def do_collect(
             content={
                 "type": "template",
                 "data": {
-                    "template_id": "AAqkjMFhiuVwF", "template_version_name": "1.0.6",
+                    "template_id": "AAqkjMFhiuVwF", "template_version_name": "1.0.7",
                     "template_variable": {
                         "requirement_content": requirement_content,
                         "expected_completion_date": expected_completion_date,

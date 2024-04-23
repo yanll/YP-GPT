@@ -28,11 +28,12 @@ class RequestHandleOperator(MapOperator[Dict, str]):
                 return {"challenge": input_body["challenge"]}
 
             print("开始异步执行回调", input_body)
+            rs = {}
             asyncio.create_task(
-                request_handle(input_body)
+                rs=await request_handle(input_body)
             )
             print("执行日志", input_body)
-
+            return rs
 
         except Exception as e:
             logging.exception("飞书回调处理异常！", e)
@@ -65,9 +66,11 @@ async def request_handle(input_body: Dict):
         "card": {
             "type": "template",
             "data": {
-                "template_id": "AAqkwmwOTohjy", "template_version_name": "1.0.10",
+                "template_id": "AAqkjMFhiuVwF", "template_version_name": "1.0.7",
                 "template_variable": {
-                    "ai_message": "请提供完整的信息！"
+                    "requirement_content": "-",
+                    "expected_completion_date": "",
+                    "emergency_level": ""
                 }
             }
         }
