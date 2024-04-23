@@ -62,8 +62,8 @@ class DailyReportCollectTool(BaseTool):
             run_manager: Optional[CallbackManagerForToolRun] = None,
     ):
         """Use the tool."""
-        print("开始运行日报填写工具：", conv_id, daily_report_content, create_date, daily_report_tomorrow_plans=None,
-              senders_name=None)
+        print("开始运行日报填写工具：", conv_id, daily_report_content, create_date, daily_report_tomorrow_plans,
+              senders_name)
         try:
             if daily_report_content == "":
                 resp = {"success": "false", "response_message": "the description of daily_report_content"}
@@ -81,22 +81,8 @@ class DailyReportCollectTool(BaseTool):
             return repr(e)
 
 
-# def do_collect(
-#         daily_report_content: str = "",
-#         create_date: str = "",
-#
-# ):
-#     return {
-#         "success": "true",
-#         "error_message": "",
-#         "data": {
-#             "daily_report_content": daily_report_content,
-#             "create_date": create_date
-#         }
-#     }
-
-
 def do_collect(
+        conv_id: str = "",
         daily_report_content: str = "",
         create_date: str = "",
         daily_report_tomorrow_plans: Optional[List[str]] = None,
@@ -107,7 +93,7 @@ def do_collect(
     """
     # 处理明日计划，如果为空则返回特定的消息
     if daily_report_tomorrow_plans is None:
-        plans_description = "无明日计划"
+        plans_description = "暂无明日计划"
     else:
         plans_description = ", ".join(daily_report_tomorrow_plans) if daily_report_tomorrow_plans else "明日计划列表为空"
 
@@ -116,6 +102,7 @@ def do_collect(
         "success": "true",
         "error_message": "",  # 默认为空，可根据需要添加错误处理逻辑
         "data": {
+            "conv_id": conv_id,
             "daily_report_content": daily_report_content,
             "create_date": create_date,
             "daily_report_tomorrow_plans": plans_description,

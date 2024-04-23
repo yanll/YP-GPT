@@ -1,5 +1,5 @@
 from typing import Optional, Type
-
+from typing import List
 from langchain.tools import BaseTool
 from langchain_core.callbacks import (
     CallbackManagerForToolRun,
@@ -7,6 +7,21 @@ from langchain_core.callbacks import (
 from pydantic import BaseModel, Field
 
 from dbgpt.util import larkutil
+
+
+class PlanDetail(BaseModel):
+    planContentString: str = Field(
+        name="下周计划内容",
+        description="下周计划内容对应的客户内容",
+        default="")
+    # customerName: str = Field(
+    #     name="客户名称",
+    #     description="下周计划内容对应的客户内容",
+    #     default="")
+    # customerNo: str = Field(
+    #     name="客户对应的ID",
+    #     description="下周计划内容对应的客户ID",
+    #     default="")
 
 
 class WeeklyReportCollectInput(BaseModel):
@@ -24,8 +39,18 @@ class WeeklyReportCollectInput(BaseModel):
         default=""
     )
     create_date: str = Field(
-        name="",
-        description="创建日期",
+        name="创建日期",
+        description="创建日期，格式：%Y-%m-%d",
+        default=""
+    )
+    weekly_report_tomorrow_plans: List[PlanDetail] = Field(
+        name="下周计划内容",
+        description="下周计划内容，可加多个，列表形式",
+        default="")
+
+    senders_name: str = Field(
+        name="抄送人员",
+        description="抄送给谁",
         default=""
     )
 
@@ -40,15 +65,17 @@ class WeeklyReportCollectTool(BaseTool):
     )
     args_schema: Type[BaseModel] = WeeklyReportCollectInput
 
-    def _run(
-            self,
-            conv_id: str = "",
-            weekly_report_content: str = "",
-            create_date: str = "",
-            run_manager: Optional[CallbackManagerForToolRun] = None,
-    ):
-        """Use the tool."""
-        print("开始运行周报填写工具：", conv_id, weekly_report_content, create_date)
+    def _run(self,
+             conv_id: str,
+             weekly_report_content: str,
+             create_date: str,
+             run_manager: Optional[CallbackManagerForToolRun] = None,
+             senders_name: Optional[str] = "",
+             weekly_report_tomorrow_plans: Optional[List[PlanDetail]] = None):
+
+        """Use the tool.77"""
+        print("开始运行周报填写工具：", conv_id, weekly_report_content, create_date, senders_name,
+              weekly_report_tomorrow_plans)
         try:
             if weekly_report_content == "":
                 resp = {"success": "false", "response_message": "the description of weekly_report_content"}
@@ -66,13 +93,27 @@ class WeeklyReportCollectTool(BaseTool):
 
 def do_collect(
         weekly_report_content: str = "",
-        create_date: str = ""
+        create_date: str = "",
+        weekly_report_tomorrow_plans: Optional[List[str]] = None,
+        senders_name: str = ""
 ):
+    """
+        处理并收集日报信息，返回收集结果。
+        """
+    # 处理明日计划，如果为空则返回特定的消息
+    if weekly_report_tomorrow_plans is None:
+        plans_description = ""
+    else:
+        plans_description = ", ".join(weekly_report_tomorrow_plans) if weekly_report_tomorrow_plans else ""
+
+    # 创建并返回结果字典,13
     return {
         "success": "true",
-        "error_message": "",
+        "error_message": "",  # 默认为空，可根据需要添加错误处理逻辑
         "data": {
-            "weekly_report_content": weekly_report_content,
-            "create_date": create_date
+            "daily_report_content": weekly_report_content,
+            "create_date": create_date,
+            "weekly_report_tomorrow_plans": plans_description,
+            "senders_name": senders_name if senders_name else "匿名"
         }
     }
