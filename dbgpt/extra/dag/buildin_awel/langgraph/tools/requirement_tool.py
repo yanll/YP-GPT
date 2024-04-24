@@ -98,7 +98,6 @@ def do_collect(
             {"text": "P2低", "action_value": "2"},
             {"text": "待定", "action_value": "99"}
         ]
-
         larkutil.send_message(
             receive_id=conv_id,
             content=card_templates.create_requirement_card_content(

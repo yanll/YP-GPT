@@ -8,6 +8,7 @@ from langchain_core.callbacks import (
 )
 from pydantic import BaseModel, Field
 
+from dbgpt.extra.dag.buildin_awel.lark import card_templates
 from dbgpt.util import larkutil
 
 
@@ -100,28 +101,30 @@ def do_collect(
     else:
         plans_description = ", ".join(daily_report_tomorrow_plans) if daily_report_tomorrow_plans else "明日计划列表为空"
 
-    print("发送飞书日报卡片：", conv_id)
-    larkutil.send_message(
-        receive_id=conv_id,
-        content={
-            "type": "template",
-            "data": {
-                "template_id": "AAqkjM4Ffisl2", "template_version_name": "1.0.1",
-                "template_variable": {
-                    "ai_message": "请提供完整的信息！"
+    try:
+        """
+        我要填写日报：
+        日报内容：今天完成了一次客户回访，进展正常。
+        填写日期：2024-04-22 00:00:00
+        明日计划：继续跟进
+        """
+        print("发送飞书日报卡片：", conv_id)
+        larkutil.send_message(
+            receive_id=conv_id,
+            content=card_templates.create_daily_report_card_content(
+                template_variable={
+                    "card_metadata": {
+                        "card_name": "daily_report_collect",
+                        "description": "日报收集表单"
+                    },
+                    "requirement_content": "",
                 }
-            }
-        },
-        receive_id_type="open_id",
-        msg_type="interactive"
-    )
-
-    """
-    我要填写日报：
-    日报内容：今天完成了一次客户回访，进展正常。
-    填写日期：2024-04-22 00:00:00
-    明日计划：继续跟进
-    """
+            ),
+            receive_id_type="open_id",
+            msg_type="interactive"
+        )
+    except Exception as e:
+        logging.error("飞书需求提报卡片发送失败：", e)
 
     # 创建并返回结果字典
     return {
