@@ -93,10 +93,10 @@ def do_collect(
         """
 
         emergency_level_options = [
-            {"text": "P0高", "action_value": "P0"},
-            {"text": "P1中", "action_value": "P1"},
-            {"text": "P2低", "action_value": "P2"},
-            {"text": "待定", "action_value": "-"}
+            {"text": "P0高", "action_value": "0"},
+            {"text": "P1中", "action_value": "1"},
+            {"text": "P2低", "action_value": "2"},
+            {"text": "待定", "action_value": "99"}
         ]
 
         larkutil.send_message(
@@ -109,7 +109,7 @@ def do_collect(
                     },
                     "requirement_content": requirement_content,
                     "expected_completion_date": expected_completion_date,
-                    "emergency_level": emergency_level,
+                    # "emergency_level": 0,
                     "emergency_level_options": emergency_level_options
                 }
             ),
