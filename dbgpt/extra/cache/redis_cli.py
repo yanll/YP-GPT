@@ -6,7 +6,7 @@ from dbgpt.util.sutil import reidspwd
 
 
 class RedisClient:
-    PRIFIX = "/YP-GTP_"
+    PRIFIX = "/YP-GPT_"
 
     def __init__(self, host=os.getenv("REDIS_HOST"), port=6379, db=0, max_connections=20):
         self.host = host
