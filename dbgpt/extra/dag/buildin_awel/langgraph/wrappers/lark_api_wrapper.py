@@ -21,7 +21,7 @@ def call_lark_api(event: Dict):
     elif card_name == "daily_report_collect":
         #
         pass
-    print("lark_openapi_call_result:", result)
+    print("call_lark_api_result:", result)
     return result
 
 

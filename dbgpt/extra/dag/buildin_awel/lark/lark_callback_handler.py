@@ -9,11 +9,11 @@ class LarkCallbackHandler:
         super().__init__(**kwargs)
 
     async def a_handle(self, input_body: Dict) -> Dict:
+        print("LarkCallbackHandler_a_handle:", input_body)
         headers = input_body['header']
         event_type = headers['event_type']
         event_id = headers['event_id']
         event = input_body['event']
-        print("call_lark_api:", event_type, event_id, event)
         rs = lark_api_wrapper.call_lark_api(event)
-        print("call_lark_api_result:", rs)
+        print("LarkCallbackHandler_a_handle_result:", rs)
         return rs

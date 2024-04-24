@@ -50,13 +50,11 @@ class LarkEventHandler:
         return True
 
     async def a_handle(self, input_body: Dict):
+        print("LarkEventHandler_a_handle：", input_body)
         headers = input_body["header"]
         event_type = headers["event_type"]
         event_id = headers["event_id"]
         event = input_body["event"]
-
-        # apps = self.gpts_app_service.get_gpts_app_list("singe_agent")
-        # print("应用列表：", apps)
         if event_type == "im.message.receive_v1":
             sender_open_id = event["sender"]["sender_id"]["open_id"]
             message = event["message"]
@@ -66,11 +64,12 @@ class LarkEventHandler:
             content_text = content["text"]
             if message_type == "text" and content_text != "" and chat_type == "p2p" and sender_open_id != "":
                 print("开始异步执行", event_id)
-                self.request_handle(sender_open_id, content_text)
+                self.handle_message(sender_open_id, content_text)
                 print("执行日志", event_id)
+        else:
+            pass
 
-    def request_handle(self, sender_open_id, human_message):
-        print("lark_event_endpoint async handle：", human_message)
+    def handle_message(self, sender_open_id, human_message):
         # 开启新会话，归档历史消息。
         if human_message == "new chat":
             self.app_chat_service.disable_app_chat_his_message_by_uid(sender_open_id)

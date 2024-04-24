@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from typing import Dict
 
@@ -20,10 +21,9 @@ class RequestHandleOperator(MapOperator[Dict, str]):
             # 首次验证挑战码
             if "challenge" in input_body:
                 return {"challenge": input_body["challenge"]}
-
-            print("lark_callback_endpoint handle：", input_body)
-            rs = self.lark_callback_handler.a_handle(input_body)
-            print("LarkCallbackHandleResult:", rs)
+            asyncio.create_task(
+                self.lark_callback_handler.a_handle(input_body)
+            )
             return {}
 
         except Exception as e:
