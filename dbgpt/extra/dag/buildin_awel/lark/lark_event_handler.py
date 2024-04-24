@@ -63,13 +63,12 @@ class LarkEventHandler:
             content = json.loads(message["content"])
             content_text = content["text"]
             if message_type == "text" and content_text != "" and chat_type == "p2p" and sender_open_id != "":
-                print("开始异步执行", event_id)
                 self.handle_message(sender_open_id, content_text)
-                print("执行日志", event_id)
         else:
             pass
 
     def handle_message(self, sender_open_id, human_message):
+        print("LarkEventHandler_handle_message:", human_message)
         # 开启新会话，归档历史消息。
         if human_message == "new chat":
             self.app_chat_service.disable_app_chat_his_message_by_uid(sender_open_id)
@@ -86,4 +85,4 @@ class LarkEventHandler:
             content={"text": resp_msg},
             receive_id_type="open_id"
         )
-        print("LarkEventHandleResult:", resp_msg)
+        print("LarkEventHandler_handle_message_result:", resp_msg)
