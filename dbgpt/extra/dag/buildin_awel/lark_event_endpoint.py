@@ -11,6 +11,7 @@ from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
 from dbgpt.extra.cache.redis_cli import RedisClient
 from dbgpt.extra.dag.buildin_awel.app.service import GptsAppService, AppChatService
 from dbgpt.extra.dag.buildin_awel.langgraph.assistants.sales_assistant import SalesAssistant
+from dbgpt.extra.dag.buildin_awel.lark import lark_event_handler
 from dbgpt.storage.chat_history import ChatHistoryMessageEntity
 from dbgpt.storage.chat_history.chat_history_db import ChatHistoryMessageDao
 from dbgpt.util import larkutil
@@ -34,49 +35,29 @@ class RequestHandleOperator(MapOperator[Dict, str]):
                 return {"challenge": input_body["challenge"]}
             headers = input_body["header"]
             event_type = headers["event_type"]
-            event_id = headers["event_id"]
-            if (event_type not in ["im.message.receive_v1",
-                                   "p2p_chat_create",
-                                   "im.chat.member.bot.added_v1",
-                                   "im.chat.member.bot.deleted_v1"
-                                   ]):
-                return {"message": "OK"}
-
-            redis_key = "lark_event_id_for_no_repeat_" + event_id
-
-            exists: str = self.redis_client.get(redis_key)
-            if (exists == "true"):
-                print("飞书事件已经存在，跳过执行：", input_body)
-                return {"message": "OK"}
-            else:
-                self.redis_client.set(redis_key, "true", 12 * 60 * 60)
+            event_id = headers["event_type"]
+            if lark_event_handler.valid_event_type(input_body) is False:
+                return {}
+            if lark_event_handler.valid_repeat(self.redis_client, input_body) is False:
+                return {}
 
             event = input_body["event"]
 
-            if (event_type == "p2p_chat_create"):
-                print("机器人会话被创建", event)
-                return {"message": "OK"}
-            if (event_type == "im.chat.member.bot.added_v1"):
-                print("机器人进群了", event)
-                return {"message": "OK"}
-            if (event_type == "im.chat.member.bot.deleted_v1"):
-                print("机器人被群踢了", event)
-                return {"message": "OK"}
-
-            sender_open_id = event["sender"]["sender_id"]["open_id"]
-            message = event["message"]
-            message_type = message["message_type"]
-            chat_type = message["chat_type"]
-            content = json.loads(message["content"])
-            content_text = content["text"]
             # apps = self.gpts_app_service.get_gpts_app_list("singe_agent")
             # print("应用列表：", apps)
-            if event_type == "im.message.receive_v1" and message_type == "text" and sender_open_id != "" and content_text != "" and chat_type == "p2p":
-                print("开始异步执行", event_id)
-                asyncio.create_task(
-                    request_handle(self.app_chat_service, self.sales_assistant, sender_open_id, content_text)
-                )
-                print("执行日志", event_id)
+            if event_type == "im.message.receive_v1":
+                sender_open_id = event["sender"]["sender_id"]["open_id"]
+                message = event["message"]
+                message_type = message["message_type"]
+                chat_type = message["chat_type"]
+                content = json.loads(message["content"])
+                content_text = content["text"]
+                if (message_type == "text" and content_text != "" and chat_type == "p2p" and sender_open_id != ""):
+                    print("开始异步执行", event_id)
+                    asyncio.create_task(
+                        request_handle(self.app_chat_service, self.sales_assistant, sender_open_id, content_text)
+                    )
+                    print("执行日志", event_id)
             return {"message": "OK"}
         except Exception as e:
             logging.exception("飞书事件处理异常！", e)
