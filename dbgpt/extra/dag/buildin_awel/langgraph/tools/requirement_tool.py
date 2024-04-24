@@ -91,13 +91,13 @@ def do_collect(
         期望完成日期：2024-05-20
         紧急程度：P0
         """
-        level = 0
-        if (emergency_level == "P0"):
-            level = 0
-        if (emergency_level == "P1"):
-            level = 1
-        if (emergency_level == "P2"):
-            level = 2
+
+        emergency_level_options = [
+            {"text": "P0高", "action_value": "P0"},
+            {"text": "P1中", "action_value": "P1"},
+            {"text": "P2低", "action_value": "P2"},
+            {"text": "待定", "action_value": "-"}
+        ]
 
         larkutil.send_message(
             receive_id=conv_id,
@@ -109,7 +109,8 @@ def do_collect(
                     },
                     "requirement_content": requirement_content,
                     "expected_completion_date": expected_completion_date,
-                    "emergency_level": level
+                    "emergency_level": emergency_level,
+                    "emergency_level_options": emergency_level_options
                 }
             ),
             receive_id_type="open_id",
