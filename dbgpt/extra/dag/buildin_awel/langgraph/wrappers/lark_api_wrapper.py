@@ -14,7 +14,7 @@ def call_lark_api(event: Dict):
     card_name = action_value['card_name']
     result = {}
     # 需求收集表单
-    if (card_name == "requirement_collect"):
+    if card_name == "requirement_collect":
         result = create_requirement_for_lark_project(
             union_id=union_id, form_value=form_value
         )
@@ -27,6 +27,7 @@ def call_lark_api(event: Dict):
 
 def create_requirement_for_lark_project(union_id: str, form_value: Dict):
     return lark_project_api_wrapper.create_requirement_for_lark_project(
+        project_key="ypgptapi",
         union_id=union_id,
         name=form_value['requirement_content'],
         priority_value=form_value['emergency_level'],

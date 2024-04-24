@@ -6,8 +6,9 @@ import requests
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
 
 
-def create_requirement_for_lark_project(union_id, name, priority_value, expected_time):
+def create_requirement_for_lark_project(project_key: str, union_id, name, priority_value, expected_time):
     rs = create_and_send_work_item(
+        project_key=project_key,
         union_id=union_id,
         name=name,
         priority_value=priority_value,
@@ -72,9 +73,27 @@ def get_user_key(union_id):
         return str(e)
 
 
-def create_and_send_work_item(union_id, name, priority_value, expected_time):
+def get_template_id(project_key, union_id):
+    # url = 'https://project.feishu.cn/open_api/' + api_path + '/ template_list / story'
+    url = 'https://project.feishu.cn/open_api/' + project_key + '/template_list/story'
+
+    headers = {'X-PLUGIN-TOKEN': get_project_app_token(),
+               'X-USER-KEY': get_user_key(union_id)}
+
+    try:
+        response = requests.get(url, headers=headers)
+        response_data = response.json()
+        if response_data and 'data' in response_data and len(response_data['data']) > 0:
+            return response_data['data'][0].get('template_id')
+        else:
+            return "No template_id found in the response."
+    except Exception as e:
+        return str(e)
+
+
+def create_and_send_work_item(project_key, union_id, name, priority_value, expected_time):
     # 直接在函数内定义 API URL 和 headers
-    url = 'https://project.feishu.cn/open_api/ypgptapi/work_item/create'
+    url = 'https://project.feishu.cn/open_api/' + project_key + '/work_item/create'
     headers = {
         'X-PLUGIN-TOKEN': get_project_app_token(),
         'X-USER-KEY': get_user_key(union_id),
@@ -93,7 +112,7 @@ def create_and_send_work_item(union_id, name, priority_value, expected_time):
     # 构建请求的数据结构
     data = {
         "work_item_type_key": "story",
-        "template_id": 979341,
+        "template_id": get_template_id(project_key, union_id),
         "name": name,
         "field_value_pairs": [
             {
