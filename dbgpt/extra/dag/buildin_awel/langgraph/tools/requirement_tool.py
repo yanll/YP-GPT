@@ -7,6 +7,7 @@ from langchain_core.callbacks import (
 )
 from pydantic import BaseModel, Field
 
+from dbgpt.extra.dag.buildin_awel.lark import card_templates
 from dbgpt.util import larkutil
 
 
@@ -97,19 +98,20 @@ def do_collect(
             level = 1
         if (emergency_level == "P2"):
             level = 2
+
         larkutil.send_message(
             receive_id=conv_id,
-            content={
-                "type": "template",
-                "data": {
-                    "template_id": "AAqkjMFhiuVwF", "template_version_name": "1.0.10",
-                    "template_variable": {
-                        "requirement_content": requirement_content,
-                        "expected_completion_date": expected_completion_date,
-                        "emergency_level": level
-                    }
+            content=card_templates.create_requirement_card_content(
+                template_variable={
+                    "card_metadata": {
+                        "card_name": "requirement_collect",
+                        "description": "需求收集表单"
+                    },
+                    "requirement_content": requirement_content,
+                    "expected_completion_date": expected_completion_date,
+                    "emergency_level": level
                 }
-            },
+            ),
             receive_id_type="open_id",
             msg_type="interactive"
         )

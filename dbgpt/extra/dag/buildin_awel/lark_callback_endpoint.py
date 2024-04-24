@@ -3,7 +3,7 @@ import logging
 from typing import Dict
 
 from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
-from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_api_wrapper
+from dbgpt.extra.dag.buildin_awel.lark import lark_callback_handler
 from dbgpt.util.azure_util import create_azure_llm
 
 
@@ -21,11 +21,9 @@ class RequestHandleOperator(MapOperator[Dict, str]):
             if "challenge" in input_body:
                 return {"challenge": input_body["challenge"]}
 
-            print("开始异步执行回调", input_body)
-            # asyncio.create_task(
+            print("开始执行回调", input_body)
             rs = request_handle(input_body)
-            # )
-            print("执行日志", input_body)
+            print("回调执行结果", input_body)
             return rs
 
         except Exception as e:
@@ -44,7 +42,7 @@ with DAG("dbgpt_awel_lark_callback_endpoint") as dag:
 
 
 def request_handle(input_body: Dict):
-    print("lark_callback_endpoint async handle：", input_body)
-    rs = lark_api_wrapper.handle_lark_callback(input_body)
+    print("lark_callback_endpoint handle：", input_body)
+    rs = lark_callback_handler.handle(input_body)
     print("LarkCallbackHandleResult:", "")
     return rs
