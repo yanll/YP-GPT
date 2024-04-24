@@ -109,7 +109,7 @@ def do_collect(
                     },
                     "requirement_content": requirement_content,
                     "expected_completion_date": expected_completion_date,
-                    "emergency_level": emergency_level,
+                    "emergency_level": "0",
                     "emergency_level_options": emergency_level_options
                 }
             ),

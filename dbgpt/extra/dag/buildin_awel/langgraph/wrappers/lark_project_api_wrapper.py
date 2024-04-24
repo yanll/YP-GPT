@@ -15,27 +15,27 @@ def create_requirement_for_lark_project(project_key: str, union_id, name, priori
         expected_time=expected_time
     )
     card = {
-        # "toast": {
-        #     "type": "info",
-        #     "content": "温馨提示",
-        #     "i18n": {
-        #         "zh_cn": "信息已提交，请查看结果！",
-        #         "en_us": "submitted"
-        #     }
-        # },
-        # "card": {
-        #     "type": "template",
-        #     "data": card_templates.create_requirement_card_content(
-        #         template_variable={
-        #             "card_metadata": {
-        #                 "card_name": "requirement_collect"
-        #             },
-        #             "requirement_content": "-",
-        #             "expected_completion_date": "",
-        #             "emergency_level": ""
-        #         }
-        #     )
-        # }
+        "toast": {
+            "type": "info",
+            "content": "温馨提示",
+            "i18n": {
+                "zh_cn": "信息已提交，请查看结果！",
+                "en_us": "submitted"
+            }
+        },
+        "card": {
+            "type": "template",
+            "data": card_templates.create_requirement_card_content(
+                template_variable={
+                    "card_metadata": {
+                        "card_name": "requirement_collect"
+                    },
+                    "requirement_content": "-",
+                    "expected_completion_date": "",
+                    "emergency_level": ""
+                }
+            )
+        }
     }
     return card
 

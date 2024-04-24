@@ -21,10 +21,11 @@ class RequestHandleOperator(MapOperator[Dict, str]):
             # 首次验证挑战码
             if "challenge" in input_body:
                 return {"challenge": input_body["challenge"]}
-            asyncio.create_task(
-                self.lark_callback_handler.a_handle(input_body)
-            )
-            return {}
+            # asyncio.create_task(
+            #     self.lark_callback_handler.a_handle(input_body)
+            # )
+            # return {}
+            return await self.lark_callback_handler.a_handle(input_body)
 
         except Exception as e:
             logging.exception("飞书回调处理异常！", e)
