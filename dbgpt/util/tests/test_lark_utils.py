@@ -1,3 +1,4 @@
+from dbgpt.extra.dag.buildin_awel.lark import card_templates
 from dbgpt.util import larkutil
 import time
 from datetime import datetime
@@ -26,18 +27,30 @@ def test_send_message():
 
 
 def test_card_send_message():
+    emergency_level_options = [
+        {"text": "P0高", "action_value": "0"},
+        {"text": "P1中", "action_value": "1"},
+        {"text": "P2中", "action_value": "2"},
+        {"text": "待定", "action_value": "99"}
+    ]
+
     larkutil.send_message(
-        receive_id="ou_8183ebf29633d5af91fa0b32a0c05bcf",
-        content={
-            "type": "template",
-            "data": {
-                "template_id": "AAqkjM4Ffisl2", "template_version_name": "1.0.1",
-                "template_variable": {
-                    "ai_message": "请提供完整的信息！"
-                }
+        receive_id="liangliang.yan@yeepay.com",
+        content=card_templates.create_card_content_by_template(
+            template_id="AAqkjMFhiuVwF",
+            template_version_name="1.0.28",
+            template_variable={
+                "card_metadata": {
+                    "card_name": "requirement_collect",
+                    "description": "需求收集表单"
+                },
+                "requirement_content": "你好",
+                "expected_completion_date": "2023-12-11",
+                "emergency_level": "0",
+                "emergency_level_options": emergency_level_options
             }
-        },
-        receive_id_type="open_id",
+        ),
+        receive_id_type="email",
         msg_type="interactive"
     )
     assert True
