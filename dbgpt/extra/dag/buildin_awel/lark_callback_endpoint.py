@@ -3,6 +3,7 @@ import logging
 from typing import Dict
 
 from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
+from dbgpt.extra.dag.buildin_awel.lark import card_templates
 from dbgpt.extra.dag.buildin_awel.lark.lark_callback_handler import LarkCallbackHandler
 from dbgpt.util.azure_util import create_azure_llm
 
@@ -21,11 +22,19 @@ class RequestHandleOperator(MapOperator[Dict, str]):
             # 首次验证挑战码
             if "challenge" in input_body:
                 return {"challenge": input_body["challenge"]}
-            # asyncio.create_task(
-            #     self.lark_callback_handler.a_handle(input_body)
-            # )
-            # return {}
-            return await self.lark_callback_handler.a_handle(input_body)
+            asyncio.create_task(
+                self.lark_callback_handler.a_handle(input_body)
+            )
+            return {
+                "toast": {
+                    "type": "info",
+                    "content": "温馨提示",
+                    "i18n": {
+                        "zh_cn": "表单数据已提交，请查看结果！",
+                        "en_us": "submitted"
+                    }
+                }
+            }
 
         except Exception as e:
             logging.exception("飞书回调处理异常！", e)
