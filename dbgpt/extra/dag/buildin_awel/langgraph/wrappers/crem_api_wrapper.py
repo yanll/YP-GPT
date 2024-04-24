@@ -1,7 +1,8 @@
 import requests
 import json
 
-def add_report(report_type, report_time, work_summary, senders=None, plans=None):
+
+def add_daily_report(report_type, report_time, work_summary, senders=None, plans=None):
     url = "https://nccemportal.yeepay.com/cem-api//workReportInfo/addWorkReportInfo"
     headers = {
         "Content-Type": "application/json",
@@ -42,24 +43,17 @@ def add_report(report_type, report_time, work_summary, senders=None, plans=None)
     response = requests.post(url, headers=headers, data=json.dumps(data))
     return response.json()
 
-# Example usage for daily and weekly reports
-if __name__ == "__main__":
-    # 日报
-    daily_report_type = "日报"
-    daily_report_time = "2024-04-22 00:00:00"
-    daily_work_summary = "日报工作总结"
-    daily_senders = "张华雪"
-    daily_plans = ["明日计划1", "明日计划2", "明日计划3"]
-    daily_result = add_report(daily_report_type, daily_report_time, daily_work_summary, daily_senders, daily_plans)
-    print("日报结果:", daily_result)
 
-    # # 周报
-    # weekly_report_type = "周报"
-    # weekly_report_time = "2024-04-28 00:00:00"
-    # weekly_work_summary = "本周完成了项目A的设计，解决了项目B中的一些问题"
-    # weekly_senders = "张华雪"
-    # weekly_plans = [
-    #     {"planContentString": "下周继续完成项目A", "customerNo": "KA2024-A04220001", "customerName": "客户X"},
-    # ]
-    # weekly_result = add_report(weekly_report_type, weekly_report_time, weekly_work_summary, weekly_senders, weekly_plans)
-    # print("周报结果:", weekly_result)
+# Example usage for daily and weekly reports
+# 日报
+
+# # 周报
+# weekly_report_type = "周报"
+# weekly_report_time = "2024-04-28 00:00:00"
+# weekly_work_summary = "本周完成了项目A的设计，解决了项目B中的一些问题"
+# weekly_senders = "张华雪"
+# weekly_plans = [
+#     {"planContentString": "下周继续完成项目A", "customerNo": "KA2024-A04220001", "customerName": "客户X"},
+# ]
+# weekly_result = add_report(weekly_report_type, weekly_report_time, weekly_work_summary, weekly_senders, weekly_plans)
+# print("周报结果:", weekly_result)
