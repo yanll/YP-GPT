@@ -28,6 +28,10 @@ def call(event: Dict):
         result = create_daily_report_for_crem(
             form_value=form_value
         )
+    elif card_name == "weekly_report_collect":
+        result = create_weekly_report_for_crem(
+            form_value=form_value
+        )
     print("call_lark_api_result:", result)
     return result
 
@@ -44,14 +48,28 @@ def create_requirement_for_lark_project(union_id: str, form_value: Dict):
 
 def create_daily_report_for_crem(form_value: Dict):
     daily_report_type = "日报"
-    daily_report_time = "2024-04-22 00:00:00"
-    daily_work_summary = "日报工作总结"
-    daily_senders = "张华雪"
-    daily_plans = ["明日计划1", "明日计划2", "明日计划3"]
-    daily_result = crem_api_wrapper.add_daily_report(
-        daily_report_type, daily_report_time, daily_work_summary,
-        daily_senders,
-        daily_plans
+    daily_report_time = form_value['create_date'].split()[0] + " 00:00:00"
+    daily_work_summary = form_value['daily_report_content']
+    daily_plans = form_value['daily_report_tomorrow_plans']
+    daily_result = crem_api_wrapper.add_daily_or_weekly_report(
+        report_type=daily_report_type,
+        report_time=daily_report_time,
+        work_summary = daily_work_summary,
+        plans = daily_plans
     )
     print("日报结果:", daily_result)
+    return {}
+
+def create_weekly_report_for_crem(form_value: Dict):
+    daily_report_type = "周报"
+    daily_report_time = form_value['create_date'].split()[0] + " 00:00:00"
+    daily_work_summary = form_value['weekly_report_content']
+    daily_plans = form_value['weekly_report_next_week_plans']
+    daily_result = crem_api_wrapper.add_daily_or_weekly_report(
+        report_type=daily_report_type,
+        report_time=daily_report_time,
+        work_summary = daily_work_summary,
+        plans = daily_plans
+    )
+    print("周报结果:", daily_result)
     return {}
