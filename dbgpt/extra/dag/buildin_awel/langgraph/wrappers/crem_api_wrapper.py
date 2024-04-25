@@ -4,7 +4,8 @@ import json
 
 def add_daily_or_weekly_report(report_type: str = "", report_time: str = "", work_summary: str = '', senders=None,
                                plans=None):
-    url = "https://nccemportal.yeepay.com/cem-api//workReportInfo/addWorkReportInfo"
+    # url = "https://nccemportal.yeepay.com/cem-api//workReportInfo/addWorkReportInfo"
+    url = "http://nck8s.iaas.yp:30762/cem-api//workReportInfo/addWorkReportInfo"
     headers = {
         "Content-Type": "application/json; charset=utf-8",
         # "pageType": "cemPortal",

@@ -3,7 +3,8 @@ import json
 
 
 def add_customer_visit_record(customerName, followUpText, followUpTime, followUpTypeName, visitTypeName):
-    url = "https://nccemportal.yeepay.com/cem-api/busFollowUp/addCreateFollowUp"
+    # url = "https://nccemportal.yeepay.com/cem-api/busFollowUp/addCreateFollowUp"
+    url = "http://nck8s.iaas.yp:30762/cem-api/busFollowUp/addCreateFollowUp"
     headers = {
         "Content-Type": "application/json",
 
