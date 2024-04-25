@@ -30,9 +30,12 @@ class LarkEventHandler:
             print("机器人进群了", input_body)
         if event_type == "im.chat.member.bot.deleted_v1":
             print("机器人被群踢了", input_body)
+        if event_type == "application.bot.menu_v6":
+            print("触发自定义事件", input_body)
 
         event_types = [
-            "im.message.receive_v1", "p2p_chat_create", "im.chat.member.bot.added_v1", "im.chat.member.bot.deleted_v1"
+            "im.message.receive_v1", "p2p_chat_create", "im.chat.member.bot.added_v1", "im.chat.member.bot.deleted_v1",
+            "application.bot.menu_v6"
         ]
         if event_type in event_types:
             return True
