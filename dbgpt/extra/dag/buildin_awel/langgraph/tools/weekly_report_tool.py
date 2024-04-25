@@ -97,14 +97,17 @@ def do_collect(
         conv_id: str,
         weekly_report_content: str = "",
         create_date: str = "",
-        weekly_report_next_week_plans: Optional[List[str]] = None,
-        senders_name: str = ""
+        weekly_report_next_week_plans: str = "",
+        senders_name: str = "",
+        weekly_report_client: str = "",
 ):
     # 处理明日计划，如果为空则返回特定的消息
     if weekly_report_next_week_plans is None:
         plans_description = ""
     else:
-        plans_description = ", ".join(weekly_report_next_week_plans) if weekly_report_next_week_plans else ""
+        plans_description = ""
+        for index, weekly_report_next_week_plan in enumerate(weekly_report_next_week_plans):
+            plans_description += str(index+1) + '. ' + weekly_report_next_week_plan.plan_content + '; '
 
     try:
         """
@@ -119,10 +122,13 @@ def do_collect(
             content=card_templates.create_weekly_report_card_content(
                 template_variable={
                     "card_metadata": {
-                        "card_name": "daily_report_collect",
+                        "card_name": "weekly_report_collect",
                         "description": "周报收集表单"
                     },
-                    "requirement_content": "",
+                    "weekly_report_next_week_plans": plans_description,
+                    "create_date": create_date,
+                    "weekly_report_client": weekly_report_client,
+                    "weekly_report_content": weekly_report_content,
                 }
             ),
             receive_id_type="open_id",
