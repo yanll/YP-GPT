@@ -12,7 +12,7 @@ from langgraph.graph import END, StateGraph
 from langgraph.prebuilt import ToolExecutor
 
 from dbgpt.util.azure_util import create_azure_llm
-from dbgpt.extra.dag.buildin_awel.langgraph.tools.general_query_tool import GeneralQueryResults
+from dbgpt.extra.dag.buildin_awel.langgraph.tools.merchant_search_tool import MerchantSearchTool
 
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_API_KEY"] = "ls__19718564013e408d8d5ae23ad8dbdf29"
@@ -32,7 +32,7 @@ class AgentState(TypedDict):
     intermediate_steps: Annotated[list[tuple[AgentAction, str]], operator.add]
 
 
-tools = [GeneralQueryResults(max_results=20)]
+tools = [MerchantSearchTool(max_results=20)]
 
 prompt = ChatPromptTemplate.from_messages(
     [
