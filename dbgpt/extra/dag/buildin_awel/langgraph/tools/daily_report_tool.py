@@ -118,7 +118,10 @@ def do_collect(
                         "card_name": "daily_report_collect",
                         "description": "日报收集表单"
                     },
-                    "requirement_content": "",
+                    "daily_report_tomorrow_plans": daily_report_tomorrow_plans[0],
+                    "create_date": create_date,
+                    "daily_report_content": daily_report_content,
+
                 }
             ),
             receive_id_type="open_id",
