@@ -129,7 +129,7 @@ def do_collect(
             msg_type="interactive"
         )
     except Exception as e:
-        logging.error("飞书需求提报卡片发送失败：", e)
+        logging.error("飞书周报卡片发送失败：", e)
 
     # 创建并返回结果字典
     return {

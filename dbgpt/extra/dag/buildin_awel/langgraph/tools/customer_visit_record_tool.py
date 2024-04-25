@@ -7,6 +7,7 @@ from langchain_core.callbacks import (
 )
 from pydantic import BaseModel, Field
 
+from dbgpt.extra.dag.buildin_awel.lark import card_templates
 from dbgpt.util import larkutil
 
 
@@ -93,6 +94,29 @@ def do_collect(
         visit_address: str = "",
         visit_date: str = ""
 ):
+    try:
+        """
+        我要填写客户拜访跟进记录：
+        XXXX：XXXX
+        """
+        print("发送飞书拜访卡片：", conv_id)
+        larkutil.send_message(
+            receive_id=conv_id,
+            # content=card_templates.create_daily_report_card_content(
+            #     template_variable={
+            #         "card_metadata": {
+            #             "card_name": "daily_report_collect",
+            #             "description": "日报收集表单"
+            #         },
+            #         "requirement_content": "",
+            #     }
+            # ),
+            receive_id_type="open_id",
+            msg_type="interactive"
+        )
+    except Exception as e:
+        logging.error("飞书拜访跟进卡片发送失败：", e)
+
     return {
         "success": "true",
         "error_message": "",
