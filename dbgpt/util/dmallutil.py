@@ -11,7 +11,7 @@ class DmallClient:
             api_name: str,
             parameters: Dict,
             api_version: str = "V1.0",
-            endpoint: str = "https://dmall.yeepay.com/dev-api"
+            endpoint: str = "http://datadmall.bigdata.yp:30915/dev-api"
     ):
         print("\n商店调用: ", api_name, " ", parameters)
         url = endpoint + "/dataapi/output/postapi/" + api_name
