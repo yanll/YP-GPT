@@ -13,7 +13,7 @@ from dbgpt.util import larkutil
 class PlanDetail(BaseModel):
     plan_content: str = Field(
         name="下周计划内容",
-        description="下周计划内容（从输入的信息中提取，默认为空，不要编造）",
+        description="下周计划内容",
         default=""
     )
 
@@ -29,23 +29,23 @@ class WeeklyReportCollectInput(BaseModel):
     )
     weekly_report_content: str = Field(
         name="周报内容",
-        description="周报内容（从输入的信息中提取，默认为空，不要编造）",
+        description="周报内容",
         default=""
     )
     create_date: str = Field(
         name="创建日期",
-        description="创建日期，格式：%Y-%m-%d（从输入的信息中提取，默认为空，不要编造）",
+        description="创建日期，格式：%Y-%m-%d",
         default=""
     )
     weekly_report_next_week_plans: List[PlanDetail] = Field(
         name="下周计划内容",
-        description="下周计划内容（从输入的信息中提取，默认为空，不要编造）",
+        description="下周计划内容",
         default=[]
     )
 
     senders_name: str = Field(
         name="抄送人员",
-        description="抄送给谁（从输入的信息中提取，默认为空，不要编造）",
+        description="抄送给谁",
         default=""
     )
 
@@ -56,18 +56,20 @@ class WeeklyReportCollectTool(BaseTool):
         "这是一个周报填写工具，帮助用户填写工作周报、填写每周工作总结。"
         "当需要填写周报/写周报/总结周报时非常有用。 "
         "能够尽可能全的收集周报信息。"
+        "调用本工具需要的参数值均来自用户的输入，可以默认为空，但是禁止随意编造。"
         ""
     )
     args_schema: Type[BaseModel] = WeeklyReportCollectInput
 
-    def _run(self,
-             conv_id: str,
-             weekly_report_content: str,
-             create_date: str,
-             run_manager: Optional[CallbackManagerForToolRun] = None,
-             senders_name: Optional[str] = "",
-             weekly_report_next_week_plans: Optional[List[PlanDetail]] = None):
-
+    def _run(
+            self,
+            conv_id: str,
+            weekly_report_content: str = "",
+            create_date: str = "",
+            senders_name: Optional[str] = "",
+            weekly_report_next_week_plans: Optional[List[PlanDetail]] = None,
+            run_manager: Optional[CallbackManagerForToolRun] = None
+    ):
         """Use the tool.77"""
         print("开始运行周报填写工具：", conv_id, weekly_report_content, create_date, senders_name,
               weekly_report_next_week_plans)
@@ -79,7 +81,9 @@ class WeeklyReportCollectTool(BaseTool):
             else:
                 resp = do_collect(
                     weekly_report_content=weekly_report_content,
-                    create_date=create_date
+                    create_date=create_date,
+                    weekly_report_next_week_plans=weekly_report_next_week_plans,
+                    senders_name=senders_name
                 )
             return resp
         except Exception as e:

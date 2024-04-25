@@ -47,6 +47,7 @@ class CustomerVisitRecordCollectTool(BaseTool):
         "这是一个客户拜访记录填写工具，帮助用户填写客户拜访记录、客户拜访信息总结。"
         "当需要填写客户拜访记录时非常有用。 "
         "能够尽可能全的收集拜访记录信息。"
+        "调用本工具需要的参数值均来自用户的输入，可以默认为空，但是禁止随意编造。"
         ""
     )
     args_schema: Type[BaseModel] = CustomerVisitRecordCollectInput

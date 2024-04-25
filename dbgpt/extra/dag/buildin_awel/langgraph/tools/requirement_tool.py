@@ -43,6 +43,7 @@ class RequirementCollectTool(BaseTool):
         "这是一个需求收集工具，用于收集用户工作中的需求、对某个事物的要求、或其他痛点等信息"
         "当需要收集需求数据时非常有用。 "
         "能够尽可能全的收集需求信息。"
+        "调用本工具需要的参数值均来自用户的输入，可以默认为空，但是禁止随意编造。"
         ""
     )
     args_schema: Type[BaseModel] = RequirementCollectInput
