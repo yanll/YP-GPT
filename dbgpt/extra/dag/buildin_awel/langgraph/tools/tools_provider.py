@@ -16,7 +16,7 @@ class ToolsProvider:
 
     def __init__(self, *args, **kwargs):
         self.general_tools = [
-            MerchantSearchTool(max_results=20),
+            MerchantSearchTool(max_results=10),
             DailyReportCollectTool(),
             WeeklyReportCollectTool(),
             CustomerVisitRecordCollectTool(),

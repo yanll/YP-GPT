@@ -22,9 +22,10 @@ class MerchantSearchTool(BaseTool):
         "当你需要通过调用工具查询商户或客户信息时非常有用。 "
         "输入参数应该是工具需要的全部参数。"
         "调用本工具需要的参数值均来自用户的输入，可以默认为空，但是禁止随意编造。"
+        "请将查询结果数据整理并美化后输出。"
         ""
     )
-    max_results: int = 10
+    max_results: int = 20
     args_schema: Type[BaseModel] = MerchantSearchToolInput
 
     def _run(
