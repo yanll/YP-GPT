@@ -74,6 +74,7 @@ class CustomerVisitRecordCollectTool(BaseTool):
                 resp = {"success": "false", "response_message": "the description of visit_date"}
             else:
                 resp = do_collect(
+                    conv_id=conv_id,
                     customer_name=customer_name,
                     visit_content=visit_content,
                     visit_address=visit_address,
@@ -86,6 +87,7 @@ class CustomerVisitRecordCollectTool(BaseTool):
 
 
 def do_collect(
+        conv_id: str,
         customer_name: str = "",
         visit_content: str = "",
         visit_address: str = "",
@@ -95,6 +97,7 @@ def do_collect(
         "success": "true",
         "error_message": "",
         "data": {
+            "conv_id": conv_id,
             "customer_name": customer_name,
             "visit_content": visit_content,
             "visit_address": visit_address,
