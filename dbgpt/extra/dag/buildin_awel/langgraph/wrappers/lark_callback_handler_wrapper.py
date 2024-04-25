@@ -1,6 +1,8 @@
 from typing import Dict
 
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_wrapper
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_customer_visit
+
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_api_wrapper
 
 
@@ -26,6 +28,10 @@ def call(event: Dict):
         )
     elif card_name == "daily_report_collect":
         result = create_daily_report_for_crem(
+            form_value=form_value
+        )
+    elif card_name == "customer_visit_record_collect":
+        result = create_customer_visit_record_for_crem(
             form_value=form_value
         )
     print("call_lark_api_result:", result)
@@ -55,3 +61,19 @@ def create_daily_report_for_crem(form_value: Dict):
     )
     print("日报结果:", daily_result)
     return {}
+
+def create_customer_visit_record_for_crem(form_value: Dict):
+
+
+    customer_name = "测试商户"
+    visit_method = "电话拜访",
+    visit_type = "初次拜访"
+    visit_content = "拜访内容测试"
+    visit_date = "2024-04-25 00:00:00"
+    customer_visit_record = crem_api_customer_visit.add_customer_visit_record(customer_name,visit_content,visit_date,visit_method,visit_type)
+
+    print("日报结果:", customer_visit_record)
+    return {}
+
+
+

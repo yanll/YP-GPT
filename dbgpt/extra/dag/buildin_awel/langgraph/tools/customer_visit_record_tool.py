@@ -25,14 +25,19 @@ class CustomerVisitRecordCollectInput(BaseModel):
         description="客户名称",
         default=""
     )
+    visit_method: str = Field(
+        name="拜访形式",
+        description="拜访形式",
+        default=""
+    )
+    visit_type: str = Field(
+        name="拜访类型",
+        description="拜访类型",
+        default=""
+    )
     visit_content: str = Field(
         name="拜访内容",
         description="拜访内容",
-        default=""
-    )
-    visit_address: str = Field(
-        name="拜访地址",
-        description="拜访地址",
         default=""
     )
     visit_date: str = Field(
@@ -57,28 +62,32 @@ class CustomerVisitRecordCollectTool(BaseTool):
             self,
             conv_id: str = "",
             customer_name: str = "",
+            visit_method: str = "",
+            visit_type: str = "",
             visit_content: str = "",
-            visit_address: str = "",
             visit_date: str = "",
             run_manager: Optional[CallbackManagerForToolRun] = None,
     ):
         """Use the tool."""
-        print("开始运行客户拜访填写工具：", conv_id, customer_name, visit_content, visit_address, visit_date)
+        print("开始运行客户拜访填写工具：", conv_id, customer_name, visit_method, visit_type, visit_content, visit_date)
         try:
             if customer_name == "":
                 resp = {"success": "false", "response_message": "the description of customer_name"}
+            elif visit_method == "":
+                resp = {"success": "false", "response_message": "the description of visit_method"}
+            elif visit_type == "":
+                resp = {"success": "false", "response_message": "the description of visit_type"}
             elif visit_content == "":
                 resp = {"success": "false", "response_message": "the description of visit_content"}
-            elif visit_address == "":
-                resp = {"success": "false", "response_message": "the description of visit_address"}
             elif visit_date == "":
                 resp = {"success": "false", "response_message": "the description of visit_date"}
             else:
                 resp = do_collect(
                     conv_id=conv_id,
                     customer_name=customer_name,
+                    visit_method=visit_method,
+                    visit_type=visit_type,
                     visit_content=visit_content,
-                    visit_address=visit_address,
                     visit_date=visit_date
                 )
             return resp
@@ -90,27 +99,39 @@ class CustomerVisitRecordCollectTool(BaseTool):
 def do_collect(
         conv_id: str,
         customer_name: str = "",
+        visit_method: str = "",
+        visit_type: str = "",
         visit_content: str = "",
-        visit_address: str = "",
         visit_date: str = ""
 ):
     try:
         """
         我要填写客户拜访跟进记录：
-        XXXX：XXXX
+        
+       - 客户名称：易宝支付
+       - 拜访形式：电话
+       - 拜访类型：初次拜访
+       - 拜访内容：测试拜访情况
+       - 拜访日期：2024年5月2日
+
+
+        
         """
         print("发送飞书拜访卡片：", conv_id)
         larkutil.send_message(
             receive_id=conv_id,
-            # content=card_templates.create_daily_report_card_content(
-            #     template_variable={
-            #         "card_metadata": {
-            #             "card_name": "daily_report_collect",
-            #             "description": "日报收集表单"
-            #         },
-            #         "requirement_content": "",
-            #     }
-            # ),
+            content=card_templates.create_customer_visit_record_card_content(
+                template_variable={
+                    "card_metadata": {
+                        "card_name": "customer_visit_record_collect",
+                        "description": "拜访收集表单"
+                    },
+                    "customer_name": customer_name,
+                    "visit_content": visit_content,
+
+
+                }
+            ),
             receive_id_type="open_id",
             msg_type="interactive"
         )
@@ -123,8 +144,9 @@ def do_collect(
         "data": {
             "conv_id": conv_id,
             "customer_name": customer_name,
+            "visit_method": visit_method,
+            "visit_type": visit_type,
             "visit_content": visit_content,
-            "visit_address": visit_address,
             "visit_date": visit_date
         }
     }
