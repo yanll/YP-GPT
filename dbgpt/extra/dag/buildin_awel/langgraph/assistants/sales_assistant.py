@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import time
 import uuid
 from typing import Any, Dict
 
@@ -50,7 +51,10 @@ class SalesAssistant:
                              ""
                 ),
                 SystemMessagePromptTemplate.from_template(
-                    template="conv_uid=\"{conv_uid}\""
+                    template=""
+                             "conv_uid=\"{conv_uid}\"\n"
+                             "current_system_time_string=\"{current_system_time_string}\"\n"
+                             ""
                 ),
                 MessagesPlaceholder(variable_name="chat_history", optional=True),
                 HumanMessagePromptTemplate.from_template(template="{input}"),
@@ -203,7 +207,8 @@ class SalesAssistant:
             inputs: Dict = {
                 "input": input,
                 "chat_history": his,
-                "conv_uid": conv_uid
+                "conv_uid": conv_uid,
+                "current_system_time_string": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
             }
             rec = {
                 "id": str(uuid.uuid1()),
