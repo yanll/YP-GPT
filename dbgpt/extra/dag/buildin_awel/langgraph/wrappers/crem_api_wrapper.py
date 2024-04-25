@@ -2,14 +2,15 @@ import requests
 import json
 
 
-def add_daily_or_weekly_report(report_type: str = "", report_time: str = "", work_summary: str = '', senders=None, plans=None):
+def add_daily_or_weekly_report(report_type: str = "", report_time: str = "", work_summary: str = '', senders=None,
+                               plans=None):
     url = "https://nccemportal.yeepay.com/cem-api//workReportInfo/addWorkReportInfo"
     headers = {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json; charset=utf-8",
         # "pageType": "cemPortal",
         # "username": "liangliang.yan",
         # "Cookie": "JSESSIONID = CC1A0187CB8ABB474AA5D97614F21FC9",
-        "yuiassotoken": 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJsb2dpbl90eXBlIjoiQUNDT1VOVCIsIm1vYmlsZSI6IjEzMjgyNTEyODM2IiwibWlncmF0ZV91c2VyX2lkIjoiZTIyM2Q5M2QiLCJ4LWlwIjoiMTAuMTcxLjMuMjMwIiwicHJpbmNpcGFsX2lkIjoiMTc3ODkiLCJ0b2tlbiI6IjQ3YjEwNWI4LTE5NmQtNDFlOC05NGYzLWU3Y2Y4YmU2MWY3NSIsImxvZ2luX25hbWUiOiJjaGFvLmh1YW5nIiwidHdvX2ZhY3Rvcl92YWxpZCI6dHJ1ZSwibG9naW5fdGltZSI6IjIwMjQtMDQtMjUgMjA6MzA6MDEiLCJzY29wZSI6IiIsImNhbGxiYWNrIjoiaHR0cHM6Ly9uY2NlbXBvcnRhbC55ZWVwYXkuY29tLyMvY3JtL3dvcmtSZXBvcnQiLCJzc290aWNrZXQiOiJmY2VmYmY1ZS0yNzRkLTQ4NTYtYjY4Mi1lMDE2NDU2ZjRkZmIiLCJleHAiOjE3MTQxMzQ2MDEsImlhdCI6MTcxNDA0NjQwMSwiZW1haWwiOiJjaGFvLmh1YW5nQHllZXBheS5jb20iLCJ1c2VybmFtZSI6Ium7hOi2hSJ9.K_RM9yleCPhSNl8qszf8S0-lzgR0ftXDBSICASvu5BI_0qWWLR-9D9EVbjNh931jVBBZ_WtTBCuvrZD0X3GnTg'
+        "Yuiassotoken": 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJsb2dpbl90eXBlIjoiQUNDT1VOVCIsIm1vYmlsZSI6IjE4NjExNzAwMzgwIiwibWlncmF0ZV91c2VyX2lkIjoiZWNkNTAyZDQtMmU2OC00NGI1LWEyNWYtZjIxZmQzM2IxNTIwIiwieC1pcCI6IjE3Mi4yNS4yNS4xMCIsInByaW5jaXBhbF9pZCI6IjE1MTAxIiwidG9rZW4iOiI4NzY1OGQ1Zi1mMTk1LTRmZTEtYjNiYS05Mzk1MTJlNjBhYjMiLCJsb2dpbl9uYW1lIjoibGlhbmdsaWFuZy55YW4iLCJ0d29fZmFjdG9yX3ZhbGlkIjp0cnVlLCJsb2dpbl90aW1lIjoiMjAyNC0wNC0yNSAyMDozNToyMCIsInNjb3BlIjoiIiwiY2FsbGJhY2siOiJodHRwczovL2RtYWxsLnllZXBheS5jb20vIy9kYXRhc2V0L2luZGV4Iiwic3NvdGlja2V0IjoiMjcyMWU0YTItNzFmZC00YzBjLWE2OWYtNTg2NGE2ZGNiYzA1IiwiZXhwIjoxNzE0MTM0OTIwLCJpYXQiOjE3MTQwNDY3MjAsImVtYWlsIjoibGlhbmdsaWFuZy55YW5AeWVlcGF5LmNvbSIsInVzZXJuYW1lIjoi5Lil5Lqu5LquIn0.8zOjyFI7JVKJ8-3KhU-1txvuVLfRP8WZZqbmfrGSoACfJ5oFP-XmDM9d3YvbS1k1Hf11GpIa_5NYUpIlnKyZJw'
     }
 
     # bus_plan_list = []
@@ -35,15 +36,20 @@ def add_daily_or_weekly_report(report_type: str = "", report_time: str = "", wor
         "reportType": report_type,
         "reportTime": report_time,
         "workSummaryString": work_summary,
-        # "senders": senders if senders else "",
-        "busPlanForTomorrowInfoList": [plans],
+        "busPlanForTomorrowInfoList": [],
         "busWorkScheduleInfoList": [],
         "busAnnexInfos": []
     }
-
-    response = requests.post(url, headers=headers, data=data)
+    # ,
+    # "senders": senders if senders else "",
+    # "busPlanForTomorrowInfoList": [plans],
+    # "busPlanForTomorrowInfoList": [],
+    # "busWorkScheduleInfoList": [],
+    # "busAnnexInfos": []
+    print("提交日报到CREM：", data)
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    print(response.json())
     return response
-
 
 # Example usage for daily and weekly reports
 # 日报
