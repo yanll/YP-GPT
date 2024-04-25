@@ -7,6 +7,7 @@ from langchain_core.callbacks import (
 )
 from pydantic import BaseModel, Field
 
+from dbgpt.extra.dag.buildin_awel.lark import card_templates
 from dbgpt.util import larkutil
 
 
@@ -80,6 +81,7 @@ class WeeklyReportCollectTool(BaseTool):
                 resp = {"success": "false", "response_message": "the description of create_date"}
             else:
                 resp = do_collect(
+                    conv_id=conv_id,
                     weekly_report_content=weekly_report_content,
                     create_date=create_date,
                     weekly_report_next_week_plans=weekly_report_next_week_plans,
@@ -92,25 +94,49 @@ class WeeklyReportCollectTool(BaseTool):
 
 
 def do_collect(
+        conv_id: str,
         weekly_report_content: str = "",
         create_date: str = "",
         weekly_report_next_week_plans: Optional[List[str]] = None,
         senders_name: str = ""
 ):
-    """
-        处理并收集日报信息，返回收集结果。
-        """
     # 处理明日计划，如果为空则返回特定的消息
     if weekly_report_next_week_plans is None:
         plans_description = ""
     else:
         plans_description = ", ".join(weekly_report_next_week_plans) if weekly_report_next_week_plans else ""
 
+    try:
+        """
+        我要填写周报：
+        周报内容：本周完成了一次客户回访，进展正常。
+        填写日期：2024-04-22
+        下周计划：1、继续跟进客户，2、完成3次回访，3、制定阅读计划
+        """
+        print("发送飞书周报卡片：", conv_id)
+        larkutil.send_message(
+            receive_id=conv_id,
+            content=card_templates.create_weekly_report_card_content(
+                template_variable={
+                    "card_metadata": {
+                        "card_name": "daily_report_collect",
+                        "description": "周报收集表单"
+                    },
+                    "requirement_content": "",
+                }
+            ),
+            receive_id_type="open_id",
+            msg_type="interactive"
+        )
+    except Exception as e:
+        logging.error("飞书需求提报卡片发送失败：", e)
+
     # 创建并返回结果字典
     return {
         "success": "true",
         "error_message": "",
         "data": {
+            "conv_id": conv_id,
             "daily_report_content": weekly_report_content,
             "create_date": create_date,
             "weekly_report_next_week_plans": plans_description,
