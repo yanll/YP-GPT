@@ -8,6 +8,7 @@ def create_azure_llm():
     os.environ["AZURE_OPENAI_API_KEY"] = os.getenv("AZURE_OPENAI_KEY")
 
     llm = AzureChatOpenAI(
-        deployment_name=os.getenv("API_AZURE_DEPLOYMENT")
+        deployment_name=os.getenv("API_AZURE_DEPLOYMENT"),
+        temperature=0.5
     )
     return llm
