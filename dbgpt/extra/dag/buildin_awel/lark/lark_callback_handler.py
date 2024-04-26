@@ -51,7 +51,7 @@ class LarkCallbackHandler:
                 }
             if action_value == "new_chat":
                 asyncio.create_task(
-                    self.app_chat_service.disable_app_chat_his_message_by_uid(open_id)
+                    self.app_chat_service.a_disable_app_chat_his_message_by_uid(open_id)
                 )
                 lark_card_util.send_message_with_welcome(
                     receive_id=open_id,
