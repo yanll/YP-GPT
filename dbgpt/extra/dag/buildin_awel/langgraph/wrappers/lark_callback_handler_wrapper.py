@@ -85,13 +85,21 @@ def create_weekly_report_for_crem(form_value: Dict):
 
 
 def create_customer_visit_record_for_crem(form_value: Dict):
-    customer_name = "测试商户"
-    visit_method = "电话拜访",
-    visit_type = "初次拜访"
-    visit_content = "拜访内容测试"
-    visit_date = "2024-04-25 00:00:00"
-    customer_visit_record = crem_api_customer_visit.add_customer_visit_record(customer_name, visit_content, visit_date,
-                                                                              visit_method, visit_type)
+    customer_name = form_value['customer_name']
+    visit_date = form_value['visit_date'].split()[0] + " 00:00:00"
+    visit_content = form_value['visit_content']
+    visit_method = form_value['visit_method']
+    visit_type = form_value['visit_type'],
+    contacts = form_value['contacts']
 
-    print("日报结果:", customer_visit_record)
+    customer_visit_record = crem_api_customer_visit.add_customer_visit_record(
+        customer_name=customer_name,
+        followUpText=visit_content,
+        followUpTime=visit_date,
+        followUpTypeName=visit_method,
+        visitTypeName=visit_type,
+        contacts=contacts
+    )
+
+    print("拜访结果:", customer_visit_record)
     return {}

@@ -45,6 +45,11 @@ class CustomerVisitRecordCollectInput(BaseModel):
         description="拜访日期",
         default=""
     )
+    contacts: str = Field(
+        name="联系人",
+        description="联系人",
+        default=""
+    )
 
 
 class CustomerVisitRecordCollectTool(BaseTool):
@@ -66,10 +71,12 @@ class CustomerVisitRecordCollectTool(BaseTool):
             visit_type: str = "",
             visit_content: str = "",
             visit_date: str = "",
+            contacts: str = "",
             run_manager: Optional[CallbackManagerForToolRun] = None,
     ):
         """Use the tool."""
-        print("开始运行客户拜访填写工具：", conv_id, customer_name, visit_method, visit_type, visit_content, visit_date)
+        print("开始运行客户拜访填写工具：", conv_id, customer_name, visit_method, visit_type, visit_content, visit_date,
+              contacts)
         try:
             if customer_name == "":
                 resp = {"success": "false", "response_message": "the description of customer_name"}
@@ -81,6 +88,8 @@ class CustomerVisitRecordCollectTool(BaseTool):
                 resp = {"success": "false", "response_message": "the description of visit_content"}
             elif visit_date == "":
                 resp = {"success": "false", "response_message": "the description of visit_date"}
+            elif contacts == "":
+                resp = {"success": "false", "response_message": "the description of contacts"}
             else:
                 resp = do_collect(
                     conv_id=conv_id,
@@ -88,7 +97,8 @@ class CustomerVisitRecordCollectTool(BaseTool):
                     visit_method=visit_method,
                     visit_type=visit_type,
                     visit_content=visit_content,
-                    visit_date=visit_date
+                    visit_date=visit_date,
+                    contacts=contacts
                 )
             return resp
         except Exception as e:
@@ -102,20 +112,22 @@ def do_collect(
         visit_method: str = "",
         visit_type: str = "",
         visit_content: str = "",
-        visit_date: str = ""
+        visit_date: str = "",
+        contacts: str = ""
 ):
     try:
         """
         我要填写客户拜访跟进记录：
-        
-       - 客户名称：易宝支付
-       - 拜访形式：电话
+
+       - 客户名称：张华雪报单客户测试
+       - 拜访形式：电话/微信拜访
        - 拜访类型：初次拜访
        - 拜访内容：测试拜访情况
        - 拜访日期：2024年5月2日
+       - 联系人  ：xxx
 
 
-        
+
         """
         print("发送飞书拜访卡片：", conv_id)
         larkutil.send_message(
@@ -128,7 +140,7 @@ def do_collect(
                     },
                     "customer_name": customer_name,
                     "visit_content": visit_content,
-
+                    "contacts": contacts
 
                 }
             ),
@@ -147,6 +159,7 @@ def do_collect(
             "visit_method": visit_method,
             "visit_type": visit_type,
             "visit_content": visit_content,
-            "visit_date": visit_date
+            "visit_date": visit_date,
+            "contacts": contacts
         }
     }
