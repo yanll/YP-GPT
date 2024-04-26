@@ -59,6 +59,7 @@ class LarkCallbackHandler:
                         "message_content": "已开启新会话！"
                     }
                 )
+                return {}
 
         return {
             "toast": {
