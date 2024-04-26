@@ -20,7 +20,7 @@ def add_customer_visit_record(customer_name, followUpText, followUpTime, followU
         "followUpText": followUpText,
         "followUpTime": followUpTime,
         "followUpTypeName": followUpTypeName,
-        "visitTypeName": visitTypeName,
+        "visitTypeName": "",
         "type": 1,
         "headEntityKey": "followUpInfo",
         "contactIdList": ["0a527c79f2ad770f1b880b8209b2223f"],
@@ -37,9 +37,9 @@ if __name__ == "__main__":
     customerName = "张华雪报单客户测试"
     followUpText = "测试24"
     followUpTime = "2024-04-26 14:36:57"
-    followUpTypeName = "电话/微信拜访"
+    followUpTypeName = "在外约谈"
     visitTypeName = "签约后日常拜访"
-    contacts = "xxx"
+    contacts = "张先生"
 
     response_text = add_customer_visit_record(customerName, followUpText, followUpTime, followUpTypeName, visitTypeName,
                                               contacts)

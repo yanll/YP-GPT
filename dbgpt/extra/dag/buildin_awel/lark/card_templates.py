@@ -62,7 +62,7 @@ def create_weekly_report_card_content(template_variable: Dict):
 def create_customer_visit_record_card_content(template_variable: Dict):
     """拜访表单"""
     template_id = "AAqkjMxmwdE8s"
-    template_version_name = "1.0.10"
+    template_version_name = "1.0.11"
 
     card = {
         "type": "template",
