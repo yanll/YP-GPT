@@ -116,7 +116,7 @@ def do_collect(
         contacts: str = ""
 ):
     try:
-        """
+        """ 
         我要填写客户拜访跟进记录：
 
        - 客户名称：YP-gpt报单客户测试
