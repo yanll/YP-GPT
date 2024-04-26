@@ -6,7 +6,8 @@ from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_customer_vi
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_api_wrapper
 
 
-def call(event: Dict):
+async def a_call(event: Dict):
+    print("lark_callback_handler_wrapper_a_call", event)
     result = {}
     card_name = ""
     operator = event['operator']
@@ -38,7 +39,7 @@ def call(event: Dict):
         result = create_customer_visit_record_for_crem(
             form_value=form_value
         )
-    print("call_lark_api_result:", result)
+    print("lark_callback_handler_wrapper_a_call_result:", result)
     return result
 
 
@@ -60,11 +61,12 @@ def create_daily_report_for_crem(form_value: Dict):
     daily_result = crem_api_wrapper.add_daily_or_weekly_report(
         report_type=daily_report_type,
         report_time=daily_report_time,
-        work_summary = daily_work_summary,
-        plans = daily_plans
+        work_summary=daily_work_summary,
+        plans=daily_plans
     )
     print("日报结果:", daily_result)
     return {}
+
 
 def create_weekly_report_for_crem(form_value: Dict):
     daily_report_type = "周报"
@@ -74,22 +76,21 @@ def create_weekly_report_for_crem(form_value: Dict):
     daily_result = crem_api_wrapper.add_daily_or_weekly_report(
         report_type=daily_report_type,
         report_time=daily_report_time,
-        work_summary = daily_work_summary,
-        plans = daily_plans
+        work_summary=daily_work_summary,
+        plans=daily_plans
     )
     print("周报结果:", daily_result)
     return {}
 
 
 def create_customer_visit_record_for_crem(form_value: Dict):
-
-
     customer_name = "测试商户"
     visit_method = "电话拜访",
     visit_type = "初次拜访"
     visit_content = "拜访内容测试"
     visit_date = "2024-04-25 00:00:00"
-    customer_visit_record = crem_api_customer_visit.add_customer_visit_record(customer_name,visit_content,visit_date,visit_method,visit_type)
+    customer_visit_record = crem_api_customer_visit.add_customer_visit_record(customer_name, visit_content, visit_date,
+                                                                              visit_method, visit_type)
 
     print("日报结果:", customer_visit_record)
     return {}

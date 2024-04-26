@@ -7,7 +7,7 @@ from dbgpt.extra.cache.redis_cli import RedisClient
 from dbgpt.extra.dag.buildin_awel.app.service import GptsAppService, AppChatService
 from dbgpt.extra.dag.buildin_awel.langgraph.assistants.sales_assistant import SalesAssistant
 from dbgpt.storage.chat_history.chat_history_db import ChatHistoryMessageDao
-from dbgpt.util.lark import larkutil
+from dbgpt.util.lark import larkutil, lark_card_util
 
 
 class LarkEventHandler:
@@ -83,10 +83,12 @@ class LarkEventHandler:
             agent_outcome = rs['agent_outcome']
             if isinstance(agent_outcome, AgentFinish):
                 resp_msg = agent_outcome.return_values['output']
-        larkutil.send_message(
+
+        lark_card_util.send_message_with_bingo(
             receive_id=sender_open_id,
-            content={"text": resp_msg},
-            receive_id_type="open_id"
+            template_variable={
+                "message_content": resp_msg
+            }
         )
         print("LarkEventHandler_handle_message_result:", resp_msg)
 
