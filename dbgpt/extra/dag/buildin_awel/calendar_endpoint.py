@@ -1,18 +1,12 @@
 import json
 from typing import Dict, List
-import os
 import logging
-from langchain.chains.llm import LLMChain
-from langchain_core.prompts import PromptTemplate, ChatPromptTemplate
 
-from dbgpt.core import SystemPromptTemplate, MessagesPlaceholder, HumanPromptTemplate, InMemoryStorage
 from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
-from dbgpt.core.interface.operators.composer_operator import ChatHistoryPromptComposerOperator
 from dbgpt.core.schema.api import ChatCompletionResponse
 from dbgpt.storage.chat_history import ChatHistoryMessageEntity
 from dbgpt.storage.chat_history.chat_history_db import ChatHistoryMessageDao
-from dbgpt.util import larkutil
-from langchain_openai import AzureChatOpenAI
+from dbgpt.util.lark import larkutil
 import asyncio
 from dbgpt.util.azure_util import create_azure_llm
 from langchain_core.messages import HumanMessage

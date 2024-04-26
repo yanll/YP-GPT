@@ -7,7 +7,7 @@ from dbgpt.extra.cache.redis_cli import RedisClient
 from dbgpt.extra.dag.buildin_awel.app.service import GptsAppService, AppChatService
 from dbgpt.extra.dag.buildin_awel.langgraph.assistants.sales_assistant import SalesAssistant
 from dbgpt.storage.chat_history.chat_history_db import ChatHistoryMessageDao
-from dbgpt.util import larkutil
+from dbgpt.util.lark import larkutil
 
 
 class LarkEventHandler:
@@ -89,3 +89,6 @@ class LarkEventHandler:
             receive_id_type="open_id"
         )
         print("LarkEventHandler_handle_message_result:", resp_msg)
+
+    def new_chat(self):
+        pass

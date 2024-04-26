@@ -1,6 +1,5 @@
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util import larkutil
-import time
+from dbgpt.util.lark import larkutil
 from datetime import datetime
 
 

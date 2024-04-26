@@ -8,7 +8,7 @@ from langchain_core.callbacks import (
 from pydantic import BaseModel, Field
 
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util import larkutil
+from dbgpt.util.lark import larkutil
 
 
 class CustomerVisitRecordCollectInput(BaseModel):

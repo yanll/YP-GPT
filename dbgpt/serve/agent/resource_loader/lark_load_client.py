@@ -7,7 +7,7 @@ from dbgpt.agent.resource.resource_api import AgentResource
 from dbgpt.agent.resource.resource_lark_api import ResourceLarkClient
 from dbgpt.component import ComponentType
 from dbgpt.util.executor_utils import ExecutorFactory
-from dbgpt.util import larkutil
+from dbgpt.util.lark import larkutil
 
 CFG = Config()
 

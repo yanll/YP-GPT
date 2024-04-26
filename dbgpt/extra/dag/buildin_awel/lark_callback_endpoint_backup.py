@@ -1,14 +1,10 @@
-import json
 import logging
-import os
 from typing import Dict
-
-from langchain_openai import AzureChatOpenAI
 
 from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
 from dbgpt.util.azure_util import create_azure_llm
 from datetime import datetime
-from dbgpt.util import larkutil
+from dbgpt.util.lark import larkutil
 
 
 class RequestHandleOperator(MapOperator[Dict, str]):

@@ -13,7 +13,7 @@ from dbgpt.extra.cache.redis_cli import RedisClient
 from dbgpt.extra.dag.buildin_awel.app.service import GptsAppService
 from dbgpt.storage.chat_history import ChatHistoryMessageEntity
 from dbgpt.storage.chat_history.chat_history_db import ChatHistoryMessageDao
-from dbgpt.util import larkutil
+from dbgpt.util.lark import larkutil
 from dbgpt.util.azure_util import create_azure_llm
 
 

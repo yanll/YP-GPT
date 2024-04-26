@@ -6,7 +6,7 @@ from dbgpt.client import Client
 
 from langchain.chains.llm import LLMChain
 from langchain_core.prompts import PromptTemplate
-from dbgpt.util import larkutil
+from dbgpt.util.lark import larkutil
 from dbgpt.util.azure_util import create_azure_llm
 from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
 from collections import Counter
