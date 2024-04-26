@@ -16,7 +16,7 @@ def add_customer_visit_record(customer_name, followUpText, followUpTime, followU
 
     data = {
         "customerName": customer_name,
-        "customerNo": "KA2024-A04260003",
+        "customerNo": "KA2024-A04260006",
         "followUpText": followUpText,
         "followUpTime": followUpTime,
         "followUpTypeName": followUpTypeName,
