@@ -37,3 +37,17 @@ def create_card_content_by_template(template_id: str, template_version_name: str
         }
     }
     return card
+
+
+def card_option2str(options: list):
+    options_str = str(len(options)) + '个选项：'
+    for option in options:
+        options_str += option['text'] + "、"
+    return options_str[:-1]
+
+def card_option2dict(options: list):
+    options_dict = {}
+    for idx, option in enumerate(options):
+        options_dict[option['text']] = idx + 1
+    return options_dict
+
