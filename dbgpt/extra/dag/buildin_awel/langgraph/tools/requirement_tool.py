@@ -9,6 +9,32 @@ from pydantic import BaseModel, Field
 
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
 from dbgpt.util.lark import larkutil
+from dbgpt.util.lark.lark_card_util import card_option2str, card_option2dict
+
+
+
+emergency_level_options = [
+  {
+    "text": "非常紧急",
+    "action_value": "s0"
+  },
+  {
+    "text": "紧急",
+    "action_value": "s1"
+  },
+  {
+    "text": "高",
+    "action_value": "s2"
+  },
+  {
+    "text": "中",
+    "action_value": "s99"
+  },
+  {
+    "text": "低",
+    "action_value": "1sdyyo6lh"
+  }
+]
 
 
 class RequirementCollectInput(BaseModel):
@@ -37,7 +63,7 @@ class RequirementCollectInput(BaseModel):
     )
     emergency_level: str = Field(
         name="紧急程度",
-        description="紧急程度",
+        description="描述紧急程度，" + card_option2str(emergency_level_options),
         default=""
     )
 
@@ -104,6 +130,8 @@ def do_collect(
         期望完成日期：2024-05-20
         紧急程度：P0
         """
+        emergency_level2dict = card_option2dict(emergency_level_options)
+
 
         industry_line_options = [
             {"text": "航旅行业线", "action_value": "662db530cde8ed174622a08d"},
@@ -111,12 +139,6 @@ def do_collect(
             {"text": "线上线下一体化", "action_value": "662db596fe2c0b51b33668ec"},
             {"text": "老板管账", "action_value": "662db5b688aa18a943e64644"},
             {"text": "金融行业线", "action_value": "662db5c3a55775e2c9c83bf9"}
-        ]
-        emergency_level_options = [
-            {"text": "P0高", "action_value": "0"},
-            {"text": "P1中", "action_value": "1"},
-            {"text": "P2低", "action_value": "2"},
-            {"text": "待定", "action_value": "99"}
         ]
         larkutil.send_message(
             receive_id=conv_id,
@@ -130,7 +152,7 @@ def do_collect(
                     "industry_line": "662db530cde8ed174622a08d",
                     "industry_line_options": industry_line_options,
                     "expected_completion_date": expected_completion_date,
-                    "emergency_level": "0",
+                    "emergency_level": emergency_level2dict[emergency_level] if emergency_level in emergency_level2dict else 1,
                     "emergency_level_options": emergency_level_options
                 }
             ),
