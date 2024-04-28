@@ -9,7 +9,7 @@ from dbgpt.util import envutils
 class RedisClient:
     PRIFIX = "/YP-GPT_"
 
-    def __init__(self, host=os.getenv("REDIS_HOST"), port=6379, db=0, max_connections=20):
+    def __init__(self, host=envutils.getenv("REDIS_HOST"), port=6379, db=0, max_connections=20):
         self.host = host
         self.port = port
         self.db = db
@@ -18,6 +18,7 @@ class RedisClient:
         self.pool = None
         self.connection = None
         self.connect()
+        print("REDIS连接成功！")
 
     def connect(self):
         try:
