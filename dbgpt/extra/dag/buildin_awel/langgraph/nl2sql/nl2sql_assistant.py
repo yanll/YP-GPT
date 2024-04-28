@@ -16,7 +16,8 @@ class Nl2sqlAssistant:
     async def handle(
             self,
             input: str,
-            conv_uid: str = ""
+            conv_uid: str = "",
+            DB_NAME: str = 'bigdata_ai_test'
     ):
         # Use the tool.
         print("数据分析助手开始调用模型：")
@@ -24,7 +25,6 @@ class Nl2sqlAssistant:
         try:
             # 根据用户输入信息获取数据库内容
             DBGPT_API_KEY = "dbgpt"
-            DB_NAME = "bigdata_ai"
 
             client = Client(api_key=DBGPT_API_KEY)
             res = await client.chat(
