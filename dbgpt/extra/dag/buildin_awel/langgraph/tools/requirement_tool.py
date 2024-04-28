@@ -111,11 +111,11 @@ def do_collect(
             lark_card_util.card_options_for_requirement_emergency_level())
 
         industry_line_options = [
-            {"text": "航旅行业线", "action_value": "航旅行业线"},
-            {"text": "大零售行业线", "action_value": "大零售行业线"},
-            {"text": "线上线下一体化", "action_value": "线上线下一体化"},
-            {"text": "老板管账", "action_value": "老板管账"},
-            {"text": "金融行业线", "action_value": "金融行业线"}
+            {"text": "航旅行业线", "action_value": "662db530cde8ed174622a08d"},
+            {"text": "大零售行业线", "action_value": "662db56afe2c0b51b33668eb"},
+            {"text": "线上线下一体化", "action_value": "662db596fe2c0b51b33668ec"},
+            {"text": "老板管账", "action_value": "662db5b688aa18a943e64644"},
+            {"text": "金融行业线", "action_value": "662db5c3a55775e2c9c83bf9"}
         ]
         larkutil.send_message(
             receive_id=conv_id,

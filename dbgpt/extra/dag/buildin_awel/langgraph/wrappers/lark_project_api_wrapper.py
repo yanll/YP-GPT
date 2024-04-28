@@ -125,7 +125,7 @@ def create_and_send_work_item(project_key, union_id, name, business_value, prior
             {
                 "field_key": "priority",
                 "field_value": {
-                    "label": lark_card_util.get_value_by_text_from_options(priority_value, emergency_level_options),
+                    "label": lark_card_util.get_text_by_value_from_options(priority_value, emergency_level_options),
                     "value": priority_value
                 }
             },

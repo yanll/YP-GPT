@@ -58,14 +58,14 @@ def card_options_to_dict_for_value_bind(options: list) -> Dict:
 
 def get_value_by_text_from_options(text, options: list):
     for option in options:
-        if option["text'"] == text:
+        if option["text"] == text:
             return option["action_value"]
     return ""
 
 
 def get_text_by_value_from_options(value, options: list):
     for option in options:
-        if option['action_value'] == value:
+        if option["action_value"] == value:
             return option["text"]
     return ""
 
