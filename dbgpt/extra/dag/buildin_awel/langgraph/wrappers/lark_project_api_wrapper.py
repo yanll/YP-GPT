@@ -93,7 +93,7 @@ def get_template_id(project_key, union_id):
         return str(e)
 
 
-def create_and_send_work_item(project_key, union_id, name,business_value,priority_value, expected_time):
+def create_and_send_work_item(project_key: object, union_id: object, name: object, business_value: object, priority_value: object, expected_time: object) -> object:
     # 直接在函数内定义 API URL 和 headers
     url = 'https://project.feishu.cn/open_api/' + project_key + '/work_item/create'
     headers = {
@@ -111,10 +111,11 @@ def create_and_send_work_item(project_key, union_id, name,business_value,priorit
     #     "662db5c3a55775e2c9c83bf9": "金融行业线",
     # }
     value_to_label = {
-        "0": "P0",
-        "1": "P1",
-        "2": "P2",
-        "99": "待定"
+        "0": "非常紧急",
+        "1": "紧急",
+        "2": "高",
+        "99": "中",
+        "1sdyyo6lh": "低"
     }
     # 将日期对象转换为毫秒级时间戳
     timestamp = int(datetime.datetime.strptime(expected_time.replace(" +0800", ""), "%Y-%m-%d").timestamp() * 1000)

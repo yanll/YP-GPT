@@ -16,19 +16,19 @@ from dbgpt.util.lark.lark_card_util import card_option2str, card_option2dict
 emergency_level_options = [
   {
     "text": "非常紧急",
-    "action_value": "s0"
+    "action_value": "0"
   },
   {
     "text": "紧急",
-    "action_value": "s1"
+    "action_value": "1"
   },
   {
     "text": "高",
-    "action_value": "s2"
+    "action_value": "2"
   },
   {
     "text": "中",
-    "action_value": "s99"
+    "action_value": "99"
   },
   {
     "text": "低",
