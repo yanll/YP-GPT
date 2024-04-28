@@ -4,7 +4,6 @@ from typing import Dict
 import requests
 
 from dbgpt.util.lark import larkutil
-from dbgpt.util.sutil import ak, sk
 
 
 def send_message_with_bingo(receive_id: str, template_variable: Dict):
