@@ -4,6 +4,7 @@ import json
 import requests
 
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
+from dbgpt.util import envutils
 from dbgpt.util.lark import lark_card_util
 
 
@@ -48,8 +49,8 @@ def get_project_app_token():
     url = 'https://project.feishu.cn/bff/v2/authen/plugin_token'
     headers = {'Content-Type': 'application/json'}
     data = {
-        "plugin_id": "MII_6620D4D5830B401C",
-        "plugin_secret": "249E74635DFA34E434B14EF3D7CA164D",
+        "plugin_id": envutils.getenv("LARK_PROJECT_PLUGIN_ID"),
+        "plugin_secret": envutils.getenv("LARK_PROJECT_PLUGIN_SECRET"),
         "type": 0
     }
     response = requests.post(url, headers=headers, data=json.dumps(data))
