@@ -4,7 +4,6 @@ from typing import Dict
 
 import requests
 
-from dbgpt.util.sutil import ak, sk
 from dbgpt.util.nl2sql import nl2sql_card
 from dbgpt.util.nl2sql import nl2sql_mapping
 from datetime import datetime
