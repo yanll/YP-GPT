@@ -3,15 +3,15 @@ from typing import Dict
 
 import requests
 
-from dbgpt.util.sutil import ak, sk
+from dbgpt.util import envutils
 
 
 def get_tenant_access_token():
     url = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal"
     headers = {}
     params = {
-        'app_id': ak(),
-        'app_secret': sk()
+        'app_id': envutils.getenv("LARK_APP_ID"),
+        'app_secret': envutils.getenv("LARK_APP_SK")
     }
     resp = requests.post(url=url, headers=headers, params=params)
     print('\n飞书租户令牌返回结果：', resp.json())
@@ -22,8 +22,8 @@ def get_app_access_token():
     url = "https://open.feishu.cn/open-apis/auth/v3/app_access_token/internal"
     headers = {}
     params = {
-        'app_id': ak(),
-        'app_secret': sk()
+        'app_id': envutils.getenv("LARK_APP_ID"),
+        'app_secret': envutils.getenv("LARK_APP_SK")
     }
     resp = requests.post(url=url, headers=headers, params=params)
     print('飞书应用令牌返回结果：', resp.json())

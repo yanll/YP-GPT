@@ -32,17 +32,6 @@ def ssourl():
     url = ncssourl() if os.getenv("DEPLOY_ENV") == "LOCAL" else innerssourl()
     return url
 
-
-def ak():
-    return decrypt("a3RxZ0FuPmo/QWlBbT87P0E4OGo=")
-
-
-def sk():
-    return decrypt("a8KBS0BpPlh6ckBaSzxaUVdOa39aYWtJecKAdXJxaklQPQ==")
-
-
-
-
 def enabledsso():
     return False if os.getenv("DEPLOY_ENV") == "LOCAL" else True
 
