@@ -37,7 +37,7 @@ def test_card_send_message():
         receive_id="liangliang.yan@yeepay.com",
         content=card_templates.create_card_content_by_template(
             template_id="AAqkjMFhiuVwF",
-            template_version_name="1.0.30",
+            template_version_name="1.0.35",
             template_variable={
                 "card_metadata": {
                     "card_name": "requirement_collect",

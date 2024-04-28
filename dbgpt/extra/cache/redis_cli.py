@@ -2,21 +2,23 @@ import os
 import pickle
 import redis
 from redis.exceptions import ConnectionError
-from dbgpt.util.sutil import reidspwd
+
+from dbgpt.util import envutils
 
 
 class RedisClient:
     PRIFIX = "/YP-GPT_"
 
-    def __init__(self, host=os.getenv("REDIS_HOST"), port=6379, db=0, max_connections=20):
+    def __init__(self, host=envutils.getenv("REDIS_HOST"), port=6379, db=0, max_connections=20):
         self.host = host
         self.port = port
         self.db = db
         self.max_connections = max_connections
-        self.password = reidspwd()
+        self.password = envutils.getenv("REDIS_SK")
         self.pool = None
         self.connection = None
         self.connect()
+        print("REDIS连接成功！")
 
     def connect(self):
         try:

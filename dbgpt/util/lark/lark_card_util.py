@@ -4,7 +4,6 @@ from typing import Dict
 import requests
 
 from dbgpt.util.lark import larkutil
-from dbgpt.util.sutil import ak, sk
 
 
 def send_message_with_bingo(receive_id: str, template_variable: Dict):
@@ -18,7 +17,7 @@ def send_message_with_bingo(receive_id: str, template_variable: Dict):
     )
 def send_message_with_welcome(receive_id: str, template_variable: Dict):
     """欢迎卡片"""
-    card = create_card_content_by_template("AAqkIeluuBZF2", "1.0.2", template_variable)
+    card = create_card_content_by_template("AAqkIeluuBZF2", "1.0.4", template_variable)
     larkutil.send_message(
         receive_id=receive_id,
         receive_id_type="open_id",
