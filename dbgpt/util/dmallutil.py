@@ -2,6 +2,8 @@ from typing import Dict
 
 import requests
 import json
+
+from dbgpt.util import envutils
 from dbgpt.util.sutil import dmsk
 
 
@@ -11,7 +13,7 @@ class DmallClient:
             api_name: str,
             parameters: Dict,
             api_version: str = "V1.0",
-            endpoint: str = "http://datadmall.bigdata.yp:30915/dev-api"
+            endpoint: str = envutils.getenv("DMALL_ENDPOINT")
     ):
         print("\n商店调用: ", api_name, " ", parameters)
         url = endpoint + "/dataapi/output/postapi/" + api_name
