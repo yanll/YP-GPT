@@ -8,9 +8,7 @@ from langchain_core.callbacks import (
 from pydantic import BaseModel, Field
 
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import larkutil
-from dbgpt.util.lark.lark_card_util import card_options_for_requirement_emergency_level, \
-    card_options_to_input_field_description, card_options_to_dict_for_value_bind
+from dbgpt.util.lark import larkutil, lark_card_util
 
 
 class RequirementCollectInput(BaseModel):
@@ -39,7 +37,10 @@ class RequirementCollectInput(BaseModel):
     )
     emergency_level: str = Field(
         name="紧急程度",
-        description="紧急程度，" + card_options_to_input_field_description(card_options_for_requirement_emergency_level),
+        description="紧急程度，" +
+                    lark_card_util.card_options_to_input_field_description(
+                        lark_card_util.card_options_for_requirement_emergency_level()
+                    ),
         default=""
     )
 
@@ -106,7 +107,8 @@ def do_collect(
         期望完成日期：2024-05-20
         紧急程度：中
         """
-        e_level_dict = card_options_to_dict_for_value_bind(card_options_for_requirement_emergency_level)
+        e_level_dict = lark_card_util.card_options_to_dict_for_value_bind(
+            lark_card_util.card_options_for_requirement_emergency_level())
 
         industry_line_options = [
             {"text": "航旅行业线", "action_value": "航旅行业线"},
@@ -128,7 +130,7 @@ def do_collect(
                     "industry_line_options": industry_line_options,
                     "expected_completion_date": expected_completion_date,
                     "emergency_level": e_level_dict[emergency_level] if emergency_level in e_level_dict else 1,
-                    "emergency_level_options": card_options_for_requirement_emergency_level
+                    "emergency_level_options": lark_card_util.card_options_for_requirement_emergency_level()
                 }
             ),
             receive_id_type="open_id",

@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict
 
 from dbgpt.util.lark import larkutil
 
@@ -70,7 +70,7 @@ def get_text_by_value_from_options(value, options: list):
     return ""
 
 
-def card_options_for_requirement_emergency_level(options: list) -> list:
+def card_options_for_requirement_emergency_level() -> list:
     options = [
         {
             "action_value": "L1",

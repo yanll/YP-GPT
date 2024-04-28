@@ -4,7 +4,7 @@ import json
 import requests
 
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark.lark_card_util import card_options_for_requirement_emergency_level, get_value_by_text_from_options
+from dbgpt.util.lark import lark_card_util
 
 
 def create_requirement_for_lark_project(project_key: str, union_id, name, business_value, priority_value,
@@ -108,7 +108,7 @@ def create_and_send_work_item(project_key, union_id, name, business_value, prior
     # 将日期对象转换为毫秒级时间戳
     timestamp = int(datetime.datetime.strptime(expected_time.replace(" +0800", ""), "%Y-%m-%d").timestamp() * 1000)
     # 构建请求的数据结构
-    emergency_level_options: list = card_options_for_requirement_emergency_level
+    emergency_level_options: list = lark_card_util.card_options_for_requirement_emergency_level()
     data = {
         "work_item_type_key": "story",
         "template_id": get_template_id(project_key, union_id),
@@ -125,7 +125,7 @@ def create_and_send_work_item(project_key, union_id, name, business_value, prior
             {
                 "field_key": "priority",
                 "field_value": {
-                    "label": get_value_by_text_from_options(priority_value, emergency_level_options),
+                    "label": lark_card_util.get_value_by_text_from_options(priority_value, emergency_level_options),
                     "value": priority_value
                 }
             },
