@@ -1,4 +1,6 @@
 import asyncio
+import multiprocessing
+import threading
 from typing import Dict
 
 from dbgpt.extra.dag.buildin_awel.app.service import AppChatService
@@ -19,11 +21,19 @@ class LarkCallbackHandler:
         event_id = headers['event_id']
         event = input_body['event']
 
-        asyncio.create_task(
-            lark_callback_handler_wrapper.a_call(event)
-        )
+        # asyncio.create_task(
+        #     lark_callback_handler_wrapper.a_call(event)
+        # )
+        my_thread = threading.Thread(target=lark_callback_handler_wrapper.a_call, args=(event,))
+        my_thread.daemon = True
+        my_thread.start()
+        # process = multiprocessing.Process(target=lark_callback_handler_wrapper.a_call, args=(event,))
+        # process.daemon = True
+        # process.start()
+
         operator = event['operator']
         open_id = operator['open_id']
+        print('立刻返回交互反馈toast')
         if "action" in event:
             action = event['action']
             action_value = action['value']

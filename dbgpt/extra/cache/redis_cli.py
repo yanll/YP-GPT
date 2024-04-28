@@ -2,7 +2,8 @@ import os
 import pickle
 import redis
 from redis.exceptions import ConnectionError
-from dbgpt.util.sutil import reidspwd
+
+from dbgpt.util import envutils
 
 
 class RedisClient:
@@ -13,7 +14,7 @@ class RedisClient:
         self.port = port
         self.db = db
         self.max_connections = max_connections
-        self.password = reidspwd()
+        self.password = envutils.getenv("REDIS_SK")
         self.pool = None
         self.connection = None
         self.connect()

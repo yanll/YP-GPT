@@ -1,11 +1,14 @@
+import logging
+
 import requests
 import json
+
+from dbgpt.util import envutils
 
 
 def add_daily_or_weekly_report(report_type: str = "", report_time: str = "", work_summary: str = '', senders=None,
                                plans=None):
-    # url = "https://nccemportal.yeepay.com/cem-api//workReportInfo/addWorkReportInfo"
-    url = "http://nck8s.iaas.yp:30762/cem-api//workReportInfo/addWorkReportInfo"
+    url = envutils.getenv("CREM_ENDPOINT") + "/workReportInfo/addWorkReportInfo"
     headers = {
         "Content-Type": "application/json; charset=utf-8",
         # "pageType": "cemPortal",
@@ -49,7 +52,12 @@ def add_daily_or_weekly_report(report_type: str = "", report_time: str = "", wor
     # "busAnnexInfos": []
     print("提交日报到CREM：", data)
     response = requests.post(url, headers=headers, data=json.dumps(data))
-    print(response.json())
+    try:
+        print(response.json())
+    except Exception as e:
+        print(response)
+        logging.error("CREM日报调用失败：", e)
+        raise e
     return response
 
 # Example usage for daily and weekly reports
