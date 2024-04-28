@@ -49,6 +49,7 @@ def create_requirement_for_lark_project(union_id: str, form_value: Dict):
         project_key="ypgptapi",
         union_id=union_id,
         name=form_value['requirement_content'],
+        business_value=form_value['industry_line'],
         priority_value=form_value['emergency_level'],
         expected_time=form_value['expected_completion_date']
     )

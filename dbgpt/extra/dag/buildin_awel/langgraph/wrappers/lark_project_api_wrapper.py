@@ -6,11 +6,12 @@ import requests
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
 
 
-def create_requirement_for_lark_project(project_key: str, union_id, name, priority_value, expected_time):
+def create_requirement_for_lark_project(project_key: str, union_id, name,business_value, priority_value, expected_time):
     rs = create_and_send_work_item(
         project_key=project_key,
         union_id=union_id,
         name=name,
+        business_value=business_value,
         priority_value=priority_value,
         expected_time=expected_time
     )
@@ -31,6 +32,7 @@ def create_requirement_for_lark_project(project_key: str, union_id, name, priori
                         "card_name": "requirement_collect"
                     },
                     "requirement_content": "-",
+                    "industry_line": "",
                     "expected_completion_date": "",
                     "emergency_level": ""
                 }
@@ -91,7 +93,7 @@ def get_template_id(project_key, union_id):
         return str(e)
 
 
-def create_and_send_work_item(project_key, union_id, name, priority_value, expected_time):
+def create_and_send_work_item(project_key, union_id, name,business_value,priority_value, expected_time):
     # 直接在函数内定义 API URL 和 headers
     url = 'https://project.feishu.cn/open_api/' + project_key + '/work_item/create'
     headers = {
@@ -101,6 +103,13 @@ def create_and_send_work_item(project_key, union_id, name, priority_value, expec
         'Content-Type': 'application/json'
     }
     # 将 label 映射到对应的 value
+    # value_to_business = {
+    #     "662db530cde8ed174622a08d": "航旅行业线",
+    #     "662db56afe2c0b51b33668eb": "大零售行业线",
+    #     "662db596fe2c0b51b33668ec": "线上线下一体化",
+    #     "662db5b688aa18a943e64644": "老板管账",
+    #     "662db5c3a55775e2c9c83bf9": "金融行业线",
+    # }
     value_to_label = {
         "0": "P0",
         "1": "P1",
@@ -115,6 +124,14 @@ def create_and_send_work_item(project_key, union_id, name, priority_value, expec
         "template_id": get_template_id(project_key, union_id),
         "name": name,
         "field_value_pairs": [
+            {
+                "field_key": "business",
+                "field_value": business_value,
+                "field_type_key": "business",
+                "field_alias": "business"
+
+            },
+
             {
                 "field_key": "priority",
                 "field_value": {
@@ -135,3 +152,6 @@ def create_and_send_work_item(project_key, union_id, name, priority_value, expec
     response = requests.post(url, headers=headers, data=json.dumps(data))
     print("飞书项目需求创建结果：", response.json())
     return response.json()
+
+
+

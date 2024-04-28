@@ -25,6 +25,11 @@ class RequirementCollectInput(BaseModel):
         description="需求内容",
         default=""
     )
+    industry_line: str = Field(
+        name="行业线",
+        description="行业线",
+        default=""
+    )
     expected_completion_date: str = Field(
         name="期望完成日期",
         description="期望完成日期，格式：%Y-%m-%d",
@@ -35,6 +40,7 @@ class RequirementCollectInput(BaseModel):
         description="紧急程度",
         default=""
     )
+
 
 
 class RequirementCollectTool(BaseTool):
@@ -52,15 +58,18 @@ class RequirementCollectTool(BaseTool):
             self,
             conv_id: str = "",
             requirement_content: str = "",
+            industry_line: str = "",
             expected_completion_date: str = "",
             emergency_level: str = "",
             run_manager: Optional[CallbackManagerForToolRun] = None,
     ):
         """Use the tool."""
-        print("开始运行需求收集工具：", conv_id, requirement_content, emergency_level, expected_completion_date)
+        print("开始运行需求收集工具：", conv_id, requirement_content,industry_line, expected_completion_date,emergency_level)
         try:
             if requirement_content == "":
                 resp = {"success": "false", "response_message": "the description of requirement_content"}
+            elif industry_line == "":
+                resp = {"success": "false", "response_message": "the description of industry_line"}
             elif expected_completion_date == "":
                 resp = {"success": "false", "response_message": "the description of expected_completion_date"}
             elif emergency_level == "":
@@ -69,6 +78,7 @@ class RequirementCollectTool(BaseTool):
                 resp = do_collect(
                     conv_id=conv_id,
                     requirement_content=requirement_content,
+                    industry_line=industry_line,
                     expected_completion_date=expected_completion_date,
                     emergency_level=emergency_level
                 )
@@ -81,6 +91,7 @@ class RequirementCollectTool(BaseTool):
 def do_collect(
         conv_id: str = "",
         requirement_content: str = "",
+        industry_line: str = "",
         expected_completion_date: str = "",
         emergency_level: str = ""
 ):
@@ -88,11 +99,19 @@ def do_collect(
     try:
         """
         我要提交一个需求：
+        行业线：航旅行业线
         需求内容：在运营后台实现一个数据导出功能。
         期望完成日期：2024-05-20
         紧急程度：P0
         """
 
+        industry_line_options = [
+            {"text": "航旅行业线", "action_value": "662db530cde8ed174622a08d"},
+            {"text": "大零售行业线", "action_value": "662db56afe2c0b51b33668eb"},
+            {"text": "线上线下一体化", "action_value": "662db596fe2c0b51b33668ec"},
+            {"text": "老板管账", "action_value": "662db5b688aa18a943e64644"},
+            {"text": "金融行业线", "action_value": "662db5c3a55775e2c9c83bf9"}
+        ]
         emergency_level_options = [
             {"text": "P0高", "action_value": "0"},
             {"text": "P1中", "action_value": "1"},
@@ -108,6 +127,8 @@ def do_collect(
                         "description": "需求收集表单"
                     },
                     "requirement_content": requirement_content,
+                    "industry_line": "662db530cde8ed174622a08d",
+                    "industry_line_options": industry_line_options,
                     "expected_completion_date": expected_completion_date,
                     "emergency_level": "0",
                     "emergency_level_options": emergency_level_options
@@ -125,6 +146,7 @@ def do_collect(
         "data": {
             "conv_id": conv_id,
             "requirement_content": requirement_content,
+            "industry_line": industry_line,
             "expected_completion_date": expected_completion_date,
             "emergency_level": emergency_level
         }
