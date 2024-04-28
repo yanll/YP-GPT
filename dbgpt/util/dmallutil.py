@@ -4,7 +4,6 @@ import requests
 import json
 
 from dbgpt.util import envutils
-from dbgpt.util.sutil import dmsk
 
 
 class DmallClient:
@@ -20,7 +19,7 @@ class DmallClient:
         headers = {'Content-Type': 'application/json; charset=utf-8'}
         data = {
             "appname": "app",
-            "appkey": dmsk(),
+            "appkey": envutils.getenv("DMALL_SK"),
             "version": api_version,
             "parameters": parameters
         }

@@ -41,9 +41,6 @@ def sk():
     return decrypt("a8KBS0BpPlh6ckBaSzxaUVdOa39aYWtJecKAdXJxaklQPQ==")
 
 
-def dmsk():
-    return decrypt("woFcej1YXW1edT5bfw==")
-
 
 
 def enabledsso():
