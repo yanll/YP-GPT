@@ -1,6 +1,7 @@
 from dotenv import dotenv_values
+import os
 
-env = dotenv_values('../../../config.env')
+env = dotenv_values(os.getenv("ENV_CONFIG_FILE"))
 
 
 def getenv(name) -> str:
