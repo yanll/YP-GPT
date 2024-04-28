@@ -97,7 +97,7 @@ def select_room_free_busy(token, room_ids, time_min, time_max):
     print('会议室忙闲返回结果：', resp.json())
     return resp.json()
 
-
+# 发送消息
 def send_message(receive_id: str, content: Dict, receive_id_type: str = "email", msg_type: str = "text"):
     url = 'https://open.feishu.cn/open-apis/im/v1/messages'
     params = {
@@ -112,6 +112,17 @@ def send_message(receive_id: str, content: Dict, receive_id_type: str = "email",
     print('发送消息返回结果：', resp.json())
     return resp.json()
 
+# 发送交互更新卡片
+def send_interactive_update_message(token:str, content: Dict):
+    url = 'https://open.feishu.cn/open-apis/interactive/v1/card/update'
+
+    data = {
+        "token": token,
+        "card":content
+    }
+    resp = requests.request('POST', url=url, headers=build_headers(), data=json.dumps(data))
+    print('发送交互更新卡片返回结果：', resp.json())
+    return resp.json()
 
 def muti_table_create(name: str, folder_token: str):
     """

@@ -1,17 +1,22 @@
+import time
 from typing import Dict
 
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_wrapper
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_customer_visit
 
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_api_wrapper
+from dbgpt.extra.dag.buildin_awel.lark import card_templates
+from dbgpt.util.lark import larkutil
 
 
-async def a_call(event: Dict):
+def a_call(event: Dict):
+    time.sleep(3)
     print("lark_callback_handler_wrapper_a_call", event)
     result = {}
     card_name = ""
     operator = event['operator']
     action = event['action']
+    token = event['token']
     if "value" in action:
         action_value = action['value']
         if "card_name" in action_value:
@@ -30,7 +35,7 @@ async def a_call(event: Dict):
         )
     elif card_name == "daily_report_collect":
         result = create_daily_report_for_crem(
-            form_value=form_value
+            form_value=form_value, token=token
         )
     elif card_name == "weekly_report_collect":
         result = create_weekly_report_for_crem(
@@ -54,7 +59,7 @@ def create_requirement_for_lark_project(union_id: str, form_value: Dict):
     )
 
 
-def create_daily_report_for_crem(form_value: Dict):
+def create_daily_report_for_crem(form_value: Dict, token: str):
     daily_report_type = "日报"
     daily_report_time = form_value['create_date'].split()[0] + " 00:00:00"
     daily_work_summary = form_value['daily_report_content']
@@ -66,6 +71,24 @@ def create_daily_report_for_crem(form_value: Dict):
         plans=daily_plans
     )
     print("日报结果:", daily_result)
+    print("开始交互更新卡片")
+    larkutil.send_interactive_update_message(
+        token=token,
+        content=card_templates.create_interactive_update_daily_report_card_content(
+            template_variable={
+                "card_metadata": {
+                    "card_name": "interactive_update_daily_report_collect",
+                    "description": "交互更新日报收集表单"
+                },
+                "daily_report_tomorrow_plans": daily_plans,
+                "create_date": daily_report_time.split()[0],
+                "daily_report_content": daily_work_summary,
+
+            }
+        ),
+    )
+
+
     return {}
 
 
