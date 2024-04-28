@@ -1,16 +1,16 @@
 import requests
-import json
 
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers.crem_api_wrapper import getssotoken
 from dbgpt.util import envutils
 
 
 #
 
 def add_customer_visit_record(customer_name, followUpText, followUpTime, followUpTypeName, visitTypeName, contacts):
-    url = envutils.getenv("CREM_ENDPOINT")+'/busFollowUp/addCreateFollowUp'
+    url = envutils.getenv("CREM_ENDPOINT") + '/busFollowUp/addCreateFollowUp'
 
     headers = {
-        'Yuiassotoken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJsb2dpbl90eXBlIjoiQUNDT1VOVCIsIm1vYmlsZSI6IjE4NzU0MzE2MjQwIiwibWlncmF0ZV91c2VyX2lkIjoiZWM4Z2ExYWYiLCJ4LWlwIjoiMTcyLjI1LjI1LjEwIiwicHJpbmNpcGFsX2lkIjoiMTc3OTUiLCJ0b2tlbiI6IjljZDk1YTY4LTE5MzYtNDYxZS1hMjc2LWM1YjJkMzdjMzc0MSIsImxvZ2luX25hbWUiOiJodWF4dWUuemhhbmciLCJ0d29fZmFjdG9yX3ZhbGlkIjp0cnVlLCJsb2dpbl90aW1lIjoiMjAyNC0wNC0yNiAxNDowMjo0NyIsInNjb3BlIjoiIiwiY2FsbGJhY2siOiJodHRwczovL25jY2VtcG9ydGFsLnllZXBheS5jb20vIy9jcm0vY2x1ZXNDdXN0b21lciIsInNzb3RpY2tldCI6Ijk3NjI0NWY5LTU4MGMtNGUzNS1hNDdjLTljNDdiYWQ5YWVlMiIsImV4cCI6MTcxNDE5Nzc2NywiaWF0IjoxNzE0MTA5NTY3LCJlbWFpbCI6Imh1YXh1ZS56aGFuZ0B5ZWVwYXkuY29tIiwidXNlcm5hbWUiOiLlvKDljY7pm6oifQ.yG9Timl49q6SYZFisOEiNiNathUyN9UmSrPLDux3j33DFdMZyXZDjLjc_WBMwY3XbG9yiSZEyp23JYNfDtbRVw',
+        'yuiassotoken': getssotoken(),
         'Content-Type': 'application/json',
         'Cookie': 'JSESSIONID=2F457B72BE5AF9189C4492286D407C20'
     }
