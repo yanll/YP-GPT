@@ -103,3 +103,23 @@ def card_options_for_requirement_industry_line() -> list:
         {"action_index": 5, "action_value": "662db5c3a55775e2c9c83bf9", "text": "金融行业线"}
     ]
     return options
+
+def card_options_for_visit_methods() -> list:
+    """拜访形式"""
+    options = [
+        {"action_index": 1, "action_value": "电话/微信拜访", "text": "电话/微信拜访"},
+        {"action_index": 2, "action_value": "客户公司拜访", "text": "客户公司拜访"},
+        {"action_index": 3, "action_value": "客户来司拜访", "text": "客户来司拜访"},
+        {"action_index": 4, "action_value": "在外约谈", "text": "在外约谈"},
+        {"action_index": 5, "action_value": "实地拜访", "text": "实地拜访"}
+    ]
+    return options
+def card_options_for_visit_types() -> list:
+    """拜访类型"""
+    options = [
+        {"action_index": 1, "action_value": "初次拜访", "text": "初次拜访"},
+        {"action_index": 2, "action_value": "签约后增量拜访", "text": "签约后增量拜访"},
+        {"action_index": 3, "action_value": "签约后日常拜访", "text": "签约后日常拜访"},
+        {"action_index": 4, "action_value": "签约前拜访", "text": "签约前拜访"}
+    ]
+    return options
