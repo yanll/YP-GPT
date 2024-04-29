@@ -107,12 +107,6 @@ def do_collect(
         期望完成日期：2024-05-20
         紧急程度：中
         """
-        e_level_dict = lark_card_util.card_options_to_dict_for_value_bind(
-            lark_card_util.card_options_for_requirement_emergency_level()
-        )
-        # e_line_dict = lark_card_util.card_options_to_dict_for_value_bind(
-        #     lark_card_util.card_options_for_requirement_industry_line()
-        # )
 
         larkutil.send_message(
             receive_id=conv_id,
@@ -126,7 +120,7 @@ def do_collect(
                     "industry_line": "",
                     "industry_line_options": lark_card_util.card_options_for_requirement_industry_line(),
                     "expected_completion_date": expected_completion_date,
-                    "emergency_level": e_level_dict[emergency_level] if emergency_level in e_level_dict else 1,
+                    "emergency_level": lark_card_util.get_action_index_by_text_from_options(emergency_level),
                     "emergency_level_options": lark_card_util.card_options_for_requirement_emergency_level()
                 }
             ),
