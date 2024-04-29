@@ -88,8 +88,9 @@ class LarkEventHandler:
                 if "last_output" in return_values:
                     last_output_dict = json.loads(return_values["last_output"].replace("'", "\""))
         print("LarkEventHandler_handle_message_result:", resp_msg)
-        # if last_output_dict and "display_type" in last_output_dict and last_output_dict["display_type"] == "form":
-        #     return
+        if last_output_dict and "display_type" in last_output_dict and last_output_dict["display_type"] == "form":
+            print("已发送表单，跳过文本消息发送！")
+            return
         lark_card_util.send_message_with_bingo(
             receive_id=sender_open_id,
             template_variable={
