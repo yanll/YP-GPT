@@ -22,32 +22,32 @@ class CustomerVisitRecordCollectInput(BaseModel):
     )
     customer_name: str = Field(
         name="客户名称",
-        description="客户名称，禁止编造",
+        description="客户名称",
         default=""
     )
     visit_method: str = Field(
         name="拜访形式",
-        description="拜访形式，禁止编造",
+        description="拜访形式",
         default=""
     )
     visit_type: str = Field(
         name="拜访类型",
-        description="拜访类型，禁止编造",
+        description="拜访类型",
         default=""
     )
     visit_content: str = Field(
         name="拜访内容",
-        description="拜访内容，禁止编造",
+        description="拜访内容",
         default=""
     )
     visit_date: str = Field(
         name="拜访日期",
-        description="拜访日期，禁止编造",
+        description="拜访日期",
         default=""
     )
     contacts: str = Field(
         name="联系人",
-        description="联系人，禁止编造",
+        description="联系人",
         default=""
     )
 
