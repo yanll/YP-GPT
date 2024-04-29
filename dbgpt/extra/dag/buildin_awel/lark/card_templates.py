@@ -59,7 +59,7 @@ def create_interactive_update_daily_report_card_content(template_variable: Dict)
     return card
 
 def create_weekly_report_card_content(template_variable: Dict):
-    """周报表单"""
+    """周报表单  """
     template_id = "AAqkjMz1cWwRB"
     template_version_name = "1.0.6"
 
