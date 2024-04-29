@@ -30,17 +30,3 @@ def add_customer_visit_record(customer_name, followUpText, followUpTime, followU
     response = requests.post(url, headers=headers, json=data)
 
     return response.text
-
-
-if __name__ == "__main__":
-    # 从外部传入参数调用函数
-    customerName = "张华雪报单客户测试"
-    followUpText = "测试24"
-    followUpTime = "2024-04-26 14:36:57"
-    followUpTypeName = "在外约谈"
-    visitTypeName = "签约后日常拜访"
-    contacts = "张先生"
-
-    response_text = add_customer_visit_record(customerName, followUpText, followUpTime, followUpTypeName, visitTypeName,
-                                              contacts)
-    print(response_text)
