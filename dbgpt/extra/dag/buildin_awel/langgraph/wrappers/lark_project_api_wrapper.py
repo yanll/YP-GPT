@@ -23,15 +23,15 @@ def create_requirement_for_lark_project(
     )
     print("需求结果:", rs)
     print("开始更新需求卡片")
-    time.sleep(5)
-    larkutil.send_interactive_update_message(
-        token=token,
-        content=card_templates.create_requirement_card_content(
-            template_variable={
-                "callback_result_message": "提交成功！",
-            }
-        ),
-    )
+    # time.sleep(5)
+    # larkutil.send_interactive_update_message(
+    #     token=token,
+    #     content=card_templates.create_requirement_card_content(
+    #         template_variable={
+    #             "callback_result_message": "提交成功！",
+    #         }
+    #     ),
+    # )
     return {}
 
 

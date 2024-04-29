@@ -73,21 +73,21 @@ def create_daily_report_for_crem(form_value: Dict, token: str):
     )
     print("日报结果:", daily_result)
     print("开始更新日报卡片")
-    larkutil.send_interactive_update_message(
-        token=token,
-        content=card_templates.create_interactive_update_daily_report_card_content(
-            template_variable={
-                "card_metadata": {
-                    "card_name": "interactive_update_daily_report_collect",
-                    "description": "交互更新日报收集表单"
-                },
-                "daily_report_tomorrow_plans": daily_plans,
-                "create_date": daily_report_time.split()[0],
-                "daily_report_content": daily_work_summary,
-
-            }
-        ),
-    )
+    # larkutil.send_interactive_update_message(
+    #     token=token,
+    #     content=card_templates.create_interactive_update_daily_report_card_content(
+    #         template_variable={
+    #             "card_metadata": {
+    #                 "card_name": "interactive_update_daily_report_collect",
+    #                 "description": "交互更新日报收集表单"
+    #             },
+    #             "daily_report_tomorrow_plans": daily_plans,
+    #             "create_date": daily_report_time.split()[0],
+    #             "daily_report_content": daily_work_summary,
+    #
+    #         }
+    #     ),
+    # )
 
     return {}
 

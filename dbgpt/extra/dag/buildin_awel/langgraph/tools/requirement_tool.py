@@ -27,7 +27,10 @@ class RequirementCollectInput(BaseModel):
     )
     industry_line: str = Field(
         name="行业线",
-        description="行业线",
+        description="行业线，" +
+                    lark_card_util.card_options_to_input_field_description(
+                        lark_card_util.card_options_for_requirement_industry_line()
+                    ),
         default=""
     )
     expected_completion_date: str = Field(
