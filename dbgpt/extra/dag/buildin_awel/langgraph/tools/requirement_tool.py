@@ -22,12 +22,12 @@ class RequirementCollectInput(BaseModel):
     )
     requirement_content: str = Field(
         name="需求内容",
-        description="需求内容",
+        description="需求内容，禁止编造",
         default=""
     )
     industry_line: str = Field(
         name="行业线",
-        description="行业线，" +
+        description="行业线，禁止编造，" +
                     lark_card_util.card_options_to_input_field_description(
                         lark_card_util.card_options_for_requirement_industry_line()
                     ),
@@ -35,12 +35,12 @@ class RequirementCollectInput(BaseModel):
     )
     expected_completion_date: str = Field(
         name="期望完成日期",
-        description="期望完成日期，格式：%Y-%m-%d",
+        description="期望完成日期，禁止编造，格式：%Y-%m-%d",
         default=""
     )
     emergency_level: str = Field(
         name="紧急程度",
-        description="紧急程度，" +
+        description="紧急程度，禁止编造，" +
                     lark_card_util.card_options_to_input_field_description(
                         lark_card_util.card_options_for_requirement_emergency_level()
                     ),

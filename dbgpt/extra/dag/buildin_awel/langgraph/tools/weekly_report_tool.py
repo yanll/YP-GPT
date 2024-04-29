@@ -30,17 +30,17 @@ class WeeklyReportCollectInput(BaseModel):
     )
     weekly_report_content: str = Field(
         name="周报内容",
-        description="周报内容",
+        description="周报内容，禁止编造",
         default=""
     )
     create_date: str = Field(
         name="创建日期",
-        description="创建日期，格式：%Y-%m-%d",
+        description="创建日期，禁止编造，格式：%Y-%m-%d",
         default=""
     )
     weekly_report_next_week_plans: List[PlanDetail] = Field(
         name="下周计划内容",
-        description="下周计划内容",
+        description="下周计划内容，禁止编造",
         default=[]
     )
 
