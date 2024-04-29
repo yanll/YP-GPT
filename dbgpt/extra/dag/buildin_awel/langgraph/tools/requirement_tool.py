@@ -27,7 +27,10 @@ class RequirementCollectInput(BaseModel):
     )
     industry_line: str = Field(
         name="行业线",
-        description="行业线",
+        description="行业线，" +
+                    lark_card_util.card_options_to_input_field_description(
+                        lark_card_util.card_options_for_requirement_industry_line()
+                    ),
         default=""
     )
     expected_completion_date: str = Field(
@@ -102,9 +105,9 @@ def do_collect(
     try:
         """
         我要提交一个需求：
-        行业线：航旅行业线
+        行业线：大零售
         需求内容：在运营后台实现一个数据导出功能。
-        期望完成日期：2024-05-20
+        期望完成日期：明天
         紧急程度：中
         """
 
@@ -117,7 +120,10 @@ def do_collect(
                         "description": "需求收集表单"
                     },
                     "requirement_content": requirement_content,
-                    "industry_line": "",
+                    "industry_line":  lark_card_util.get_action_index_by_text_from_options(
+                        industry_line,
+                        lark_card_util.card_options_for_requirement_industry_line()
+                    ),
                     "industry_line_options": lark_card_util.card_options_for_requirement_industry_line(),
                     "expected_completion_date": expected_completion_date,
                     "emergency_level": lark_card_util.get_action_index_by_text_from_options(

@@ -1,15 +1,18 @@
+import asyncio
 import datetime
 import json
+import time
 
 import requests
 
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
 from dbgpt.util import envutils
-from dbgpt.util.lark import lark_card_util
+from dbgpt.util.lark import lark_card_util, larkutil
 
 
-def create_requirement_for_lark_project(project_key: str, union_id, name, business_value, priority_value,
-                                        expected_time):
+def create_requirement_for_lark_project(
+        token, project_key: str, union_id, name, business_value, priority_value, expected_time
+):
     rs = create_and_send_work_item(
         project_key=project_key,
         union_id=union_id,
@@ -18,31 +21,18 @@ def create_requirement_for_lark_project(project_key: str, union_id, name, busine
         priority_value=priority_value,
         expected_time=expected_time
     )
-    card = {
-        "toast": {
-            "type": "info",
-            "content": "温馨提示",
-            "i18n": {
-                "zh_cn": "信息已提交，请查看结果！",
-                "en_us": "submitted"
-            }
-        },
-        "card": {
-            "type": "template",
-            "data": card_templates.create_requirement_card_content(
-                template_variable={
-                    "card_metadata": {
-                        "card_name": "requirement_collect"
-                    },
-                    "requirement_content": "-",
-                    "industry_line": "",
-                    "expected_completion_date": "",
-                    "emergency_level": ""
-                }
-            )
-        }
-    }
-    return card
+    print("需求结果:", rs)
+    print("开始更新需求卡片")
+    # time.sleep(5)
+    # larkutil.send_interactive_update_message(
+    #     token=token,
+    #     content=card_templates.create_requirement_card_content(
+    #         template_variable={
+    #             "callback_result_message": "提交成功！",
+    #         }
+    #     ),
+    # )
+    return {}
 
 
 def get_project_app_token():

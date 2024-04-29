@@ -9,8 +9,7 @@ from dbgpt.extra.dag.buildin_awel.lark import card_templates
 from dbgpt.util.lark import larkutil
 
 
-def a_call(event: Dict):
-    time.sleep(3)
+async def a_call(event: Dict):
     print("lark_callback_handler_wrapper_a_call", event)
     result = {}
     card_name = ""
@@ -31,7 +30,7 @@ def a_call(event: Dict):
     # 需求收集表单
     if card_name == "requirement_collect":
         result = create_requirement_for_lark_project(
-            union_id=union_id, form_value=form_value
+            token=token, union_id=union_id, form_value=form_value
         )
     elif card_name == "daily_report_collect":
         result = create_daily_report_for_crem(
@@ -49,8 +48,9 @@ def a_call(event: Dict):
     return result
 
 
-def create_requirement_for_lark_project(union_id: str, form_value: Dict):
+def create_requirement_for_lark_project(token, union_id: str, form_value: Dict):
     return lark_project_api_wrapper.create_requirement_for_lark_project(
+        token=token,
         project_key="ypgptapi",
         union_id=union_id,
         name=form_value['requirement_content'],
@@ -72,23 +72,22 @@ def create_daily_report_for_crem(form_value: Dict, token: str):
         plans=daily_plans
     )
     print("日报结果:", daily_result)
-    print("开始交互更新卡片")
-    larkutil.send_interactive_update_message(
-        token=token,
-        content=card_templates.create_interactive_update_daily_report_card_content(
-            template_variable={
-                "card_metadata": {
-                    "card_name": "interactive_update_daily_report_collect",
-                    "description": "交互更新日报收集表单"
-                },
-                "daily_report_tomorrow_plans": daily_plans,
-                "create_date": daily_report_time.split()[0],
-                "daily_report_content": daily_work_summary,
-
-            }
-        ),
-    )
-
+    print("开始更新日报卡片")
+    # larkutil.send_interactive_update_message(
+    #     token=token,
+    #     content=card_templates.create_interactive_update_daily_report_card_content(
+    #         template_variable={
+    #             "card_metadata": {
+    #                 "card_name": "interactive_update_daily_report_collect",
+    #                 "description": "交互更新日报收集表单"
+    #             },
+    #             "daily_report_tomorrow_plans": daily_plans,
+    #             "create_date": daily_report_time.split()[0],
+    #             "daily_report_content": daily_work_summary,
+    #
+    #         }
+    #     ),
+    # )
 
     return {}
 
