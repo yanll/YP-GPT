@@ -168,6 +168,7 @@ def do_collect(
     return {
         "success": "true",
         "error_message": "",
+        "display_type": "form",
         "data": {
             "conv_id": conv_id,
             "customer_name": customer_name,

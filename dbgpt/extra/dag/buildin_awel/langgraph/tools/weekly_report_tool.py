@@ -106,7 +106,7 @@ def do_collect(
     else:
         plans_description = ""
         for index, weekly_report_next_week_plan in enumerate(weekly_report_next_week_plans):
-            plans_description += str(index+1) + '. ' + weekly_report_next_week_plan.plan_content + '; '
+            plans_description += str(index + 1) + '. ' + weekly_report_next_week_plan.plan_content + '; '
 
     try:
         """
@@ -140,6 +140,7 @@ def do_collect(
     return {
         "success": "true",
         "error_message": "",
+        "display_type": "form",
         "data": {
             "conv_id": conv_id,
             "daily_report_content": weekly_report_content,
