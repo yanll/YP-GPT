@@ -11,8 +11,7 @@ def add_customer_visit_record(customer_name, followUpText, followUpTime, followU
 
     headers = {
         'yuiassotoken': getssotoken(),
-        'Content-Type': 'application/json',
-        'Cookie': 'JSESSIONID=2F457B72BE5AF9189C4492286D407C20'
+        'Content-Type': 'application/json'
     }
 
     data = {
