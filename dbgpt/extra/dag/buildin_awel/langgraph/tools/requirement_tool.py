@@ -8,33 +8,7 @@ from langchain_core.callbacks import (
 from pydantic import BaseModel, Field
 
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import larkutil
-from dbgpt.util.lark.lark_card_util import card_option2str, card_option2dict
-
-
-
-emergency_level_options = [
-  {
-    "text": "非常紧急",
-    "action_value": "0"
-  },
-  {
-    "text": "紧急",
-    "action_value": "1"
-  },
-  {
-    "text": "高",
-    "action_value": "2"
-  },
-  {
-    "text": "中",
-    "action_value": "99"
-  },
-  {
-    "text": "低",
-    "action_value": "1sdyyo6lh"
-  }
-]
+from dbgpt.util.lark import larkutil, lark_card_util
 
 
 class RequirementCollectInput(BaseModel):
@@ -63,10 +37,12 @@ class RequirementCollectInput(BaseModel):
     )
     emergency_level: str = Field(
         name="紧急程度",
-        description="描述紧急程度，" + card_option2str(emergency_level_options),
+        description="紧急程度，" +
+                    lark_card_util.card_options_to_input_field_description(
+                        lark_card_util.card_options_for_requirement_emergency_level()
+                    ),
         default=""
     )
-
 
 
 class RequirementCollectTool(BaseTool):
@@ -90,7 +66,8 @@ class RequirementCollectTool(BaseTool):
             run_manager: Optional[CallbackManagerForToolRun] = None,
     ):
         """Use the tool."""
-        print("开始运行需求收集工具：", conv_id, requirement_content,industry_line, expected_completion_date,emergency_level)
+        print("开始运行需求收集工具：", conv_id, requirement_content, industry_line, expected_completion_date,
+              emergency_level)
         try:
             if requirement_content == "":
                 resp = {"success": "false", "response_message": "the description of requirement_content"}
@@ -128,18 +105,15 @@ def do_collect(
         行业线：航旅行业线
         需求内容：在运营后台实现一个数据导出功能。
         期望完成日期：2024-05-20
-        紧急程度：P0
+        紧急程度：中
         """
-        emergency_level2dict = card_option2dict(emergency_level_options)
+        e_level_dict = lark_card_util.card_options_to_dict_for_value_bind(
+            lark_card_util.card_options_for_requirement_emergency_level()
+        )
+        # e_line_dict = lark_card_util.card_options_to_dict_for_value_bind(
+        #     lark_card_util.card_options_for_requirement_industry_line()
+        # )
 
-
-        industry_line_options = [
-            {"text": "航旅行业线", "action_value": "662db530cde8ed174622a08d"},
-            {"text": "大零售行业线", "action_value": "662db56afe2c0b51b33668eb"},
-            {"text": "线上线下一体化", "action_value": "662db596fe2c0b51b33668ec"},
-            {"text": "老板管账", "action_value": "662db5b688aa18a943e64644"},
-            {"text": "金融行业线", "action_value": "662db5c3a55775e2c9c83bf9"}
-        ]
         larkutil.send_message(
             receive_id=conv_id,
             content=card_templates.create_requirement_card_content(
@@ -149,11 +123,11 @@ def do_collect(
                         "description": "需求收集表单"
                     },
                     "requirement_content": requirement_content,
-                    "industry_line": "662db530cde8ed174622a08d",
-                    "industry_line_options": industry_line_options,
+                    "industry_line": "",
+                    "industry_line_options": lark_card_util.card_options_for_requirement_industry_line(),
                     "expected_completion_date": expected_completion_date,
-                    "emergency_level": emergency_level2dict[emergency_level] if emergency_level in emergency_level2dict else 1,
-                    "emergency_level_options": emergency_level_options
+                    "emergency_level": e_level_dict[emergency_level] if emergency_level in e_level_dict else 1,
+                    "emergency_level_options": lark_card_util.card_options_for_requirement_emergency_level()
                 }
             ),
             receive_id_type="open_id",

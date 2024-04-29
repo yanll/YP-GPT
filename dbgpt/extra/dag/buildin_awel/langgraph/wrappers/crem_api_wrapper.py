@@ -6,15 +6,13 @@ import json
 from dbgpt.util import envutils
 
 
-def add_daily_or_weekly_report(report_type: str = "", report_time: str = "", work_summary: str = '', senders=None,
+def add_daily_or_weekly_report(report_type: str = "", report_time: str = "", work_summary: str = '',
+                               senders=None,
                                plans=None):
     url = envutils.getenv("CREM_ENDPOINT") + "/workReportInfo/addWorkReportInfo"
     headers = {
         "Content-Type": "application/json; charset=utf-8",
-        # "pageType": "cemPortal",
-        # "username": "liangliang.yan",
-        # "Cookie": "JSESSIONID = CC1A0187CB8ABB474AA5D97614F21FC9",
-        "Yuiassotoken": 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJsb2dpbl90eXBlIjoiQUNDT1VOVCIsIm1vYmlsZSI6IjE4NzU0MzE2MjQwIiwibWlncmF0ZV91c2VyX2lkIjoiZWM4Z2ExYWYiLCJ4LWlwIjoiMTcyLjI1LjI1LjEwIiwicHJpbmNpcGFsX2lkIjoiMTc3OTUiLCJ0b2tlbiI6IjQ5NmZjZjg3LTg2YTMtNDdiNS05NzU0LTJjNTQ3YTUxY2I4YyIsImxvZ2luX25hbWUiOiJodWF4dWUuemhhbmciLCJ0d29fZmFjdG9yX3ZhbGlkIjp0cnVlLCJsb2dpbl90aW1lIjoiMjAyNC0wNC0yOCAxODowOToxOCIsInNjb3BlIjoiIiwiY2FsbGJhY2siOiJodHRwczovL25jY2VtcG9ydGFsLnllZXBheS5jb20vIy9jcm0vZm9sbG93VmlzaXQiLCJzc290aWNrZXQiOiIyMGM4NDMyYS01N2M0LTRmMWEtYjY1Zi0wZjk3YjYwYzliOTMiLCJleHAiOjE3MTQzODUzNTgsImlhdCI6MTcxNDI5NzE1OCwiZW1haWwiOiJodWF4dWUuemhhbmdAeWVlcGF5LmNvbSIsInVzZXJuYW1lIjoi5byg5Y2O6ZuqIn0.0E0cvT9TPfE0tQl-l-BOnQMaFwb5zOklVWtfUFCymo_a-4W2qFMG1_2riGHRynLiuKi122UOgRYrQDSeNpHoLA'
+        "yuiassotoken": getssotoken()
     }
 
     # bus_plan_list = []
@@ -59,6 +57,10 @@ def add_daily_or_weekly_report(report_type: str = "", report_time: str = "", wor
         logging.error("CREM日报调用失败：", e)
         raise e
     return response
+
+
+def getssotoken() -> str:
+    return envutils.getenv("SSO_TOKEN")
 
 # Example usage for daily and weekly reports
 # 日报

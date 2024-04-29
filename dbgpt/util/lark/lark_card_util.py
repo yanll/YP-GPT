@@ -1,7 +1,4 @@
-import json
 from typing import Dict
-
-import requests
 
 from dbgpt.util.lark import larkutil
 
@@ -15,6 +12,8 @@ def send_message_with_bingo(receive_id: str, template_variable: Dict):
         content=card,
         msg_type="interactive"
     )
+
+
 def send_message_with_welcome(receive_id: str, template_variable: Dict):
     """欢迎卡片"""
     card = create_card_content_by_template("AAqkIeluuBZF2", "1.0.4", template_variable)
@@ -38,15 +37,56 @@ def create_card_content_by_template(template_id: str, template_version_name: str
     return card
 
 
-def card_option2str(options: list):
-    options_str = str(len(options)) + '个选项：'
+def card_options_to_input_field_description(options: list) -> str:
+    """将卡片选项转换为参数接收字段中的选项描述"""
+    options_str = "共" + str(len(options)) + "个选项："
     for option in options:
         options_str += option['text'] + "、"
-    return options_str[:-1]
+    rs = options_str[:-1]
+    print("卡片选项转换结果：", rs)
+    return rs
 
-def card_option2dict(options: list):
+
+def card_options_to_dict_for_value_bind(options: list) -> Dict:
+    """将卡片选项转换为可以绑定回填值的字典"""
     options_dict = {}
     for idx, option in enumerate(options):
         options_dict[option['text']] = idx + 1
+    print("飞书卡片选项字典：", options_dict)
     return options_dict
 
+
+def get_value_by_text_from_options(text, options: list):
+    for option in options:
+        if option["text"] == text:
+            return option["action_value"]
+    return ""
+
+
+def get_text_by_value_from_options(value, options: list):
+    for option in options:
+        if option["action_value"] == value:
+            return option["text"]
+    return ""
+
+
+def card_options_for_requirement_emergency_level() -> list:
+    options = [
+        {"action_value": "L1", "text": "非常紧急"},
+        {"action_value": "L2", "text": "紧急"},
+        {"action_value": "L3", "text": "高"},
+        {"action_value": "L4", "text": "中"},
+        {"action_value": "L5", "text": "低"}
+    ]
+    return options
+
+
+def card_options_for_requirement_industry_line() -> list:
+    options = [
+        {"action_value": "662db530cde8ed174622a08d", "text": "航旅行业线"},
+        {"action_value": "662db56afe2c0b51b33668eb", "text": "大零售行业线"},
+        {"action_value": "662db596fe2c0b51b33668ec", "text": "线上线下一体化"},
+        {"action_value": "662db5b688aa18a943e64644", "text": "老板管账"},
+        {"action_value": "662db5c3a55775e2c9c83bf9", "text": "金融行业线"}
+    ]
+    return options

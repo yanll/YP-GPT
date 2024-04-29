@@ -1,6 +1,8 @@
 import base64
 import os
 
+from dbgpt.util import envutils
+
 
 def encrypt(text):
     encrypted_text = ""
@@ -20,20 +22,10 @@ def decrypt(encrypted_text):
     return decrypted_result
 
 
-def ncssourl():
-    return decrypt("cHx8eEI3N8KBa212azbCgW1teGnCgTZrd3VCOzg8Ojo3woF9cWk1e216fnFrbTVqd3t7N2l9fHA3eHpxdmtxeGl0")
-
-
-def innerssourl():
-    return decrypt("cHx8eEI3N8KBfXFpNntten5xa202and7ezbCgXhCOzg8Ojo3woF9cWk1e216fnFrbTVqd3t7N2l9fHA3eHpxdmtxeGl0")
-
-
 def ssourl():
-    url = ncssourl() if os.getenv("DEPLOY_ENV") == "LOCAL" else innerssourl()
+    url = envutils.getenv("SSO_SERVER_ENDPOINT") + "/auth/principal"
     return url
 
+
 def enabledsso():
-    return False if os.getenv("DEPLOY_ENV") == "LOCAL" else True
-
-
-
+    return False if envutils.getenv("DEPLOY_ENV") == "LOCAL" else True
