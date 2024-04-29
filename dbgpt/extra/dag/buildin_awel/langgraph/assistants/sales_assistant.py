@@ -39,6 +39,7 @@ class SalesAssistant:
         self.app = self.init_flow()
         super().__init__(**kwargs)
 
+
     def create_function_call_node(self):
         prompt = ChatPromptTemplate.from_messages(
             [
@@ -68,12 +69,12 @@ class SalesAssistant:
         )
 
         # 定义FC代理节点，返回：Function/ActionFinish
-        def start_function_call_node(data):
+        def thought_function_call_node(data):
             # 构建OpenAI函数代理
             agent_runnable = create_openai_functions_agent(self.llm, self.tools_provider.general_tools, prompt)
             # 返回待下一步执行的Function
             function_call_outcome = agent_runnable.invoke(data)
-            print("======== start_function_call_node：", function_call_outcome)
+            print("======== thought_function_call_node：", function_call_outcome)
             content = ""
             message_detail = function_call_outcome.json()
             message_type = ""
@@ -86,7 +87,7 @@ class SalesAssistant:
             rec = {
                 "id": str(uuid.uuid1()),
                 "agent_name": "SalesAssistant",
-                "node_name": "start_function_call_node",
+                "node_name": "thought_function_call_node",
                 "conv_uid": data['conv_uid'],
                 "message_type": message_type,
                 "content": content,
@@ -95,7 +96,7 @@ class SalesAssistant:
             self.app_chat_service.add_app_chat_his_message(rec)
             return {"agent_outcome": function_call_outcome}
 
-        return start_function_call_node
+        return thought_function_call_node
 
     def create_do_execute_tools_node(self):
         # 定义执行工具的函数
@@ -145,7 +146,7 @@ class SalesAssistant:
 
     def init_flow(self):
         # 开始节点，解析是否执行工具
-        start_function_call_node = self.create_function_call_node()
+        thought_function_call_node = self.create_function_call_node()
         # 工具执行节点
         do_execute_tools_node = self.create_do_execute_tools_node()
 
@@ -168,15 +169,15 @@ class SalesAssistant:
         workflow = StateGraph(GeneralAgentState)
 
         # 添加节点
-        workflow.add_node("start_function_call_node", start_function_call_node)
+        workflow.add_node("thought_function_call_node", thought_function_call_node)
         workflow.add_node("do_execute_tools_node", do_execute_tools_node)
 
         # 设置入口节点
-        workflow.set_entry_point("start_function_call_node")
+        workflow.set_entry_point("thought_function_call_node")
 
         # 设置网关
         workflow.add_conditional_edges(
-            start_key="start_function_call_node",
+            start_key="thought_function_call_node",
             # 接下来，我们传入将决定接下来调用哪个节点的函数。
             condition=should_continue,
             # 最后我们传入一个映射。
@@ -192,7 +193,7 @@ class SalesAssistant:
             },
         )
         # 添加连线
-        workflow.add_edge(start_key="do_execute_tools_node", end_key="start_function_call_node")
+        workflow.add_edge(start_key="do_execute_tools_node", end_key="thought_function_call_node")
         app: CompiledGraph = workflow.compile()
         return app
 

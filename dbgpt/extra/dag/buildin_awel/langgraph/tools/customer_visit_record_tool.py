@@ -8,7 +8,7 @@ from langchain_core.callbacks import (
 from pydantic import BaseModel, Field
 
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import larkutil
+from dbgpt.util.lark import larkutil, lark_card_util
 
 
 class CustomerVisitRecordCollectInput(BaseModel):
@@ -26,12 +26,18 @@ class CustomerVisitRecordCollectInput(BaseModel):
     )
     visit_method: str = Field(
         name="拜访形式",
-        description="拜访形式",
+        description="拜访形式，" +
+                    lark_card_util.card_options_to_input_field_description(
+                        lark_card_util.card_options_for_visit_methods()
+                    ),
         default=""
     )
     visit_type: str = Field(
         name="拜访类型",
-        description="拜访类型",
+        description="拜访类型" +
+                    lark_card_util.card_options_to_input_field_description(
+                        lark_card_util.card_options_for_visit_types()
+                    ),
         default=""
     )
     visit_content: str = Field(
@@ -139,8 +145,18 @@ def do_collect(
                     },
                     "customer_name": customer_name,
                     "visit_content": visit_content,
-                    "contacts": contacts
-
+                    "contacts": contacts,
+                    "visit_date": visit_date,
+                    "visit_method": lark_card_util.get_action_index_by_text_from_options(
+                        visit_method,
+                        lark_card_util.card_options_for_visit_methods()
+                    ),
+                    "visit_methods": lark_card_util.card_options_for_visit_methods(),
+                    "visit_type": lark_card_util.get_action_index_by_text_from_options(
+                        visit_type,
+                        lark_card_util.card_options_for_visit_types()
+                    ),
+                    "visit_types": lark_card_util.card_options_for_visit_types()
                 }
             ),
             receive_id_type="open_id",
