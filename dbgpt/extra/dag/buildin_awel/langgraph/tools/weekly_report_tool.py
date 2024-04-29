@@ -25,7 +25,7 @@ class WeeklyReportCollectInput(BaseModel):
     """
     conv_id: str = Field(
         name="conv_id",
-        description="value of conv_id",
+        description="the value of conv_id",
         default=""
     )
     weekly_report_content: str = Field(

@@ -54,7 +54,11 @@ class SalesAssistant:
                     template=""
                              "conv_uid=\"{conv_uid}\"\n"
                              "current_system_time_string=\"{current_system_time_string}\"\n"
-                             "You can calculate other times based on current_system_time_string, such as yesterday、tomorrow or next tuesday and so on.\n"
+                             ""
+                ),
+                SystemMessagePromptTemplate.from_template(
+                    template=""
+                             "You can calculate other times based on 'current_system_time_string', such as yesterday、tomorrow or next tuesday and so on.\n"
                              ""
                 ),
                 MessagesPlaceholder(variable_name="chat_history", optional=True),
@@ -235,8 +239,6 @@ class SalesAssistant:
     def printgraph(self):
         graph = chat_agent_executor.create_tool_calling_executor(self.llm, self.tools_provider.general_tools)
         graph.get_graph().print_ascii()
-
-
 
 # human_input = "我需要在CREM系统中录入一个用户需求，需求内容是：‘商户后台导航支持二级菜单’，非常紧急，希望3天完成。"
 # assistant = SalesAssistant()
