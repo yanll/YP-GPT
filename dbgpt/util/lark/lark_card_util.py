@@ -82,17 +82,19 @@ def get_text_by_value_from_options(value, options: list):
 
 
 def card_options_for_requirement_emergency_level() -> list:
+    """值必须和飞书项目一致"""
     options = [
-        {"action_index": 1, "action_value": "L1", "text": "非常紧急"},
-        {"action_index": 2, "action_value": "L2", "text": "紧急"},
-        {"action_index": 3, "action_value": "L3", "text": "高"},
-        {"action_index": 4, "action_value": "L4", "text": "中"},
-        {"action_index": 5, "action_value": "L5", "text": "低"}
+        {"action_index": 1, "action_value": "0", "text": "非常紧急"},
+        {"action_index": 2, "action_value": "1", "text": "紧急"},
+        {"action_index": 3, "action_value": "2", "text": "高"},
+        {"action_index": 4, "action_value": "99", "text": "中"},
+        {"action_index": 5, "action_value": "1sdyyo6lh", "text": "低"}
     ]
     return options
 
 
 def card_options_for_requirement_industry_line() -> list:
+    """值必须和飞书项目一致"""
     options = [
         {"action_index": 1, "action_value": "662db530cde8ed174622a08d", "text": "航旅行业线"},
         {"action_index": 2, "action_value": "662db56afe2c0b51b33668eb", "text": "大零售行业线"},
