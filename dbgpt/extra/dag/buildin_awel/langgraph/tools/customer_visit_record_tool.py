@@ -146,6 +146,7 @@ def do_collect(
                     "customer_name": customer_name,
                     "visit_content": visit_content,
                     "contacts": contacts,
+                    "visit_date": visit_date,
                     "visit_method": lark_card_util.get_action_index_by_text_from_options(
                         visit_method,
                         lark_card_util.card_options_for_visit_methods()
