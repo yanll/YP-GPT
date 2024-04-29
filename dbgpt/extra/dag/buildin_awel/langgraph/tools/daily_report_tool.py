@@ -19,7 +19,6 @@ class DailyReportCollectInput(BaseModel):
     conv_id: str = Field(
         name="conv_id",
         description="the value of conv_id",
-        default=""
     )
     daily_report_content: str = Field(
         name="日报内容",

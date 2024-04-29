@@ -18,7 +18,6 @@ class RequirementCollectInput(BaseModel):
     conv_id: str = Field(
         name="conv_id",
         description="the value of conv_id",
-        default=""
     )
     requirement_content: str = Field(
         name="需求内容",
