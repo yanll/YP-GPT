@@ -98,7 +98,7 @@ def do_collect(
     """
     # 处理明日计划，如果为空则返回特定的消息
     if daily_report_tomorrow_plans is None:
-        plans_description = ["暂无明日计划"]
+        plans_description = "暂无明日计划"
     else:
         plans_description = ", ".join(daily_report_tomorrow_plans) if daily_report_tomorrow_plans else "明日计划列表为空"
 
