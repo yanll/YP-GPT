@@ -18,8 +18,8 @@ from dbgpt.extra.dag.buildin_awel.langgraph.assistants.agent_states import Gener
 from dbgpt.extra.dag.buildin_awel.langgraph.tools.tools_provider import ToolsProvider
 from dbgpt.util.azure_util import create_azure_llm
 
-os.environ["LANGCHAIN_TRACING_V2"] = "true"
-os.environ["LANGCHAIN_API_KEY"] = "ls__19718564013e408d8d5ae23ad8dbdf29"
+# os.environ["LANGCHAIN_TRACING_V2"] = "true"
+# os.environ["LANGCHAIN_API_KEY"] = "ls__19718564013e408d8d5ae23ad8dbdf29"
 
 
 class SalesAssistant:
