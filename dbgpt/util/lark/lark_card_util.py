@@ -16,7 +16,11 @@ def send_message_with_bingo(receive_id: str, template_variable: Dict):
 
 def send_message_with_welcome(receive_id: str, template_variable: Dict):
     """欢迎卡片"""
-    card = create_card_content_by_template("AAqkIeluuBZF2", "1.0.4", template_variable)
+    card = create_card_content_by_template(
+        template_id="AAqkIeluuBZF2",
+        template_version_name="1.0.5",
+        template_variable=template_variable
+    )
     larkutil.send_message(
         receive_id=receive_id,
         receive_id_type="open_id",
