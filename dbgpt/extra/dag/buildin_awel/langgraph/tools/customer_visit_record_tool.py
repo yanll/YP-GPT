@@ -150,11 +150,12 @@ def do_collect(
                         visit_method,
                         lark_card_util.card_options_for_visit_methods()
                     ),
+                    "visit_methods": lark_card_util.card_options_for_visit_methods(),
                     "visit_type": lark_card_util.get_action_index_by_text_from_options(
                         visit_type,
                         lark_card_util.card_options_for_visit_types()
-                    )
-
+                    ),
+                    "visit_types": lark_card_util.card_options_for_visit_types()
                 }
             ),
             receive_id_type="open_id",
