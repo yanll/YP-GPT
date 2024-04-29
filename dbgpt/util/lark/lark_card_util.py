@@ -5,7 +5,7 @@ from dbgpt.util.lark import larkutil
 
 def send_message_with_bingo(receive_id: str, template_variable: Dict):
     """包含点赞、新会话功能的消息卡片"""
-    card = create_card_content_by_template("AAqkIdjGltfge", "1.0.4", template_variable)
+    card = create_card_content_by_template("AAqkIdjGltfge", "1.0.7", template_variable)
     larkutil.send_message(
         receive_id=receive_id,
         receive_id_type="open_id",
