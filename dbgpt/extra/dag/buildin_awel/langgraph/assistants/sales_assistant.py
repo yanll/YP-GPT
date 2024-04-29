@@ -54,6 +54,7 @@ class SalesAssistant:
                     template=""
                              "conv_uid=\"{conv_uid}\"\n"
                              "current_system_time_string=\"{current_system_time_string}\"\n"
+                             "You can calculate other times based on current_system_time_string, such as yesterday、tomorrow or next tuesday and so on.\n"
                              ""
                 ),
                 MessagesPlaceholder(variable_name="chat_history", optional=True),
