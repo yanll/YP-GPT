@@ -120,7 +120,10 @@ def do_collect(
                     "industry_line": "",
                     "industry_line_options": lark_card_util.card_options_for_requirement_industry_line(),
                     "expected_completion_date": expected_completion_date,
-                    "emergency_level": lark_card_util.get_action_index_by_text_from_options(emergency_level),
+                    "emergency_level": lark_card_util.get_action_index_by_text_from_options(
+                        emergency_level,
+                        lark_card_util.card_options_for_requirement_emergency_level()
+                    ),
                     "emergency_level_options": lark_card_util.card_options_for_requirement_emergency_level()
                 }
             ),
