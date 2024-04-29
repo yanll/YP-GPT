@@ -18,7 +18,6 @@ class CustomerVisitRecordCollectInput(BaseModel):
     conv_id: str = Field(
         name="conv_id",
         description="the value of conv_id",
-        default=""
     )
     customer_name: str = Field(
         name="客户名称",
