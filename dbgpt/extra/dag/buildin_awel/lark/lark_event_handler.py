@@ -89,7 +89,8 @@ class LarkEventHandler:
                 if "last_output" in return_values:
                     last_output = return_values["last_output"]
                     try:
-                        last_output_dict = json.loads(last_output.replace("'", "\""))
+                        if len(last_output) > 0:
+                            last_output_dict = json.loads(last_output.replace("'", "\""))
                     except Exception as e:
                         logging.error("last_output_load_err：", last_output)
         print("LarkEventHandler_handle_message_result:", resp_msg)
