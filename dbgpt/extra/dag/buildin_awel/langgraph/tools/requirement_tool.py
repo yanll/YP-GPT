@@ -119,7 +119,7 @@ def do_collect(
                         "description": "需求收集表单"
                     },
                     "requirement_content": requirement_content,
-                    "industry_line":  lark_card_util.get_action_index_by_text_from_options(
+                    "industry_line": lark_card_util.get_action_index_by_text_from_options(
                         industry_line,
                         lark_card_util.card_options_for_requirement_industry_line()
                     ),
@@ -141,6 +141,7 @@ def do_collect(
     return {
         "success": "true",
         "error_message": "",
+        "display_type": "form",
         "data": {
             "conv_id": conv_id,
             "requirement_content": requirement_content,

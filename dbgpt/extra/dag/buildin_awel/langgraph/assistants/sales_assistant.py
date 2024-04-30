@@ -6,7 +6,7 @@ import uuid
 from typing import Any, Dict
 
 from langchain.agents import create_openai_functions_agent
-from langchain_core.agents import AgentFinish
+from langchain_core.agents import AgentFinish, AgentActionMessageLog
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, SystemMessagePromptTemplate, \
     HumanMessagePromptTemplate
 from langgraph.graph import END, StateGraph
@@ -39,12 +39,13 @@ class SalesAssistant:
         self.app = self.init_flow()
         super().__init__(**kwargs)
 
-
     def create_function_call_node(self):
         prompt = ChatPromptTemplate.from_messages(
             [
                 SystemMessagePromptTemplate.from_template(
                     template="You are a helpful ai assistant."
+                             "\n"
+                             "Please answer in simplified Chinese.\n"
                              "\n"
                              "Answer the following questions as best you can.\n"
                              "You can access to the provided tools.\n"
@@ -94,7 +95,21 @@ class SalesAssistant:
                 "message_detail": message_detail
             }
             self.app_chat_service.add_app_chat_his_message(rec)
-            return {"agent_outcome": function_call_outcome}
+            last_outcome = ""
+            if 'intermediate_steps' not in data:
+                return {"agent_outcome": function_call_outcome, "last_outcome": last_outcome}
+            intermediate_steps = data['intermediate_steps']
+            if len(intermediate_steps) > 0:
+                last_step = intermediate_steps[-1]
+                if isinstance(last_step, tuple):
+                    last_outcome = last_step[-1]
+            # 上一步的执行结果继续输出
+            if isinstance(function_call_outcome, AgentFinish):
+                return_values = function_call_outcome.return_values
+                if isinstance(return_values, dict):
+                    return_values['last_output'] = last_outcome
+
+            return {"agent_outcome": function_call_outcome, "last_outcome": last_outcome}
 
         return thought_function_call_node
 
@@ -140,7 +155,9 @@ class SalesAssistant:
             }
             self.app_chat_service.add_app_chat_his_message(rec)
 
-            return {"intermediate_steps": [(agent_action, str(output))]}
+            tool_execute_result = {"intermediate_steps": [(agent_action, str(output))]}
+            print("tool_execute_result:", tool_name, tool_execute_result)
+            return tool_execute_result
 
         return do_execute_tools_node
 

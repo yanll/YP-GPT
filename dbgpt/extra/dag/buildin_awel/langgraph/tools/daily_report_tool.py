@@ -133,8 +133,8 @@ def do_collect(
     return {
         "success": "true",
         "error_message": "",
+        "display_type": "form",
         "data": {
-            "next": "send_card_and_callback",
             "conv_id": conv_id,
             "daily_report_content": daily_report_content,
             "create_date": create_date,
