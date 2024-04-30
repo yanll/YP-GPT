@@ -1,21 +1,40 @@
 import json
+import logging
 from typing import Dict
 
 import requests
 
+from dbgpt.extra.cache.redis_cli import RedisClient
 from dbgpt.util import envutils
+
+redis_client = RedisClient()
 
 
 def get_tenant_access_token():
     url = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal"
     headers = {}
+    app_id = envutils.getenv("LARK_APP_ID")
     params = {
-        'app_id': envutils.getenv("LARK_APP_ID"),
+        'app_id': app_id,
         'app_secret': envutils.getenv("LARK_APP_SK")
     }
-    resp = requests.post(url=url, headers=headers, params=params)
-    print('\n飞书租户令牌返回结果：', resp.json())
-    return resp.json()
+    token = ""
+    try:
+        redis_key = "lark_tenant_access_token_by_app_id_" + app_id
+        token: str = redis_client.get(redis_key)
+    except Exception as e:
+        logging.error("从缓存读取飞书租户令牌失败：", e)
+    if token and token != "":
+        print("飞书租户令牌缓存读取成功！")
+        return {
+            'tenant_access_token': token
+        }
+    else:
+        resp = requests.post(url=url, headers=headers, params=params)
+        token = resp.json()['tenant_access_token']
+        redis_client.set(redis_key, token, 30 * 60)
+        print('\n飞书租户令牌返回结果：', resp.json())
+        return resp.json()
 
 
 def get_app_access_token():
