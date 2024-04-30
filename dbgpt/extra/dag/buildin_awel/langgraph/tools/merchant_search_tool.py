@@ -7,19 +7,25 @@ from langchain_core.callbacks import (
 )
 from pydantic import BaseModel, Field
 
+from dbgpt.extra.dag.buildin_awel.lark import card_templates
 from dbgpt.util.dmallutil import DmallClient
+from dbgpt.util.lark import larkutil
 
 
 class MerchantSearchToolInput(BaseModel):
-    customer_number: str = Field(name="客户/商户编号", description="客户/商户编号", default="")
-    customer_name: str = Field(name="客户/商户名称", description="客户/商户名称", default="")
+    conv_id: str = Field(
+        name="conv_id",
+        description="the value of conv_id",
+    )
+    customer_number: str = Field(name="商户编号", description="商户编号", default="")
+    customer_name: str = Field(name="商户名称", description="商户名称", default="")
 
 
 class MerchantSearchTool(BaseTool):
     name: str = "merchant_search_tool"
     description: str = (
-        "你是一个全面优化的商户信息和客户信息查询工具，结果准确、可信。 "
-        "当你需要通过调用工具查询商户或客户信息时非常有用。 "
+        "你是一个全面优化的商户信息查询工具，结果准确、可信。 "
+        "当你需要通过调用工具查询商户信息时非常有用。 "
         "输入参数应该是工具需要的全部参数。"
         "调用本工具需要的参数值均来自用户的输入，可以默认为空，但是禁止随意编造。"
         "请将查询结果数据整理并美化后输出。"
@@ -30,6 +36,7 @@ class MerchantSearchTool(BaseTool):
 
     def _run(
             self,
+            conv_id: str = "",
             customer_number: str = "",
             customer_name: str = "",
             run_manager: Optional[CallbackManagerForToolRun] = None,
@@ -37,6 +44,7 @@ class MerchantSearchTool(BaseTool):
         """Use the tool."""
         print("开始执行商户信息查询工具：", customer_number, customer_name, self.max_results)
         try:
+            resp_data = {}
             if customer_number == "" and customer_name == "":
                 resp = {"success": "false", "response_message": "the description of customer_number and customer_name"}
             else:
@@ -48,8 +56,38 @@ class MerchantSearchTool(BaseTool):
                         "CUSTOMER_NAME": customer_name
                     }
                 )
-                resp = data.json()['data']['data']
-            return resp
+                resp_data = data.json()['data']['data']
+            query_str = (customer_name + "" + customer_number).strip()
+            print("商户查询结果：", query_str, resp_data)
+            display_type = ""
+            if resp_data and len(resp_data) > 0:
+                list = []
+                for m in resp_data:
+                    list.append({
+                        "CUSTOMER_NAME": m["CUSTOMER_NAME"],
+                        "CUSTOMERNUMBER": m["CUSTOMERNUMBER"],
+                        "PRODUCTLINE": m["PRODUCTLINE"],
+                        "CUSTOMER_SALESNAME": m["CUSTOMER_SALESNAME"],
+                        "CREATEDATE": m["CREATEDATE"]
+                    })
+                display_type = "form"
+                larkutil.send_message(
+                    receive_id=conv_id,
+                    content=card_templates.create_merchant_list_card_content(
+                        template_variable={
+                            "query_str": query_str,
+                            "merchant_list": list
+                        }
+                    ),
+                    receive_id_type="open_id",
+                    msg_type="interactive"
+                )
+            return {
+                "success": "true",
+                "error_message": "",
+                "display_type": display_type,
+                "data": resp_data
+            }
         except Exception as e:
             logging.error("商户查询工具运行异常：", e)
             return repr(e)
