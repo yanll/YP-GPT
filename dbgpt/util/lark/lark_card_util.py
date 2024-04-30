@@ -18,7 +18,7 @@ def send_message_with_welcome(receive_id: str, template_variable: Dict):
     """欢迎卡片"""
     card = create_card_content_by_template(
         template_id="AAqkIeluuBZF2",
-        template_version_name="1.0.7",
+        template_version_name="1.0.8",
         template_variable=template_variable
     )
     larkutil.send_message(
