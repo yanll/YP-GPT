@@ -1,9 +1,11 @@
 import requests
-
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers.crem_api_wrapper import getssotoken
+from dbgpt.util import envutils
 def get_crem_30DaysTrx_text(customer_id):
-    url = 'https://cem.yeepay.com/cem-api/doggiex-daportal/wrap/apis/CEMCustomerPortraitCustomerInfo_30DaysTrxnew'
+    url = envutils.getenv("CREM_ENDPOINT") +'/doggiex-daportal/wrap/apis/CEMCustomerPortraitCustomerInfo_30DaysTrxnew'
     headers = {
-        'Yuiassotoken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJsb2dpbl90eXBlIjoiQUNDT1VOVCIsIm1vYmlsZSI6IjE4NzU0MzE2MjQwIiwibWlncmF0ZV91c2VyX2lkIjoiZWM4Z2ExYWYiLCJ4LWlwIjoiMTcyLjI1LjI1LjEwIiwicHJpbmNpcGFsX2lkIjoiMTc3OTUiLCJ0b2tlbiI6ImViMDdmZmQyLTE4ZmYtNDU4Ny1hMTNjLWU2MmY2ZjY2NDdiNSIsImxvZ2luX25hbWUiOiJodWF4dWUuemhhbmciLCJ0d29fZmFjdG9yX3ZhbGlkIjp0cnVlLCJsb2dpbl90aW1lIjoiMjAyNC0wNC0yOSAxNDowMTo1MyIsInNjb3BlIjoiIiwiY2FsbGJhY2siOiJodHRwczovL25jY2VtcG9ydGFsLnllZXBheS5jb20vIy9jcm0vd29ya1JlcG9ydCIsInNzb3RpY2tldCI6IjU2M2U3NTUzLWY0NzktNDA5MC1iYzMwLTk0OTNjNTI2YzU2NiIsImV4cCI6MTcxNDQ1NjkxMywiaWF0IjoxNzE0MzY4NzEzLCJlbWFpbCI6Imh1YXh1ZS56aGFuZ0B5ZWVwYXkuY29tIiwidXNlcm5hbWUiOiLlvKDljY7pm6oifQ.RQj2jE214xsM6owBcK11npUmva18mOnzAYOqJ0RfoA_2N5Qxt7sA7I8pVR0cIFCah9mHXcX-3wJ-93tRFpENYg'  # 你的请求头信息
+        'yuiassotoken': getssotoken(),
+        'Content-Type': 'application/json'
     }
     data = {
         "uid": "1191",
