@@ -1,4 +1,5 @@
 import json
+import logging
 from typing import Dict
 
 from langchain_core.agents import AgentFinish
@@ -86,7 +87,11 @@ class LarkEventHandler:
                 return_values = agent_outcome.return_values
                 resp_msg = return_values['output']
                 if "last_output" in return_values:
-                    last_output_dict = json.loads(return_values["last_output"].replace("'", "\""))
+                    last_output = return_values["last_output"]
+                    try:
+                        last_output_dict = json.loads(last_output.replace("'", "\""))
+                    except Exception as e:
+                        logging.error("last_output_load_err：", last_output)
         print("LarkEventHandler_handle_message_result:", resp_msg)
         if last_output_dict and "display_type" in last_output_dict and last_output_dict["display_type"] == "form":
             print("已发送表单，跳过文本消息发送！")
