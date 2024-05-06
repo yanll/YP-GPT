@@ -22,6 +22,11 @@ async def a_call(event: Dict):
         if "card_name" in action_value:
             card_name = action_value['card_name']
     if "form_value" not in action:
+        # 非表单回调，按钮回调
+        button_type = action['value']['button_type']
+        if button_type == 'merchant_detail':
+            CUSTOMERNUMBER = action['value']['CUSTOMERNUMBER']
+            print('查询商户的编号', CUSTOMERNUMBER)
         print("表单内容为空，跳过执行：", event)
         return result
     form_value = action['form_value']
