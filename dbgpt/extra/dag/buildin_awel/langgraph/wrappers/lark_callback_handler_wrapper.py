@@ -3,6 +3,7 @@ from typing import Dict
 
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_wrapper
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_customer_visit
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_30DaysTrxTre_card
 
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_api_wrapper
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
@@ -44,6 +45,10 @@ async def a_call(event: Dict):
         result = create_customer_visit_record_for_crem(
             form_value=form_value
         )
+    elif card_name == "Days_30_TrxTre":
+        result = create_Days_30_TrxTre_for_crem(
+            form_value=form_value
+        )
     print("lark_callback_handler_wrapper_a_call_result:", result)
     return result
 
@@ -73,21 +78,7 @@ def create_daily_report_for_crem(form_value: Dict, token: str):
     )
     print("日报结果:", daily_result)
     print("开始更新日报卡片")
-    # larkutil.send_interactive_update_message(
-    #     token=token,
-    #     content=card_templates.create_interactive_update_daily_report_card_content(
-    #         template_variable={
-    #             "card_metadata": {
-    #                 "card_name": "interactive_update_daily_report_collect",
-    #                 "description": "交互更新日报收集表单"
-    #             },
-    #             "daily_report_tomorrow_plans": daily_plans,
-    #             "create_date": daily_report_time.split()[0],
-    #             "daily_report_content": daily_work_summary,
-    #
-    #         }
-    #     ),
-    # )
+
 
     return {}
 
@@ -125,4 +116,16 @@ def create_customer_visit_record_for_crem(form_value: Dict):
     )
 
     print("拜访结果:", customer_visit_record)
+    return {}
+
+def create_Days_30_TrxTre_for_crem(form_value: Dict):
+    customer_id = form_value['customer_id']
+
+
+    Days_30_TrxTre = crem_30DaysTrxTre_card.get_crem_30DaysTrxTre_card(
+        customer_id=customer_id,
+
+    )
+
+    print("30天毛利与交易金额:", Days_30_TrxTre)
     return {}
