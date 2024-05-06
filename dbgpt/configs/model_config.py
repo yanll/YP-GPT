@@ -70,6 +70,7 @@ LLM_MODEL_CONFIG = {
     "yi_proxyllm": "yi_proxyllm",
     # https://platform.moonshot.cn/docs/
     "moonshot_proxyllm": "moonshot_proxyllm",
+    "ollama_proxyllm": "ollama_proxyllm",
     "llama-2-7b": os.path.join(MODEL_PATH, "Llama-2-7b-chat-hf"),
     "llama-2-13b": os.path.join(MODEL_PATH, "Llama-2-13b-chat-hf"),
     "llama-2-70b": os.path.join(MODEL_PATH, "Llama-2-70b-chat-hf"),
@@ -113,6 +114,8 @@ LLM_MODEL_CONFIG = {
     # https://huggingface.co/Qwen/Qwen1.5-32B-Chat
     "qwen1.5-32b-chat": os.path.join(MODEL_PATH, "Qwen1.5-32B-Chat"),
     "qwen1.5-72b-chat": os.path.join(MODEL_PATH, "Qwen1.5-72B-Chat"),
+    # https://huggingface.co/Qwen/Qwen1.5-110B-Chat
+    "qwen1.5-110b-chat": os.path.join(MODEL_PATH, "Qwen1.5-110B-Chat"),
     # https://huggingface.co/Qwen/CodeQwen1.5-7B-Chat
     "codeqwen1.5-7b-chat": os.path.join(MODEL_PATH, "CodeQwen1.5-7B-Chat"),
     # https://huggingface.co/Qwen/Qwen1.5-MoE-A2.7B-Chat
@@ -199,6 +202,7 @@ EMBEDDING_MODEL_CONFIG = {
     "proxy_azure": "proxy_azure",
     # Common HTTP embedding model
     "proxy_http_openapi": "proxy_http_openapi",
+    "proxy_ollama": "proxy_ollama",
 }
 
 
