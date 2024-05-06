@@ -60,15 +60,20 @@ class MerchantSearchTool(BaseTool):
             query_str = (customer_name + "" + customer_number).strip()
             print("商户查询结果：", query_str, resp_data)
             display_type = ""
+            list = []
             if resp_data and len(resp_data) > 0:
-                list = []
                 for m in resp_data:
+                    CUSTOMER_NAME = m["CUSTOMER_NAME"]
+                    CUSTOMERNUMBER = m["CUSTOMERNUMBER"]
+                    PRODUCTLINE = m["PRODUCTLINE"]
+                    CUSTOMER_SALESNAME = m["CUSTOMER_SALESNAME"]
+                    CREATEDATE = m["CREATEDATE"]
                     list.append({
-                        "CUSTOMER_NAME": m["CUSTOMER_NAME"],
-                        "CUSTOMERNUMBER": m["CUSTOMERNUMBER"],
-                        "PRODUCTLINE": m["PRODUCTLINE"],
-                        "CUSTOMER_SALESNAME": m["CUSTOMER_SALESNAME"],
-                        "CREATEDATE": m["CREATEDATE"]
+                        "CUSTOMER_NAME": CUSTOMER_NAME if CUSTOMER_NAME is not None else "",
+                        "CUSTOMERNUMBER": CUSTOMERNUMBER if CUSTOMERNUMBER is not None else "",
+                        "PRODUCTLINE": PRODUCTLINE if PRODUCTLINE is not None else "",
+                        "CUSTOMER_SALESNAME": CUSTOMER_SALESNAME if CUSTOMER_SALESNAME is not None else "",
+                        "CREATEDATE": CREATEDATE if CREATEDATE is not None else ""
                     })
                 display_type = "form"
                 larkutil.send_message(
@@ -86,7 +91,7 @@ class MerchantSearchTool(BaseTool):
                 "success": "true",
                 "error_message": "",
                 "display_type": display_type,
-                "data": resp_data
+                "data": list
             }
         except Exception as e:
             logging.error("商户查询工具运行异常：", e)
