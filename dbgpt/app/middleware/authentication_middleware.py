@@ -25,6 +25,7 @@ def principal(token):
     }
     params = {}
     resp = requests.post(url=ssourl(), headers=headers, params=params)
+    print("用户信息校验结果：", resp)
     return resp.json()
 
 
