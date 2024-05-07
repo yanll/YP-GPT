@@ -12,7 +12,6 @@ redis_client = RedisClient()
 
 
 def get_sso_credential(open_id: str):
-
     if True:
         return envutils.getenv("SSO_TOKEN")
 
@@ -28,8 +27,14 @@ def get_sso_credential(open_id: str):
         print("用户凭证信息缓存读取成功！", open_id)
         return credential
     else:
-        larkutil.select_userinfo(open_id=open_id)
-        resp = requests.request(method='POST', url=url, headers={}, params={}, data={})
+        userinfo = larkutil.select_userinfo(open_id=open_id)
+        data = {
+            "en_name": userinfo["en_name"],
+            "name": userinfo["name"],
+            "email": userinfo["email"],
+            "mobile": userinfo["mobile"],
+        }
+        resp = requests.request(method='POST', url=url, headers={}, params={}, data=json.dumps(data))
         if resp.status_code != 200:
             logging.error("用户凭证接口异常：" + str(resp.status_code))
             return None
