@@ -59,16 +59,13 @@ def build_headers(token=None):
     return headers
 
 
-def select_userinfo_batch(token: str = None, email: str = None):
-    url = 'https://open.feishu.cn/open-apis/contact/v3/users/batch_get_id'
+def select_userinfo_batch(token: str = None, open_id: str = None):
+    url = 'https://open.feishu.cn/open-apis/contact/v3/users/batch'
     params = {
-        "user_id_type": "open_id"
+        "user_id_type": "open_id",
+        "user_ids": [open_id]
     }
-    emails = [email]
-    data = {
-        "emails": emails
-    }
-    resp = requests.request('POST', url=url, headers=build_headers(token), params=params, data=json.dumps(data))
+    resp = requests.request('GET', url=url, headers=build_headers(token), params=params)
     print('用户列表信息返回结果：', resp.json())
     return resp.json()
 

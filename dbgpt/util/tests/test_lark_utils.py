@@ -15,7 +15,7 @@ def test_get_app_access_token():
 
 def test_select_userinfo_batch():
     token = larkutil.get_tenant_access_token()['tenant_access_token']
-    larkutil.select_userinfo_batch(token, "liangliang.yan@yeepay.com")
+    larkutil.select_userinfo_batch(token, "ou_8183ebf29633d5af91fa0b32a0c05bcf")
     assert True
 
 
