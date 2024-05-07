@@ -4,6 +4,7 @@ from langchain.tools import BaseTool
 from langchain_core.utils.function_calling import convert_to_openai_tool
 from pydantic import BaseModel
 
+from dbgpt.extra.dag.buildin_awel.langgraph.tools.crm_bus_customer_tool import CrmBusCustomerCollectTool
 from dbgpt.extra.dag.buildin_awel.langgraph.tools.customer_visit_record_tool import CustomerVisitRecordCollectTool
 from dbgpt.extra.dag.buildin_awel.langgraph.tools.daily_report_tool import DailyReportCollectTool
 from dbgpt.extra.dag.buildin_awel.langgraph.tools.merchant_search_tool import MerchantSearchTool
@@ -20,7 +21,8 @@ class ToolsProvider:
             DailyReportCollectTool(),
             WeeklyReportCollectTool(),
             CustomerVisitRecordCollectTool(),
-            RequirementCollectTool()
+            RequirementCollectTool(),
+            CrmBusCustomerCollectTool()
         ]
         pass
 
