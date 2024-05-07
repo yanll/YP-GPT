@@ -9,7 +9,7 @@ from langchain_core.callbacks import (
 from pydantic import BaseModel, Field
 
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import larkutil
+from dbgpt.util.lark import larkutil, lark_card_util
 
 
 class CrmBusCustomerCollectInput(BaseModel):
@@ -26,19 +26,29 @@ class CrmBusCustomerCollectInput(BaseModel):
         default=""
     )
 
-    industry_line: str = Field(
-        name="所属行业线",
-        description="所属行业线",
-        default=""
+    # industry_line: str = Field(
+    #     name="所属行业线",
+    #     description="所属行业线",
+    #     default=""
+    # )
+    customer_role: str = Field(
+        name='客户角色',
+        description='客户角色，' + lark_card_util.card_options_to_input_field_description(
+                        lark_card_util.card_options_for_customer_role()
+                    ),
     )
-    customer_source: str = Field(
+    customer_source_default: str = Field(
         name="客户来源",
-        description="客户来源",
+        description="客户来源, " + lark_card_util.card_options_to_input_field_description(
+                        lark_card_util.card_options_for_customer_source()
+                    ),
         default=""
     )
-    customer_importance: str = Field(
+    customer_importance_default: str = Field(
         name="客户重要程度",
-        description="客户重要程度",
+        description="客户重要程度, " + lark_card_util.card_options_to_input_field_description(
+                        lark_card_util.card_options_for_customer_importance()
+                    ),
         default=""
     )
 
