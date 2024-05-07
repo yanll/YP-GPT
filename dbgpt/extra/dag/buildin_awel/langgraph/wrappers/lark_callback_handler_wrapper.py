@@ -18,30 +18,29 @@ async def a_call(event: Dict):
     operator = event['operator']
     action = event['action']
     token = event['token']
+    button_type = ""
     if "value" in action:
         action_value = action['value']
         if "card_name" in action_value:
             card_name = action_value['card_name']
+        if "button_type" in action_value:
+            button_type = action_value['button_type']
+    if button_type == 'merchant_detail':
+        customerNo = action['value']['customerNo']
+        conv_id = event['operator']['open_id']
+        print('查询商户的编号', customerNo)
+        print('对话用户id', conv_id)
+        result = Day_30_TrxTre_card_tool.user_crem_30DaysTrxTre_card(
+            customer_id=customerNo,
+            conv_id=conv_id)
     if "form_value" not in action:
         # 非表单回调，按钮回调
-        button_type = action['value']['button_type']
-        if button_type == 'merchant_detail':
-            customerNo = action['value']['customerNo']
-            conv_id = event['operator']['open_id']
-            print('查询商户的编号', customerNo)
-            print('对话用户id', conv_id)
-
-            result = Day_30_TrxTre_card_tool.user_crem_30DaysTrxTre_card(
-                customer_id = customerNo,
-                conv_id = conv_id)
-
         print("表单内容为空，跳过执行：", event)
         return result
     form_value = action['form_value']
     open_id = operator['open_id']
     union_id = operator['union_id']
     # open_id or union_id
-
 
     # 需求收集表单
     if card_name == "requirement_collect":
@@ -91,7 +90,6 @@ def create_daily_report_for_crem(form_value: Dict, token: str):
     print("日报结果:", daily_result)
     print("开始更新日报卡片")
 
-
     return {}
 
 
@@ -129,4 +127,3 @@ def create_customer_visit_record_for_crem(form_value: Dict):
 
     print("拜访结果:", customer_visit_record)
     return {}
-
