@@ -104,6 +104,43 @@ def card_options_for_requirement_industry_line() -> list:
     ]
     return options
 
+def card_options_for_customer_role() -> list:
+    """值必须和飞书项目一致"""
+    options = [
+        {"action_index": 1, "action_value": "662db530cde8ed174622a08d", "text": "标准商户"},
+        {"action_index": 2, "action_value": "662db56afe2c0b51b33668eb", "text": "服务商"},
+        {"action_index": 3, "action_value": "662db596fe2c0b51b33668ec", "text": "平台商"},
+        {"action_index": 4, "action_value": "662db5b688aa18a943e64644", "text": "平台入驻客户"},
+        {"action_index": 5, "action_value": "662db5c3a55775e2c9c83bf9", "text": "分账客户"},
+        {"action_index": 6, "action_value": "662db5c3a55775e2c9c83bf9", "text": "代理商"},
+        {"action_index": 7, "action_value": "662db5c3a55775e2c9c83bf9", "text": "分账接受方"},
+    ]
+    return options
+
+def card_options_for_customer_source() -> list:
+    """值必须和飞书项目一致"""
+    options = [
+        {"action_index": 1, "action_value": "662db530cde8ed174622a08d", "text": "电话营销"},
+        {"action_index": 2, "action_value": "662db56afe2c0b51b33668eb", "text": "主动来电"},
+        {"action_index": 3, "action_value": "662db596fe2c0b51b33668ec", "text": "客户介绍"},
+        {"action_index": 4, "action_value": "662db5b688aa18a943e64644", "text": "朋友介绍"},
+        {"action_index": 5, "action_value": "662db5c3a55775e2c9c83bf9", "text": "独立开发"},
+        {"action_index": 6, "action_value": "662db5c3a55775e2c9c83bf9", "text": "网络搜索"},
+        {"action_index": 7, "action_value": "662db5c3a55775e2c9c83bf9", "text": "广告杂志"},
+        {"action_index": 8, "action_value": "662db5c3a55775e2c9c83bf9", "text": "展会促销"},
+        {"action_index": 9, "action_value": "662db5c3a55775e2c9c83bf9", "text": "其他途径"},
+    ]
+    return options
+
+def card_options_for_customer_importance() -> list:
+    """值必须和飞书项目一致"""
+    options = [
+        {"action_index": 1, "action_value": "662db530cde8ed174622a08d", "text": "一般商户"},
+        {"action_index": 2, "action_value": "662db56afe2c0b51b33668eb", "text": "重要商户"},
+        {"action_index": 3, "action_value": "662db596fe2c0b51b33668ec", "text": "KA商户"},
+    ]
+    return options
+
 def card_options_for_visit_methods() -> list:
     """拜访形式"""
     options = [
