@@ -54,7 +54,7 @@ class CrmBusCustomerCollectInput(BaseModel):
 
 
 class CrmBusCustomerCollectTool(BaseTool):
-    name: str = "daily_report_collect_tool"
+    name: str = "CrmBusCustomerCollectTool"
     description: str = (
         "这是一个报单客户信息填写工具，帮助销售用户填写报单客户信息。"
         "当需要填写报单客户时非常有用。 "

@@ -8,7 +8,6 @@ from langchain_core.callbacks import (
 from pydantic import BaseModel, Field
 
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.dmallutil import DmallClient
 from dbgpt.util.lark import larkutil
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_customer_search
 
@@ -43,13 +42,13 @@ class MerchantSearchTool(BaseTool):
             run_manager: Optional[CallbackManagerForToolRun] = None,
     ):
         """Use the tool."""
-        print("开始执行商户信息查询工具：", customer_number, customer_name, self.max_results)
+        print("开始执行商户信息查询工具：", conv_id, customer_number, customer_name, self.max_results)
         try:
             resp_data = {}
             if customer_number == "" and customer_name == "":
                 resp = {"success": "false", "response_message": "the description of customer_number and customer_name"}
             else:
-                data = crem_customer_search.customer_search(
+                data = crem_customer_search.customer_list_search(
                     open_id=conv_id,
                     customer_name=customer_name,
                     customer_number=customer_number

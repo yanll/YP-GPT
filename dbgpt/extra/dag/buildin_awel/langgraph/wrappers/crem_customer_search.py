@@ -5,7 +5,7 @@ from dbgpt.util import envutils
 from dbgpt.util.lark import ssoutil
 
 
-def customer_search(open_id: str, customer_name=None, customer_number=None):
+def customer_list_search(open_id: str, customer_name=None, customer_number=None):
     url = 'https://cem.yeepay.com/cem-api/comprehensiveSearch/_search'
     headers = {
         'yuiassotoken': ssoutil.get_sso_credential(open_id=open_id),  # 确保这个 token 获取函数已经被正确定义
@@ -48,6 +48,6 @@ def customer_search(open_id: str, customer_name=None, customer_number=None):
 
 # # 示例调用
 # # 你需要至少提供一个参数: customer_name 或 customer_number
-# result = customer_search(customer_name="上海")
+# result = customer_list_search(customer_name="上海")
 # for item in result:
 #     print(item)
