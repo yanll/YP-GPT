@@ -1,10 +1,13 @@
 import requests
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers.crem_api_wrapper import getssotoken
 from dbgpt.util import envutils
-def get_crem_30DaysTrx_text(customer_id):
-    url = envutils.getenv("CREM_ENDPOINT") +'/doggiex-daportal/wrap/apis/CEMCustomerPortraitCustomerInfo_30DaysTrxnew'
+from dbgpt.util.lark import ssoutil
+
+
+def get_crem_30DaysTrx_text(open_id, customer_id):
+    url = envutils.getenv("CREM_ENDPOINT") + '/doggiex-daportal/wrap/apis/CEMCustomerPortraitCustomerInfo_30DaysTrxnew'
     headers = {
-        'yuiassotoken': getssotoken(),
+        'yuiassotoken': ssoutil.get_sso_credential(open_id),
         'Content-Type': 'application/json'
     }
     data = {
@@ -33,10 +36,8 @@ def get_crem_30DaysTrx_text(customer_id):
     else:
         return {"error": "请求失败，状态码：" + str(response.status_code)}
 
+
 # 调用示例
 customer_id = "KA2022-A09150004"  # 这里替换为你要查询的客户商编ID
-result = get_crem_30DaysTrx_text(customer_id)
+result = get_crem_30DaysTrx_text("", customer_id)
 print(result)
-
-
-

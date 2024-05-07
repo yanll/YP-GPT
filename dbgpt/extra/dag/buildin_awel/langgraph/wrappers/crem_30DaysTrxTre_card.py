@@ -2,10 +2,15 @@ import requests
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers.crem_api_wrapper import getssotoken
 from dbgpt.util import envutils
 import datetime
-def get_crem_30DaysTrxTre_card(customer_id):
-    url = envutils.getenv("CREM_ENDPOINT") +'/doggiex-daportal/wrap/apis/CEMCustomerPortraitCustomerInfo_30DaysTrxTrenew'
+
+from dbgpt.util.lark import ssoutil
+
+
+def get_crem_30DaysTrxTre_card(open_id, customer_id):
+    url = (envutils.getenv("CREM_ENDPOINT") +
+           '/doggiex-daportal/wrap/apis/CEMCustomerPortraitCustomerInfo_30DaysTrxTrenew')
     headers = {
-        'yuiassotoken': getssotoken(),
+        'yuiassotoken': ssoutil.get_sso_credential(open_id),
         'Content-Type': 'application/json'
     }
 
@@ -85,7 +90,6 @@ def get_crem_30DaysTrxTre_card(customer_id):
     }
 
     return json_data, formatted_data, formatted_data_jiaoyijine, var, var2
-
 
 # # 示例调用
 # customer_id = "KA2022-A09150004"

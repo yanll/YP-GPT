@@ -72,9 +72,39 @@ def select_userinfo_batch(token: str = None, open_id: str = None):
 
 def select_userinfo(token: str = None, open_id: str = None):
     url = ('https://open.feishu.cn/open-apis/contact/v3/users/{user_id}'.format(user_id=open_id))
-    resp = requests.request('GET', url=url, headers=build_headers(token))
-    print('用户详细信息返回结果：', resp.json())
-    return resp.json()
+
+    userinfo_str = ""
+    redis_key = "lark_userinfo_by_open_id_" + open_id
+    try:
+        userinfo_str: str = redis_client.get(redis_key)
+    except Exception as e:
+        logging.error("从缓存读取飞书用户信息失败：", e)
+    if userinfo_str and userinfo_str != "":
+        print("飞书用户信息缓存读取成功！", open_id)
+        rs = json.loads(userinfo_str)
+        print("缓存读取的飞书用户详细信息：", rs)
+        return rs
+    else:
+        resp = requests.request('GET', url=url, headers=build_headers(token))
+        if resp.status_code != 200:
+            logging.error("飞书用户查询接口异常：" + str(resp.status_code))
+            return None
+        result = resp.json()
+        if result["code"] != 0:
+            logging.error("飞书用户查询业务异常：" + resp.text)
+            return None
+        user = result['data']['user']
+        userinfo = {
+            "open_id": user['open_id'],
+            "union_id": user['union_id'],
+            "name": user['name'],
+            "en_name": user['en_name'],
+            "email": user['email'],
+            "mobile": user['mobile']
+        }
+        redis_client.set(redis_key, json.dumps(userinfo), 10 * 60)
+        print('\n用户详细信息返回结果：', userinfo)
+        return userinfo
 
 
 def select_buildings(token: str = None):

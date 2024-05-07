@@ -1,18 +1,19 @@
+import json
 import logging
 
 import requests
-import json
 
 from dbgpt.util import envutils
+from dbgpt.util.lark import ssoutil
 
 
-def add_daily_or_weekly_report(report_type: str = "", report_time: str = "", work_summary: str = '',
+def add_daily_or_weekly_report(open_id: str, report_type: str = "", report_time: str = "", work_summary: str = '',
                                senders=None,
                                plans=None):
     url = envutils.getenv("CREM_ENDPOINT") + "/workReportInfo/addWorkReportInfo"
     headers = {
         "Content-Type": "application/json; charset=utf-8",
-        "yuiassotoken": getssotoken()
+        "yuiassotoken": ssoutil.get_sso_credential(open_id=open_id)
     }
 
     # bus_plan_list = []
@@ -59,15 +60,17 @@ def add_daily_or_weekly_report(report_type: str = "", report_time: str = "", wor
     return response
 
 
-def add_crm_bus_customer(customer_name: str = "",
-                         industry_line: str = "",
-                         customer_source: str = '',
-                         customer_importance: str = ''):
+def add_crm_bus_customer(
+        open_id: str,
+        customer_name: str = "",
+        industry_line: str = "",
+        customer_source: str = '',
+        customer_importance: str = ''):
     url = envutils.getenv("CREM_ENDPOINT") + "/crmCustomer/addCrmBusCustomer"
     headers = {
         "pagetype": "cemPortal",
         "Content-Type": "application/json; charset=utf-8",
-        "yuiassotoken": getssotoken()
+        "yuiassotoken": ssoutil.get_sso_credential(open_id=open_id)
     }
 
     data = {
@@ -86,9 +89,6 @@ def add_crm_bus_customer(customer_name: str = "",
         logging.error("CREM添加报单客户信息调用失败：", e)
         raise e
     return response
-
-def getssotoken() -> str:
-    return envutils.getenv("SSO_TOKEN")
 
 # Example usage for daily and weekly reports
 # 日报

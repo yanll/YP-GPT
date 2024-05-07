@@ -43,17 +43,18 @@ class MerchantSearchTool(BaseTool):
             run_manager: Optional[CallbackManagerForToolRun] = None,
     ):
         """Use the tool."""
-        print("开始执行商户信息查询工具：",customer_number, customer_name, self.max_results)
+        print("开始执行商户信息查询工具：", customer_number, customer_name, self.max_results)
         try:
             resp_data = {}
             if customer_number == "" and customer_name == "":
                 resp = {"success": "false", "response_message": "the description of customer_number and customer_name"}
             else:
                 data = crem_customer_search.customer_search(
+                    open_id=conv_id,
                     customer_name=customer_name,
                     customer_number=customer_number
                 )
-                resp_data = data # 直接从查询结果中获取data列表
+                resp_data = data  # 直接从查询结果中获取data列表
             query_str = (customer_name + "" + customer_number).strip()
             print("商户查询结果：", query_str, resp_data)
             display_type = ""

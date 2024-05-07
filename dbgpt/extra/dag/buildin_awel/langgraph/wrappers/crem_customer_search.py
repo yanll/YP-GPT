@@ -3,13 +3,13 @@ import json
 import requests
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers.crem_api_wrapper import getssotoken
 from dbgpt.util import envutils
+from dbgpt.util.lark import ssoutil
 
 
-
-def customer_search(customer_name=None, customer_number=None):
+def customer_search(open_id: str, customer_name=None, customer_number=None):
     url = 'https://cem.yeepay.com/cem-api/comprehensiveSearch/_search'
     headers = {
-        'yuiassotoken': getssotoken(),  # 确保这个 token 获取函数已经被正确定义
+        'yuiassotoken': ssoutil.get_sso_credential(open_id=open_id),  # 确保这个 token 获取函数已经被正确定义
         'Content-Type': 'application/json',
     }
 
@@ -52,4 +52,3 @@ def customer_search(customer_name=None, customer_number=None):
 # result = customer_search(customer_name="上海")
 # for item in result:
 #     print(item)
-

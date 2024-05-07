@@ -19,6 +19,10 @@ async def a_call(event: Dict):
     action = event['action']
     token = event['token']
     button_type = ""
+    open_id = operator['open_id']
+    union_id = operator['union_id']
+    # open_id or union_id
+
     if "value" in action:
         action_value = action['value']
         if "card_name" in action_value:
@@ -30,6 +34,7 @@ async def a_call(event: Dict):
         conv_id = event['operator']['open_id']
         print('查询商户的编号', customerNo)
         result = Day_30_TrxTre_card_tool.user_crem_30DaysTrxTre_card(
+            open_id=open_id,
             customer_id=customerNo,
             conv_id=conv_id)
     if "form_value" not in action:
@@ -37,9 +42,6 @@ async def a_call(event: Dict):
         print("表单内容为空，跳过执行：", event)
         return result
     form_value = action['form_value']
-    open_id = operator['open_id']
-    union_id = operator['union_id']
-    # open_id or union_id
 
     # 需求收集表单
     if card_name == "requirement_collect":
@@ -48,15 +50,15 @@ async def a_call(event: Dict):
         )
     elif card_name == "daily_report_collect":
         result = create_daily_report_for_crem(
-            form_value=form_value, token=token
+            open_id=open_id, form_value=form_value
         )
     elif card_name == "weekly_report_collect":
         result = create_weekly_report_for_crem(
-            form_value=form_value
+            open_id=open_id, form_value=form_value
         )
     elif card_name == "customer_visit_record_collect":
         result = create_customer_visit_record_for_crem(
-            form_value=form_value
+            open_id=open_id, form_value=form_value
         )
 
     print("lark_callback_handler_wrapper_a_call_result:", result)
@@ -75,12 +77,13 @@ def create_requirement_for_lark_project(token, union_id: str, form_value: Dict):
     )
 
 
-def create_daily_report_for_crem(form_value: Dict, token: str):
+def create_daily_report_for_crem(open_id, form_value: Dict):
     daily_report_type = "日报"
     daily_report_time = form_value['create_date'].split()[0] + " 00:00:00"
     daily_work_summary = form_value['daily_report_content']
     daily_plans = form_value['daily_report_tomorrow_plans']
     daily_result = crem_api_wrapper.add_daily_or_weekly_report(
+        open_id=open_id,
         report_type=daily_report_type,
         report_time=daily_report_time,
         work_summary=daily_work_summary,
@@ -92,12 +95,13 @@ def create_daily_report_for_crem(form_value: Dict, token: str):
     return {}
 
 
-def create_weekly_report_for_crem(form_value: Dict):
+def create_weekly_report_for_crem(open_id, form_value: Dict):
     daily_report_type = "周报"
     daily_report_time = form_value['create_date'].split()[0] + " 00:00:00"
     daily_work_summary = form_value['weekly_report_content']
     daily_plans = form_value['weekly_report_next_week_plans']
     daily_result = crem_api_wrapper.add_daily_or_weekly_report(
+        open_id=open_id,
         report_type=daily_report_type,
         report_time=daily_report_time,
         work_summary=daily_work_summary,
@@ -107,7 +111,7 @@ def create_weekly_report_for_crem(form_value: Dict):
     return {}
 
 
-def create_customer_visit_record_for_crem(form_value: Dict):
+def create_customer_visit_record_for_crem(open_id, form_value: Dict):
     customer_name = form_value['customer_name']
     visit_date = form_value['visit_date'].split()[0] + " 00:00:00"
     visit_content = form_value['visit_content']
@@ -116,6 +120,7 @@ def create_customer_visit_record_for_crem(form_value: Dict):
     contacts = form_value['contacts']
 
     customer_visit_record = crem_api_customer_visit.add_customer_visit_record(
+        open_id=open_id,
         customer_name=customer_name,
         followUpText=visit_content,
         followUpTime=visit_date,

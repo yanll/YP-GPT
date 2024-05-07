@@ -1,16 +1,22 @@
 import requests
 
-from dbgpt.extra.dag.buildin_awel.langgraph.wrappers.crem_api_wrapper import getssotoken
 from dbgpt.util import envutils
+from dbgpt.util.lark import ssoutil
 
 
 #
 
-def add_customer_visit_record(customer_name, followUpText, followUpTime, followUpTypeName, visitTypeName, contacts):
+def add_customer_visit_record(open_id,
+                              customer_name,
+                              followUpText,
+                              followUpTime,
+                              followUpTypeName,
+                              visitTypeName,
+                              contacts):
     url = envutils.getenv("CREM_ENDPOINT") + '/busFollowUp/addCreateFollowUp'
 
     headers = {
-        'yuiassotoken': getssotoken(),
+        'yuiassotoken': ssoutil.get_sso_credential(open_id=open_id),
         'Content-Type': 'application/json'
     }
 
