@@ -23,7 +23,7 @@ def _clear_torch_cache(device="cuda"):
 
     gc.collect()
     if device != "cpu":
-        if torch.has_mps:
+        if torch.backends.mps.is_built():
             try:
                 from torch.mps import empty_cache
 

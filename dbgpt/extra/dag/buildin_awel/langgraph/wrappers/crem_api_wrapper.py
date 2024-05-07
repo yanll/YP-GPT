@@ -59,6 +59,34 @@ def add_daily_or_weekly_report(report_type: str = "", report_time: str = "", wor
     return response
 
 
+def add_crm_bus_customer(customer_name: str = "",
+                         industry_line: str = "",
+                         customer_source: str = '',
+                         customer_importance: str = ''):
+    url = envutils.getenv("CREM_ENDPOINT") + "/crmCustomer/addCrmBusCustomer"
+    headers = {
+        "pagetype": "cemPortal",
+        "Content-Type": "application/json; charset=utf-8",
+        "yuiassotoken": getssotoken()
+    }
+
+    data = {
+        "customer_name": customer_name,
+        "industry_line": industry_line,
+        "customer_source": customer_source,
+        "customer_importance": customer_importance,
+    }
+    print("提交添加报单客户信息到CREM：", data)
+    return {}
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    try:
+        print(response.json())
+    except Exception as e:
+        print(response)
+        logging.error("CREM添加报单客户信息调用失败：", e)
+        raise e
+    return response
+
 def getssotoken() -> str:
     return envutils.getenv("SSO_TOKEN")
 

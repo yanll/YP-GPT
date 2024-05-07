@@ -43,6 +43,20 @@ def create_daily_report_card_content(template_variable: Dict):
     }
     return card
 
+def create_crm_bus_customer_card_content(template_variable: Dict):
+    """报单客户信息表单"""
+    template_id = "AAqkEJ9hph8Ij"
+    template_version_name = "1.0.3"
+
+    card = {
+        "type": "template",
+        "data": {
+            "template_id": template_id,
+            "template_version_name": template_version_name,
+            "template_variable": template_variable
+        }
+    }
+    return card
 def create_interactive_update_daily_report_card_content(template_variable: Dict):
     """交互更新日报表单"""
     template_id = "AAqkIQ23gTztS"
