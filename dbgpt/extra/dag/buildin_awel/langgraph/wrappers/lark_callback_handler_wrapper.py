@@ -29,7 +29,6 @@ async def a_call(event: Dict):
         customerNo = action['value']['customerNo']
         conv_id = event['operator']['open_id']
         print('查询商户的编号', customerNo)
-        print('对话用户id', conv_id)
         result = Day_30_TrxTre_card_tool.user_crem_30DaysTrxTre_card(
             customer_id=customerNo,
             conv_id=conv_id)
