@@ -6,6 +6,7 @@ from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_customer_vi
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_30DaysTrxTre_card
 
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_api_wrapper
+from dbgpt.extra.dag.buildin_awel.langgraph.tools import Day_30_TrxTre_card_tool
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
 from dbgpt.util.lark import larkutil
 
@@ -25,14 +26,23 @@ async def a_call(event: Dict):
         # 非表单回调，按钮回调
         button_type = action['value']['button_type']
         if button_type == 'merchant_detail':
-            CUSTOMERNUMBER = action['value']['CUSTOMERNUMBER']
-            print('查询商户的编号', CUSTOMERNUMBER)
+            customerNo = action['value']['customerNo']
+            conv_id = event['operator']['open_id']
+            print('查询商户的编号', customerNo)
+            print('对话用户id', conv_id)
+
+            result = Day_30_TrxTre_card_tool.user_crem_30DaysTrxTre_card(
+                customer_id = customerNo,
+                conv_id = conv_id)
+
         print("表单内容为空，跳过执行：", event)
         return result
     form_value = action['form_value']
     open_id = operator['open_id']
     union_id = operator['union_id']
     # open_id or union_id
+
+
     # 需求收集表单
     if card_name == "requirement_collect":
         result = create_requirement_for_lark_project(
@@ -50,10 +60,7 @@ async def a_call(event: Dict):
         result = create_customer_visit_record_for_crem(
             form_value=form_value
         )
-    elif card_name == "Days_30_TrxTre":
-        result = create_Days_30_TrxTre_for_crem(
-            form_value=form_value
-        )
+
     print("lark_callback_handler_wrapper_a_call_result:", result)
     return result
 
@@ -123,14 +130,3 @@ def create_customer_visit_record_for_crem(form_value: Dict):
     print("拜访结果:", customer_visit_record)
     return {}
 
-def create_Days_30_TrxTre_for_crem(form_value: Dict):
-    customer_id = form_value['customer_id']
-
-
-    Days_30_TrxTre = crem_30DaysTrxTre_card.get_crem_30DaysTrxTre_card(
-        customer_id=customer_id,
-
-    )
-
-    print("30天毛利与交易金额:", Days_30_TrxTre)
-    return {}

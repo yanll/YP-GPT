@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
 from dbgpt.util.dmallutil import DmallClient
 from dbgpt.util.lark import larkutil
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_customer_search
 
 
 class MerchantSearchToolInput(BaseModel):
@@ -42,38 +43,34 @@ class MerchantSearchTool(BaseTool):
             run_manager: Optional[CallbackManagerForToolRun] = None,
     ):
         """Use the tool."""
-        print("开始执行商户信息查询工具：", customer_number, customer_name, self.max_results)
+        print("开始执行商户信息查询工具：",customer_number, customer_name, self.max_results)
         try:
             resp_data = {}
             if customer_number == "" and customer_name == "":
                 resp = {"success": "false", "response_message": "the description of customer_number and customer_name"}
             else:
-                dmall_client = DmallClient()
-                data = dmall_client.post(
-                    api_name="query_merchant_info",
-                    parameters={
-                        "CUSTOMERNUMBER": customer_number,
-                        "CUSTOMER_NAME": customer_name
-                    }
+                data = crem_customer_search.customer_search(
+                    customer_name=customer_name,
+                    customer_number=customer_number
                 )
-                resp_data = data.json()['data']['data']
+                resp_data = data # 直接从查询结果中获取data列表
             query_str = (customer_name + "" + customer_number).strip()
             print("商户查询结果：", query_str, resp_data)
             display_type = ""
             list = []
             if resp_data and len(resp_data) > 0:
                 for m in resp_data:
-                    CUSTOMER_NAME = m["CUSTOMER_NAME"]
-                    CUSTOMERNUMBER = m["CUSTOMERNUMBER"]
-                    PRODUCTLINE = m["PRODUCTLINE"]
-                    CUSTOMER_SALESNAME = m["CUSTOMER_SALESNAME"]
-                    CREATEDATE = m["CREATEDATE"]
+                    customerName = m.get("customerName", "")
+                    customerIntroduction = m.get("customerIntroduction", "")
+                    industryLine = m.get("industryLine", "")
+                    saleName = m.get("saleName", "")
+                    customerNo = m.get("customerNo", "")
                     list.append({
-                        "CUSTOMER_NAME": CUSTOMER_NAME if CUSTOMER_NAME is not None else "",
-                        "CUSTOMERNUMBER": CUSTOMERNUMBER if CUSTOMERNUMBER is not None else "",
-                        "PRODUCTLINE": PRODUCTLINE if PRODUCTLINE is not None else "",
-                        "CUSTOMER_SALESNAME": CUSTOMER_SALESNAME if CUSTOMER_SALESNAME is not None else "",
-                        "CREATEDATE": CREATEDATE if CREATEDATE is not None else ""
+                        "customerName": customerName if customerName is not None else "",
+                        "customerIntroduction": customerIntroduction if customerIntroduction is not None else "",
+                        "industryLine": industryLine if industryLine is not None else "",
+                        "saleName": saleName if saleName is not None else "",
+                        "customerNo": customerNo if customerNo is not None else ""
                     })
                 display_type = "form"
                 larkutil.send_message(

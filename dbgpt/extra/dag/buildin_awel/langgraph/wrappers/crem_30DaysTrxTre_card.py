@@ -8,16 +8,10 @@ def get_crem_30DaysTrxTre_card(customer_id):
         'yuiassotoken': getssotoken(),
         'Content-Type': 'application/json'
     }
-    today = datetime.date.today()
-    # 计算30天前的日期
-    thirty_days_ago = today - datetime.timedelta(days=30)
-    # 格式化日期
-    today_str = today.strftime('%Y-%m-%d')
-    thirty_days_ago_str = thirty_days_ago.strftime('%Y-%m-%d')
+
     data = {
-        "uid": "1191",
-        "rid": "843",
-        "querys": "{\"客户编号\":\"" + customer_id + "\",\"商编交易日期\":\"" + thirty_days_ago_str + "," + today_str + "\"}",
+
+        "querys": "{\"客户编号\":\"" + customer_id + "\",\"商编交易日期\":\",\"}",
         "apiName": "CEMCustomerPortraitCustomerInfo_30DaysTrxTrenew",
         "limit": ""
     }
