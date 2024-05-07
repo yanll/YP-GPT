@@ -46,8 +46,8 @@ class CrmBusCustomerCollectInput(BaseModel):
 class CrmBusCustomerCollectTool(BaseTool):
     name: str = "daily_report_collect_tool"
     description: str = (
-        "这是一个报单填写工具，帮助销售用户填写报单，报单中主要是填写客户信息。"
-        "当需要填写报单时非常有用。 "
+        "这是一个报单客户信息填写工具，帮助销售用户填写报单客户信息。"
+        "当需要填写报单客户时非常有用。 "
         "能够尽可能全的收集报单信息。"
         "调用本工具需要的参数值均来自用户的输入，可以默认为空，但是禁止随意编造。"
         ""
@@ -63,7 +63,7 @@ class CrmBusCustomerCollectTool(BaseTool):
             customer_importance: str = "",
     ):
         """Use the tool."""
-        print("开始运行报单填写工具：", conv_id, customer_name, industry_line, customer_source,
+        print("开始运行添加报单客户信息填写工具：", conv_id, customer_name, industry_line, customer_source,
               customer_importance)
         try:
             if customer_name == "":
@@ -96,7 +96,7 @@ def do_collect(
     """
     try:
         """
-        我要填写报单：
+        我要填写报单客户：
         客户名：转转商户。
         行业线：Web3.0行业线
         客户来源：朋友介绍
@@ -109,7 +109,7 @@ def do_collect(
                 template_variable={
                     "card_metadata": {
                         "card_name": "crm_bus_customer_collect",
-                        "description": "提报收集表单"
+                        "description": "添加报单客户信息表单"
                     },
                     "customer_name": customer_name,
                     "industry_line": industry_line,
@@ -121,7 +121,7 @@ def do_collect(
             msg_type="interactive"
         )
     except Exception as e:
-        logging.error("飞书提报卡片发送失败：", e)
+        logging.error("飞书添加报单客户信息卡片发送失败：", e)
 
     # 创建并返回结果字典
     return {
