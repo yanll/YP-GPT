@@ -119,5 +119,5 @@ class LarkEventHandler:
             }
             print(str(headers))
             resp = requests.request(method='GET', headers=headers, url=url, params=params)
-            print("FMC返回结果：", resp.status_code)
+            print("FMC返回结果：", resp.text.startswith("<!DOCTYPE html"))
         self.app_chat_service.disable_app_chat_his_message_by_uid(sender_open_id)
