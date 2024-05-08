@@ -1,12 +1,12 @@
 import time
 from typing import Dict
 
-from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_wrapper
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_wrapper, crem_daily_report_search
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_customer_visit
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_30DaysTrxTre_card
 
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_api_wrapper
-from dbgpt.extra.dag.buildin_awel.langgraph.tools import Day_30_TrxTre_card_tool
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import Day_30_TrxTre_card_tool
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
 from dbgpt.util.lark import larkutil
 
@@ -37,6 +37,14 @@ async def a_call(event: Dict):
             open_id=open_id,
             customer_id=customerNo,
             conv_id=conv_id)
+    # elif button_type == 'daily_report_detail':
+    #     id = action['value']['id']
+    #     conv_id = event['operator']['open_id']
+    #     print('查询日报的编号', id)
+    #     result = crem_daily_report_search.daily_report_search(create_user)(
+    #         open_id=open_id,
+    #         customer_id=customerNo,
+    #         conv_id=conv_id)
     if "form_value" not in action:
         # 非表单回调，按钮回调
         print("表单内容为空，跳过执行：", event)
