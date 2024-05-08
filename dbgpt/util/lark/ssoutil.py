@@ -6,14 +6,12 @@ import requests
 
 from dbgpt.extra.cache.redis_cli import RedisClient
 from dbgpt.util import envutils
-from dbgpt.util.lark import larkutil
+from dbgpt.util.lark import larkutil, aesutil
 
 redis_client = RedisClient()
 
 
 def get_sso_credential(open_id: str):
-    if True:
-        return envutils.getenv("SSO_TOKEN")
 
     url = envutils.getenv("PROC_CONSOLE_ENDPOINT") + '/auth/agent?openId=' + open_id
 
@@ -34,23 +32,24 @@ def get_sso_credential(open_id: str):
             "email": userinfo["email"],
             "mobile": userinfo["mobile"],
         }
-        resp = requests.request(method='POST', url=url, headers={}, params={}, data=json.dumps(data))
+        resp = requests.request(
+            method='POST',
+            url=url,
+            headers={
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            params={}, data=json.dumps(data))
         if resp.status_code != 200:
             logging.error("用户凭证接口异常：" + str(resp.status_code))
             return None
-        result = resp.json()
-        if result["code"] != 0:
+        text = resp.text
+        dict = json.loads(text)
+        code = dict['code']
+        if code != "200":
             logging.error("飞书用户查询业务异常：" + resp.text)
             return None
-        user = result['data']['user']
-        userinfo = {
-            "open_id": user['open_id'],
-            "union_id": user['union_id'],
-            "name": user['name'],
-            "en_name": user['en_name'],
-            "email": user['email'],
-            "mobile": user['mobile']
-        }
-        redis_client.set(redis_key, json.dumps(userinfo), 30 * 60)
-        print('\n用户详细信息返回结果：', userinfo)
-        return userinfo
+        data = dict['data']
+        credential = aesutil.decrypt_from_base64(envutils.getenv("AES_KEY"), data)
+        redis_client.set(redis_key, credential, 5 * 60)
+        print('\n用户凭证信息结果：', data)
+        return credential

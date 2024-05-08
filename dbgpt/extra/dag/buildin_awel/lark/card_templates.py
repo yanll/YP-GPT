@@ -106,7 +106,7 @@ def create_customer_visit_record_card_content(template_variable: Dict):
 def create_merchant_list_card_content(template_variable: Dict):
     """商户查询"""
     template_id = "AAqkXYlYpaLEf"
-    template_version_name = "1.0.11"
+    template_version_name = "1.0.13"
 
     card = {
         "type": "template",

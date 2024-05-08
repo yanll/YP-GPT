@@ -6,7 +6,7 @@ from dbgpt.util.lark import ssoutil
 
 
 def customer_list_search(open_id: str, customer_name=None, customer_number=None):
-    url = 'https://cem.yeepay.com/cem-api/comprehensiveSearch/_search'
+    url = envutils.getenv("CREM_ENDPOINT") +'/comprehensiveSearch/_search'
     headers = {
         'yuiassotoken': ssoutil.get_sso_credential(open_id=open_id),  # 确保这个 token 获取函数已经被正确定义
         'Content-Type': 'application/json',
