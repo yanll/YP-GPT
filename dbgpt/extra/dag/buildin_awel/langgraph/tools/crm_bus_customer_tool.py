@@ -68,25 +68,25 @@ class CrmBusCustomerCollectTool(BaseTool):
             self,
             conv_id: str = "",
             customer_name: str = "",
-            industry_line: str = "",
-            customer_source: str = "",
-            customer_importance: str = "",
+            customer_role: str = "",
+            customer_source_default: str = "",
+            customer_importance_default: str = ""
     ):
         """Use the tool."""
-        print("开始运行添加报单客户信息填写工具：", conv_id, customer_name, industry_line, customer_source,
-              customer_importance)
+        print("开始运行添加报单客户信息填写工具：", conv_id, customer_name, customer_role, customer_source_default,
+              customer_importance_default)
         try:
             if customer_name == "":
                 resp = {"success": "false", "response_message": "the name of customer"}
-            elif industry_line == "":
+            elif customer_role == "":
                 resp = {"success": "false", "response_message": "the industry line of customer"}
             else:
                 resp = do_collect(
                     conv_id=conv_id,
                     customer_name=customer_name,
-                    industry_line=industry_line,
-                    customer_source=customer_source,
-                    customer_importance=customer_importance
+                    customer_role=customer_role,
+                    customer_source_default=customer_source_default,
+                    customer_importance_default=customer_importance_default
                 )
             return resp
         except Exception as e:
@@ -97,9 +97,9 @@ class CrmBusCustomerCollectTool(BaseTool):
 def do_collect(
         conv_id: str = "",
         customer_name: str = "",
-        industry_line: str = "",
-        customer_source: str = "",
-        customer_importance: str = ""
+        customer_role: str = "",
+        customer_source_default: str = "",
+        customer_importance_default: str = ""
 ):
     """
     处理并收集提报信息，返回收集结果。
@@ -107,8 +107,8 @@ def do_collect(
     try:
         """
         我要填写报单客户：
-        客户名：转转商户。
-        行业线：Web3.0行业线
+        客户名：转转精神。
+        客户角色：标准商户
         客户来源：朋友介绍
         客户重要程度：一般商户
         """
@@ -122,9 +122,23 @@ def do_collect(
                         "description": "添加报单客户信息表单"
                     },
                     "customer_name": customer_name,
-                    "industry_line": industry_line,
-                    "customer_source": customer_source,
-                    "customer_importance": customer_importance
+                    "customer_role": lark_card_util.get_action_index_by_text_from_options(
+                        customer_role,
+                        lark_card_util.card_options_for_customer_role()
+                    ),
+                    "customer_source_default": lark_card_util.get_action_index_by_text_from_options(
+                        customer_source_default,
+                        lark_card_util.card_options_for_customer_source()
+                    ),
+                    "customer_importance_default": lark_card_util.get_action_index_by_text_from_options(
+                        customer_importance_default,
+                        lark_card_util.card_options_for_customer_importance()
+                    ),
+
+
+                    "customer_role_options": lark_card_util.card_options_for_customer_role(),
+                    "customer_source_options": lark_card_util.card_options_for_customer_source(),
+                    "customer_importance_options": lark_card_util.card_options_for_customer_importance()
                 }
             ),
             receive_id_type="open_id",
