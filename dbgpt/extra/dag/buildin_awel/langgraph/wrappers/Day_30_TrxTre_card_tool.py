@@ -5,7 +5,7 @@ from dbgpt.extra.dag.buildin_awel.langgraph.wrappers.crem_30DaysTrxTre_card impo
 import logging
 
 
-def user_crem_30DaysTrxTre_card(open_id, customer_id, conv_id):  # 添加 conv_id 参数
+def user_crem_30DaysTrxTre_card(open_id, customer_id, customerName,conv_id):  # 添加 conv_id 参数
 
     try:
         if customer_id == "":
@@ -15,7 +15,7 @@ def user_crem_30DaysTrxTre_card(open_id, customer_id, conv_id):  # 添加 conv_i
         # 调用外部函数获取商户信息分析结果
         else:
             # customer_id = "KA2022-A09150004"
-            customer_analysis = get_crem_30DaysTrxTre_card(open_id, customer_id)
+            customer_analysis = get_crem_30DaysTrxTre_card(open_id, customer_id,customerName)
 
             print("完整返回结果", customer_analysis)
             # 分解返回结果
@@ -36,7 +36,7 @@ def user_crem_30DaysTrxTre_card(open_id, customer_id, conv_id):  # 添加 conv_i
         # 发送信息卡片给用户
         larkutil.send_message(
             receive_id=conv_id,
-            content=var2,
+            content=var,
             receive_id_type="open_id",
             msg_type="interactive"
         )

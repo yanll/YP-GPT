@@ -5,7 +5,7 @@ import datetime
 from dbgpt.util.lark import ssoutil
 
 
-def get_crem_30DaysTrxTre_card(open_id, customer_id):
+def get_crem_30DaysTrxTre_card(open_id, customer_id,customerName):
     url = (envutils.getenv("CREM_ENDPOINT") +
            '/doggiex-daportal/wrap/apis/CEMCustomerPortraitCustomerInfo_30DaysTrxTrenew')
     headers = {
@@ -57,7 +57,7 @@ def get_crem_30DaysTrxTre_card(open_id, customer_id):
                     "tag": "chart",
                     "chart_spec": {
                         "type": "area",
-                        "title": {"text": "近30天毛利"},
+                        "title": {"text": customerName +"近30天毛利"},
                         "data": {"values": formatted_data},  # 更新数据部分
                         "xField": "time",
                         "yField": "value",
@@ -77,7 +77,7 @@ def get_crem_30DaysTrxTre_card(open_id, customer_id):
                     "tag": "chart",
                     "chart_spec": {
                         "type": "area",
-                        "title": {"text": "近30天交易金额"},
+                        "title": {"text": customerName+"近30天交易金额"},
                         "data": {"values": formatted_data_jiaoyijine},  # 更新数据部分
                         "xField": "time",
                         "yField": "value",

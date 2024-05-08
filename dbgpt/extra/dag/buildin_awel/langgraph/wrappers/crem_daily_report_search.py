@@ -6,13 +6,13 @@ import requests
 from dbgpt.util import envutils
 from dbgpt.util.lark import ssoutil
 
-def daily_report_search(create_user):
+def daily_report_search(open_id,create_user):
     url = envutils.getenv("CREM_ENDPOINT") +'/workReportInfo/findWorkReportInfo'
 
     headers = {
         "Content-Type": "application/json; charset=utf-8",
         'pageType': 'cemPortal',
-        "yuiassotoken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJsb2dpbl90eXBlIjoiQUNDT1VOVCIsIm1vYmlsZSI6IjE4NzU0MzE2MjQwIiwibWlncmF0ZV91c2VyX2lkIjoiZWM4Z2ExYWYiLCJ4LWlwIjoiMTcyLjI1LjI1LjEwIiwicHJpbmNpcGFsX2lkIjoiMTc3OTUiLCJ0b2tlbiI6ImJlYmI5Yjg2LTMzMGUtNGY3MC05ZTg5LTRjNTJlNmZmYjQ2NyIsImxvZ2luX25hbWUiOiJodWF4dWUuemhhbmciLCJ0d29fZmFjdG9yX3ZhbGlkIjp0cnVlLCJsb2dpbl90aW1lIjoiMjAyNC0wNS0wOCAwOTo1ODoxNCIsInNjb3BlIjoiIiwiY2FsbGJhY2siOiJodHRwczovL25jY2VtcG9ydGFsLnllZXBheS5jb20vIy9jdXN0b21lci9jdXN0b21lclNlYXJjaCIsInNzb3RpY2tldCI6IjhkMjJhYmMwLTNlMDAtNDczNi1iMWM5LWFlZDVjM2VhYzJlZSIsImV4cCI6MTcxNTIxOTg5NCwiaWF0IjoxNzE1MTMxNjk0LCJlbWFpbCI6Imh1YXh1ZS56aGFuZ0B5ZWVwYXkuY29tIiwidXNlcm5hbWUiOiLlvKDljY7pm6oifQ.JkoSEqraFBRf4eUuzp8oqeEUPkQEHA-RCJoFQy7XblhJyPn14wFMZJBg5ZwYVYevTkNFdDL8lrAOAGtL77iQLg"
+        'yuiassotoken': ssoutil.get_sso_credential(open_id)
     }
 
     data = {
@@ -42,7 +42,7 @@ def daily_report_search(create_user):
     return extracted_data
 
 
-# 使用示例
-results = daily_report_search("张华雪")
-for result in results:
-    print(result)
+# # 使用示例
+# results = daily_report_search("张华雪")
+# for result in results:
+#     print(result)

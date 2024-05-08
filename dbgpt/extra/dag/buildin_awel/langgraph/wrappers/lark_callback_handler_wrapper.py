@@ -31,11 +31,13 @@ async def a_call(event: Dict):
             button_type = action_value['button_type']
     if button_type == 'merchant_detail':
         customerNo = action['value']['customerNo']
+        customerName = action['value']['customerName']
         conv_id = event['operator']['open_id']
         print('查询商户的编号', customerNo)
         result = Day_30_TrxTre_card_tool.user_crem_30DaysTrxTre_card(
             open_id=open_id,
             customer_id=customerNo,
+            customerName = customerName,
             conv_id=conv_id)
     # elif button_type == 'daily_report_detail':
     #     id = action['value']['id']
