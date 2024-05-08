@@ -31,7 +31,7 @@ def get_sso_credential(open_id: str):
             "email": userinfo["email"],
             "mobile": userinfo["mobile"],
         }
-        logging.info("飞书用户：" + data)
+        logging.info("飞书用户：" + str(data))
         resp = requests.request(
             method='POST',
             url=url,
