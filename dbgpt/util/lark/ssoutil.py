@@ -46,7 +46,7 @@ def get_sso_credential(open_id: str):
         dict = json.loads(text)
         code = dict['code']
         if code != "200":
-            logging.error("飞书用户查询业务异常：" + resp.text)
+            logging.error("UIA用户查询业务异常：" + resp.text)
             return None
         data = dict['data']
         credential = aesutil.decrypt_from_base64(envutils.getenv("AES_KEY"), data)
