@@ -94,13 +94,24 @@ def select_userinfo(token: str = None, open_id: str = None):
             logging.error("飞书用户查询业务异常：" + resp.text)
             return None
         user = result['data']['user']
+        name: str = user['name']
+
+        if "email" not in user:
+            raise Exception("请开通飞书通讯录获取邮箱权限！" + name)
+        if "mobile" not in user:
+            raise Exception("请开通飞书通讯录获取手机号码权限！" + name)
+        en_name: str = user['en_name']
+        email: str = user['email']
+        mobile: str = user['mobile']
+        if en_name == "":
+            en_name = email.count()
         userinfo = {
             "open_id": user['open_id'],
             "union_id": user['union_id'],
-            "name": user['name'],
-            "en_name": user['en_name'],
-            "email": user['email'],
-            "mobile": user['mobile']
+            "name": name,
+            "en_name": en_name,
+            "email": email,
+            "mobile": mobile
         }
         redis_client.set(redis_key, json.dumps(userinfo), 10 * 60)
         print('\n用户详细信息返回结果：', userinfo)
