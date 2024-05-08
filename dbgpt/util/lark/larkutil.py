@@ -104,7 +104,7 @@ def select_userinfo(token: str = None, open_id: str = None):
         email: str = user['email']
         mobile: str = user['mobile']
         if en_name == "":
-            en_name = email.count()
+            en_name = email.split("@")[0]
         userinfo = {
             "open_id": user['open_id'],
             "union_id": user['union_id'],
