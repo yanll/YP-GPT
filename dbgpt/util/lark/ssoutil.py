@@ -15,7 +15,7 @@ def get_sso_credential(open_id: str):
     url = envutils.getenv("PROC_CONSOLE_ENDPOINT") + '/auth/agent?openId=' + open_id
 
     credential = ""
-    redis_key = "sso_credential_by_open_id_new_" + open_id
+    redis_key = "sso_credential_by_open_id_" + open_id
     try:
         credential: str = redis_client.get(redis_key)
     except Exception as e:
@@ -31,7 +31,7 @@ def get_sso_credential(open_id: str):
             "email": userinfo["email"],
             "mobile": userinfo["mobile"],
         }
-        logging.info("飞书用户：", data)
+        logging.info("飞书用户：" + str(data))
         resp = requests.request(
             method='POST',
             url=url,
@@ -44,7 +44,7 @@ def get_sso_credential(open_id: str):
             logging.error("用户凭证接口异常：" + str(resp.status_code))
             return None
         text = resp.text
-        logging.info("UIA用户：", text)
+        logging.info("UIA用户：" + text)
 
         dict = json.loads(text)
         code = dict['code']
@@ -53,7 +53,7 @@ def get_sso_credential(open_id: str):
             return None
         data = dict['data']
         credential = aesutil.decrypt_from_base64(envutils.getenv("AES_KEY"), data)
-        redis_client.set(redis_key, credential, 5 * 60)
+        # redis_client.set(redis_key, credential, 5 * 60)
         print('\n用户凭证信息结果：', data)
         print("\n用户凭证信息结果！", open_id, credential, "END")
 
