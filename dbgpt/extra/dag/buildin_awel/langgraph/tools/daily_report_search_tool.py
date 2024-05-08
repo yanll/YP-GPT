@@ -23,12 +23,13 @@ class DailyReportSearchToolInput(BaseModel):
 class DailyReportSearchTool(BaseTool):
     name: str = "daily_report_search_tool"
     description: str = (
-        "你是一个全面优化的日报信息查询工具，结果准确、可信。 "
+        "你是一个全面优化的日报信息查询工具，用于日报查询，结果准确、可信。 "
         "当你需要通过调用工具查询日报信息时非常有用。 "
         "输入参数应该是工具需要的全部参数。"
         "调用本工具需要的参数值均来自用户的输入，可以默认为空，但是禁止随意编造。"
         "请将查询结果数据整理并美化后输出。"
-        ""
+        "不要将日报查询工具跟日报填写工具混淆"
+        "不要将日报查询工具与其他查询工具混淆"
     )
     max_results: int = 20
     args_schema: Type[BaseModel] = DailyReportSearchToolInput
