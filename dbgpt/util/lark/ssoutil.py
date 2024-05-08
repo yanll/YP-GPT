@@ -54,7 +54,7 @@ def get_sso_credential(open_id: str):
         data = dict['data']
         credential = aesutil.decrypt_from_base64(envutils.getenv("AES_KEY"), data)
         # redis_client.set(redis_key, credential, 5 * 60)
-        print('\n用户凭证信息结果：', data)
+        print('\n用户凭证信息结果：', open_id, data, "END")
         print("\n用户凭证信息结果！", open_id, credential, "END")
 
         return credential
