@@ -70,7 +70,7 @@ async def a_call(event: Dict):
         )
     elif card_name == 'crm_bus_customer_collect':
         result = create_crm_bus_customer_for_crem(
-            form_value=form_value
+            open_id=open_id, form_value=form_value
         )
 
 
@@ -145,17 +145,24 @@ def create_customer_visit_record_for_crem(open_id, form_value: Dict):
     print("拜访结果:", customer_visit_record)
     return {}
 
-def create_crm_bus_customer_for_crem(form_value: Dict):
+def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
     customer_name = form_value['customer_name']
-    industry_line = form_value['customer_source']
+    customer_role = form_value['customer_role']
     customer_source = form_value['customer_source']
-    customer_importance = form_value['customer_importance'],
+    customer_importance = form_value['customer_importance']
+    sale_name = form_value['sale_name']
+    industry_line = form_value['industry_line']
+    business_type = form_value['business_type']
 
     customer_visit_record = crem_api_wrapper.add_crm_bus_customer(
+        open_id=open_id,
         customer_name=customer_name,
-        industry_line=industry_line,
+        customer_role=customer_role,
         customer_source=customer_source,
         customer_importance=customer_importance,
+        sale_name=sale_name,
+        industry_line=industry_line,
+        business_type=business_type
     )
 
     print("添加报单客户信息结果:", customer_visit_record)

@@ -63,9 +63,13 @@ def add_daily_or_weekly_report(open_id: str, report_type: str = "", report_time:
 def add_crm_bus_customer(
         open_id: str,
         customer_name: str = "",
-        industry_line: str = "",
+        customer_role: str = "",
         customer_source: str = '',
-        customer_importance: str = ''):
+        customer_importance: str = '',
+        sale_name: str = '',
+        industry_line: str = '',
+        business_type: str = '',
+):
     url = envutils.getenv("CREM_ENDPOINT") + "/crmCustomer/addCrmBusCustomer"
     headers = {
         "pagetype": "cemPortal",
@@ -73,11 +77,21 @@ def add_crm_bus_customer(
         "yuiassotoken": ssoutil.get_sso_credential(open_id=open_id)
     }
 
+
     data = {
-        "customer_name": customer_name,
-        "industry_line": industry_line,
-        "customer_source": customer_source,
-        "customer_importance": customer_importance,
+        "busCrmCustomerMerchantRelationList": [
+            {
+                "association": "同一资质",
+                "enterpriseName": customer_name
+            }
+        ],
+        "businessType": business_type,
+        "customerName": customer_name,
+        "customerRole": customer_role,
+        "customerSource": customer_source,
+        "industryLine": industry_line,
+        "saleName": sale_name,
+        "customerImportance": customer_importance
     }
     print("提交添加报单客户信息到CREM：", data)
     return {}

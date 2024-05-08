@@ -107,37 +107,37 @@ def card_options_for_requirement_industry_line() -> list:
 def card_options_for_customer_role() -> list:
     """值必须和飞书项目一致"""
     options = [
-        {"action_index": 1, "action_value": "662db530cde8ed174622a08d", "text": "标准商户"},
-        {"action_index": 2, "action_value": "662db56afe2c0b51b33668eb", "text": "服务商"},
-        {"action_index": 3, "action_value": "662db596fe2c0b51b33668ec", "text": "平台商"},
-        {"action_index": 4, "action_value": "662db5b688aa18a943e64644", "text": "平台入驻客户"},
-        {"action_index": 5, "action_value": "662db5c3a55775e2c9c83bf9", "text": "分账客户"},
-        {"action_index": 6, "action_value": "662db5c3a55775e2c9c83bf9", "text": "代理商"},
-        {"action_index": 7, "action_value": "662db5c3a55775e2c9c83bf9", "text": "分账接受方"},
+        {"action_index": 1, "action_value": "标准商户", "text": "标准商户"},
+        {"action_index": 2, "action_value": "服务商", "text": "服务商"},
+        {"action_index": 3, "action_value": "平台商", "text": "平台商"},
+        {"action_index": 4, "action_value": "平台入驻客户", "text": "平台入驻客户"},
+        {"action_index": 5, "action_value": "分账客户", "text": "分账客户"},
+        {"action_index": 6, "action_value": "代理商", "text": "代理商"},
+        {"action_index": 7, "action_value": "分账接受方", "text": "分账接受方"},
     ]
     return options
 
 def card_options_for_customer_source() -> list:
     """值必须和飞书项目一致"""
     options = [
-        {"action_index": 1, "action_value": "662db530cde8ed174622a08d", "text": "电话营销"},
-        {"action_index": 2, "action_value": "662db56afe2c0b51b33668eb", "text": "主动来电"},
-        {"action_index": 3, "action_value": "662db596fe2c0b51b33668ec", "text": "客户介绍"},
-        {"action_index": 4, "action_value": "662db5b688aa18a943e64644", "text": "朋友介绍"},
-        {"action_index": 5, "action_value": "662db5c3a55775e2c9c83bf9", "text": "独立开发"},
-        {"action_index": 6, "action_value": "662db5c3a55775e2c9c83bf9", "text": "网络搜索"},
-        {"action_index": 7, "action_value": "662db5c3a55775e2c9c83bf9", "text": "广告杂志"},
-        {"action_index": 8, "action_value": "662db5c3a55775e2c9c83bf9", "text": "展会促销"},
-        {"action_index": 9, "action_value": "662db5c3a55775e2c9c83bf9", "text": "其他途径"},
+        {"action_index": 1, "action_value": "电话营销", "text": "电话营销"},
+        {"action_index": 2, "action_value": "主动来电", "text": "主动来电"},
+        {"action_index": 3, "action_value": "客户介绍", "text": "客户介绍"},
+        {"action_index": 4, "action_value": "朋友介绍", "text": "朋友介绍"},
+        {"action_index": 5, "action_value": "独立开发", "text": "独立开发"},
+        {"action_index": 6, "action_value": "网络搜索", "text": "网络搜索"},
+        {"action_index": 7, "action_value": "广告杂志", "text": "广告杂志"},
+        {"action_index": 8, "action_value": "展会促销", "text": "展会促销"},
+        {"action_index": 9, "action_value": "其他途径", "text": "其他途径"},
     ]
     return options
 
 def card_options_for_customer_importance() -> list:
     """值必须和飞书项目一致"""
     options = [
-        {"action_index": 1, "action_value": "662db530cde8ed174622a08d", "text": "一般商户"},
-        {"action_index": 2, "action_value": "662db56afe2c0b51b33668eb", "text": "重要商户"},
-        {"action_index": 3, "action_value": "662db596fe2c0b51b33668ec", "text": "KA商户"},
+        {"action_index": 1, "action_value": "一般商户", "text": "一般商户"},
+        {"action_index": 2, "action_value": "重要商户", "text": "重要商户"},
+        {"action_index": 3, "action_value": "KA商户", "text": "KA商户"},
     ]
     return options
 
