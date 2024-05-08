@@ -2,13 +2,15 @@ import json
 import logging
 from typing import Dict
 
+import requests
 from langchain_core.agents import AgentFinish
 
 from dbgpt.extra.cache.redis_cli import RedisClient
 from dbgpt.extra.dag.buildin_awel.app.service import GptsAppService, AppChatService
 from dbgpt.extra.dag.buildin_awel.langgraph.assistants.sales_assistant import SalesAssistant
 from dbgpt.storage.chat_history.chat_history_db import ChatHistoryMessageDao
-from dbgpt.util.lark import larkutil, lark_card_util
+from dbgpt.util import envutils
+from dbgpt.util.lark import lark_card_util, ssoutil
 
 
 class LarkEventHandler:
@@ -75,7 +77,7 @@ class LarkEventHandler:
         print("LarkEventHandler_handle_message:", human_message)
         # 开启新会话，归档历史消息。
         if human_message == "new chat":
-            self.app_chat_service.disable_app_chat_his_message_by_uid(sender_open_id)
+            self.new_chat(sender_open_id)
             return None
 
         rs = self.sales_assistant._run(input=human_message, conv_uid=sender_open_id)
@@ -104,5 +106,17 @@ class LarkEventHandler:
             }
         )
 
-    def new_chat(self):
-        pass
+    def new_chat(self, sender_open_id):
+        if True:
+            url = envutils.getenv("FMC_ENDPOINT") + '/flowable/task/list'
+            headers = {
+                'yuiassotoken': ssoutil.get_sso_credential(open_id=sender_open_id),
+                'Content-Type': 'application/json',
+            }
+            params = {
+                "page": 1,
+                "limit": 10
+            }
+            resp = requests.request(method='GET', headers=headers, url=url, params=params)
+            print("FMC返回结果：", resp.text)
+        self.app_chat_service.disable_app_chat_his_message_by_uid(sender_open_id)
