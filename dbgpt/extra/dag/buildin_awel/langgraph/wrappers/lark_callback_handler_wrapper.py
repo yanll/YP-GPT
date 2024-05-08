@@ -43,9 +43,10 @@ async def a_call(event: Dict):
     #     id = action['value']['id']
     #     conv_id = event['operator']['open_id']
     #     print('查询日报的编号', id)
-    #     result = crem_daily_report_search.daily_report_search(create_user)(
+    #     result = crem_daily_report_search.daily_report_search(
     #         open_id=open_id,
     #         customer_id=customerNo,
+    #         customerName = customerName,
     #         conv_id=conv_id)
     if "form_value" not in action:
         # 非表单回调，按钮回调

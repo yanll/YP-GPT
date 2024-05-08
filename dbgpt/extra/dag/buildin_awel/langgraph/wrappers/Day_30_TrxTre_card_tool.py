@@ -40,6 +40,12 @@ def user_crem_30DaysTrxTre_card(open_id, customer_id, customerName,conv_id):  # 
             receive_id_type="open_id",
             msg_type="interactive"
         )
+        larkutil.send_message(
+            receive_id=conv_id,
+            content=var2,
+            receive_id_type="open_id",
+            msg_type="interactive"
+        )
 
         return {}
 

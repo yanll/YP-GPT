@@ -116,3 +116,17 @@ def create_merchant_list_card_content(template_variable: Dict):
         }
     }
     return card
+
+def search_daily_report_card_content(template_variable: Dict):
+    """日报查询"""
+    template_id = "AAqkZz4JvpXQR"
+    template_version_name = "1.0.0"
+
+    card = {
+        "type": "template",
+        "data": {
+            "template_id": template_id, "template_version_name": template_version_name,
+            "template_variable": template_variable
+        }
+    }
+    return card

@@ -32,9 +32,9 @@ def daily_report_search(open_id,create_user):
     extracted_data = []
     for report in report_list:
         report_data = {
+            'reportTime': report.get('reportTime', ''),
             'createUser': report.get('createUser', ''),
             'senders': report.get('senders', ''),
-            'reportTime': report.get('reportTime', ''),
             'workSummaryString': report.get('workSummaryString', ''),
             'id': report.get('id', '')
         }
