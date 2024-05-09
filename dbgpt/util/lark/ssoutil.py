@@ -1,6 +1,5 @@
 import json
 import logging
-from typing import Dict
 
 import requests
 
@@ -45,29 +44,17 @@ def get_sso_credential(open_id: str):
             return None
         text = resp.text
         logging.info("UIA用户：" + text)
-        print("111111")
         dict = json.loads(text)
-        print("222222")
-
         code = dict['code']
         if code != "200":
-            print("3333")
-
             logging.error("UIA用户查询业务异常：" + resp.text)
             return None
         data = dict['data']
-        print("44444")
-
         credential = aesutil.decrypt_from_base64(envutils.getenv("AES_KEY"), data)
-        print("5555")
-
         redis_client.set(redis_key, credential, 5 * 60)
-        print("6666")
-
         print('\n用户凭证信息结果：', open_id, data, "END")
 
         return credential
     except Exception as e:
         logging.error("用户凭证解析异常：", open_id)
         raise Exception("用户凭证解析异常", e)
-

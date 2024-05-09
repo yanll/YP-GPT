@@ -31,6 +31,10 @@ class RAGLarkHandler:
         super().__init__(**kwargs)
 
     async def handle(self, input_body: Dict):
+
+        # res = await self.rag_api_client.test_slow_http()
+        # print("result ", res)
+        # return
         sender_id = input_body['event']['sender']['sender_id']
         message = input_body['event']['message']
         if message['message_type'] != "text":
@@ -38,7 +42,7 @@ class RAGLarkHandler:
             return
         open_id = sender_id['open_id']
         text_content = message['content']
-        res = (await self.rag_api_client.async_coversation_start(user_id = open_id)).json()
+        res = await self.rag_api_client.async_coversation_start(user_id = open_id)
         id = res['data']['id']
         message_init = res['data']['message']
         new_message = {
@@ -46,7 +50,7 @@ class RAGLarkHandler:
             'role':'user'
         }
         message_init.append(new_message)
-        res = (await self.rag_api_client.async_chat(conversation_id = id,messages = message_init)).json()
+        res = await self.rag_api_client.async_chat(conversation_id = id,messages = message_init)
         response = res['data']['answer']
         chunks = res['data']['reference']['chunks']
         # document_name = []

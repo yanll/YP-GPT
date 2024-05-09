@@ -17,7 +17,9 @@ class RAGApiClient(object):
 
     async def test_slow_http(self):
         # https://httpbin.org/delay/10
-        async with aiohttp.ClientSession() as session:
+        headers = {'Content-Type': 'application/json; charset=utf-8',
+                   'Authorization': 'Bearer ragflow-M4MDBhYmNjMDFlMDExZWZhYWY2MDI0Mm'}
+        async with aiohttp.ClientSession(headers=headers) as session:
             async with session.get('http://httpbin.org/delay/8') as response:
 
                 print("Status:", response.status)
@@ -25,7 +27,6 @@ class RAGApiClient(object):
 
                 html = await response.json()
                 print("Body:", html, "...")
-                session.close()
                 return html
 
     def test_slow_http1(self):
@@ -39,10 +40,11 @@ class RAGApiClient(object):
         url = "http://172.31.91.206:8066/v1/api/new_conversation?name="+user_id
         headers = {'Content-Type': 'application/json; charset=utf-8',
                    'Authorization': 'Bearer ragflow-M4MDBhYmNjMDFlMDExZWZhYWY2MDI0Mm'}
-        async with aiohttp.ClientSession(headers) as session:
+        async with aiohttp.ClientSession(headers=headers) as session:
             async with session.get(url) as response:
                 session.close()
-                return response
+                res_json = await response.json()
+                return res_json
             
     
     async def async_chat(self,conversation_id, messages):
@@ -53,12 +55,10 @@ class RAGApiClient(object):
             "conversation_id": conversation_id,
             "messages": messages,
         }
-        async with aiohttp.ClientSession(headers,data) as session:
-            async with session.post(url) as response:
-                session.close()
-                return response
-        resp = requests.request('POST', headers=headers, url=url, data=json.dumps(data))
-        return resp
+        async with aiohttp.ClientSession(headers=headers) as session:
+            async with session.post(url,data=data) as response:
+                res_json = await response.json()
+                return res_json
     
     def coversation_start(self,user_id):
         url = "http://172.31.91.206:8066/v1/api/new_conversation?name="+user_id

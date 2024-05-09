@@ -79,7 +79,7 @@ class SalesAssistant:
             content = ""
             message_detail = function_call_outcome.json()
             message_type = ""
-            if (isinstance(function_call_outcome, AgentFinish)):
+            if isinstance(function_call_outcome, AgentFinish):
                 rs = function_call_outcome.return_values
                 message_type = "ai"
                 content = rs['output']
@@ -223,7 +223,7 @@ class SalesAssistant:
         print("开始运行销售助理：")
 
         try:
-            converted_tools_info = self.tools_provider.converted_tools_info()
+            # converted_tools_info = self.tools_provider.converted_tools_info()
             # print("工具列表：", converted_tools_info)
             his = self.app_chat_service.get_app_chat_his_messages_by_conv_uid(conv_uid=conv_uid)
             # print("历史消息", his)
