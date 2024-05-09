@@ -101,6 +101,8 @@ def do_collect(
         emergency_level: str = ""
 ):
     print("发送飞书需求提报卡片：", conv_id)
+    lark_message_id = "123456"
+
     try:
         """
         我要提交一个需求：
@@ -140,6 +142,7 @@ def do_collect(
         "success": "true",
         "error_message": "",
         "display_type": "form",
+        "lark_message_id": lark_message_id,
         "data": {
             "conv_id": conv_id,
             "requirement_content": requirement_content,
