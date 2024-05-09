@@ -36,7 +36,8 @@ class RAGApiClient(object):
         async with aiohttp.ClientSession(headers=headers) as session:
             async with session.get("http://172.31.91.206:8066/v1/api/new_conversation?name="+user_id) as resp:
                 print(resp.status)
-                return await resp.text()
+                print(await resp.text())
+                return "sadf"
             
     
     async def async_chat(self,conversation_id, messages):
