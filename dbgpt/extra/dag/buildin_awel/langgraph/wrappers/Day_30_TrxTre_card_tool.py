@@ -1,5 +1,5 @@
 import json
-from dbgpt.util.lark import larkutil
+from dbgpt.util.lark import lark_message_util
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers.crem_30DaysTrxTre_card import \
     get_crem_30DaysTrxTre_card  # 确保此模块路径正确
 import logging
@@ -34,13 +34,13 @@ def user_crem_30DaysTrxTre_card(open_id, customer_id, customerName,conv_id):  # 
         print("30天毛利与交易金额:", customer_analysis)
 
         # 发送信息卡片给用户
-        larkutil.send_message(
+        lark_message_util.send_message(
             receive_id=conv_id,
             content=var,
             receive_id_type="open_id",
             msg_type="interactive"
         )
-        larkutil.send_message(
+        lark_message_util.send_message(
             receive_id=conv_id,
             content=var2,
             receive_id_type="open_id",

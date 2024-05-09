@@ -9,7 +9,7 @@ from langchain_core.callbacks import (
 from pydantic import BaseModel, Field
 
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import larkutil, lark_card_util
+from dbgpt.util.lark import larkutil, lark_card_util, lark_message_util
 
 
 class CrmBusCustomerCollectInput(BaseModel):
@@ -113,7 +113,7 @@ def do_collect(
         客户重要程度：一般商户
         """
         print("发送飞书提报卡片：", conv_id)
-        larkutil.send_message(
+        lark_message_util.send_message(
             receive_id=conv_id,
             content=card_templates.create_crm_bus_customer_card_content(
                 template_variable={

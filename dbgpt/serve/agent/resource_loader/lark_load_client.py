@@ -7,7 +7,7 @@ from dbgpt.agent.resource.resource_api import AgentResource
 from dbgpt.agent.resource.resource_lark_api import ResourceLarkClient
 from dbgpt.component import ComponentType
 from dbgpt.util.executor_utils import ExecutorFactory
-from dbgpt.util.lark import larkutil, lark_calendar_util, lark_muti_table_util
+from dbgpt.util.lark import larkutil, lark_calendar_util, lark_muti_table_util, lark_message_util
 
 CFG = Config()
 
@@ -40,7 +40,7 @@ class LarkLoadClient(ResourceLarkClient):
     # 后置处理
     async def a_lark_after_notify(self, receive_id: str, text: str):
         content = {"text": text}
-        return larkutil.send_message(receive_id, content)
+        return lark_message_util.send_message(receive_id, content)
 
     def get_meeting_room_status(self):
         if True:

@@ -6,7 +6,7 @@ from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
 from dbgpt.core.schema.api import ChatCompletionResponse
 from dbgpt.storage.chat_history import ChatHistoryMessageEntity
 from dbgpt.storage.chat_history.chat_history_db import ChatHistoryMessageDao
-from dbgpt.util.lark import larkutil
+from dbgpt.util.lark import larkutil, lark_message_util
 import asyncio
 from dbgpt.util.azure_util import create_azure_llm
 from langchain_core.messages import HumanMessage
@@ -98,13 +98,13 @@ async def call_extract_goal(messages: List[HumanMessage]):
     ai_message = res.choices[0].message.content
     print("执行结果：", ai_message)
     if (ai_message != "MEETING_ROOM_BINGO"):
-        larkutil.send_message(
+        lark_message_util.send_message(
             receive_id=conv_uid,
             content={"text": ai_message.replace("AI: ", "")},
             receive_id_type="open_id"
         )
     else:
-        larkutil.send_message(
+        lark_message_util.send_message(
             receive_id="ou_1a32c82be0a5c6ee7bc8debd75c65e34",
             content={
                 "type": "template",

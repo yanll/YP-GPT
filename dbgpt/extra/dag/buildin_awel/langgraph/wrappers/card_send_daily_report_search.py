@@ -2,7 +2,7 @@ import json
 
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers.crem_daily_report_id_search import daily_report_id_search
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import larkutil
+from dbgpt.util.lark import lark_message_util
 import logging
 
 def card_send_daily_report_search(open_id,report_id,report_time,conv_id):
@@ -44,7 +44,7 @@ def card_send_daily_report_search(open_id,report_id,report_time,conv_id):
                     "busPlanForTomorrowInfoList": busPlanForTomorrowInfoList if busPlanForTomorrowInfoList is not None else ""
                 })
             display_type = "form"
-            larkutil.send_message(
+            lark_message_util.send_message(
                 receive_id=conv_id,
                 content=card_templates.search_daily_report_id_card_content(
                     template_variable={

@@ -8,7 +8,7 @@ from langchain_core.callbacks import (
 from pydantic import BaseModel, Field
 
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import larkutil
+from dbgpt.util.lark import larkutil, lark_message_util
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_customer_search
 
 
@@ -73,7 +73,7 @@ class MerchantSearchTool(BaseTool):
                         "customerNo": customerNo if customerNo is not None else ""
                     })
                 display_type = "form"
-                larkutil.send_message(
+                lark_message_util.send_message(
                     receive_id=conv_id,
                     content=card_templates.create_merchant_list_card_content(
                         template_variable={

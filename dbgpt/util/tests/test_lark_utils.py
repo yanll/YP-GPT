@@ -1,5 +1,5 @@
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import larkutil, lark_calendar_util, lark_muti_table_util
+from dbgpt.util.lark import larkutil, lark_calendar_util, lark_muti_table_util, lark_message_util
 from datetime import datetime
 
 
@@ -27,7 +27,7 @@ def test_select_userinfo():
 
 def test_send_message():
     content = {"text": "你好\n\n点点滴滴！"}
-    larkutil.send_message("ou_8183ebf29633d5af91fa0b32a0c05bcf", content, receive_id_type="open_id")
+    lark_message_util.send_message("ou_8183ebf29633d5af91fa0b32a0c05bcf", content, receive_id_type="open_id")
     assert True
 
 
@@ -39,7 +39,7 @@ def test_card_send_message():
         {"text": "待定", "action_value": "99"}
     ]
 
-    larkutil.send_message(
+    lark_message_util.send_message(
         receive_id="liangliang.yan@yeepay.com",
         content=card_templates.create_card_content_by_template(
             template_id="AAqkjMFhiuVwF",

@@ -1,12 +1,12 @@
 from typing import Dict
 
-from dbgpt.util.lark import larkutil
+from dbgpt.util.lark import lark_message_util
 
 
 def send_message_with_bingo(receive_id: str, template_variable: Dict):
     """包含点赞、新会话功能的消息卡片"""
     card = create_card_content_by_template("AAqkIdjGltfge", "1.0.7", template_variable)
-    larkutil.send_message(
+    lark_message_util.send_message(
         receive_id=receive_id,
         receive_id_type="open_id",
         content=card,
@@ -21,7 +21,7 @@ def send_message_with_welcome(receive_id: str, template_variable: Dict):
         template_version_name="1.0.10",
         template_variable=template_variable
     )
-    larkutil.send_message(
+    lark_message_util.send_message(
         receive_id=receive_id,
         receive_id_type="open_id",
         content=card,

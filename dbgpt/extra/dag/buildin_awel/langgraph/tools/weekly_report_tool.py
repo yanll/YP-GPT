@@ -8,7 +8,7 @@ from langchain_core.callbacks import (
 from pydantic import BaseModel, Field
 
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import larkutil
+from dbgpt.util.lark import larkutil, lark_message_util
 
 
 class PlanDetail(BaseModel):
@@ -116,7 +116,7 @@ def do_collect(
         下周计划：1、继续跟进客户，2、完成3次回访，3、制定阅读计划
         """
         print("发送飞书周报卡片：", conv_id)
-        larkutil.send_message(
+        lark_message_util.send_message(
             receive_id=conv_id,
             content=card_templates.create_weekly_report_card_content(
                 template_variable={
