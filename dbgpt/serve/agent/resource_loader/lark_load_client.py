@@ -7,7 +7,7 @@ from dbgpt.agent.resource.resource_api import AgentResource
 from dbgpt.agent.resource.resource_lark_api import ResourceLarkClient
 from dbgpt.component import ComponentType
 from dbgpt.util.executor_utils import ExecutorFactory
-from dbgpt.util.lark import larkutil
+from dbgpt.util.lark import larkutil, lark_calendar_util
 
 CFG = Config()
 
@@ -46,7 +46,7 @@ class LarkLoadClient(ResourceLarkClient):
         if True:
             return ""
         token = larkutil.get_tenant_access_token()['tenant_access_token']
-        sta = larkutil.select_room_free_busy(
+        sta = lark_calendar_util.select_room_free_busy(
             token=token,
             room_ids=["omm_fce8075d5a6a25c764a808c69a48b82a",
                       "omm_435bca3a3d40f120c63540028b965538",
@@ -92,10 +92,10 @@ class LarkLoadClient(ResourceLarkClient):
         e_time = int(datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S").timestamp())
 
         token = larkutil.get_tenant_access_token()['tenant_access_token']
-        calendar_id = larkutil.create_calendar_id(token=token)
-        larkutil.grant_calendar(token, calendar_id, "writer", grant_user_open_id)
+        calendar_id = lark_calendar_util.create_calendar_id(token=token)
+        lark_calendar_util.grant_calendar(token, calendar_id, "writer", grant_user_open_id)
 
-        calendar = larkutil.create_calendar(token, calendar_id, {
+        calendar = lark_calendar_util.create_calendar(token, calendar_id, {
             "summary": summary,
             "description": description,
             "need_notification": "false",
@@ -120,7 +120,7 @@ class LarkLoadClient(ResourceLarkClient):
         print("已经创建的日历：", calendar)
         event_id = calendar['data']['event']['event_id']
 
-        larkutil.add_calendar_user(token, calendar_id, event_id, {
+        lark_calendar_util.add_calendar_user(token, calendar_id, event_id, {
             "attendees": [
                 {
                     "type": "user",
@@ -134,7 +134,7 @@ class LarkLoadClient(ResourceLarkClient):
         })
         if (room_id):
             print("开始尝试预定会议室：", name, room_id)
-            larkutil.add_calendar_room(token, calendar_id, event_id, {
+            lark_calendar_util.add_calendar_room(token, calendar_id, event_id, {
                 "attendees": [
                     {
                         "type": "resource",
