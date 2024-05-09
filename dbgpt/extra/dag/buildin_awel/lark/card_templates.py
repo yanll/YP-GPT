@@ -44,19 +44,36 @@ def create_daily_report_card_content(template_variable: Dict):
     return card
 
 
-def create_crm_bus_customer_card_content(template_variable: Dict):
+class create_crm_bus_customer_card_content:
     """报单客户信息表单"""
-    template_id = "AAqkEJ9hph8Ij"
-    template_version_name = "1.0.15"
-    card = {
-        "type": "template",
-        "data": {
-            "template_id": template_id,
-            "template_version_name": template_version_name,
-            "template_variable": template_variable
+
+    @staticmethod
+    def Web3(template_variable: Dict):
+        template_id = "AAqkEJ9hph8Ij"
+        template_version_name = "1.0.21"
+        card = {
+            "type": "template",
+            "data": {
+                "template_id": template_id,
+                "template_version_name": template_version_name,
+                "template_variable": template_variable
+            }
         }
-    }
-    return card
+        return card
+
+    @staticmethod
+    def Finance(template_variable: Dict):
+        template_id = "AAqkooGVViOUK"
+        template_version_name = "1.0.1"
+        card = {
+            "type": "template",
+            "data": {
+                "template_id": template_id,
+                "template_version_name": template_version_name,
+                "template_variable": template_variable
+            }
+        }
+        return card
 
 
 def create_interactive_update_daily_report_card_content(template_variable: Dict):
@@ -133,6 +150,7 @@ def search_daily_report_card_content(template_variable: Dict):
         }
     }
     return card
+
 
 def search_daily_report_id_card_content(template_variable: Dict):
     """日报详情查询"""
