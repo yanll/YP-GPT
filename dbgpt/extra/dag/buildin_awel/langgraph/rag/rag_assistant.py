@@ -31,17 +31,15 @@ class RAGApiClient(object):
     
 
     async def async_coversation_start(self,user_id):
-        url = "http://172.31.91.206:8066/v1/api/new_conversation?name="+user_id
         headers = {'Content-Type': 'application/json; charset=utf-8',
                    'Authorization': 'Bearer ragflow-M4MDBhYmNjMDFlMDExZWZhYWY2MDI0Mm'}
         async with aiohttp.ClientSession(headers=headers) as session:
-            async with session.get(url) as resp:
+            async with session.get("http://172.31.91.206:8066/v1/api/new_conversation?name="+user_id) as resp:
                 print(resp.status)
                 return await resp.json()
             
     
     async def async_chat(self,conversation_id, messages):
-        url = "http://172.31.91.206:8066/v1/api/completion"
         headers = {'Content-Type': 'application/json; charset=utf-8',
                    'Authorization': 'Bearer ragflow-M4MDBhYmNjMDFlMDExZWZhYWY2MDI0Mm'}
         data = {
@@ -49,9 +47,9 @@ class RAGApiClient(object):
             "messages": messages,
         }
         async with aiohttp.ClientSession(headers=headers) as session:
-            async with session.post(url,data=data) as response:
-                res_json = await response.json()
-                return res_json
+            async with session.post("http://172.31.91.206:8066/v1/api/completion",data=data) as response:
+                print(response.status)
+                return await response.json()
     
     def coversation_start(self,user_id):
         url = "http://172.31.91.206:8066/v1/api/new_conversation?name="+user_id
