@@ -44,7 +44,7 @@ class DailyReportSearchTool(BaseTool):
         print("开始执行日报信息查询工具：", conv_id, sales_name, self.max_results)
         try:
             resp_data = {}
-            if  sales_name == "":
+            if sales_name == "":
                 resp = {"success": "false", "response_message": "the description of  sales_name"}
             else:
                 data = crem_daily_report_search.daily_report_search(
