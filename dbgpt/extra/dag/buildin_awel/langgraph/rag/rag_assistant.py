@@ -15,8 +15,9 @@ class RAGApiClient(object):
         self.rag_api_endpoint = rag_api_endpoint
         self.rag_api_key = rag_api_key
 
-    async def test_slow_http(self):
+    async def test_slow_http(self,user_id):
         # https://httpbin.org/delay/10
+        url = "http://172.31.91.206:8066/v1/api/new_conversation?name="+user_id
         headers = {'Content-Type': 'application/json; charset=utf-8',
                    'Authorization': 'Bearer ragflow-M4MDBhYmNjMDFlMDExZWZhYWY2MDI0Mm'}
         async with aiohttp.ClientSession(headers=headers) as session:
@@ -34,12 +35,9 @@ class RAGApiClient(object):
         headers = {'Content-Type': 'application/json; charset=utf-8',
                    'Authorization': 'Bearer ragflow-M4MDBhYmNjMDFlMDExZWZhYWY2MDI0Mm'}
         async with aiohttp.ClientSession(headers=headers) as session:
-            async with session.get(url) as response:
-                print("Status:", response.status)
-                print("Content-type:", response.headers['content-type'])
-                
-                res_json = await response.json()
-                return res_json
+            async with session.get(url) as resp:
+                print(resp.status)
+                return await resp.json()
             
     
     async def async_chat(self,conversation_id, messages):
