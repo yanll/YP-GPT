@@ -104,6 +104,7 @@ def card_options_for_requirement_industry_line() -> list:
     ]
     return options
 
+
 def card_options_for_customer_role() -> list:
     """值必须和飞书项目一致"""
     options = [
@@ -116,6 +117,34 @@ def card_options_for_customer_role() -> list:
         {"action_index": 7, "action_value": "分账接受方", "text": "分账接受方"},
     ]
     return options
+
+
+def card_options_for_industry_line() -> list:
+    """值必须和飞书项目一致"""
+    options = [
+        {"action_index": 1, "action_value": "Web3.0行业线", "text": "Web3.0行业线"},
+        {"action_index": 2, "action_value": "金融行业线", "text": "金融行业线"},
+    ]
+    return options
+
+
+def card_options_for_business_type() -> list:
+    """值必须和飞书项目一致"""
+    options = [
+        {"action_index": 1, "action_value": "银行", "text": "银行"},
+        {"action_index": 2, "action_value": "车抵房抵", "text": "车抵房抵"},
+        {"action_index": 3, "action_value": "融资担保", "text": "融资担保"},
+        {"action_index": 4, "action_value": "逃废债", "text": "逃废债"},
+        {"action_index": 5, "action_value": "消费贷", "text": "消费贷"},
+        {"action_index": 6, "action_value": "信托", "text": "信托"},
+        {"action_index": 7, "action_value": "助贷平台", "text": "助贷平台"},
+        {"action_index": 8, "action_value": "会员权益", "text": "会员权益"},
+        {"action_index": 9, "action_value": "消费金融", "text": "消费金融"},
+        {"action_index": 10, "action_value": "小贷/网贷", "text": "小贷/网贷"},
+        {"action_index": 11, "action_value": "其他", "text": "其他"},
+    ]
+    return options
+
 
 def card_options_for_customer_source() -> list:
     """值必须和飞书项目一致"""
@@ -132,6 +161,7 @@ def card_options_for_customer_source() -> list:
     ]
     return options
 
+
 def card_options_for_customer_importance() -> list:
     """值必须和飞书项目一致"""
     options = [
@@ -140,6 +170,7 @@ def card_options_for_customer_importance() -> list:
         {"action_index": 3, "action_value": "KA商户", "text": "KA商户"},
     ]
     return options
+
 
 def card_options_for_visit_methods() -> list:
     """拜访形式"""
@@ -151,6 +182,8 @@ def card_options_for_visit_methods() -> list:
         {"action_index": 5, "action_value": "实地拜访", "text": "实地拜访"}
     ]
     return options
+
+
 def card_options_for_visit_types() -> list:
     """拜访类型"""
     options = [
