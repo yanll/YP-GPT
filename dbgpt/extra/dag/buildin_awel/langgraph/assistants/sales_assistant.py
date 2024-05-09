@@ -194,15 +194,15 @@ class SalesAssistant:
 
         # 设置网关
         workflow.add_conditional_edges(
-            start_key="thought_function_call_node",
+            source="thought_function_call_node",
             # 接下来，我们传入将决定接下来调用哪个节点的函数。
-            condition=should_continue,
+            path=should_continue,
             # 最后我们传入一个映射。
             # 键是字符串，值是其他节点。
             # END是一个特殊的节点，表示图形应该结束。
             # 将发生的是我们将调用`should_continue`，然后将其输出与此映射中的键进行匹配。
             # 根据匹配结果，然后将调用该节点。
-            conditional_edge_mapping={
+            path_map={
                 # 如果是`tools`，那么我们调用工具节点。
                 "continue": "do_execute_tools_node",
                 # 否则我们结束。
