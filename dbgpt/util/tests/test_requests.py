@@ -1,5 +1,6 @@
 import requests
 import json
+import jwt
 
 
 def test_lark_event_endpoint():
@@ -21,6 +22,7 @@ def test_lark_event_endpoint():
     print("\n调用返回结果：", resp.text)
     assert True
 
+
 def test_calendar_endpoint():
     url = "http://127.0.0.1:5670/api/v1/awel/trigger/calendar_endpoint"
     headers = {'Content-Type': 'application/json; charset=utf-8', 'Authorization': '123456'}
@@ -29,7 +31,8 @@ def test_calendar_endpoint():
                        'create_time': '1713174740198', 'event_type': 'im.message.receive_v1',
                        'tenant_key': '2cfa3e0dad8cd75d', 'app_id': 'cli_9f6b79a9e737900b'}, 'event': {
             'message': {'chat_id': 'oc_db3dcc0ff9c6d494a07527e363a5861c', 'chat_type': 'p2p',
-                        'content': '{"text_":"你好","text":"我需要预定明天下午3点到4点的极致会议室！"}', 'create_time': '1713174739807',
+                        'content': '{"text_":"你好","text":"我需要预定明天下午3点到4点的极致会议室！"}',
+                        'create_time': '1713174739807',
                         'message_id': 'om_5b624dce3d5a4ad203e55126668a5ab7', 'message_type': 'text',
                         'update_time': '1713174739807'}, 'sender': {
                 'sender_id': {'open_id': 'ou_1a32c82be0a5c6ee7bc8debd75c65e34',
@@ -39,3 +42,4 @@ def test_calendar_endpoint():
     resp = requests.request('POST', headers=headers, url=url, data=json.dumps(data))
     print("\n调用返回结果：", resp.text)
     assert True
+
