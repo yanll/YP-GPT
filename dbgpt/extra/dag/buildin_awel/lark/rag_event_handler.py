@@ -189,11 +189,10 @@ class RAGLarkHandler:
             return
         open_id = sender_id['open_id']
         text_content = message['content']
-        res = await self.rag_api_client.async_coversation_start(user_id = open_id)
+        org_res = await self.rag_api_client.async_coversation_start(user_id = open_id)
         # res = self.rag_api_client.coversation_start(user_id = open_id).json()
-
+        res = await org_res.json()
         print("res",res)
-        return
         id = res['data']['id']
         message_init = res['data']['message']
         new_message = {
@@ -201,9 +200,9 @@ class RAGLarkHandler:
             'role':'user'
         }
         message_init.append(new_message)
-        # res = await self.rag_api_client.async_chat(conversation_id = id,messages = message_init)
-        res = self.rag_api_client.chat(conversation_id = id,messages = message_init).json()
-
+        org_res = await self.rag_api_client.async_chat(conversation_id = id,messages = message_init)
+        # res = self.rag_api_client.chat(conversation_id = id,messages = message_init).json()
+        res = await org_res.json()
         response = res['data']['answer']
         chunks = res['data']['reference']['chunks']
         # document_name = []
