@@ -41,7 +41,24 @@ class RAGApiClient(object):
                    'Authorization': 'Bearer ragflow-M4MDBhYmNjMDFlMDExZWZhYWY2MDI0Mm'}
         async with aiohttp.ClientSession(headers) as session:
             async with session.get(url) as response:
+                session.close()
                 return response
+            
+    
+    async def async_chat(self,conversation_id, messages):
+        url = "http://172.31.91.206:8066/v1/api/completion"
+        headers = {'Content-Type': 'application/json; charset=utf-8',
+                   'Authorization': 'Bearer ragflow-M4MDBhYmNjMDFlMDExZWZhYWY2MDI0Mm'}
+        data = {
+            "conversation_id": conversation_id,
+            "messages": messages,
+        }
+        async with aiohttp.ClientSession(headers,data) as session:
+            async with session.post(url) as response:
+                session.close()
+                return response
+        resp = requests.request('POST', headers=headers, url=url, data=json.dumps(data))
+        return resp
     
     def coversation_start(self,user_id):
         url = "http://172.31.91.206:8066/v1/api/new_conversation?name="+user_id
