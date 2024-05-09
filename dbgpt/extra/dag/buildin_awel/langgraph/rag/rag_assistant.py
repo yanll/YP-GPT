@@ -21,19 +21,12 @@ class RAGApiClient(object):
                    'Authorization': 'Bearer ragflow-M4MDBhYmNjMDFlMDExZWZhYWY2MDI0Mm'}
         async with aiohttp.ClientSession(headers=headers) as session:
             async with session.get('http://httpbin.org/delay/8') as response:
-
                 print("Status:", response.status)
                 print("Content-type:", response.headers['content-type'])
 
                 html = await response.json()
                 print("Body:", html, "...")
                 return html
-
-    def test_slow_http1(self):
-        # https://httpbin.org/delay/10
-        resp = requests.request('GET', url='https://httpbin.org/delay/8')
-        print("requests finish")
-        return resp
     
 
     async def async_coversation_start(self,user_id):
@@ -42,7 +35,9 @@ class RAGApiClient(object):
                    'Authorization': 'Bearer ragflow-M4MDBhYmNjMDFlMDExZWZhYWY2MDI0Mm'}
         async with aiohttp.ClientSession(headers=headers) as session:
             async with session.get(url) as response:
-                session.close()
+                print("Status:", response.status)
+                print("Content-type:", response.headers['content-type'])
+                
                 res_json = await response.json()
                 return res_json
             
