@@ -60,23 +60,20 @@ def add_daily_or_weekly_report(open_id: str, report_type: str = "", report_time:
     return response
 
 
-def add_crm_bus_customer(
-        open_id: str,
-        customer_name: str = "",
-        customer_role: str = "",
-        customer_source: str = '',
-        customer_importance: str = '',
-        sale_name: str = '',
-        industry_line: str = '',
-        business_type: str = '',
-):
+def add_crm_bus_customer(open_id: str,
+                         customer_name: str = "",
+                         customer_role: str = "",
+                         customer_source: str = '',
+                         customer_importance: str = '',
+                         sale_name: str = '',
+                         industry_line: str = '',
+                         business_type: str = ''):
     url = envutils.getenv("CREM_ENDPOINT") + "/crmCustomer/addCrmBusCustomer"
     headers = {
         "pagetype": "cemPortal",
         "Content-Type": "application/json; charset=utf-8",
         "yuiassotoken": ssoutil.get_sso_credential(open_id=open_id)
     }
-
 
     data = {
         "busCrmCustomerMerchantRelationList": [
@@ -94,7 +91,6 @@ def add_crm_bus_customer(
         "customerImportance": customer_importance
     }
     print("提交添加报单客户信息到CREM：", data)
-    return {}
     response = requests.post(url, headers=headers, data=json.dumps(data))
     try:
         print(response.json())
