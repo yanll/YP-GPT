@@ -1,5 +1,5 @@
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import larkutil,lark_calendar_util
+from dbgpt.util.lark import larkutil, lark_calendar_util, lark_muti_table_util
 from datetime import datetime
 
 
@@ -62,7 +62,7 @@ def test_card_send_message():
 
 
 def test_muti_table_create():
-    larkutil.muti_table_create("我是自动创建的多维表格", "PPzIfGbCTlPrHpdfXb8ctLAVnVh")
+    lark_muti_table_util.muti_table_create("我是自动创建的多维表格", "PPzIfGbCTlPrHpdfXb8ctLAVnVh")
     assert True
 
 
@@ -72,7 +72,7 @@ def test_muti_table_add_record():
             "文本": "文本内容..."
         }
     }
-    larkutil.muti_table_add_record("MOdJbtJeTa41xXsMRxycPS5Bnnh", "tblxYruUqA0KMdZE", rec)
+    lark_muti_table_util.muti_table_add_record("MOdJbtJeTa41xXsMRxycPS5Bnnh", "tblxYruUqA0KMdZE", rec)
     assert True
 
 

@@ -7,7 +7,7 @@ from dbgpt.agent.resource.resource_api import AgentResource
 from dbgpt.agent.resource.resource_lark_api import ResourceLarkClient
 from dbgpt.component import ComponentType
 from dbgpt.util.executor_utils import ExecutorFactory
-from dbgpt.util.lark import larkutil, lark_calendar_util
+from dbgpt.util.lark import larkutil, lark_calendar_util, lark_muti_table_util
 
 CFG = Config()
 
@@ -35,7 +35,7 @@ class LarkLoadClient(ResourceLarkClient):
     # 获取AI结果后调用
     async def a_muti_table_add_record(self, app_id: str, table_id: str, record: dict) -> None:
         print("这里开始执行外部调用，Endpoint a_query！", record)
-        return larkutil.muti_table_add_record(app_id=app_id, table_id=table_id, record=record)
+        return lark_muti_table_util.muti_table_add_record(app_id=app_id, table_id=table_id, record=record)
 
     # 后置处理
     async def a_lark_after_notify(self, receive_id: str, text: str):

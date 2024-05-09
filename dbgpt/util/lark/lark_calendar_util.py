@@ -1,14 +1,8 @@
 import json
-import logging
-from typing import Dict
 
 import requests
 
-from dbgpt.extra.cache.redis_cli import RedisClient
-from dbgpt.util import envutils
 from dbgpt.util.lark.larkutil import build_headers
-
-redis_client = RedisClient()
 
 
 def select_buildings(token: str = None):
@@ -53,7 +47,6 @@ def select_room_free_busy(token, room_ids, time_min, time_max):
     resp = requests.request('GET', url=url, headers=build_headers(token), params=params)
     print('会议室忙闲返回结果：', resp.json())
     return resp.json()
-
 
 
 def create_calendar_id(token):
