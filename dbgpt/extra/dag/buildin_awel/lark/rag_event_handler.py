@@ -43,6 +43,8 @@ class RAGLarkHandler:
         open_id = sender_id['open_id']
         text_content = message['content']
         res = await self.rag_api_client.async_coversation_start(user_id = open_id)
+        print("res",res)
+        return
         id = res['data']['id']
         message_init = res['data']['message']
         new_message = {
