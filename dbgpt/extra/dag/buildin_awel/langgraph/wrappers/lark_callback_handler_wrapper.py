@@ -1,7 +1,8 @@
 import time
 from typing import Dict
 
-from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_wrapper, crem_daily_report_search
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_wrapper, crem_daily_report_search, \
+    crem_daily_report_id_search, card_send_daily_report_search
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_customer_visit
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_30DaysTrxTre_card
 
@@ -39,15 +40,17 @@ async def a_call(event: Dict):
             customer_id=customerNo,
             customerName = customerName,
             conv_id=conv_id)
-    # elif button_type == 'daily_report_detail':
-    #     id = action['value']['id']
-    #     conv_id = event['operator']['open_id']
-    #     print('查询日报的编号', id)
-    #     result = crem_daily_report_search.daily_report_search(
-    #         open_id=open_id,
-    #         customer_id=customerNo,
-    #         customerName = customerName,
-    #         conv_id=conv_id)
+    elif button_type == 'daily_report_detail':
+        id = action['value']['id']
+        report_time = action['value']['report_time']
+        conv_id = event['operator']['open_id']
+        print('查询日报的编号', id)
+        print('对应销售的名称',report_time)
+        result = card_send_daily_report_search.card_send_daily_report_search(
+            open_id=open_id,
+            report_id=id,
+            report_time=report_time,
+            conv_id=conv_id)
     if "form_value" not in action:
         # 非表单回调，按钮回调
         print("表单内容为空，跳过执行：", event)

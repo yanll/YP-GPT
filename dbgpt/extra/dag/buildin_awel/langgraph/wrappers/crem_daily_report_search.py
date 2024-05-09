@@ -5,9 +5,12 @@ import requests
 
 from dbgpt.util import envutils
 from dbgpt.util.lark import ssoutil
+from datetime import datetime
+
 
 def daily_report_search(open_id,create_user):
-    url = envutils.getenv("CREM_ENDPOINT") +'/workReportInfo/findWorkReportInfo'
+    #url = envutils.getenv("CREM_ENDPOINT") +'/workReportInfo/findWorkReportInfo'
+    url = 'https://cem.yeepay.com/cem-api/workReportInfo/findWorkReportInfo'
 
     headers = {
         "Content-Type": "application/json; charset=utf-8",
@@ -31,8 +34,12 @@ def daily_report_search(open_id,create_user):
     report_list = response_json.get('data', {}).get('list', [])
     extracted_data = []
     for report in report_list:
+        # 处理报告时间，保留年月日格式
+        report_time = report.get('reportTime', '')
+        if report_time:
+            report_time = datetime.strptime(report_time, '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d')
         report_data = {
-            'reportTime': report.get('reportTime', ''),
+            'reportTime': report_time,
             'createUser': report.get('createUser', ''),
             'senders': report.get('senders', ''),
             'workSummaryString': report.get('workSummaryString', ''),
