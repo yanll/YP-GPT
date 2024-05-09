@@ -129,7 +129,7 @@ def do_collect(
         """
         print("发送飞书提报卡片：", conv_id)
         if industry_line == "Web3.0行业线":
-            lark_message_util.send_message(
+            lark_message_util.send_card_message(
                 receive_id=conv_id,
                 content=card_templates.create_crm_bus_customer_card_content.Web3(
                     template_variable={
@@ -156,12 +156,10 @@ def do_collect(
                         "customer_source_options": lark_card_util.card_options_for_customer_source(),
                         "customer_importance_options": lark_card_util.card_options_for_customer_importance()
                     }
-                ),
-                receive_id_type="open_id",
-                msg_type="interactive"
+                )
             )
         else:
-            lark_message_util.send_message(
+            lark_message_util.send_card_message(
                 receive_id=conv_id,
                 content=card_templates.create_crm_bus_customer_card_content.Finance(
                     template_variable={
@@ -187,9 +185,7 @@ def do_collect(
                         "customer_source_options": lark_card_util.card_options_for_customer_source(),
                         "customer_importance_options": lark_card_util.card_options_for_customer_importance()
                     }
-                ),
-                receive_id_type="open_id",
-                msg_type="interactive"
+                )
             )
     except Exception as e:
         logging.error("飞书添加报单客户信息卡片发送失败：", e)

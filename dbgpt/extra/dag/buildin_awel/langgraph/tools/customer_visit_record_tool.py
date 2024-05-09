@@ -135,7 +135,7 @@ def do_collect(
 
         """
         print("发送飞书拜访卡片：", conv_id)
-        lark_message_util.send_message(
+        lark_message_util.send_card_message(
             receive_id=conv_id,
             content=card_templates.create_customer_visit_record_card_content(
                 template_variable={
@@ -158,9 +158,7 @@ def do_collect(
                     ),
                     "visit_types": lark_card_util.card_options_for_visit_types()
                 }
-            ),
-            receive_id_type="open_id",
-            msg_type="interactive"
+            )
         )
     except Exception as e:
         logging.error("飞书拜访跟进卡片发送失败：", e)

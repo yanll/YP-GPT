@@ -110,7 +110,7 @@ def do_collect(
         紧急程度：中
         """
 
-        lark_message_util.send_message(
+        lark_message_util.send_card_message(
             receive_id=conv_id,
             content=card_templates.create_requirement_card_content(
                 template_variable={
@@ -131,9 +131,7 @@ def do_collect(
                     ),
                     "emergency_level_options": lark_card_util.card_options_for_requirement_emergency_level()
                 }
-            ),
-            receive_id_type="open_id",
-            msg_type="interactive"
+            )
         )
     except Exception as e:
         logging.error("飞书需求提报卡片发送失败：", e)

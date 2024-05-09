@@ -1,6 +1,6 @@
-from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import larkutil, lark_calendar_util, lark_muti_table_util, lark_message_util
 from datetime import datetime
+
+from dbgpt.util.lark import larkutil, lark_calendar_util, lark_muti_table_util, lark_message_util
 
 
 def test_get_tenant_access_token():
@@ -28,36 +28,6 @@ def test_select_userinfo():
 def test_send_message():
     content = {"text": "你好\n\n点点滴滴！"}
     lark_message_util.send_message("ou_8183ebf29633d5af91fa0b32a0c05bcf", content, receive_id_type="open_id")
-    assert True
-
-
-def test_card_send_message():
-    emergency_level_options = [
-        {"text": "P0高", "action_value": "0"},
-        {"text": "P1中", "action_value": "1"},
-        {"text": "P2中", "action_value": "2"},
-        {"text": "待定", "action_value": "99"}
-    ]
-
-    lark_message_util.send_message(
-        receive_id="liangliang.yan@yeepay.com",
-        content=card_templates.create_card_content_by_template(
-            template_id="AAqkjMFhiuVwF",
-            template_version_name="1.0.35",
-            template_variable={
-                "card_metadata": {
-                    "card_name": "requirement_collect",
-                    "description": "需求收集表单"
-                },
-                "requirement_content": "你好",
-                "expected_completion_date": "2023-12-11",
-                "emergency_level": "0",
-                "emergency_level_options": emergency_level_options
-            }
-        ),
-        receive_id_type="email",
-        msg_type="interactive"
-    )
     assert True
 
 

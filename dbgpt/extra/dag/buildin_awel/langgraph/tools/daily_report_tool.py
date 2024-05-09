@@ -109,7 +109,7 @@ def do_collect(
         明日计划：继续跟进
         """
         print("发送飞书日报卡片：", conv_id)
-        lark_message_util.send_message(
+        lark_message_util.send_card_message(
             receive_id=conv_id,
             content=card_templates.create_daily_report_card_content(
                 template_variable={
@@ -122,9 +122,7 @@ def do_collect(
                     "daily_report_content": daily_report_content,
 
                 }
-            ),
-            receive_id_type="open_id",
-            msg_type="interactive"
+            )
         )
     except Exception as e:
         logging.error("飞书日报卡片发送失败：", e)

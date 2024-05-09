@@ -34,17 +34,13 @@ def user_crem_30DaysTrxTre_card(open_id, customer_id, customerName,conv_id):  # 
         print("30天毛利与交易金额:", customer_analysis)
 
         # 发送信息卡片给用户
-        lark_message_util.send_message(
+        lark_message_util.send_card_message(
             receive_id=conv_id,
-            content=var,
-            receive_id_type="open_id",
-            msg_type="interactive"
+            content=var
         )
-        lark_message_util.send_message(
+        lark_message_util.send_card_message(
             receive_id=conv_id,
-            content=var2,
-            receive_id_type="open_id",
-            msg_type="interactive"
+            content=var2
         )
 
         return {}
