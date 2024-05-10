@@ -61,13 +61,15 @@ def add_daily_or_weekly_report(open_id: str, report_type: str = "", report_time:
 
 
 def add_crm_bus_customer(open_id: str,
-                         customer_name: str = "",
-                         customer_role: str = "",
-                         customer_source: str = '',
-                         customer_importance: str = '',
-                         sale_name: str = '',
-                         industry_line: str = '',
-                         business_type: str = ''):
+         customer_name: str = "",
+         customer_role: str = "",
+         customer_source: str = '',
+         customer_importance: str = '',
+         sale_name: str = '',
+         industry_line: str = '',
+         business_type: str = '',
+         product_type: str = '',
+         ):
     url = envutils.getenv("CREM_ENDPOINT") + "/crmCustomer/addCrmBusCustomer"
     headers = {
         "pagetype": "cemPortal",
@@ -82,13 +84,21 @@ def add_crm_bus_customer(open_id: str,
                 "enterpriseName": customer_name
             }
         ],
+        "busCrmCustomerProductList": [
+            {
+                "productType": product_type,
+                "productEntrance": "",
+                "id": ""
+            }
+        ],
         "businessType": business_type,
         "customerName": customer_name,
         "customerRole": customer_role,
         "customerSource": customer_source,
         "industryLine": industry_line,
         "saleName": sale_name,
-        "customerImportance": customer_importance
+        "customerImportance": customer_importance,
+
     }
     print("提交添加报单客户信息到CREM：", data)
     response = requests.post(url, headers=headers, data=json.dumps(data))
@@ -99,6 +109,8 @@ def add_crm_bus_customer(open_id: str,
         logging.error("CREM添加报单客户信息调用失败：", e)
         raise e
     return response
+
+
 
 # Example usage for daily and weekly reports
 # 日报
