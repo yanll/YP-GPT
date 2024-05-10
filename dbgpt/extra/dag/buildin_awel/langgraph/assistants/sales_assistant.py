@@ -75,7 +75,7 @@ class SalesAssistant:
             agent_runnable = create_openai_functions_agent(self.llm, self.tools_provider.general_tools, prompt)
             # 返回待下一步执行的Function
             function_call_outcome = agent_runnable.invoke(data)
-            print("======== thought_function_call_node：", function_call_outcome)
+            # print("======== thought_function_call_node：", function_call_outcome)
             content = ""
             message_detail = function_call_outcome.json()
             message_type = ""
@@ -136,7 +136,7 @@ class SalesAssistant:
             output = self.tool_executor.invoke(agent_action)
 
             # function_message = FunctionMessage(content=str(output), name=agent_action_.tool)
-            print("======== do_execute_tools_node：", output)
+            # print("======== do_execute_tools_node：", output)
             content = ""
             message_detail = str(output)
             message_type = ""
