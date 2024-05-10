@@ -13,7 +13,11 @@ from dbgpt.util.lark import larkutil, lark_card_util, lark_message_util
 
 class RequirementCollectInput(BaseModel):
     """
-
+    我要提交一个需求：
+    行业线：大零售
+    需求内容：在运营后台实现一个数据导出功能。
+    期望完成日期：明天
+    紧急程度：中
     """
     conv_id: str = Field(
         name="conv_id",
@@ -67,33 +71,29 @@ class RequirementCollectTool(BaseTool):
             emergency_level: str = "",
             run_manager: Optional[CallbackManagerForToolRun] = None,
     ):
-        """Use the tool."""
-        print("开始运行需求收集工具：", conv_id, requirement_content, industry_line, expected_completion_date,
-              emergency_level)
+        print("开始运行需求收集工具：", conv_id, requirement_content)
         try:
             if requirement_content == "":
-                resp = {"success": "false", "response_message": "the description of requirement_content"}
+                return {"success": "false", "response_message": "the description of requirement_content"}
             elif industry_line == "":
-                resp = {"success": "false", "response_message": "the description of industry_line"}
+                return {"success": "false", "response_message": "the description of industry_line"}
             elif expected_completion_date == "":
-                resp = {"success": "false", "response_message": "the description of expected_completion_date"}
+                return {"success": "false", "response_message": "the description of expected_completion_date"}
             elif emergency_level == "":
-                resp = {"success": "false", "response_message": "the description of emergency_level"}
-            else:
-                resp = do_collect(
-                    conv_id=conv_id,
-                    requirement_content=requirement_content,
-                    industry_line=industry_line,
-                    expected_completion_date=expected_completion_date,
-                    emergency_level=emergency_level
-                )
-            return resp
+                return {"success": "false", "response_message": "the description of emergency_level"}
+            return handle(
+                conv_id=conv_id,
+                requirement_content=requirement_content,
+                industry_line=industry_line,
+                expected_completion_date=expected_completion_date,
+                emergency_level=emergency_level
+            )
         except Exception as e:
-            logging.error("工具运行异常：", e)
+            logging.error("需求收集工具运行异常：" + conv_id + " " + requirement_content, e)
             return repr(e)
 
 
-def do_collect(
+def handle(
         conv_id: str = "",
         requirement_content: str = "",
         industry_line: str = "",
@@ -101,54 +101,34 @@ def do_collect(
         emergency_level: str = ""
 ):
     print("发送飞书需求提报卡片：", conv_id)
-    lark_message_id = ""
-
     try:
-        """
-        我要提交一个需求：
-        行业线：大零售
-        需求内容：在运营后台实现一个数据导出功能。
-        期望完成日期：明天
-        紧急程度：中
-        """
-
-        resp = lark_message_util.send_card_message(
-            receive_id=conv_id,
-            content=card_templates.create_requirement_card_content(
-                template_variable={
-                    "card_metadata": {
-                        "card_name": "requirement_collect",
-                        "description": "需求收集表单"
-                    },
-                    "requirement_content": requirement_content,
-                    "industry_line": lark_card_util.get_action_index_by_text_from_options(
-                        industry_line,
-                        lark_card_util.card_options_for_requirement_industry_line()
-                    ),
-                    "industry_line_options": lark_card_util.card_options_for_requirement_industry_line(),
-                    "expected_completion_date": expected_completion_date,
-                    "emergency_level": lark_card_util.get_action_index_by_text_from_options(
-                        emergency_level,
-                        lark_card_util.card_options_for_requirement_emergency_level()
-                    ),
-                    "emergency_level_options": lark_card_util.card_options_for_requirement_emergency_level()
-                }
-            )
+        industry_line_ = lark_card_util.get_action_index_by_text_from_options(
+            industry_line,
+            lark_card_util.card_options_for_requirement_industry_line()
         )
-        lark_message_id = resp["message_id"]
-    except Exception as e:
-        logging.error("飞书需求提报卡片发送失败：", e)
+        industry_line_options_ = lark_card_util.card_options_for_requirement_industry_line()
+        emergency_level_ = lark_card_util.get_action_index_by_text_from_options(
+            emergency_level,
+            lark_card_util.card_options_for_requirement_emergency_level()
+        )
+        emergency_level_options_ = lark_card_util.card_options_for_requirement_emergency_level()
 
-    return {
-        "success": "true",
-        "error_message": "",
-        "display_type": "form",
-        "lark_message_id": lark_message_id,
-        "data": {
-            "conv_id": conv_id,
-            "requirement_content": requirement_content,
-            "industry_line": industry_line,
-            "expected_completion_date": expected_completion_date,
-            "emergency_level": emergency_level
+        return {
+            "success": "true",
+            "error_message": "",
+            "action": {
+                "action_name": "send_lark_form_card",
+                "card_name": "requirement_collect"
+            },
+            "data": {
+                "conv_id": conv_id,
+                "requirement_content": requirement_content,
+                "industry_line": industry_line_,
+                "industry_line_options": industry_line_options_,
+                "expected_completion_date": expected_completion_date,
+                "emergency_level": emergency_level_,
+                "emergency_level_options": emergency_level_options_
+            }
         }
-    }
+    except Exception as e:
+        raise Exception("飞书需求提报数据组装失败：" + conv_id + " " + requirement_content, e)
