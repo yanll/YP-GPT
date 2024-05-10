@@ -110,6 +110,34 @@ def add_crm_bus_customer(open_id: str,
         raise e
     return response
 
+def get_crm_user_industry_line(open_id: str) -> str:
+    url = envutils.getenv("CREM_ENDPOINT") + "/common/treeDictionary"
+    headers = {
+        "pagetype": "cemPortal",
+        "Content-Type": "application/json; charset=utf-8",
+        "yuiassotoken": ssoutil.get_sso_credential(open_id=open_id)
+    }
+
+    data = {
+        "type": "49"
+    }
+    print("开始获取用户行业线")
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    try:
+        print(response.json())
+        resp = response.json()
+        if response.status_code != 200:
+            logging.error("用户凭证接口异常：" + str(response.status_code))
+            raise ValueError("获取用户行业线失败" + str(response.status_code))
+        print(resp['data'])
+        if len(resp['data']) == 0:
+            return ''
+        return resp['data'][0]['typename']
+
+    except Exception as e:
+        logging.error("crm获取用户行业线", e)
+        raise e
+    return ''
 
 
 # Example usage for daily and weekly reports
