@@ -120,6 +120,7 @@ def do_collect(
         visit_date: str = "",
         contacts: str = ""
 ):
+    lark_message_id = ""
     try:
         """ 
         我要填写客户拜访跟进记录：
@@ -135,7 +136,7 @@ def do_collect(
 
         """
         print("发送飞书拜访卡片：", conv_id)
-        lark_message_util.send_card_message(
+        resp = lark_message_util.send_card_message(
             receive_id=conv_id,
             content=card_templates.create_customer_visit_record_card_content(
                 template_variable={
@@ -160,6 +161,8 @@ def do_collect(
                 }
             )
         )
+
+        lark_message_id = resp["message_id"]
     except Exception as e:
         logging.error("飞书拜访跟进卡片发送失败：", e)
 
@@ -167,6 +170,7 @@ def do_collect(
         "success": "true",
         "error_message": "",
         "display_type": "form",
+        "lark_message_id": lark_message_id,
         "data": {
             "conv_id": conv_id,
             "customer_name": customer_name,

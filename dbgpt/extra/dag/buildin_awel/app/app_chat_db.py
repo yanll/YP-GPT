@@ -11,7 +11,7 @@ class AppChatDao(BaseDao):
         session = self.get_raw_session()
         statement = text(
             """
-            insert into app_chat_history_message(id, agent_name, conv_uid, message_type, content, message_detail) values (:id, :agent_name, :conv_uid, :message_type, :content, :message_detail)
+            insert into app_chat_history_message(id, agent_name, conv_uid, message_type, content, message_detail, display_type, lark_message_id) values (:id, :agent_name, :conv_uid, :message_type, :content, :message_detail, :display_type, :lark_message_id)
             """
         )
         session.execute(statement, rec)

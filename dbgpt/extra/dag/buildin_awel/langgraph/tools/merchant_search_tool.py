@@ -43,6 +43,7 @@ class MerchantSearchTool(BaseTool):
     ):
         """Use the tool."""
         print("开始执行商户信息查询工具：", conv_id, customer_number, customer_name, self.max_results)
+        lark_message_id = ""
         try:
             resp_data = {}
             if customer_number == "" and customer_name == "":
@@ -73,7 +74,7 @@ class MerchantSearchTool(BaseTool):
                         "customerNo": customerNo if customerNo is not None else ""
                     })
                 display_type = "form"
-                lark_message_util.send_card_message(
+                resp = lark_message_util.send_card_message(
                     receive_id=conv_id,
                     content=card_templates.create_merchant_list_card_content(
                         template_variable={
@@ -82,10 +83,13 @@ class MerchantSearchTool(BaseTool):
                         }
                     )
                 )
+                lark_message_id = resp["message_id"]
+
             return {
                 "success": "true",
                 "error_message": "",
                 "display_type": display_type,
+                "lark_message_id": lark_message_id,
                 "data": list
             }
         except Exception as e:

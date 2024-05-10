@@ -108,6 +108,8 @@ def do_collect(
         # for index, weekly_report_next_week_plan in enumerate(weekly_report_next_week_plans):
         #     plans_description += str(index + 1) + '. ' + weekly_report_next_week_plan.plan_content + '; '
 
+    lark_message_id = ""
+
     try:
         """
         我要填写周报：
@@ -116,7 +118,7 @@ def do_collect(
         下周计划：1、继续跟进客户，2、完成3次回访，3、制定阅读计划
         """
         print("发送飞书周报卡片：", conv_id)
-        lark_message_util.send_card_message(
+        resp = lark_message_util.send_card_message(
             receive_id=conv_id,
             content=card_templates.create_weekly_report_card_content(
                 template_variable={
@@ -131,6 +133,8 @@ def do_collect(
                 }
             )
         )
+        lark_message_id = resp["message_id"]
+
     except Exception as e:
         logging.error("飞书周报卡片发送失败：", e)
 
@@ -139,6 +143,7 @@ def do_collect(
         "success": "true",
         "error_message": "",
         "display_type": "form",
+        "lark_message_id": lark_message_id,
         "data": {
             "conv_id": conv_id,
             "daily_report_content": weekly_report_content,

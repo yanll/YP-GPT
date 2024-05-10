@@ -1,4 +1,5 @@
 import json
+import logging
 from typing import Dict
 
 import requests
@@ -22,8 +23,11 @@ def send_message(receive_id: str, content: Dict, receive_id_type: str = "email",
         "content": json.dumps(content)
     }
     resp = requests.request('POST', url=url, headers=build_headers(), params=params, data=json.dumps(data))
+    rs = resp.json()
     print('发送消息返回结果：', type, receive_id, resp.json())
-    return resp.json()
+    if rs["code"] != 0:
+        logging.error("飞书消息发送失败：" + str(rs))
+    return rs["data"]
 
 
 # 发送消息

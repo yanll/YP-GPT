@@ -11,6 +11,7 @@ from dbgpt.extra.dag.buildin_awel.langgraph.assistants.sales_assistant import Sa
 from dbgpt.storage.chat_history.chat_history_db import ChatHistoryMessageDao
 from dbgpt.util import envutils
 from dbgpt.util.lark import lark_card_util, ssoutil
+import uuid
 
 
 class LarkEventHandler:
@@ -98,13 +99,40 @@ class LarkEventHandler:
         print("LarkEventHandler_handle_message_result:", resp_msg)
         if last_output_dict and "display_type" in last_output_dict and last_output_dict["display_type"] == "form":
             print("已发送表单，跳过文本消息发送！")
+            lark_message_id = last_output_dict["lark_message_id"]
+            rec = {
+                "id": str(uuid.uuid1()),
+                "agent_name": "SalesAssistant",
+                "node_name": "final",
+                "conv_uid": sender_open_id,
+                "message_type": "view",
+                "content": resp_msg,
+                "message_detail": "",
+                "display_type": "form",
+                "lark_message_id": lark_message_id
+            }
+            self.app_chat_service.add_app_chat_his_message(rec)
             return
-        lark_card_util.send_message_with_bingo(
+
+        resp = lark_card_util.send_message_with_bingo(
             receive_id=sender_open_id,
             template_variable={
                 "message_content": resp_msg
             }
         )
+        lark_message_id = resp["message_id"]
+        rec = {
+            "id": str(uuid.uuid1()),
+            "agent_name": "SalesAssistant",
+            "node_name": "final",
+            "conv_uid": sender_open_id,
+            "message_type": "view",
+            "content": resp_msg,
+            "message_detail": "",
+            "display_type": "text",
+            "lark_message_id": lark_message_id
+        }
+        self.app_chat_service.add_app_chat_his_message(rec)
 
     def new_chat(self, sender_open_id):
         if True:

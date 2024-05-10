@@ -92,7 +92,9 @@ class SalesAssistant:
                 "conv_uid": data['conv_uid'],
                 "message_type": message_type,
                 "content": content,
-                "message_detail": message_detail
+                "message_detail": message_detail,
+                "display_type": "",
+                "lark_message_id": ""
             }
             self.app_chat_service.add_app_chat_his_message(rec)
             last_outcome = ""
@@ -151,7 +153,9 @@ class SalesAssistant:
                 "conv_uid": data['conv_uid'],
                 "message_type": message_type,
                 "content": content,
-                "message_detail": message_detail
+                "message_detail": message_detail,
+                "display_type": "",
+                "lark_message_id": ""
             }
             self.app_chat_service.add_app_chat_his_message(rec)
 
@@ -240,10 +244,13 @@ class SalesAssistant:
                 "conv_uid": conv_uid,
                 "message_type": "human",
                 "content": input,
-                "message_detail": ""
+                "message_detail": "",
+                "display_type": "text",
+                "lark_message_id": ""
             }
             self.app_chat_service.add_app_chat_his_message(rec)
             rs = ""
+            print("Execute Agent")
             for s in self.app.stream(inputs):
                 row = list(s.values())[0]
                 # print("\n==== ", row)

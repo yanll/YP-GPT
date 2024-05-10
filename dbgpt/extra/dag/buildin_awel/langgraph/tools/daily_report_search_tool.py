@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
 from dbgpt.util.lark import larkutil, lark_message_util
-from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import  crem_daily_report_search
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_daily_report_search
 
 
 class DailyReportSearchToolInput(BaseModel):
@@ -42,6 +42,8 @@ class DailyReportSearchTool(BaseTool):
     ):
         """Use the tool."""
         print("开始执行日报信息查询工具：", conv_id, sales_name, self.max_results)
+        lark_message_id = ""
+
         try:
             resp_data = {}
             if sales_name == "":
@@ -53,7 +55,7 @@ class DailyReportSearchTool(BaseTool):
 
                 )
                 resp_data = data  # 直接从查询结果中获取data列表
-            query_str = (sales_name + "" ).strip()
+            query_str = (sales_name + "").strip()
             print("日报查询结果：", query_str, resp_data)
             display_type = ""
             list = []
@@ -72,7 +74,7 @@ class DailyReportSearchTool(BaseTool):
                         "id": id if id is not None else ""
                     })
                 display_type = "form"
-                lark_message_util.send_card_message(
+                resp = lark_message_util.send_card_message(
                     receive_id=conv_id,
                     content=card_templates.search_daily_report_card_content(
                         template_variable={
@@ -81,10 +83,13 @@ class DailyReportSearchTool(BaseTool):
                         }
                     )
                 )
+                lark_message_id = resp["message_id"]
+
             return {
                 "success": "true",
                 "error_message": "",
                 "display_type": display_type,
+                "lark_message_id": lark_message_id,
                 "data": list
             }
         except Exception as e:

@@ -101,7 +101,7 @@ def do_collect(
         emergency_level: str = ""
 ):
     print("发送飞书需求提报卡片：", conv_id)
-    lark_message_id = "123456"
+    lark_message_id = ""
 
     try:
         """
@@ -112,7 +112,7 @@ def do_collect(
         紧急程度：中
         """
 
-        lark_message_util.send_card_message(
+        resp = lark_message_util.send_card_message(
             receive_id=conv_id,
             content=card_templates.create_requirement_card_content(
                 template_variable={
@@ -135,6 +135,7 @@ def do_collect(
                 }
             )
         )
+        lark_message_id = resp["message_id"]
     except Exception as e:
         logging.error("飞书需求提报卡片发送失败：", e)
 
