@@ -230,7 +230,6 @@ class SalesAssistant:
             # converted_tools_info = self.tools_provider.converted_tools_info()
             # print("工具列表：", converted_tools_info)
             his = self.app_chat_service.get_app_chat_his_messages_by_conv_uid(conv_uid=conv_uid)
-            # print("历史消息", his)
             inputs: Dict = {
                 "input": input,
                 "chat_history": his,
@@ -253,7 +252,6 @@ class SalesAssistant:
             print("Execute Agent")
             for s in self.app.stream(inputs):
                 row = list(s.values())[0]
-                # print("\n==== ", row)
                 rs = row
             # s = self.app.invoke(inputs)
             return rs
@@ -265,7 +263,7 @@ class SalesAssistant:
         graph = chat_agent_executor.create_tool_calling_executor(self.llm, self.tools_provider.general_tools)
         graph.get_graph().print_ascii()
 
-# human_input = "我需要在CREM系统中录入一个用户需求，需求内容是：‘商户后台导航支持二级菜单’，非常紧急，希望3天完成。"
+# human_input = "我需要在系统中录入一个用户需求，需求内容是：‘商户后台导航支持二级菜单’，非常紧急，希望3天完成。"
 # assistant = SalesAssistant()
 # rs = assistant._run(input=human_input, conv_uid="123456")
 # print(rs)
