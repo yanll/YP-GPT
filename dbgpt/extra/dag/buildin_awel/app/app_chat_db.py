@@ -31,18 +31,18 @@ class AppChatDao(BaseDao):
         session.close()
         return 0
 
-    def a_update_app_chat_his_message_like_by_uid_mid(self, comment: str, conv_uid: str, message_id: str) -> int:
-        if comment == "" and conv_uid == "" and message_id == "":
+    def a_update_app_chat_his_message_like_by_uid_mid(self, comment_type: str, conv_uid: str, message_id: str) -> int:
+        if comment_type == "" and conv_uid == "" and message_id == "":
             return 0
         session = self.get_raw_session()
         statement = text(
             """
-            update app_chat_history_message set comment = :comment where conv_uid = :conv_uid and lark_message_id = :lark_message_id
+            update app_chat_history_message set comment_type = :comment_type where conv_uid = :conv_uid and lark_message_id = :lark_message_id
             """
         )
         session.execute(
             statement, {
-                "comment": comment,
+                "comment_type": comment_type,
                 "conv_uid": conv_uid,
                 "lark_message_id": message_id
             }

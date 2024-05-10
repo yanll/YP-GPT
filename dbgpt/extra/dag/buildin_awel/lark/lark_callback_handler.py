@@ -33,7 +33,7 @@ class LarkCallbackHandler:
             action = event['action']
             action_value = action['value']
             self.app_chat_service.a_update_app_chat_his_message_like_by_uid_mid(
-                comment=action_value, conv_uid=open_id,
+                comment_type=action_value, conv_uid=open_id,
                 message_id=event["context"]["open_message_id"]
             )
             if action_value == "like":

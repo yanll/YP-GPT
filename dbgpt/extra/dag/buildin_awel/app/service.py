@@ -35,8 +35,8 @@ class AppChatService:
     async def a_disable_app_chat_his_message_by_uid(self, conv_uid: str) -> int:
         return self.app_chat_dao.disable_app_chat_his_message_by_uid(conv_uid)
 
-    def a_update_app_chat_his_message_like_by_uid_mid(self, comment: str, conv_uid: str, message_id: str) -> int:
-        return self.app_chat_dao.a_update_app_chat_his_message_like_by_uid_mid(comment, conv_uid, message_id)
+    def a_update_app_chat_his_message_like_by_uid_mid(self, comment_type: str, conv_uid: str, message_id: str) -> int:
+        return self.app_chat_dao.a_update_app_chat_his_message_like_by_uid_mid(comment_type, conv_uid, message_id)
 
     def get_app_chat_his_messages_by_conv_uid(self, conv_uid, status: str = "ENABLED") -> List:
         list = self.app_chat_dao.get_app_chat_his_messages_by_conv_uid(conv_uid, status)
