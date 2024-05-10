@@ -31,6 +31,26 @@ class AppChatDao(BaseDao):
         session.close()
         return 0
 
+    def a_update_app_chat_his_message_like_by_uid_mid(self, comment: str, conv_uid: str, message_id: str) -> int:
+        if comment == "" and conv_uid == "" and message_id == "":
+            return 0
+        session = self.get_raw_session()
+        statement = text(
+            """
+            update app_chat_history_message set comment = :comment where conv_uid = :conv_uid and lark_message_id = :lark_message_id
+            """
+        )
+        session.execute(
+            statement, {
+                "comment": comment,
+                "conv_uid": conv_uid,
+                "lark_message_id": message_id
+            }
+        )
+        session.commit()
+        session.close()
+        return 0
+
     def get_app_chat_his_messages_by_conv_uid(self, conv_uid: str = "#", status: str = "ENABLED") -> List:
         """最近30分钟的聊天记录"""
         session = self.get_raw_session()

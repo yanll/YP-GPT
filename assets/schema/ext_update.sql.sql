@@ -17,6 +17,7 @@ create table app_chat_history_message
     lark_message_id varchar(128) not null default '' comment '飞书消息主键：',
     content         text null comment '消息内容',
     message_detail  text null comment '消息详情',
+    comment         varchar(128) not null default '' comment 'like/unlike',
     status          varchar(32)  not null default 'ENABLED' comment 'ENABLED、DISABLED、DELETED',
     created_time    datetime null default current_timestamp comment '创建时间',
     modified_time   datetime null default current_timestamp on update current_timestamp comment '更新时间'
