@@ -31,7 +31,7 @@ def create_requirement_card_content(template_variable: Dict):
 def create_daily_report_card_content(template_variable: Dict):
     """日报表单"""
     template_id = "AAqkjM4Ffisl2"
-    template_version_name = "1.0.12"
+    template_version_name = "1.0.13"
 
     card = {
         "type": "template",
@@ -95,7 +95,7 @@ def create_interactive_update_daily_report_card_content(template_variable: Dict)
 def create_weekly_report_card_content(template_variable: Dict):
     """周报表单  """
     template_id = "AAqkjMz1cWwRB"
-    template_version_name = "1.0.8"
+    template_version_name = "1.0.9"
 
     card = {
         "type": "template",
@@ -110,7 +110,7 @@ def create_weekly_report_card_content(template_variable: Dict):
 def create_customer_visit_record_card_content(template_variable: Dict):
     """拜访表单"""
     template_id = "AAqkjMxmwdE8s"
-    template_version_name = "1.0.17"
+    template_version_name = "1.0.18"
 
     card = {
         "type": "template",
@@ -125,7 +125,7 @@ def create_customer_visit_record_card_content(template_variable: Dict):
 def create_merchant_list_card_content(template_variable: Dict):
     """商户查询"""
     template_id = "AAqkXYlYpaLEf"
-    template_version_name = "1.0.15"
+    template_version_name = "1.0.16"
 
     card = {
         "type": "template",
@@ -140,7 +140,7 @@ def create_merchant_list_card_content(template_variable: Dict):
 def search_daily_report_card_content(template_variable: Dict):
     """日报查询"""
     template_id = "AAqkZz4JvpXQR"
-    template_version_name = "1.0.4"
+    template_version_name = "1.0.5"
 
     card = {
         "type": "template",
@@ -155,7 +155,7 @@ def search_daily_report_card_content(template_variable: Dict):
 def search_daily_report_id_card_content(template_variable: Dict):
     """日报详情查询"""
     template_id = "AAqkart7DnGFW"
-    template_version_name = "1.0.3"
+    template_version_name = "1.0.4"
 
     card = {
         "type": "template",
