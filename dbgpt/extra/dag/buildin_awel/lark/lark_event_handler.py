@@ -6,9 +6,8 @@ import requests
 from langchain_core.agents import AgentFinish
 
 from dbgpt.extra.cache.redis_cli import RedisClient
-from dbgpt.extra.dag.buildin_awel.app.service import GptsAppService, AppChatService
+from dbgpt.extra.dag.buildin_awel.app.service import AppChatService
 from dbgpt.extra.dag.buildin_awel.langgraph.assistants.sales_assistant import SalesAssistant
-from dbgpt.storage.chat_history.chat_history_db import ChatHistoryMessageDao
 from dbgpt.util import envutils
 from dbgpt.util.lark import lark_card_util, ssoutil
 import uuid
@@ -17,8 +16,6 @@ import uuid
 class LarkEventHandler:
 
     def __init__(self, **kwargs):
-        self.chat_history_message_dao = ChatHistoryMessageDao()
-        self.gpts_app_service = GptsAppService()
         self.app_chat_service = AppChatService()
         self.sales_assistant = SalesAssistant()
         self.redis_client = RedisClient()
