@@ -136,17 +136,23 @@ def do_collect(
         客户重要程度：一般商户
         """
         print("发送飞书提报卡片：", conv_id)
-        if industry_line == "Web3.0行业线":
+        if industry_line == "Web3.0行业线" or industry_line == "外综服行业线":
+            business_type = ''
+            if industry_line == "Web3.0行业线":
+                business_type = 'Web3.0'
+            elif industry_line == "外综服行业线":
+                business_type = '外综服'
             lark_message_util.send_card_message(
                 receive_id=conv_id,
-                content=card_templates.create_crm_bus_customer_card_content.Web3(
+                content=card_templates.create_crm_bus_customer_card_content.Web3_or_ForeignComprehensiveService(
                     template_variable={
                         "card_metadata": {
                             "card_name": "crm_bus_customer_collect",
                             "description": "添加报单客户信息表单"
                         },
+                        "industry_line": industry_line,
                         "customer_name": customer_name,
-                        # "business_type": 99,
+                        "business_type": business_type,
                         "customer_role": lark_card_util.get_action_index_by_text_from_options(
                             customer_role,
                             lark_card_util.card_options_for_customer_role()
