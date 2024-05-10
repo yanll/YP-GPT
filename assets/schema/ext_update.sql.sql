@@ -23,9 +23,5 @@ create table app_chat_history_message
     modified_time   datetime null default current_timestamp on update current_timestamp comment '更新时间'
 ) comment '应用会话历史';
 
-ALTER TABLE app_chat_history_message
-    ADD COLUMN display_type varchar(128) not null default '' comment '展示类型：',
-    ADD COLUMN lark_message_id varchar(128) not null default '' comment '飞书消息主键',
-    ADD COLUMN comment_type         varchar(128) not null default '' comment_type 'like/unlike';
 
 
