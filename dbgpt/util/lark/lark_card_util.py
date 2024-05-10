@@ -124,26 +124,44 @@ def card_options_for_industry_line() -> list:
     options = [
         {"action_index": 1, "action_value": "Web3.0行业线", "text": "Web3.0行业线"},
         {"action_index": 2, "action_value": "金融行业线", "text": "金融行业线"},
+        {"action_index": 3, "action_value": "大零售行业线", "text": "大零售行业线"},
     ]
     return options
 
 
-def card_options_for_business_type() -> list:
+class card_options_for_business_type:
+
     """值必须和飞书项目一致"""
-    options = [
-        {"action_index": 1, "action_value": "银行", "text": "银行"},
-        {"action_index": 2, "action_value": "车抵房抵", "text": "车抵房抵"},
-        {"action_index": 3, "action_value": "融资担保", "text": "融资担保"},
-        {"action_index": 4, "action_value": "逃废债", "text": "逃废债"},
-        {"action_index": 5, "action_value": "消费贷", "text": "消费贷"},
-        {"action_index": 6, "action_value": "信托", "text": "信托"},
-        {"action_index": 7, "action_value": "助贷平台", "text": "助贷平台"},
-        {"action_index": 8, "action_value": "会员权益", "text": "会员权益"},
-        {"action_index": 9, "action_value": "消费金融", "text": "消费金融"},
-        {"action_index": 10, "action_value": "小贷/网贷", "text": "小贷/网贷"},
-        {"action_index": 11, "action_value": "其他", "text": "其他"},
-    ]
-    return options
+    @staticmethod
+    def Finance():
+        options = [
+            {"action_index": 1, "action_value": "银行", "text": "银行"},
+            {"action_index": 2, "action_value": "车抵房抵", "text": "车抵房抵"},
+            {"action_index": 3, "action_value": "融资担保", "text": "融资担保"},
+            {"action_index": 4, "action_value": "逃废债", "text": "逃废债"},
+            {"action_index": 5, "action_value": "消费贷", "text": "消费贷"},
+            {"action_index": 6, "action_value": "信托", "text": "信托"},
+            {"action_index": 7, "action_value": "助贷平台", "text": "助贷平台"},
+            {"action_index": 8, "action_value": "会员权益", "text": "会员权益"},
+            {"action_index": 9, "action_value": "消费金融", "text": "消费金融"},
+            {"action_index": 10, "action_value": "小贷/网贷", "text": "小贷/网贷"},
+            {"action_index": 11, "action_value": "其他", "text": "其他"},
+        ]
+        return options
+    @staticmethod
+    def Retail():
+        options = [
+            {"action_index": 1, "action_value": "加油站/能源", "text": "加油站/能源"},
+            {"action_index": 2, "action_value": "供应链平台", "text": "供应链平台"},
+            {"action_index": 3, "action_value": "撮合型平台(电商)", "text": "撮合型平台(电商)"},
+            {"action_index": 4, "action_value": "品牌连锁直/分销", "text": "品牌连锁直/分销"},
+            {"action_index": 5, "action_value": "二手市场买卖", "text": "二手市场买卖"},
+            {"action_index": 6, "action_value": "人力资源劳务发放", "text": "人力资源劳务发放"},
+            {"action_index": 7, "action_value": "其他", "text": "其他"},
+            {"action_index": 8, "action_value": "税务科技", "text": "税务科技"},
+        ]
+        return options
+
 
 
 def card_options_for_customer_source() -> list:
@@ -171,6 +189,16 @@ def card_options_for_customer_importance() -> list:
     ]
     return options
 
+def card_options_for_product_type() -> list:
+    """值必须和飞书项目一致"""
+    options = [
+        {"action_index": 1, "action_value": "APP", "text": "APP"},
+        {"action_index": 2, "action_value": "小程序", "text": "小程序"},
+        {"action_index": 3, "action_value": "公众号", "text": "公众号"},
+        {"action_index": 4, "action_value": "生活号", "text": "生活号"},
+        {"action_index": 5, "action_value": "网站", "text": "网站"}
+    ]
+    return options
 
 def card_options_for_visit_methods() -> list:
     """拜访形式"""
