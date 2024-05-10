@@ -3,7 +3,7 @@ import json
 import datetime
 import json
 import time
-from pypinyin import pinyin, lazy_pinyin
+#from pypinyin import pinyin, lazy_pinyin
 import requests
 from datetime import datetime
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
@@ -88,45 +88,45 @@ def get_name_cn(union_id):
 
 
 
-def chinese_name_to_email(requirement_create_name):
-    pinyin_name = ''.join(lazy_pinyin(requirement_create_name))
-    # 提取姓和名的拼音
-    last_name = lazy_pinyin(requirement_create_name[0])[0]
-    first_name = pinyin_name[len(last_name):]
-    # 构建邮箱格式
-    email = first_name.lower() + '.' + last_name.lower() + '@yeepay.com'
-    return email
+# def chinese_name_to_email(requirement_create_name):
+#     pinyin_name = ''.join(lazy_pinyin(requirement_create_name))
+#     # 提取姓和名的拼音
+#     last_name = lazy_pinyin(requirement_create_name[0])[0]
+#     first_name = pinyin_name[len(last_name):]
+#     # 构建邮箱格式
+#     email = first_name.lower() + '.' + last_name.lower() + '@yeepay.com'
+#     return email
 
 
-def get_search_user_key(requirement_create_name):
-    url = 'https://project.feishu.cn/open_api/user/query'
-    headers = {
-        'X-PLUGIN-TOKEN': get_project_app_token(),
-        'Content-Type': 'application/json'
-    }
-    data = {
-        "user_keys": [chinese_name_to_email(requirement_create_name)]
-    }
-
-    try:
-        response = requests.post(url, headers=headers, data=json.dumps(data))
-        response_data = response.json()
-        if response_data and 'data' in response_data and len(response_data['data']) > 0:
-            search_id = response_data['data'][0].get('user_keys')
-            print("查询所得的用户key为:", search_id)  # 打印用户键
-            return search_id
-
-        else:
-            return "No user_keys found in the response."
-    except Exception as e:
-        return str(e)
+# def get_search_user_key(requirement_create_name):
+#     url = 'https://project.feishu.cn/open_api/user/query'
+#     headers = {
+#         'X-PLUGIN-TOKEN': get_project_app_token(),
+#         'Content-Type': 'application/json'
+#     }
+#     data = {
+#         "user_keys": [chinese_name_to_email(requirement_create_name)]
+#     }
+#
+#     try:
+#         response = requests.post(url, headers=headers, data=json.dumps(data))
+#         response_data = response.json()
+#         if response_data and 'data' in response_data and len(response_data['data']) > 0:
+#             search_id = response_data['data'][0].get('user_keys')
+#             print("查询所得的用户key为:", search_id)  # 打印用户键
+#             return search_id
+#
+#         else:
+#             return "No user_keys found in the response."
+#     except Exception as e:
+#         return str(e)
 
 
 
 def requirement_search(union_id,requirement_create_name,project_key, business_value=None, priority_value=None):
     global priority_label
-    acc = json.dumps(get_search_user_key(requirement_create_name))[1:-1]
-    print("用户账户的id",acc)
+    #acc = json.dumps(get_search_user_key(requirement_create_name))[1:-1]
+    #print("用户账户的id",acc)
     url = 'https://project.feishu.cn/open_api/' + project_key + '/work_item/story/search/params'
     headers = {
         'X-PLUGIN-TOKEN': get_project_app_token(),
