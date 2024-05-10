@@ -18,15 +18,11 @@ class RequestHandleOperator(MapOperator[Dict, str]):
         try:
             print(f"接收飞书事件debug: {input_body}")
             # 首次验证挑战码
-            if "challenge" in input_body:
-                return {"challenge": input_body["challenge"]}
-            if self.lark_event_handler.valid_event_type(input_body) is False:
-                return {}
-            if self.lark_event_handler.valid_repeat(input_body) is False:
-                return {}
-            # asyncio.create_task(
-            await self.rag_event_handler.debug_handle(input_body)
-            # )
+           
+            asyncio.create_task(
+                self.rag_event_handler.debug_handle(input_body)
+            )
+            print("before return.....")
             return {}
         except Exception as e:
             logging.exception("飞书事件处理异常！", e)
