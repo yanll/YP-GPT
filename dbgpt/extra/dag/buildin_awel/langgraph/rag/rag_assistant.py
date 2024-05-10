@@ -47,6 +47,8 @@ class RAGApiClient(object):
             "conversation_id": conversation_id,
             "messages": messages,
         }
+
+        print("rag start chat",conversation_id,messages,data)
         async with aiohttp.ClientSession(headers=headers) as session:
             async with session.post("http://172.31.91.206:8066/v1/api/completion",data=data) as response:
                 print(response.status)
