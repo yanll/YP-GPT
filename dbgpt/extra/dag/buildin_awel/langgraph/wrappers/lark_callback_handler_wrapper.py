@@ -38,14 +38,14 @@ async def a_call(event: Dict):
         result = Day_30_TrxTre_card_tool.user_crem_30DaysTrxTre_card(
             open_id=open_id,
             customer_id=customerNo,
-            customerName = customerName,
+            customerName=customerName,
             conv_id=conv_id)
     elif button_type == 'daily_report_detail':
         id = action['value']['id']
         report_time = action['value']['report_time']
         conv_id = event['operator']['open_id']
         print('查询日报的编号', id)
-        print('对应销售的名称',report_time)
+        print('对应销售的名称', report_time)
         result = card_send_daily_report_search.card_send_daily_report_search(
             open_id=open_id,
             report_id=id,
@@ -78,7 +78,6 @@ async def a_call(event: Dict):
         result = create_crm_bus_customer_for_crem(
             open_id=open_id, form_value=form_value
         )
-
 
     print("lark_callback_handler_wrapper_a_call_result:", result)
     return result
@@ -151,6 +150,7 @@ def create_customer_visit_record_for_crem(open_id, form_value: Dict):
     print("拜访结果:", customer_visit_record)
     return {}
 
+
 def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
     customer_name = form_value['customer_name']
     customer_role = form_value['customer_role']
@@ -178,4 +178,3 @@ def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
 
     print("添加报单客户信息结果:", customer_visit_record)
     return {}
-

@@ -166,15 +166,22 @@ def do_collect(
                     }
                 )
             )
-        elif industry_line == "金融行业线":
+        elif industry_line == "金融行业线" or industry_line == "跨境行业线":
+            business_type_options = []
+            if industry_line == "金融行业线":
+                business_type_options = lark_card_util.card_options_for_business_type.Finance()
+            elif industry_line == "跨境行业线":
+                business_type_options = lark_card_util.card_options_for_business_type.CrossBorder()
+
             lark_message_util.send_card_message(
                 receive_id=conv_id,
-                content=card_templates.create_crm_bus_customer_card_content.Finance(
+                content=card_templates.create_crm_bus_customer_card_content.Finance_or_CrossBorder(
                     template_variable={
                         "card_metadata": {
                             "card_name": "crm_bus_customer_collect",
                             "description": "添加报单客户信息表单"
                         },
+                        "industry_line": industry_line,
                         "customer_name": customer_name,
                         "customer_role": lark_card_util.get_action_index_by_text_from_options(
                             customer_role,
@@ -188,7 +195,7 @@ def do_collect(
                             customer_importance_default,
                             lark_card_util.card_options_for_customer_importance()
                         ),
-                        "business_type_options": lark_card_util.card_options_for_business_type.Finance(),
+                        "business_type_options": business_type_options,
                         "customer_role_options": lark_card_util.card_options_for_customer_role(),
                         "customer_source_options": lark_card_util.card_options_for_customer_source(),
                         "customer_importance_options": lark_card_util.card_options_for_customer_importance()

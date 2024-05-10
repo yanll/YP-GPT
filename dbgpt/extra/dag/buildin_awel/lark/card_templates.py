@@ -62,9 +62,9 @@ class create_crm_bus_customer_card_content:
         return card
 
     @staticmethod
-    def Finance(template_variable: Dict):
+    def Finance_or_CrossBorder(template_variable: Dict):
         template_id = "AAqkooGVViOUK"
-        template_version_name = "1.0.1"
+        template_version_name = "1.0.2"
         card = {
             "type": "template",
             "data": {
