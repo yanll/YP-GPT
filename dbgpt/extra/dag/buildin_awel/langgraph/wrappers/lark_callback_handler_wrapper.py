@@ -42,14 +42,14 @@ async def a_call(event: Dict):
         result = Day_30_TrxTre_card_tool.user_crem_30DaysTrxTre_card(
             open_id=open_id,
             customer_id=customerNo,
-            customerName = customerName,
+            customerName=customerName,
             conv_id=conv_id)
     elif button_type == 'daily_report_detail':
         id = action['value']['id']
         report_time = action['value']['report_time']
         conv_id = event['operator']['open_id']
         print('查询日报的编号', id)
-        print('对应销售的名称',report_time)
+        print('对应销售的名称', report_time)
         result = card_send_daily_report_search.card_send_daily_report_search(
             open_id=open_id,
             report_id=id,
@@ -90,7 +90,6 @@ async def a_call(event: Dict):
     #     result = card_send_requirement_callbacksearch(
     #         token=token, union_id=union_id, form_value=form_value
     #     )
-
 
     print("lark_callback_handler_wrapper_a_call_result:", result)
     return result

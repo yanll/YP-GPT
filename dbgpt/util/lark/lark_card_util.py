@@ -125,6 +125,8 @@ def card_options_for_industry_line() -> list:
         {"action_index": 1, "action_value": "Web3.0行业线", "text": "Web3.0行业线"},
         {"action_index": 2, "action_value": "金融行业线", "text": "金融行业线"},
         {"action_index": 3, "action_value": "大零售行业线", "text": "大零售行业线"},
+        {"action_index": 4, "action_value": "跨境行业线", "text": "跨境行业线"},
+        {"action_index": 5, "action_value": "外综服行业线", "text": "外综服行业线"},
     ]
     return options
 
@@ -148,6 +150,20 @@ class card_options_for_business_type:
             {"action_index": 11, "action_value": "其他", "text": "其他"},
         ]
         return options
+
+    @staticmethod
+    def CrossBorder():
+        options = [
+            {"action_index": 1, "action_value": "货物贸易", "text": "货物贸易"},
+            {"action_index": 2, "action_value": "国际运输", "text": "国际运输"},
+            {"action_index": 3, "action_value": "航空机票", "text": "航空机票"},
+            {"action_index": 4, "action_value": "酒店住宿", "text": "酒店住宿"},
+            {"action_index": 5, "action_value": "PSP", "text": "PSP"},
+            {"action_index": 6, "action_value": "其他直签客户", "text": "其他直签客户"},
+            {"action_index": 7, "action_value": "其他", "text": "其他"},
+        ]
+        return options
+
     @staticmethod
     def Retail():
         options = [

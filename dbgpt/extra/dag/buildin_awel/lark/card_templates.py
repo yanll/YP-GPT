@@ -48,9 +48,9 @@ class create_crm_bus_customer_card_content:
     """报单客户信息表单"""
 
     @staticmethod
-    def Web3(template_variable: Dict):
+    def Web3_or_ForeignComprehensiveService(template_variable: Dict):
         template_id = "AAqkEJ9hph8Ij"
-        template_version_name = "1.0.21"
+        template_version_name = "1.0.22"
         card = {
             "type": "template",
             "data": {
@@ -62,9 +62,9 @@ class create_crm_bus_customer_card_content:
         return card
 
     @staticmethod
-    def Finance(template_variable: Dict):
+    def Finance_or_CrossBorder(template_variable: Dict):
         template_id = "AAqkooGVViOUK"
-        template_version_name = "1.0.1"
+        template_version_name = "1.0.2"
         card = {
             "type": "template",
             "data": {
