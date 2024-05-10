@@ -16,7 +16,7 @@ def create_card_content_by_template(template_id: str, template_version_name: str
 def create_requirement_card_content(template_variable: Dict):
     """需求提报表单"""
     template_id = "AAqkjMFhiuVwF"
-    template_version_name = "1.0.50"
+    template_version_name = "1.0.51"
 
     card = {
         "type": "template",
