@@ -206,13 +206,13 @@ class RAGLarkHandler:
                 'role':'user'
             }
             message_init.append(new_message)
-            org_res = await self.rag_api_client.async_chat(conversation_id = id,messages = message_init)
+            chat_org_res = await self.rag_api_client.async_chat(conversation_id = id,messages = message_init)
             # res = self.rag_api_client.chat(conversation_id = id,messages = message_init).json()
-            res = await org_res.json()
+            chat_res = await chat_org_res.json()
 
-            print("res",res)
-            response = res['data']['answer']
-            chunks = res['data']['reference']['chunks']
+            print("chat_res",chat_res)
+            response = chat_res['data']['answer']
+            chunks = chat_res['data']['reference']['chunks']
             # document_name = []
             # translation_table = str.maketrans(reference_number_replace)
             # response = response.translate(translation_table)
@@ -297,7 +297,7 @@ class RAGLarkHandler:
                         "tag": "markdown",
                         "content": "similarity",
                     }
-            doc_aggs = res['data']['reference']['doc_aggs']
+            # doc_aggs = res['data']['reference']['doc_aggs']
             for chunk in chunks:
                 # print("current: ", chunk)
                 temp = copy.deepcopy(reference_template)
