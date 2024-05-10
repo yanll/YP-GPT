@@ -2,7 +2,7 @@ import json
 
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers.lark_project_requirement_search import create_requirement_search_for_lark_project
-from dbgpt.util.lark import larkutil
+from dbgpt.util.lark import lark_message_util
 import logging
 
 def card_send_requirement_callbacksearch(union_id,
@@ -78,7 +78,7 @@ def card_send_requirement_callbacksearch(union_id,
                     "name": name if name is not None else ""
                 })
             display_type = "form"
-            larkutil.send_message(
+            lark_message_util.send_message(
                 receive_id=conv_id,
                 content=card_templates.requirement_search_list_card_content(
                     template_variable={
