@@ -7,7 +7,11 @@ from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_customer_vi
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_30DaysTrxTre_card
 
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_api_wrapper
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_requirement_search
+
+
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import Day_30_TrxTre_card_tool
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import card_send_requirement_search
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
 from dbgpt.util.lark import larkutil
 
@@ -78,6 +82,14 @@ async def a_call(event: Dict):
         result = create_crm_bus_customer_for_crem(
             open_id=open_id, form_value=form_value
         )
+    elif card_name == 'requirement_search':
+        result = create_requirement_search_for_lark_project(
+            token=token, union_id=union_id, form_value=form_value,event = event
+        )
+    # elif card_name == 'requirement_search_callback':
+    #     result = card_send_requirement_callbacksearch(
+    #         token=token, union_id=union_id, form_value=form_value
+    #     )
 
     print("lark_callback_handler_wrapper_a_call_result:", result)
     return result
@@ -150,7 +162,6 @@ def create_customer_visit_record_for_crem(open_id, form_value: Dict):
     print("拜访结果:", customer_visit_record)
     return {}
 
-
 def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
     customer_name = form_value['customer_name']
     customer_role = form_value['customer_role']
@@ -178,3 +189,15 @@ def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
 
     print("添加报单客户信息结果:", customer_visit_record)
     return {}
+
+def create_requirement_search_for_lark_project(token, event,union_id: str, form_value: Dict):
+    return card_send_requirement_search.card_send_requirement_callbacksearch(
+        conv_id=event['operator']['open_id'],
+        token=token,
+        project_key="ypgptapi",
+        union_id=union_id,
+        business_value=form_value['industry_line'],
+        priority_value=form_value['emergency_level'],
+        requirement_create_name=form_value['requirement_create_name'],
+
+    )
