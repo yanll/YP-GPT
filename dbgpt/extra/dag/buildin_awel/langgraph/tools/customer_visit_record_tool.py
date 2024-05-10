@@ -7,12 +7,21 @@ from langchain_core.callbacks import (
 )
 from pydantic import BaseModel, Field
 
-from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import larkutil, lark_card_util, lark_message_util
+from dbgpt.util.lark import lark_card_util
 
 
 class CustomerVisitRecordCollectInput(BaseModel):
     """
+    我要填写客户拜访跟进记录：
+
+   - 客户名称：YP-GPT报单客户测试
+   - 拜访形式：电话/微信拜访
+   - 拜访类型：初次拜访
+   - 拜访内容：测试拜访情况
+   - 拜访日期：2024年5月2日
+   - 联系人：张先生
+
+
 
     """
     conv_id: str = Field(
@@ -84,34 +93,32 @@ class CustomerVisitRecordCollectTool(BaseTool):
               contacts)
         try:
             if customer_name == "":
-                resp = {"success": "false", "response_message": "the description of customer_name"}
+                return {"success": "false", "response_message": "the description of customer_name"}
             elif visit_method == "":
-                resp = {"success": "false", "response_message": "the description of visit_method"}
+                return {"success": "false", "response_message": "the description of visit_method"}
             elif visit_type == "":
-                resp = {"success": "false", "response_message": "the description of visit_type"}
+                return {"success": "false", "response_message": "the description of visit_type"}
             elif visit_content == "":
-                resp = {"success": "false", "response_message": "the description of visit_content"}
+                return {"success": "false", "response_message": "the description of visit_content"}
             elif visit_date == "":
-                resp = {"success": "false", "response_message": "the description of visit_date"}
+                return {"success": "false", "response_message": "the description of visit_date"}
             elif contacts == "":
-                resp = {"success": "false", "response_message": "the description of contacts"}
-            else:
-                resp = do_collect(
-                    conv_id=conv_id,
-                    customer_name=customer_name,
-                    visit_method=visit_method,
-                    visit_type=visit_type,
-                    visit_content=visit_content,
-                    visit_date=visit_date,
-                    contacts=contacts
-                )
-            return resp
+                return {"success": "false", "response_message": "the description of contacts"}
+            return handle(
+                conv_id=conv_id,
+                customer_name=customer_name,
+                visit_method=visit_method,
+                visit_type=visit_type,
+                visit_content=visit_content,
+                visit_date=visit_date,
+                contacts=contacts
+            )
         except Exception as e:
-            logging.error("工具运行异常：", e)
+            logging.error("跟进拜访工具运行异常：" + conv_id + " " + visit_content, e)
             return repr(e)
 
 
-def do_collect(
+def handle(
         conv_id: str,
         customer_name: str = "",
         visit_method: str = "",
@@ -120,64 +127,31 @@ def do_collect(
         visit_date: str = "",
         contacts: str = ""
 ):
-    lark_message_id = ""
     try:
-        """ 
-        我要填写客户拜访跟进记录：
-
-       - 客户名称：YP-gpt报单客户测试
-       - 拜访形式：电话/微信拜访
-       - 拜访类型：初次拜访
-       - 拜访内容：测试拜访情况
-       - 拜访日期：2024年5月2日
-       - 联系人  ：张先生
-
-
-
-        """
-        print("发送飞书拜访卡片：", conv_id)
-        resp = lark_message_util.send_card_message(
-            receive_id=conv_id,
-            content=card_templates.create_customer_visit_record_card_content(
-                template_variable={
-                    "card_metadata": {
-                        "card_name": "customer_visit_record_collect",
-                        "description": "拜访收集表单"
-                    },
-                    "customer_name": customer_name,
-                    "visit_content": visit_content,
-                    "contacts": contacts,
-                    "visit_date": visit_date,
-                    "visit_method": lark_card_util.get_action_index_by_text_from_options(
-                        visit_method,
-                        lark_card_util.card_options_for_visit_methods()
-                    ),
-                    "visit_methods": lark_card_util.card_options_for_visit_methods(),
-                    "visit_type": lark_card_util.get_action_index_by_text_from_options(
-                        visit_type,
-                        lark_card_util.card_options_for_visit_types()
-                    ),
-                    "visit_types": lark_card_util.card_options_for_visit_types()
-                }
-            )
-        )
-
-        lark_message_id = resp["message_id"]
-    except Exception as e:
-        logging.error("飞书拜访跟进卡片发送失败：", e)
-
-    return {
-        "success": "true",
-        "error_message": "",
-        "display_type": "form",
-        "lark_message_id": lark_message_id,
-        "data": {
-            "conv_id": conv_id,
-            "customer_name": customer_name,
-            "visit_method": visit_method,
-            "visit_type": visit_type,
-            "visit_content": visit_content,
-            "visit_date": visit_date,
-            "contacts": contacts
+        return {
+            "success": "true",
+            "error_message": "",
+            "action": {
+                "action_name": "send_lark_form_card",
+                "card_name": "requirement_collect"
+            },
+            "data": {
+                "conv_id": conv_id,
+                "customer_name": customer_name,
+                "visit_content": visit_content,
+                "contacts": contacts,
+                "visit_date": visit_date,
+                "visit_method": lark_card_util.get_action_index_by_text_from_options(
+                    visit_method,
+                    lark_card_util.card_options_for_visit_methods()
+                ),
+                "visit_methods": lark_card_util.card_options_for_visit_methods(),
+                "visit_type": lark_card_util.get_action_index_by_text_from_options(
+                    visit_type,
+                    lark_card_util.card_options_for_visit_types()
+                ),
+                "visit_types": lark_card_util.card_options_for_visit_types()
+            }
         }
-    }
+    except Exception as e:
+        raise Exception("跟进拜访数据组装失败：" + conv_id + " " + visit_content, e)

@@ -21,7 +21,10 @@ class PlanDetail(BaseModel):
 
 class WeeklyReportCollectInput(BaseModel):
     """
-
+    我要填写周报：
+    周报内容：本周完成了一次客户回访，进展正常。
+    填写日期：2024-04-22
+    下周计划：1、继续跟进客户，2、完成3次回访，3、制定阅读计划
     """
     conv_id: str = Field(
         name="conv_id",
@@ -71,84 +74,69 @@ class WeeklyReportCollectTool(BaseTool):
             run_manager: Optional[CallbackManagerForToolRun] = None
     ):
         """Use the tool.77"""
-        print("开始运行周报填写工具：", conv_id, weekly_report_content, create_date, senders_name,
-              weekly_report_next_week_plans)
+        print("开始运行周报填写工具：", conv_id, weekly_report_content)
         try:
             if weekly_report_content == "":
-                resp = {"success": "false", "response_message": "the description of weekly_report_content"}
+                return {"success": "false", "response_message": "the description of weekly_report_content"}
             elif create_date == "":
-                resp = {"success": "false", "response_message": "the description of create_date"}
-            else:
-                resp = do_collect(
-                    conv_id=conv_id,
-                    weekly_report_content=weekly_report_content,
-                    create_date=create_date,
-                    weekly_report_next_week_plans=weekly_report_next_week_plans,
-                    senders_name=senders_name
-                )
-            return resp
+                return {"success": "false", "response_message": "the description of create_date"}
+            return handle(
+                conv_id=conv_id,
+                weekly_report_content=weekly_report_content,
+                create_date=create_date,
+                weekly_report_next_week_plans=weekly_report_next_week_plans
+            )
         except Exception as e:
-            logging.error("工具运行异常：", e)
+            logging.error("日报收集工具运行异常：" + conv_id + " " + weekly_report_content, e)
             return repr(e)
 
 
-def do_collect(
+def handle(
         conv_id: str,
         weekly_report_content: str = "",
         create_date: str = "",
-        weekly_report_next_week_plans: str = "",
-        senders_name: str = "",
-        weekly_report_client: str = "",
+        weekly_report_next_week_plans: str = ""
 ):
-    # 处理明日计划，如果为空则返回特定的消息
-    if weekly_report_next_week_plans is None:
-        plans_description = ""
-    else:
-        plans_description = ""
-        # for index, weekly_report_next_week_plan in enumerate(weekly_report_next_week_plans):
-        #     plans_description += str(index + 1) + '. ' + weekly_report_next_week_plan.plan_content + '; '
-
-    lark_message_id = ""
 
     try:
-        """
-        我要填写周报：
-        周报内容：本周完成了一次客户回访，进展正常。
-        填写日期：2024-04-22
-        下周计划：1、继续跟进客户，2、完成3次回访，3、制定阅读计划
-        """
-        print("发送飞书周报卡片：", conv_id)
-        resp = lark_message_util.send_card_message(
-            receive_id=conv_id,
-            content=card_templates.create_weekly_report_card_content(
-                template_variable={
-                    "card_metadata": {
-                        "card_name": "weekly_report_collect",
-                        "description": "周报收集表单"
-                    },
-                    "weekly_report_next_week_plans": plans_description,
-                    "create_date": create_date,
-                    "weekly_report_client": weekly_report_client,
-                    "weekly_report_content": weekly_report_content,
-                }
-            )
-        )
-        lark_message_id = resp["message_id"]
+        # 处理明日计划，如果为空则返回特定的消息
+        if weekly_report_next_week_plans is None:
+            plans_description = ""
+        else:
+            plans_description = ""
+            # for index, weekly_report_next_week_plan in enumerate(weekly_report_next_week_plans):
+            #     plans_description += str(index + 1) + '. ' + weekly_report_next_week_plan.plan_content + '; '
+
+        # resp = lark_message_util.send_card_message(
+        #     receive_id=conv_id,
+        #     content=card_templates.create_weekly_report_card_content(
+        #         template_variable={
+        #             "card_metadata": {
+        #                 "card_name": "weekly_report_collect",
+        #                 "description": "周报收集表单"
+        #             },
+        #             "weekly_report_next_week_plans": plans_description,
+        #             "create_date": create_date,
+        #             "weekly_report_client": weekly_report_client,
+        #             "weekly_report_content": weekly_report_content,
+        #         }
+        #     )
+        # )
+
+        return {
+            "success": "true",
+            "error_message": "",
+            "action": {
+                "action_name": "send_lark_form_card",
+                "card_name": "weekly_report_collect"
+            },
+            "data": {
+                "conv_id": conv_id,
+                "weekly_report_next_week_plans": plans_description,
+                "create_date": create_date,
+                "weekly_report_content": weekly_report_content
+            }
+        }
 
     except Exception as e:
-        logging.error("飞书周报卡片发送失败：", e)
-
-    # 创建并返回结果字典
-    return {
-        "success": "true",
-        "error_message": "",
-        "display_type": "form",
-        "lark_message_id": lark_message_id,
-        "data": {
-            "conv_id": conv_id,
-            "daily_report_content": weekly_report_content,
-            "create_date": create_date,
-            "weekly_report_next_week_plans": plans_description,
-            "senders_name": senders_name
-        }
-    }
+        raise Exception("周报数据组装失败：" + conv_id + " " + weekly_report_content, e)

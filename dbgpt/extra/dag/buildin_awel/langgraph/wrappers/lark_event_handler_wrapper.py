@@ -82,6 +82,66 @@ class LarkEventHandlerWrapper:
             lark_message_id = resp["message_id"]
             self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
             return
+        if card_name == "daily_report_collect":
+            resp = lark_message_util.send_card_message(
+                receive_id=sender_open_id,
+                content=card_templates.create_requirement_card_content(
+                    template_variable={
+                        "card_metadata": {
+                            "card_name": card_name,
+                            "description": "日报收集表单"
+                        },
+                        "daily_report_content": data["daily_report_content"],
+                        "create_date": data["create_date"],
+                        "daily_report_tomorrow_plans": data["daily_report_tomorrow_plans"]
+                    }
+                )
+            )
+            lark_message_id = resp["message_id"]
+            self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
+            return
+        if card_name == "weekly_report_collect":
+            resp = lark_message_util.send_card_message(
+                receive_id=sender_open_id,
+                content=card_templates.create_requirement_card_content(
+                    template_variable={
+                        "card_metadata": {
+                            "card_name": card_name,
+                            "description": "周报收集表单"
+                        },
+                        "weekly_report_next_week_plans": data["weekly_report_next_week_plans"],
+                        "create_date": data["create_date"],
+                        "weekly_report_client": "",
+                        "weekly_report_content": data["weekly_report_content"]
+                    }
+                )
+            )
+            lark_message_id = resp["message_id"]
+            self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
+            return
+        if card_name == "customer_visit_record_collect":
+            resp = lark_message_util.send_card_message(
+                receive_id=sender_open_id,
+                content=card_templates.create_requirement_card_content(
+                    template_variable={
+                        "card_metadata": {
+                            "card_name": card_name,
+                            "description": "拜访收集表单"
+                        },
+                        "customer_name": data["customer_name"],
+                        "visit_content": data["visit_content"],
+                        "contacts": data["contacts"],
+                        "visit_date": data["visit_date"],
+                        "visit_method": data["visit_method"],
+                        "visit_methods": data["visit_methods"],
+                        "visit_type": data["visit_type"],
+                        "visit_types": data["visit_types"]
+                    }
+                )
+            )
+            lark_message_id = resp["message_id"]
+            self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
+            return
 
     def lark_reply_general_message(self, sender_open_id, resp_msg):
         resp = lark_card_util.send_message_with_bingo(
