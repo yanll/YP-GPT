@@ -16,7 +16,7 @@ class LarkEventHandlerWrapper:
         self.app_chat_service = AppChatService()
         super().__init__(**kwargs)
 
-    async def a_reply(self, sender_open_id: str, human_message: str, assistant_response):
+    def a_reply(self, sender_open_id: str, human_message: str, assistant_response):
         resp_msg = str(assistant_response)
         action = None
         data = None

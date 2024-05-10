@@ -102,30 +102,6 @@ def handle(
 ):
     print("发送飞书需求提报卡片：", conv_id)
     try:
-        # resp = lark_message_util.send_card_message(
-        #     receive_id=conv_id,
-        #     content=card_templates.create_requirement_card_content(
-        #         template_variable={
-        #             "card_metadata": {
-        #                 "card_name": "requirement_collect",
-        #                 "description": "需求收集表单"
-        #             },
-        #             "requirement_content": requirement_content,
-        #             "industry_line": lark_card_util.get_action_index_by_text_from_options(
-        #                 industry_line,
-        #                 lark_card_util.card_options_for_requirement_industry_line()
-        #             ),
-        #             "industry_line_options": lark_card_util.card_options_for_requirement_industry_line(),
-        #             "expected_completion_date": expected_completion_date,
-        #             "emergency_level": lark_card_util.get_action_index_by_text_from_options(
-        #                 emergency_level,
-        #                 lark_card_util.card_options_for_requirement_emergency_level()
-        #             ),
-        #             "emergency_level_options": lark_card_util.card_options_for_requirement_emergency_level()
-        #         }
-        #     )
-        # )
-        # lark_message_id = resp["message_id"]
         industry_line_ = lark_card_util.get_action_index_by_text_from_options(
             industry_line,
             lark_card_util.card_options_for_requirement_industry_line()
