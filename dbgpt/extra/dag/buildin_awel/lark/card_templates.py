@@ -16,7 +16,7 @@ def create_card_content_by_template(template_id: str, template_version_name: str
 def create_requirement_card_content(template_variable: Dict):
     """需求提报表单"""
     template_id = "AAqkjMFhiuVwF"
-    template_version_name = "1.0.50"
+    template_version_name = "1.0.51"
 
     card = {
         "type": "template",
@@ -31,7 +31,7 @@ def create_requirement_card_content(template_variable: Dict):
 def create_daily_report_card_content(template_variable: Dict):
     """日报表单"""
     template_id = "AAqkjM4Ffisl2"
-    template_version_name = "1.0.12"
+    template_version_name = "1.0.13"
 
     card = {
         "type": "template",
@@ -44,19 +44,50 @@ def create_daily_report_card_content(template_variable: Dict):
     return card
 
 
-def create_crm_bus_customer_card_content(template_variable: Dict):
+class create_crm_bus_customer_card_content:
     """报单客户信息表单"""
-    template_id = "AAqkEJ9hph8Ij"
-    template_version_name = "1.0.15"
-    card = {
-        "type": "template",
-        "data": {
-            "template_id": template_id,
-            "template_version_name": template_version_name,
-            "template_variable": template_variable
+
+    @staticmethod
+    def Web3(template_variable: Dict):
+        template_id = "AAqkEJ9hph8Ij"
+        template_version_name = "1.0.21"
+        card = {
+            "type": "template",
+            "data": {
+                "template_id": template_id,
+                "template_version_name": template_version_name,
+                "template_variable": template_variable
+            }
         }
-    }
-    return card
+        return card
+
+    @staticmethod
+    def Finance(template_variable: Dict):
+        template_id = "AAqkooGVViOUK"
+        template_version_name = "1.0.1"
+        card = {
+            "type": "template",
+            "data": {
+                "template_id": template_id,
+                "template_version_name": template_version_name,
+                "template_variable": template_variable
+            }
+        }
+        return card
+
+    @staticmethod
+    def Retail(template_variable: Dict):
+        template_id = "AAqklNZ65v58c"
+        template_version_name = "1.0.1"
+        card = {
+            "type": "template",
+            "data": {
+                "template_id": template_id,
+                "template_version_name": template_version_name,
+                "template_variable": template_variable
+            }
+        }
+        return card
 
 
 def create_interactive_update_daily_report_card_content(template_variable: Dict):
@@ -78,7 +109,7 @@ def create_interactive_update_daily_report_card_content(template_variable: Dict)
 def create_weekly_report_card_content(template_variable: Dict):
     """周报表单  """
     template_id = "AAqkjMz1cWwRB"
-    template_version_name = "1.0.8"
+    template_version_name = "1.0.9"
 
     card = {
         "type": "template",
@@ -93,7 +124,7 @@ def create_weekly_report_card_content(template_variable: Dict):
 def create_customer_visit_record_card_content(template_variable: Dict):
     """拜访表单"""
     template_id = "AAqkjMxmwdE8s"
-    template_version_name = "1.0.17"
+    template_version_name = "1.0.18"
 
     card = {
         "type": "template",
@@ -108,7 +139,7 @@ def create_customer_visit_record_card_content(template_variable: Dict):
 def create_merchant_list_card_content(template_variable: Dict):
     """商户查询"""
     template_id = "AAqkXYlYpaLEf"
-    template_version_name = "1.0.15"
+    template_version_name = "1.0.16"
 
     card = {
         "type": "template",
@@ -123,7 +154,7 @@ def create_merchant_list_card_content(template_variable: Dict):
 def search_daily_report_card_content(template_variable: Dict):
     """日报查询"""
     template_id = "AAqkZz4JvpXQR"
-    template_version_name = "1.0.4"
+    template_version_name = "1.0.5"
 
     card = {
         "type": "template",
@@ -134,10 +165,11 @@ def search_daily_report_card_content(template_variable: Dict):
     }
     return card
 
+
 def search_daily_report_id_card_content(template_variable: Dict):
     """日报详情查询"""
     template_id = "AAqkart7DnGFW"
-    template_version_name = "1.0.3"
+    template_version_name = "1.0.4"
 
     card = {
         "type": "template",

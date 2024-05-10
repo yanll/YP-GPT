@@ -79,7 +79,7 @@ class SalesAssistant:
             content = ""
             message_detail = function_call_outcome.json()
             message_type = ""
-            if (isinstance(function_call_outcome, AgentFinish)):
+            if isinstance(function_call_outcome, AgentFinish):
                 rs = function_call_outcome.return_values
                 message_type = "ai"
                 content = rs['output']
@@ -92,7 +92,9 @@ class SalesAssistant:
                 "conv_uid": data['conv_uid'],
                 "message_type": message_type,
                 "content": content,
-                "message_detail": message_detail
+                "message_detail": message_detail,
+                "display_type": "",
+                "lark_message_id": ""
             }
             self.app_chat_service.add_app_chat_his_message(rec)
             last_outcome = ""
@@ -151,7 +153,9 @@ class SalesAssistant:
                 "conv_uid": data['conv_uid'],
                 "message_type": message_type,
                 "content": content,
-                "message_detail": message_detail
+                "message_detail": message_detail,
+                "display_type": "",
+                "lark_message_id": ""
             }
             self.app_chat_service.add_app_chat_his_message(rec)
 
@@ -223,10 +227,10 @@ class SalesAssistant:
         print("开始运行销售助理：")
 
         try:
-            converted_tools_info = self.tools_provider.converted_tools_info()
-            print("工具列表：", converted_tools_info)
+            # converted_tools_info = self.tools_provider.converted_tools_info()
+            # print("工具列表：", converted_tools_info)
             his = self.app_chat_service.get_app_chat_his_messages_by_conv_uid(conv_uid=conv_uid)
-            print("历史消息", his)
+            # print("历史消息", his)
             inputs: Dict = {
                 "input": input,
                 "chat_history": his,
@@ -240,10 +244,13 @@ class SalesAssistant:
                 "conv_uid": conv_uid,
                 "message_type": "human",
                 "content": input,
-                "message_detail": ""
+                "message_detail": "",
+                "display_type": "text",
+                "lark_message_id": ""
             }
             self.app_chat_service.add_app_chat_his_message(rec)
             rs = ""
+            print("Execute Agent")
             for s in self.app.stream(inputs):
                 row = list(s.values())[0]
                 # print("\n==== ", row)

@@ -8,7 +8,7 @@ from langchain_core.callbacks import (
 from pydantic import BaseModel, Field
 
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import larkutil, lark_card_util
+from dbgpt.util.lark import larkutil, lark_card_util, lark_message_util
 
 
 class CustomerVisitRecordCollectInput(BaseModel):
@@ -120,6 +120,7 @@ def do_collect(
         visit_date: str = "",
         contacts: str = ""
 ):
+    lark_message_id = ""
     try:
         """ 
         我要填写客户拜访跟进记录：
@@ -135,7 +136,7 @@ def do_collect(
 
         """
         print("发送飞书拜访卡片：", conv_id)
-        larkutil.send_message(
+        resp = lark_message_util.send_card_message(
             receive_id=conv_id,
             content=card_templates.create_customer_visit_record_card_content(
                 template_variable={
@@ -158,10 +159,10 @@ def do_collect(
                     ),
                     "visit_types": lark_card_util.card_options_for_visit_types()
                 }
-            ),
-            receive_id_type="open_id",
-            msg_type="interactive"
+            )
         )
+
+        lark_message_id = resp["message_id"]
     except Exception as e:
         logging.error("飞书拜访跟进卡片发送失败：", e)
 
@@ -169,6 +170,7 @@ def do_collect(
         "success": "true",
         "error_message": "",
         "display_type": "form",
+        "lark_message_id": lark_message_id,
         "data": {
             "conv_id": conv_id,
             "customer_name": customer_name,

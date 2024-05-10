@@ -13,7 +13,7 @@ from dbgpt.extra.cache.redis_cli import RedisClient
 from dbgpt.extra.dag.buildin_awel.app.service import GptsAppService
 from dbgpt.storage.chat_history import ChatHistoryMessageEntity
 from dbgpt.storage.chat_history.chat_history_db import ChatHistoryMessageDao
-from dbgpt.util.lark import larkutil
+from dbgpt.util.lark import lark_message_util
 from dbgpt.util.azure_util import create_azure_llm
 
 
@@ -137,14 +137,14 @@ async def call_extract_app(llm, apps, conv_uid, human_message: str, his: List):
             print("to_agent_message", to_agent_message)
             response_text = await call_agent(conv_uid, app_code, to_agent_message)
             print("发送智能体回复的消息：", response_text)
-            larkutil.send_message(
+            lark_message_util.send_message(
                 receive_id=conv_uid,
                 content={"text": response_text},
                 receive_id_type="open_id"
             )
 
         else:
-            larkutil.send_message(
+            lark_message_util.send_message(
                 receive_id=conv_uid,
                 content={"text": ai_message},
                 receive_id_type="open_id"
@@ -179,7 +179,7 @@ async def call_agent(conv_uid, app_code, msg):
     return response_text
 
 # if (ai_message.startswith("{'app_code'")):
-#     larkutil.send_message(
+#     lark_message_util.send_message(
 #         receive_id=conv_uid,
 #         content={
 #             "type": "template",

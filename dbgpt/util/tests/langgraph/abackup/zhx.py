@@ -6,7 +6,7 @@ from dbgpt.client import Client
 
 from langchain.chains.llm import LLMChain
 from langchain_core.prompts import PromptTemplate
-from dbgpt.util.lark import larkutil
+from dbgpt.util.lark import lark_message_util
 from dbgpt.util.azure_util import create_azure_llm
 from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
 from collections import Counter
@@ -133,7 +133,7 @@ async def handle(llm, sender_open_id, human_message):
             print('ddddddddd')
             print(f"使用APP_ID {app_id} 处理，对应的功能为：{message_type}")
 
-    larkutil.send_message(
+    lark_message_util.send_message(
         receive_id=sender_open_id,
         content=response_text,
         receive_id_type="open_id"

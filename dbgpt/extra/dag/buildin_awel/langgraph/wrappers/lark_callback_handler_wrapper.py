@@ -172,6 +172,10 @@ def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
     industry_line = form_value['industry_line']
     business_type = form_value['business_type']
 
+    product_type = ''
+    if industry_line == '大零售行业线':
+        product_type = form_value['product_type']
+
     customer_visit_record = crem_api_wrapper.add_crm_bus_customer(
         open_id=open_id,
         customer_name=customer_name,
@@ -180,7 +184,8 @@ def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
         customer_importance=customer_importance,
         sale_name=sale_name,
         industry_line=industry_line,
-        business_type=business_type
+        business_type=business_type,
+        product_type=product_type
     )
 
     print("添加报单客户信息结果:", customer_visit_record)

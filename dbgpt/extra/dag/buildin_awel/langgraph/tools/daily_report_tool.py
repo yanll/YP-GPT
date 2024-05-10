@@ -9,7 +9,7 @@ from langchain_core.callbacks import (
 from pydantic import BaseModel, Field
 
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import larkutil
+from dbgpt.util.lark import larkutil, lark_message_util
 
 
 class DailyReportCollectInput(BaseModel):
@@ -101,6 +101,8 @@ def do_collect(
     else:
         plans_description = ", ".join(daily_report_tomorrow_plans) if daily_report_tomorrow_plans else "明日计划列表为空"
 
+    lark_message_id = ""
+
     try:
         """
         我要填写日报：
@@ -109,7 +111,7 @@ def do_collect(
         明日计划：继续跟进
         """
         print("发送飞书日报卡片：", conv_id)
-        larkutil.send_message(
+        resp = lark_message_util.send_card_message(
             receive_id=conv_id,
             content=card_templates.create_daily_report_card_content(
                 template_variable={
@@ -122,10 +124,10 @@ def do_collect(
                     "daily_report_content": daily_report_content,
 
                 }
-            ),
-            receive_id_type="open_id",
-            msg_type="interactive"
+            )
         )
+        lark_message_id = resp["message_id"]
+
     except Exception as e:
         logging.error("飞书日报卡片发送失败：", e)
 
@@ -134,6 +136,7 @@ def do_collect(
         "success": "true",
         "error_message": "",
         "display_type": "form",
+        "lark_message_id": lark_message_id,
         "data": {
             "conv_id": conv_id,
             "daily_report_content": daily_report_content,

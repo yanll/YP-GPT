@@ -3,6 +3,7 @@ import logging
 import requests
 import json
 from typing import Dict
+import aiohttp
 
 # const
 TENANT_ACCESS_TOKEN_URI = "/open-apis/auth/v3/tenant_access_token/internal"
@@ -13,6 +14,45 @@ class RAGApiClient(object):
     def __init__(self, rag_api_endpoint, rag_api_key):
         self.rag_api_endpoint = rag_api_endpoint
         self.rag_api_key = rag_api_key
+
+    async def test_slow_http(self,user_id):
+        # https://httpbin.org/delay/10
+        url = "http://172.31.91.206:8066/v1/api/new_conversation?name="+user_id
+        headers = {'Content-Type': 'application/json; charset=utf-8',
+                   'Authorization': 'Bearer ragflow-M4MDBhYmNjMDFlMDExZWZhYWY2MDI0Mm'}
+        async with aiohttp.ClientSession(headers=headers) as session:
+            async with session.get('http://httpbin.org/delay/8') as response:
+                print("Status:", response.status)
+                print("Content-type:", response.headers['content-type'])
+
+                html = await response.json()
+                print("Body:", html, "...")
+                return html
+    
+
+    async def async_coversation_start(self,user_id):
+        headers = {'Content-Type': 'application/json; charset=utf-8',
+                   'Authorization': 'Bearer ragflow-M4MDBhYmNjMDFlMDExZWZhYWY2MDI0Mm'}
+        async with aiohttp.ClientSession(headers=headers) as session:
+            async with session.get("http://172.31.91.206:8066/v1/api/new_conversation?name="+user_id) as resp:
+                print(resp.status)
+                print(await resp.text())
+                return resp
+            
+    
+    async def async_chat(self,conversation_id, messages):
+        headers = {'Content-Type': 'application/json; charset=utf-8',
+                   'Authorization': 'Bearer ragflow-M4MDBhYmNjMDFlMDExZWZhYWY2MDI0Mm'}
+        data = {
+            "conversation_id": conversation_id,
+            "messages": messages,
+        }
+
+        print("rag start chat",conversation_id,messages,data)
+        async with aiohttp.ClientSession(headers=headers) as session:
+            async with session.post("http://172.31.91.206:8066/v1/api/completion",data=data) as response:
+                print(response.status)
+                return response
     
     def coversation_start(self,user_id):
         url = "http://172.31.91.206:8066/v1/api/new_conversation?name="+user_id

@@ -8,7 +8,7 @@ from langchain_core.callbacks import (
 from pydantic import BaseModel, Field
 
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import larkutil, lark_card_util
+from dbgpt.util.lark import larkutil, lark_card_util, lark_message_util
 
 
 class RequirementCollectInput(BaseModel):
@@ -101,6 +101,8 @@ def do_collect(
         emergency_level: str = ""
 ):
     print("发送飞书需求提报卡片：", conv_id)
+    lark_message_id = ""
+
     try:
         """
         我要提交一个需求：
@@ -110,7 +112,7 @@ def do_collect(
         紧急程度：中
         """
 
-        larkutil.send_message(
+        resp = lark_message_util.send_card_message(
             receive_id=conv_id,
             content=card_templates.create_requirement_card_content(
                 template_variable={
@@ -131,10 +133,9 @@ def do_collect(
                     ),
                     "emergency_level_options": lark_card_util.card_options_for_requirement_emergency_level()
                 }
-            ),
-            receive_id_type="open_id",
-            msg_type="interactive"
+            )
         )
+        lark_message_id = resp["message_id"]
     except Exception as e:
         logging.error("飞书需求提报卡片发送失败：", e)
 
@@ -142,6 +143,7 @@ def do_collect(
         "success": "true",
         "error_message": "",
         "display_type": "form",
+        "lark_message_id": lark_message_id,
         "data": {
             "conv_id": conv_id,
             "requirement_content": requirement_content,

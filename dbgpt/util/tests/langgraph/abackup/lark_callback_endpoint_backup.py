@@ -4,7 +4,7 @@ from typing import Dict
 from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
 from dbgpt.util.azure_util import create_azure_llm
 from datetime import datetime
-from dbgpt.util.lark import larkutil
+from dbgpt.util.lark import larkutil, lark_calendar_util
 
 
 class RequestHandleOperator(MapOperator[Dict, str]):
@@ -83,10 +83,10 @@ def create_calendar(title, name, room_id, start_time, end_time):
     e_time = int(datetime.strptime(end_time, "%Y-%m-%d %H:%M").timestamp())
 
     token = larkutil.get_tenant_access_token()['tenant_access_token']
-    calendar_id = larkutil.create_calendar_id(token=token)
-    larkutil.grant_calendar(token, calendar_id, "writer", grant_user_open_id)
+    calendar_id = lark_calendar_util.create_calendar_id(token=token)
+    lark_calendar_util.grant_calendar(token, calendar_id, "writer", grant_user_open_id)
 
-    calendar = larkutil.create_calendar(token, calendar_id, {
+    calendar = lark_calendar_util.create_calendar(token, calendar_id, {
         "summary": summary,
         "description": description,
         "need_notification": "false",
@@ -111,7 +111,7 @@ def create_calendar(title, name, room_id, start_time, end_time):
     print("已经创建的日历：", calendar)
     event_id = calendar['data']['event']['event_id']
 
-    larkutil.add_calendar_user(token, calendar_id, event_id, {
+    lark_calendar_util.add_calendar_user(token, calendar_id, event_id, {
         "attendees": [
             {
                 "type": "user",
@@ -125,7 +125,7 @@ def create_calendar(title, name, room_id, start_time, end_time):
     })
     if (room_id):
         print("开始尝试预定会议室：", name, room_id)
-        larkutil.add_calendar_room(token, calendar_id, event_id, {
+        lark_calendar_util.add_calendar_room(token, calendar_id, event_id, {
             "attendees": [
                 {
                     "type": "resource",

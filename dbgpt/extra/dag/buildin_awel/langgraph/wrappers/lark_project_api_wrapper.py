@@ -7,7 +7,7 @@ import requests
 
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
 from dbgpt.util import envutils
-from dbgpt.util.lark import lark_card_util, larkutil
+from dbgpt.util.lark import lark_card_util, larkutil, lark_message_util
 
 
 def create_requirement_for_lark_project(
@@ -24,7 +24,7 @@ def create_requirement_for_lark_project(
     print("需求结果:", rs)
     print("开始更新需求卡片")
     # time.sleep(5)
-    # larkutil.send_interactive_update_message(
+    # lark_message_util.send_interactive_update_message(
     #     token=token,
     #     content=card_templates.create_requirement_card_content(
     #         template_variable={
