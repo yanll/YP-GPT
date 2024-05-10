@@ -8,6 +8,7 @@ from langchain_core.callbacks import (
 )
 from pydantic import BaseModel, Field
 
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers.crem_api_wrapper import get_crm_user_industry_line
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
 from dbgpt.util.lark import lark_message_util, lark_card_util
 
@@ -26,13 +27,13 @@ class CrmBusCustomerCollectInput(BaseModel):
         default=""
     )
 
-    industry_line: str = Field(
-        name="行业线",
-        description="行业线， " + lark_card_util.card_options_to_input_field_description(
-            lark_card_util.card_options_for_industry_line()
-        ),
-        default=""
-    )
+    # industry_line: str = Field(
+    #     name="行业线",
+    #     description="行业线， " + lark_card_util.card_options_to_input_field_description(
+    #         lark_card_util.card_options_for_industry_line()
+    #     ),
+    #     default=""
+    # )
 
     business_type: str = Field(
         name="所属行业",
@@ -95,8 +96,9 @@ class CrmBusCustomerCollectTool(BaseTool):
         print("开始运行添加报单客户信息填写工具：", conv_id, customer_name, customer_role, customer_source_default,
               customer_importance_default)
         try:
+            industry_line = get_crm_user_industry_line(open_id=conv_id)
             if industry_line == "":
-                resp = {"success": "false", "response_message": "缺少行业线信息"}
+                resp = {"success": "false", "response_message": "该用户无行业线"}
             else:
                 resp = do_collect(
                     conv_id=conv_id,
