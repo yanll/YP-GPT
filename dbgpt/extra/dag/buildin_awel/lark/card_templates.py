@@ -147,3 +147,30 @@ def search_daily_report_id_card_content(template_variable: Dict):
         }
     }
     return card
+
+def requirement_search_card_content(template_variable: Dict):
+    """需求查询"""
+    template_id = "AAqk5wmyPFr8z"
+    template_version_name = "1.0.2"
+
+    card = {
+        "type": "template",
+        "data": {
+            "template_id": template_id, "template_version_name": template_version_name,
+            "template_variable": template_variable
+        }
+    }
+    return card
+def requirement_search_list_card_content(template_variable: Dict):
+    """需求查询列表展示"""
+    template_id = "AAqklS3kyRc0R"
+    template_version_name = "1.0.3"
+
+    card = {
+        "type": "template",
+        "data": {
+            "template_id": template_id, "template_version_name": template_version_name,
+            "template_variable": template_variable
+        }
+    }
+    return card
