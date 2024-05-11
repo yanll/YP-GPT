@@ -42,7 +42,7 @@ async def a_call(app_chat_service, event: Dict):
         return do_like(app_chat_service, open_id, event["context"]["open_message_id"])
 
     if event_type == "unlike":
-        return do_unlike(app_chat_service, open_id, event["context"]["open_message_id"], "")
+        return do_unlike(app_chat_service, open_id, event["context"]["open_message_id"], event_data["message"])
 
     if event_type == "submit":
         form_value = action['form_value']
@@ -272,6 +272,10 @@ def do_unlike(app_chat_service, open_id, open_message_id, message):
         receive_id=open_id,
         content=card_templates.comment_card_content(
             template_variable={
+                "submit_callback_event": {
+                    "event_type": "submit",
+                    "event_source": "comment_collect"
+                },
                 "open_message_id": open_message_id,
                 "message": message
             }

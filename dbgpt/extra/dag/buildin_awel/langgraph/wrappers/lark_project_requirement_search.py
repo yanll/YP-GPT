@@ -1,14 +1,11 @@
-import requests
-import json
 import datetime
 import json
-import time
-#from pypinyin import pinyin, lazy_pinyin
-import requests
 from datetime import datetime
-from dbgpt.extra.dag.buildin_awel.lark import card_templates
+
+# from pypinyin import pinyin, lazy_pinyin
+import requests
+
 from dbgpt.util import envutils
-from dbgpt.util.lark import lark_card_util, larkutil
 
 
 def create_requirement_search_for_lark_project(
