@@ -176,7 +176,7 @@ def do_collect(
                     template_variable={
                         "card_metadata": {
                             "card_name": "crm_bus_customer_collect",
-                            "description": "添加报单客户信息表单"
+                            "card_description": "添加报单客户信息表单"
                         },
                         "industry_line": industry_line,
                         "customer_name": customer_name,
@@ -214,7 +214,7 @@ def do_collect(
                     template_variable={
                         "card_metadata": {
                             "card_name": "crm_bus_customer_collect",
-                            "description": "添加报单客户信息表单"
+                            "card_description": "添加报单客户信息表单"
                         },
                         "industry_line": industry_line,
                         "customer_name": customer_name,
@@ -245,7 +245,7 @@ def do_collect(
                     template_variable={
                         "card_metadata": {
                             "card_name": "crm_bus_customer_collect",
-                            "description": "添加报单客户信息表单"
+                            "card_description": "添加报单客户信息表单"
                         },
                         "customer_name": customer_name,
                         # "business_type": business_type,
@@ -282,7 +282,7 @@ def do_collect(
                     template_variable={
                         "card_metadata": {
                             "card_name": "crm_bus_customer_collect",
-                            "description": "添加报单客户信息表单"
+                            "card_description": "添加报单客户信息表单"
                         },
                         "industry_line": industry_line,
                         "customer_name": customer_name,

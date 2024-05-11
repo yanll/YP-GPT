@@ -17,14 +17,16 @@ def create_requirement_search_for_lark_project(
         project_key: str,
         union_id,
         business_value,
-        priority_value
+        priority_value,
+        work_status_value
 ):
     rs = requirement_search(
         project_key=project_key,
         requirement_create_name = requirement_create_name,
         union_id=union_id,
         business_value=business_value,
-        priority_value=priority_value
+        priority_value=priority_value,
+        work_status_value=work_status_value
 
     )
     print("需求查询结果:", rs)
@@ -124,7 +126,7 @@ def get_name_cn(union_id):
 
 
 def requirement_search(union_id, requirement_create_name, project_key,
-business_value=[], priority_value=[]):
+                       business_value=[], priority_value=[], work_status_value=[]):
     global priority_label
     #acc = json.dumps(get_search_user_key(requirement_create_name))[1:-1]
     #print("用户账户的id",acc)
@@ -153,6 +155,12 @@ business_value=[], priority_value=[]):
                     "param_key": "priority",
                     "operator": "HAS ANY OF",
                     "value": [priority_value] if priority_value else []
+                },
+                {
+                    "param_key": "work_item_status",
+                    "operator": "HAS ANY OF",
+                    "value": [work_status_value] if work_status_value else []
+                    
                 }
             ]
         }
@@ -169,7 +177,8 @@ business_value=[], priority_value=[]):
             "priority_label": '',
             "business_id": '',
             "start_time": None,
-            "owner": get_name_cn(union_id)
+            "owner": get_name_cn(union_id),
+            "state_key": None  # 添加state_key字段
         }
         fields = item.get('fields', [])
         for field in fields:
@@ -177,12 +186,16 @@ business_value=[], priority_value=[]):
                 extracted_item['exp_time'] = timestamp_to_date(field['field_value'])
             elif field['field_key'] == 'priority':
                 extracted_item['priority_label'] = field['field_value']['label']
-                priority_label = field['field_value']['label']
-                print("紧急程度是：", priority_label)
+
             elif field['field_key'] == 'business':
                 extracted_item['business_id'] = field['field_value']
             elif field['field_key'] == 'start_time':
                 extracted_item['start_time'] = timestamp_to_date(field['field_value'])
+            # elif field['field_key'] == 'state_key':
+            #     extracted_item['state_key'] = timestamp_to_date(field['field_value'])
+            extracted_item['state_key'] = item.get('work_item_status', {}).get('state_key', '')
+            #extracted_item.append(extracted_item)
+
         extracted_data.append(extracted_item)
 
     return extracted_data
