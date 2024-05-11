@@ -31,7 +31,7 @@ def create_requirement_card_content(template_variable: Dict):
 def create_daily_report_card_content(template_variable: Dict):
     """日报表单"""
     template_id = "AAqkjM4Ffisl2"
-    template_version_name = "1.0.17"
+    template_version_name = "1.0.18"
 
     card = {
         "type": "template",
