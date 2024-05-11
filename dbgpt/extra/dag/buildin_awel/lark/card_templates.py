@@ -134,7 +134,7 @@ def create_interactive_update_daily_report_card_content(template_variable: Dict)
 def create_weekly_report_card_content(template_variable: Dict):
     """周报表单  """
     template_id = "AAqkjMz1cWwRB"
-    template_version_name = "1.0.9"
+    template_version_name = "1.0.12"
 
     card = {
         "type": "template",
@@ -149,7 +149,7 @@ def create_weekly_report_card_content(template_variable: Dict):
 def create_customer_visit_record_card_content(template_variable: Dict):
     """拜访表单"""
     template_id = "AAqkjMxmwdE8s"
-    template_version_name = "1.0.18"
+    template_version_name = "1.0.20"
 
     card = {
         "type": "template",
