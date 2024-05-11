@@ -66,10 +66,18 @@ class LarkEventHandlerWrapper:
                 receive_id=sender_open_id,
                 content=card_templates.create_requirement_card_content(
                     template_variable={
-                        "card_metadata": {
-                            "card_name": card_name,
-                            "description": "需求收集表单"
+                        "submit_callback_event": {
+                            "event_type": "submit",
+                            "event_source": card_name
                         },
+                        "unlike_callback_event": {
+                            "event_type": "unlike",
+                            "event_source": card_name,
+                            "event_data": {
+                                "message": "需求收集表单"
+                            }
+                        },
+                        "ai_message": resp_msg,
                         "requirement_content": data["requirement_content"],
                         "industry_line": data["industry_line"],
                         "industry_line_options": data["industry_line_options"],
@@ -89,8 +97,20 @@ class LarkEventHandlerWrapper:
                     template_variable={
                         "card_metadata": {
                             "card_name": card_name,
-                            "description": "日报收集表单"
+                            "card_description": "日报收集表单"
                         },
+                        "submit_callback_event": {
+                            "event_type": "submit",
+                            "event_source": card_name
+                        },
+                        "unlike_callback_event": {
+                            "event_type": "unlike",
+                            "event_source": card_name,
+                            "event_data": {
+                                "message": "需求收集表单"
+                            }
+                        },
+                        "ai_message": resp_msg,
                         "daily_report_content": data["daily_report_content"],
                         "create_date": data["create_date"],
                         "daily_report_tomorrow_plans": data["daily_report_tomorrow_plans"]
@@ -107,8 +127,20 @@ class LarkEventHandlerWrapper:
                     template_variable={
                         "card_metadata": {
                             "card_name": card_name,
-                            "description": "周报收集表单"
+                            "card_description": "周报收集表单"
                         },
+                        "submit_callback_event": {
+                            "event_type": "submit",
+                            "event_source": card_name
+                        },
+                        "unlike_callback_event": {
+                            "event_type": "unlike",
+                            "event_source": card_name,
+                            "event_data": {
+                                "message": "需求收集表单"
+                            }
+                        },
+                        "ai_message": resp_msg,
                         "weekly_report_next_week_plans": data["weekly_report_next_week_plans"],
                         "create_date": data["create_date"],
                         "weekly_report_client": "",
@@ -126,8 +158,20 @@ class LarkEventHandlerWrapper:
                     template_variable={
                         "card_metadata": {
                             "card_name": card_name,
-                            "description": "拜访收集表单"
+                            "card_description": "拜访收集表单"
                         },
+                        "submit_callback_event": {
+                            "event_type": "submit",
+                            "event_source": card_name
+                        },
+                        "unlike_callback_event": {
+                            "event_type": "unlike",
+                            "event_source": card_name,
+                            "event_data": {
+                                "message": "需求收集表单"
+                            }
+                        },
+                        "ai_message": resp_msg,
                         "customer_name": data["customer_name"],
                         "visit_content": data["visit_content"],
                         "contacts": data["contacts"],
@@ -147,6 +191,13 @@ class LarkEventHandlerWrapper:
         resp = lark_card_util.send_message_with_bingo(
             receive_id=sender_open_id,
             template_variable={
+                "unlike_callback_event": {
+                    "event_type": "unlike",
+                    "event_source": "general_card",
+                    "event_data": {
+                        "message": resp_msg
+                    }
+                },
                 "message_content": resp_msg
             }
         )
