@@ -29,6 +29,7 @@ class LarkEventHandlerWrapper:
                     last_output_str = return_values["last_output"]
                     try:
                         if len(last_output_str) > 0:
+                            # TODO-YLL-FIXME 查询我的周报复现
                             last_output = json.loads(last_output_str.replace("'", "\""))
                             if last_output and "action" in last_output:
                                 action = last_output["action"]
@@ -246,8 +247,6 @@ class LarkEventHandlerWrapper:
             lark_message_id = resp["message_id"]
             self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
             return
-
-
 
     def lark_reply_general_message(self, sender_open_id, resp_msg):
         resp = lark_card_util.send_message_with_bingo(
