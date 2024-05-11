@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from typing import Dict
 
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import Day_30_TrxTre_card_tool
@@ -31,6 +32,9 @@ async def a_call(app_chat_service, event: Dict):
             event_source = action_value["event_source"]
         if "event_data" in action_value:
             event_data = action_value["event_data"]
+
+    if event_type == "":
+        logging.info("事件为空，跳过执行：" + str(event))
 
     if event_type == "new_chat":
         return do_new_chat(app_chat_service, open_id)
