@@ -137,7 +137,7 @@ def handle(
             "error_message": "",
             "action": {
                 "action_name": "send_lark_form_card",
-                "card_name": "requirement_collect"
+                "card_name": "customer_visit_record_collect"
             },
             "data": {
                 "conv_id": conv_id,
