@@ -304,6 +304,41 @@ def do_collect(
                     }
                 )
             )
+        elif industry_line == "航旅事业部":
+            business_type_options = lark_card_util.card_options_for_business_type.AirTravel()
+            lark_message_util.send_card_message(
+                receive_id=conv_id,
+                content=card_templates.create_crm_bus_customer_card_content.AirTravel(
+                    template_variable={
+                        "card_metadata": {
+                            "card_name": "crm_bus_customer_collect",
+                            "description": "添加报单客户信息表单"
+                        },
+                        "industry_line": industry_line,
+                        "customer_name": customer_name,
+                        "customer_role": lark_card_util.get_action_index_by_text_from_options(
+                            customer_role,
+                            lark_card_util.card_options_for_customer_role()
+                        ),
+                        "customer_source_default": lark_card_util.get_action_index_by_text_from_options(
+                            customer_source_default,
+                            lark_card_util.card_options_for_customer_source()
+                        ),
+                        "customer_importance_default": lark_card_util.get_action_index_by_text_from_options(
+                            customer_importance_default,
+                            lark_card_util.card_options_for_customer_importance()
+                        ),
+                        "crem_user_name": crem_user_name,
+
+                        "business_type_options": business_type_options,
+                        "customer_role_options": lark_card_util.card_options_for_customer_role(),
+                        "customer_source_options": lark_card_util.card_options_for_customer_source(),
+                        "customer_importance_options": lark_card_util.card_options_for_customer_importance(),
+                        "customer_size_options": lark_card_util.card_options_for_customer_size(),
+                        "important_step_options": lark_card_util.card_options_for_important_step()
+                    }
+                )
+            )
         # 没有行业线表单
         else:
             return {"success": "false", "response_message": f"无{industry_line}表单"}
