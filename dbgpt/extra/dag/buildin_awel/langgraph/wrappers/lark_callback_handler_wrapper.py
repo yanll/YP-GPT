@@ -70,18 +70,18 @@ async def a_call(app_chat_service, event: Dict):
             )
         return result
 
-    if "button_type" in action_value:
-        button_type = action_value['button_type']
-    if button_type == 'merchant_detail':
-        customerNo = action['value']['customerNo']
-        customerName = action['value']['customerName']
-        conv_id = event['operator']['open_id']
+    if event_type == 'merchant_detail':
+        customerNo = action_value['customerNo']
+        customerName = action_value['customerName']
         print('查询商户的编号', customerNo)
         result = Day_30_TrxTre_card_tool.user_crem_30DaysTrxTre_card(
             open_id=open_id,
             customer_id=customerNo,
             customerName=customerName,
-            conv_id=conv_id)
+            conv_id=open_id)
+
+    if "button_type" in action_value:
+        button_type = action_value['button_type']
     elif button_type == 'daily_report_detail':
         id = action['value']['id']
         report_time = action['value']['report_time']
