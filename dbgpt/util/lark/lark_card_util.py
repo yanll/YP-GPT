@@ -129,6 +129,7 @@ def card_options_for_industry_line() -> list:
         {"action_index": 5, "action_value": "外综服行业线", "text": "外综服行业线"},
         {"action_index": 6, "action_value": "大出行项目组", "text": "大出行项目组"},
         {"action_index": 7, "action_value": "政务行业线", "text": "政务行业线"},
+        {"action_index": 8, "action_value": "航旅事业部", "text": "航旅事业部"},
     ]
     return options
 
@@ -195,6 +196,22 @@ class card_options_for_business_type:
         ]
         return options
 
+    @staticmethod
+    def AirTravel():
+
+        data = {
+            '出行':['出行平台商及服务商','共享出行','火车票','汽车票','出行周边服务商'],
+            '通信': ['通信'],
+            '酒店住宿': ['单体酒店','民俗公寓等集团','酒店集团','系统商','酒店周边','酒店代理/包房商']
+        }
+        """值必须和飞书项目一致"""
+        options = []
+        for index, aspect in enumerate(data):
+            for sub_aspect in data[aspect]:
+                option={"action_index": index + 1, "action_value": f"{aspect}:{sub_aspect}", "text": f"{aspect}:{sub_aspect}"}
+                options.append(option)
+        return options
+
 
 def card_options_for_customer_source() -> list:
     """值必须和飞书项目一致"""
@@ -251,6 +268,26 @@ def card_options_for_zw_province() -> list:
         "甘肃省", "青海省", "台湾省", "内蒙古自治区", "广西壮族自治区", "西藏自治区",
         "宁夏回族自治区", "新疆维吾尔自治区", "香港特别行政区", "澳门特别行政区",
 
+    ]
+    """值必须和飞书项目一致"""
+    options = []
+    for index, option in enumerate(data):
+        options.append({"action_index": index + 1, "action_value": option, "text": option})
+    return options
+
+def card_options_for_customer_size() -> list:
+    data = [
+        "10人以内","10-20人","21人-50人","51人-200人","201人-500人","500人以上"
+    ]
+    """值必须和飞书项目一致"""
+    options = []
+    for index, option in enumerate(data):
+        options.append({"action_index": index + 1, "action_value": option, "text": option})
+    return options
+
+def card_options_for_important_step() -> list:
+    data = [
+        "潜在客户","确认合作意向","方案阶段","洽谈签约","洽谈签约"
     ]
     """值必须和飞书项目一致"""
     options = []

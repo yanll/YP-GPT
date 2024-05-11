@@ -61,15 +61,21 @@ def add_daily_or_weekly_report(open_id: str, report_type: str = "", report_time:
 
 
 def add_crm_bus_customer(open_id: str,
-         customer_name: str = "",
-         customer_role: str = "",
-         customer_source: str = '',
-         customer_importance: str = '',
-         sale_name: str = '',
-         industry_line: str = '',
-         business_type: str = '',
-         product_type: str = '',
-         ):
+                         customer_name: str = "",
+                         customer_role: str = "",
+                         customer_source: str = '',
+                         customer_importance: str = '',
+                         sale_name: str = '',
+                         industry_line: str = '',
+                         business_type: str = '',
+                         product_type: str = '',
+                         zw_client_assets: str = '',
+                         zw_business_type: str = '',
+                         zw_province: str = '',
+                         zw_system_vendor: str = '',
+                         zw_signed_annual_gross_profit: str = '',
+                         zw_customer_level: str = ''
+                         ):
     url = envutils.getenv("CREM_ENDPOINT") + "/crmCustomer/addCrmBusCustomer"
     headers = {
         "pagetype": "cemPortal",
@@ -99,6 +105,13 @@ def add_crm_bus_customer(open_id: str,
         "saleName": sale_name,
         "customerImportance": customer_importance,
 
+        "zwClientAssets": zw_client_assets,
+        "zwBusinessType": zw_business_type,
+        "zwProvince": zw_province,
+        "zwSystemVendor": zw_system_vendor,
+        "zwSignedAnnualGrossProfit": zw_signed_annual_gross_profit,
+        "zwCustomerLevel": zw_customer_level
+
     }
     print("提交添加报单客户信息到CREM：", data)
     response = requests.post(url, headers=headers, data=json.dumps(data))
@@ -109,6 +122,7 @@ def add_crm_bus_customer(open_id: str,
         logging.error("CREM添加报单客户信息调用失败：", e)
         raise e
     return response
+
 
 def get_crm_user_industry_line(open_id: str) -> str:
     url = envutils.getenv("CREM_ENDPOINT") + "/common/treeDictionary"
@@ -167,8 +181,6 @@ def get_crm_user_name(open_id: str) -> str:
         logging.error("crm获取用户行业线", e)
         raise e
     return ''
-
-
 
 # Example usage for daily and weekly reports
 # 日报
