@@ -92,18 +92,22 @@ class CustomerVisitRecordCollectTool(BaseTool):
         print("开始运行客户拜访填写工具：", conv_id, customer_name, visit_method, visit_type, visit_content, visit_date,
               contacts)
         try:
+            reuqires = []
             if customer_name == "":
-                return {"success": "false", "response_message": "the description of customer_name"}
-            elif visit_method == "":
-                return {"success": "false", "response_message": "the description of visit_method"}
-            elif visit_type == "":
-                return {"success": "false", "response_message": "the description of visit_type"}
-            elif visit_content == "":
-                return {"success": "false", "response_message": "the description of visit_content"}
-            elif visit_date == "":
-                return {"success": "false", "response_message": "the description of visit_date"}
-            elif contacts == "":
-                return {"success": "false", "response_message": "the description of contacts"}
+                reuqires.append("customer_name")
+            if visit_method == "":
+                reuqires.append("visit_method")
+            if visit_type == "":
+                reuqires.append("visit_type")
+            if visit_content == "":
+                reuqires.append("visit_content")
+            if visit_date == "":
+                reuqires.append("visit_date")
+            if contacts == "":
+                reuqires.append("contacts")
+            if len(reuqires) > 0:
+                return {"success": "false", "response_message": "the description of " + str(reuqires)}
+
             return handle(
                 conv_id=conv_id,
                 customer_name=customer_name,

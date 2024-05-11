@@ -93,7 +93,7 @@ class LarkEventHandlerWrapper:
         if card_name == "daily_report_collect":
             resp = lark_message_util.send_card_message(
                 receive_id=sender_open_id,
-                content=card_templates.create_requirement_card_content(
+                content=card_templates.create_daily_report_card_content(
                     template_variable={
                         "card_metadata": {
                             "card_name": card_name,
@@ -226,7 +226,6 @@ class LarkEventHandlerWrapper:
             lark_message_id = resp["message_id"]
             self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
             return
-
         if card_name == "requirement_search_list":
             resp = lark_message_util.send_card_message(
                 receive_id=sender_open_id,

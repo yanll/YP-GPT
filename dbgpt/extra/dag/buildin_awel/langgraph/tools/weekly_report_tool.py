@@ -76,10 +76,15 @@ class WeeklyReportCollectTool(BaseTool):
         """Use the tool.77"""
         print("开始运行周报填写工具：", conv_id, weekly_report_content)
         try:
+
+            reuqires = []
             if weekly_report_content == "":
-                return {"success": "false", "response_message": "the description of weekly_report_content"}
-            elif create_date == "":
-                return {"success": "false", "response_message": "the description of create_date"}
+                reuqires.append("weekly_report_content")
+            if create_date == "":
+                reuqires.append("create_date")
+            if len(reuqires) > 0:
+                return {"success": "false", "response_message": "the description of " + str(reuqires)}
+
             return handle(
                 conv_id=conv_id,
                 weekly_report_content=weekly_report_content,
@@ -97,7 +102,6 @@ def handle(
         create_date: str = "",
         weekly_report_next_week_plans: str = ""
 ):
-
     try:
         # 处理明日计划，如果为空则返回特定的消息
         if weekly_report_next_week_plans is None:
@@ -106,22 +110,6 @@ def handle(
             plans_description = ""
             # for index, weekly_report_next_week_plan in enumerate(weekly_report_next_week_plans):
             #     plans_description += str(index + 1) + '. ' + weekly_report_next_week_plan.plan_content + '; '
-
-        # resp = lark_message_util.send_card_message(
-        #     receive_id=conv_id,
-        #     content=card_templates.create_weekly_report_card_content(
-        #         template_variable={
-        #             "card_metadata": {
-        #                 "card_name": "weekly_report_collect",
-        #                 "card_description": "周报收集表单"
-        #             },
-        #             "weekly_report_next_week_plans": plans_description,
-        #             "create_date": create_date,
-        #             "weekly_report_client": weekly_report_client,
-        #             "weekly_report_content": weekly_report_content,
-        #         }
-        #     )
-        # )
 
         return {
             "success": "true",
