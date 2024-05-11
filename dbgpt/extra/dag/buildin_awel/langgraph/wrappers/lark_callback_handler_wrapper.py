@@ -6,7 +6,8 @@ from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import Day_30_TrxTre_card_t
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_customer_visit
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_wrapper, card_send_daily_report_search
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_api_wrapper
-from dbgpt.util.lark import lark_card_util
+from dbgpt.extra.dag.buildin_awel.lark import card_templates
+from dbgpt.util.lark import lark_card_util, lark_message_util
 
 
 async def a_call(app_chat_service, event: Dict):
@@ -41,7 +42,7 @@ async def a_call(app_chat_service, event: Dict):
         return do_like(app_chat_service, open_id, event["context"]["open_message_id"])
 
     if event_type == "unlike":
-        return do_unlike(app_chat_service, open_id, event["context"]["open_message_id"])
+        return do_unlike(app_chat_service, open_id, event["context"]["open_message_id"], "")
 
     if event_type == "submit":
         form_value = action['form_value']
@@ -194,17 +195,14 @@ def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
     if industry_line == '航旅事业部':
         important_step = form_value['important_step']
     # 航旅中第二类
-    purchasing_channels=''
-    payment_scene=''
-    sales_channel=''
+    purchasing_channels = ''
+    payment_scene = ''
+    sales_channel = ''
     if industry_line == '航旅事业部' and 'sales_channel' in form_value:
         purchasing_channels_raw = form_value['purchasing_channels']
-        purchasing_channels=[purchasing_channels_raw.split(':')[0], purchasing_channels_raw.split(':')[-1]]
+        purchasing_channels = [purchasing_channels_raw.split(':')[0], purchasing_channels_raw.split(':')[-1]]
         payment_scene = form_value['payment_scene']
         sales_channel = form_value['sales_channel']
-
-
-
 
     customer_visit_record = crem_api_wrapper.add_crm_bus_customer(
         open_id=open_id,
@@ -264,11 +262,22 @@ def do_like(app_chat_service, open_id, open_message_id):
     }
 
 
-def do_unlike(app_chat_service, open_id, open_message_id):
+def do_unlike(app_chat_service, open_id, open_message_id, message):
     app_chat_service.a_update_app_chat_his_message_like_by_uid_mid(
         comment_type="unlike", conv_uid=open_id,
         message_id=open_message_id
     )
+
+    lark_message_util.send_card_message(
+        receive_id=open_id,
+        content=card_templates.comment_card_content(
+            template_variable={
+                "open_message_id": open_message_id,
+                "message": message
+            }
+        )
+    )
+
     return {
         "toast": {
             "type": "info",

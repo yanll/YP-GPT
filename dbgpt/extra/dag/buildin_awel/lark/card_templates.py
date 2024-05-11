@@ -74,6 +74,7 @@ class create_crm_bus_customer_card_content:
             }
         }
         return card
+
     @staticmethod
     def Retail(template_variable: Dict):
         template_id = "AAqklNZ65v58c"
@@ -87,6 +88,7 @@ class create_crm_bus_customer_card_content:
             }
         }
         return card
+
     @staticmethod
     def Government(template_variable: Dict):
         template_id = "AAq3O0CfLPZJu"
@@ -100,7 +102,6 @@ class create_crm_bus_customer_card_content:
             }
         }
         return card
-
 
     class AirTravel:
         @staticmethod
@@ -242,6 +243,21 @@ def requirement_search_list_card_content(template_variable: Dict):
     """需求查询列表展示"""
     template_id = "AAqklS3kyRc0R"
     template_version_name = "1.0.6"
+
+    card = {
+        "type": "template",
+        "data": {
+            "template_id": template_id, "template_version_name": template_version_name,
+            "template_variable": template_variable
+        }
+    }
+    return card
+
+
+def comment_card_content(template_variable: Dict):
+    """需求查询列表展示"""
+    template_id = "AAqkEvmXj7MSH"
+    template_version_name = "1.0.1"
 
     card = {
         "type": "template",
