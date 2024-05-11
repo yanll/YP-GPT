@@ -168,7 +168,7 @@ class LarkEventHandlerWrapper:
                             "event_type": "unlike",
                             "event_source": card_name,
                             "event_data": {
-                                "message": "需求收集表单"
+                                "message": "跟进拜访表单"
                             }
                         },
                         "ai_message": resp_msg,
@@ -180,6 +180,27 @@ class LarkEventHandlerWrapper:
                         "visit_methods": data["visit_methods"],
                         "visit_type": data["visit_type"],
                         "visit_types": data["visit_types"]
+                    }
+                )
+            )
+            lark_message_id = resp["message_id"]
+            self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
+            return
+
+        if card_name == "merchant_list_card":
+            resp = lark_message_util.send_card_message(
+                receive_id=sender_open_id,
+                content=card_templates.create_merchant_list_card_content(
+                    template_variable={
+                        "unlike_callback_event": {
+                            "event_type": "unlike",
+                            "event_source": card_name,
+                            "event_data": {
+                                "message": "商户信息列表"
+                            }
+                        },
+                        "query_str": data["query_str"],
+                        "merchant_list": data["list"]
                     }
                 )
             )

@@ -7,8 +7,6 @@ from langchain_core.callbacks import (
 )
 from pydantic import BaseModel, Field
 
-from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import larkutil, lark_message_util
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_customer_search
 
 
@@ -43,7 +41,6 @@ class MerchantSearchTool(BaseTool):
     ):
         """Use the tool."""
         print("开始执行商户信息查询工具：", conv_id, customer_number, customer_name, self.max_results)
-        lark_message_id = ""
         try:
             resp_data = {}
             if customer_number == "" and customer_name == "":
@@ -54,43 +51,51 @@ class MerchantSearchTool(BaseTool):
                     customer_name=customer_name,
                     customer_number=customer_number
                 )
-                resp_data = data  # 直接从查询结果中获取data列表
+                resp_data = data
             query_str = (customer_name + "" + customer_number).strip()
             print("商户查询结果：", query_str, resp_data)
             display_type = ""
             list = []
-            if resp_data and len(resp_data) > 0:
-                for m in resp_data:
-                    customerName = m.get("customerName", "")
-                    customerIntroduction = m.get("customerIntroduction", "")
-                    industryLine = m.get("industryLine", "")
-                    saleName = m.get("saleName", "")
-                    customerNo = m.get("customerNo", "")
-                    list.append({
-                        "customerName": customerName if customerName is not None else "",
-                        "customerIntroduction": customerIntroduction if customerIntroduction is not None else "",
-                        "industryLine": industryLine if industryLine is not None else "",
-                        "saleName": saleName if saleName is not None else "",
-                        "customerNo": customerNo if customerNo is not None else ""
-                    })
-                display_type = "form"
-                resp = lark_message_util.send_card_message(
-                    receive_id=conv_id,
-                    content=card_templates.create_merchant_list_card_content(
-                        template_variable={
-                            "query_str": query_str,
-                            "merchant_list": list
-                        }
-                    )
-                )
-                lark_message_id = resp["message_id"]
+            if resp_data and len(resp_data) == 0:
+                return {"success": "true", "data": []}
+
+            for m in resp_data:
+                customerName = m.get("customerName", "")
+                customerIntroduction = m.get("customerIntroduction", "")
+                industryLine = m.get("industryLine", "")
+                saleName = m.get("saleName", "")
+                customerNo = m.get("customerNo", "")
+                list.append({
+                    "customerName": customerName if customerName is not None else "",
+                    "customerIntroduction": customerIntroduction if customerIntroduction is not None else "",
+                    "industryLine": industryLine if industryLine is not None else "",
+                    "saleName": saleName if saleName is not None else "",
+                    "customerNo": customerNo if customerNo is not None else ""
+                })
+
+            # display_type = "form"
+            # resp = lark_message_util.send_card_message(
+            #     receive_id=conv_id,
+            #     content=card_templates.create_merchant_list_card_content(
+            #         template_variable={
+            #             "query_str": query_str,
+            #             "merchant_list": list
+            #         }
+            #     )
+            # )
+            # lark_message_id = resp["message_id"]
 
             return {
                 "success": "true",
                 "error_message": "",
-                "display_type": display_type,
-                "lark_message_id": lark_message_id,
-                "data": list
+                "action": {
+                    "action_name": "send_lark_form_card",
+                    "card_name": "merchant_list_card"
+                },
+                "data": {
+                    "list": list,
+                    "query_str": query_str
+                }
             }
         except Exception as e:
             logging.error("商户查询工具运行异常：", e)
