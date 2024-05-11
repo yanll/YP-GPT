@@ -42,7 +42,10 @@ async def a_call(app_chat_service, event: Dict):
         return do_like(app_chat_service, open_id, event["context"]["open_message_id"])
 
     if event_type == "unlike":
-        return do_unlike(app_chat_service, open_id, event["context"]["open_message_id"], event_data["message"])
+        message = ""
+        if event_data and "message" in event_data:
+            message = event_data["message"]
+        return do_unlike(app_chat_service, open_id, event["context"]["open_message_id"], message)
 
     if event_type == "submit":
         form_value = action['form_value']
