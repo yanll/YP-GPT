@@ -12,7 +12,7 @@ from dbgpt.util.lark import lark_card_util, larkutil
 
 
 def create_requirement_search_for_lark_project(
-        token,
+
         requirement_create_name,
         project_key: str,
         union_id,
@@ -24,7 +24,7 @@ def create_requirement_search_for_lark_project(
         requirement_create_name = requirement_create_name,
         union_id=union_id,
         business_value=business_value,
-        priority_value=priority_value,
+        priority_value=priority_value
 
     )
     print("需求查询结果:", rs)
@@ -123,7 +123,8 @@ def get_name_cn(union_id):
 
 
 
-def requirement_search(union_id,requirement_create_name,project_key, business_value=None, priority_value=None):
+def requirement_search(union_id, requirement_create_name, project_key,
+business_value=[], priority_value=[]):
     global priority_label
     #acc = json.dumps(get_search_user_key(requirement_create_name))[1:-1]
     #print("用户账户的id",acc)
@@ -144,14 +145,14 @@ def requirement_search(union_id,requirement_create_name,project_key, business_va
                     "operator": "HAS ANY OF"
                 },
                 {
-                "param_key":"business",
-                "value":[business_value],
-                "operator":"HAS ANY OF"
+                    "param_key": "business",
+                    "operator": "HAS ANY OF",
+                    "value": [business_value] if business_value else []
                 },
                 {
-                "param_key":"priority",
-                "value":[priority_value],
-                "operator":"HAS ANY OF"
+                    "param_key": "priority",
+                    "operator": "HAS ANY OF",
+                    "value": [priority_value] if priority_value else []
                 }
             ]
         }
@@ -184,7 +185,7 @@ def requirement_search(union_id,requirement_create_name,project_key, business_va
                 extracted_item['start_time'] = timestamp_to_date(field['field_value'])
         extracted_data.append(extracted_item)
 
-    return extracted_data,priority_label
+    return extracted_data
 
 
 

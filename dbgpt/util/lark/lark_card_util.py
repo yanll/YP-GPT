@@ -89,6 +89,7 @@ def card_options_for_requirement_emergency_level() -> list:
         {"action_index": 3, "action_value": "2", "text": "高"},
         {"action_index": 4, "action_value": "99", "text": "中"},
         {"action_index": 5, "action_value": "1sdyyo6lh", "text": "低"}
+        #1sdyyo6lh
     ]
     return options
 
