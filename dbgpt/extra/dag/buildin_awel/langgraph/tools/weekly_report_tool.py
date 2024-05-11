@@ -1,14 +1,12 @@
 import logging
-from typing import Optional, Type
 from typing import List
+from typing import Optional, Type
+
 from langchain.tools import BaseTool
 from langchain_core.callbacks import (
     CallbackManagerForToolRun,
 )
 from pydantic import BaseModel, Field
-
-from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import larkutil, lark_message_util
 
 
 class PlanDetail(BaseModel):
