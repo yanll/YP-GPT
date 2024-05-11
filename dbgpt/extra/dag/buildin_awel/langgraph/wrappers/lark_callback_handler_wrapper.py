@@ -1,19 +1,11 @@
 import asyncio
-import time
 from typing import Dict
 
-from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_wrapper, crem_daily_report_search, \
-    crem_daily_report_id_search, card_send_daily_report_search
-from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_customer_visit
-from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_30DaysTrxTre_card
-
-from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_api_wrapper
-from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_requirement_search
-
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import Day_30_TrxTre_card_tool
-from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import card_send_requirement_search
-from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import larkutil, lark_card_util
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_customer_visit
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_wrapper, card_send_daily_report_search
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_api_wrapper
+from dbgpt.util.lark import lark_card_util
 
 
 async def a_call(app_chat_service, event: Dict):
@@ -222,19 +214,6 @@ def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
 
     print("添加报单客户信息结果:", customer_visit_record)
     return {}
-
-
-def create_requirement_search_for_lark_project(token, event, union_id: str, form_value: Dict):
-    return card_send_requirement_search.card_send_requirement_callbacksearch(
-        conv_id=event['operator']['open_id'],
-        token=token,
-        project_key="ypgptapi",
-        union_id=union_id,
-        business_value=form_value['industry_line'],
-        priority_value=form_value['emergency_level'],
-        requirement_create_name=form_value['requirement_create_name'],
-
-    )
 
 
 def do_new_chat(app_chat_service, open_id):
