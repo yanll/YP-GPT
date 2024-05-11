@@ -8,7 +8,8 @@ from langchain_core.callbacks import (
 )
 from pydantic import BaseModel, Field
 
-from dbgpt.extra.dag.buildin_awel.langgraph.wrappers.crem_api_wrapper import get_crm_user_industry_line
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers.crem_api_wrapper import get_crm_user_industry_line, \
+    get_crm_user_name
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
 from dbgpt.util.lark import lark_message_util, lark_card_util
 
@@ -97,8 +98,11 @@ class CrmBusCustomerCollectTool(BaseTool):
               customer_importance_default)
         try:
             industry_line = get_crm_user_industry_line(open_id=conv_id)
+            crem_user_name = get_crm_user_name(open_id=conv_id)
             if industry_line == "":
                 resp = {"success": "false", "response_message": "该用户无行业线"}
+            if crem_user_name == "":
+                resp = {"success": "false", "response_message": "该用户无CREM系统权限"}
             else:
                 resp = do_collect(
                     conv_id=conv_id,
@@ -108,7 +112,8 @@ class CrmBusCustomerCollectTool(BaseTool):
                     customer_role=customer_role,
                     customer_source_default=customer_source_default,
                     customer_importance_default=customer_importance_default,
-                    product_type=product_type
+                    product_type=product_type,
+                    crem_user_name=crem_user_name,
                 )
             return resp
         except Exception as e:
@@ -125,6 +130,7 @@ def do_collect(
         customer_source_default: str = "",
         customer_importance_default: str = "",
         product_type: str = "",
+        crem_user_name: str = '',
 ):
     """
     处理并收集提报信息，返回收集结果。
@@ -167,6 +173,7 @@ def do_collect(
                             customer_importance_default,
                             lark_card_util.card_options_for_customer_importance()
                         ),
+                        "crem_user_name": crem_user_name,
 
                         "customer_role_options": lark_card_util.card_options_for_customer_role(),
                         "customer_source_options": lark_card_util.card_options_for_customer_source(),
@@ -203,6 +210,7 @@ def do_collect(
                             customer_importance_default,
                             lark_card_util.card_options_for_customer_importance()
                         ),
+                        "crem_user_name": crem_user_name,
                         "business_type_options": business_type_options,
                         "customer_role_options": lark_card_util.card_options_for_customer_role(),
                         "customer_source_options": lark_card_util.card_options_for_customer_source(),
@@ -237,6 +245,7 @@ def do_collect(
                             customer_importance_default,
                             lark_card_util.card_options_for_product_type()
                         ),
+                        "crem_user_name": crem_user_name,
                         "business_type_options": lark_card_util.card_options_for_business_type.Retail(),
                         "customer_role_options": lark_card_util.card_options_for_customer_role(),
                         "customer_source_options": lark_card_util.card_options_for_customer_source(),
@@ -245,6 +254,9 @@ def do_collect(
                     }
                 )
             )
+        # 没有行业线表单
+        else:
+            return {"success": "false", "response_message": f"无{industry_line}表单"}
     except Exception as e:
         logging.error("飞书添加报单客户信息卡片发送失败：", e)
 

@@ -50,7 +50,7 @@ class create_crm_bus_customer_card_content:
     @staticmethod
     def Web3_or_ForeignComprehensiveService(template_variable: Dict):
         template_id = "AAqkEJ9hph8Ij"
-        template_version_name = "1.0.22"
+        template_version_name = "1.0.24"
         card = {
             "type": "template",
             "data": {
@@ -64,7 +64,7 @@ class create_crm_bus_customer_card_content:
     @staticmethod
     def Finance_or_CrossBorder(template_variable: Dict):
         template_id = "AAqkooGVViOUK"
-        template_version_name = "1.0.2"
+        template_version_name = "1.0.4"
         card = {
             "type": "template",
             "data": {
@@ -78,7 +78,7 @@ class create_crm_bus_customer_card_content:
     @staticmethod
     def Retail(template_variable: Dict):
         template_id = "AAqklNZ65v58c"
-        template_version_name = "1.0.1"
+        template_version_name = "1.0.3"
         card = {
             "type": "template",
             "data": {
@@ -180,6 +180,7 @@ def search_daily_report_id_card_content(template_variable: Dict):
     }
     return card
 
+
 def requirement_search_card_content(template_variable: Dict):
     """需求查询"""
     template_id = "AAqk5wmyPFr8z"
@@ -193,6 +194,8 @@ def requirement_search_card_content(template_variable: Dict):
         }
     }
     return card
+
+
 def requirement_search_list_card_content(template_variable: Dict):
     """需求查询列表展示"""
     template_id = "AAqklS3kyRc0R"
