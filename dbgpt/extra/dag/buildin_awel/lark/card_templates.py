@@ -74,7 +74,6 @@ class create_crm_bus_customer_card_content:
             }
         }
         return card
-
     @staticmethod
     def Retail(template_variable: Dict):
         template_id = "AAqklNZ65v58c"
@@ -88,7 +87,19 @@ class create_crm_bus_customer_card_content:
             }
         }
         return card
-
+    @staticmethod
+    def Government(template_variable: Dict):
+        template_id = "AAq3O0CfLPZJu"
+        template_version_name = "1.0.0"
+        card = {
+            "type": "template",
+            "data": {
+                "template_id": template_id,
+                "template_version_name": template_version_name,
+                "template_variable": template_variable
+            }
+        }
+        return card
 
 def create_interactive_update_daily_report_card_content(template_variable: Dict):
     """交互更新日报表单"""

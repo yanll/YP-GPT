@@ -92,6 +92,12 @@ class CrmBusCustomerCollectTool(BaseTool):
             customer_source_default: str = "",
             customer_importance_default: str = "",
             product_type: str = "",
+            zw_client_assets: str = "",
+            zw_business_type: str = "",
+            zw_province: str = "",
+            zw_system_vendor: str = "",
+            zw_signed_annual_gross_profit: str = "",
+            zw_customer_level: str = "",
     ):
         """Use the tool."""
         print("开始运行添加报单客户信息填写工具：", conv_id, customer_name, customer_role, customer_source_default,
@@ -114,6 +120,7 @@ class CrmBusCustomerCollectTool(BaseTool):
                     customer_importance_default=customer_importance_default,
                     product_type=product_type,
                     crem_user_name=crem_user_name,
+
                 )
             return resp
         except Exception as e:
@@ -253,6 +260,47 @@ def do_collect(
                         "customer_source_options": lark_card_util.card_options_for_customer_source(),
                         "customer_importance_options": lark_card_util.card_options_for_customer_importance(),
                         "product_type_options": lark_card_util.card_options_for_product_type()
+                    }
+                )
+            )
+        elif industry_line == "政务行业线":
+            business_type_options = lark_card_util.card_options_for_business_type.Government()
+            lark_message_util.send_card_message(
+                receive_id=conv_id,
+                content=card_templates.create_crm_bus_customer_card_content.Government(
+                    template_variable={
+                        "card_metadata": {
+                            "card_name": "crm_bus_customer_collect",
+                            "description": "添加报单客户信息表单"
+                        },
+                        "industry_line": industry_line,
+                        "customer_name": customer_name,
+                        "customer_role": lark_card_util.get_action_index_by_text_from_options(
+                            customer_role,
+                            lark_card_util.card_options_for_customer_role()
+                        ),
+                        "customer_source_default": lark_card_util.get_action_index_by_text_from_options(
+                            customer_source_default,
+                            lark_card_util.card_options_for_customer_source()
+                        ),
+                        "customer_importance_default": lark_card_util.get_action_index_by_text_from_options(
+                            customer_importance_default,
+                            lark_card_util.card_options_for_customer_importance()
+                        ),
+                        "zw_client_assets": lark_card_util.get_action_index_by_text_from_options(
+                            customer_importance_default,
+                            lark_card_util.card_options_for_customer_importance()
+                        ),
+
+                        "crem_user_name": crem_user_name,
+                        "business_type_options": business_type_options,
+                        "customer_role_options": lark_card_util.card_options_for_customer_role(),
+                        "customer_source_options": lark_card_util.card_options_for_customer_source(),
+                        "customer_importance_options": lark_card_util.card_options_for_customer_importance(),
+                        "zw_client_assets_options": lark_card_util.card_options_for_zw_client_assets(),
+                        "zw_business_type_options": lark_card_util.card_options_for_zw_business_type(),
+                        "zw_province_options": lark_card_util.card_options_for_zw_province(),
+                        "zw_customer_level_options": lark_card_util.card_options_for_zw_customer_level(),
                     }
                 )
             )
