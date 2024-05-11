@@ -44,17 +44,15 @@ class MerchantSearchTool(BaseTool):
         try:
             resp_data = {}
             if customer_number == "" and customer_name == "":
-                resp = {"success": "false", "response_message": "the description of customer_number and customer_name"}
-            else:
-                data = crem_customer_search.customer_list_search(
-                    open_id=conv_id,
-                    customer_name=customer_name,
-                    customer_number=customer_number
-                )
-                resp_data = data
+                return {"success": "false", "response_message": "the description of customer_number and customer_name"}
+            data = crem_customer_search.customer_list_search(
+                open_id=conv_id,
+                customer_name=customer_name,
+                customer_number=customer_number
+            )
+            resp_data = data
             query_str = (customer_name + "" + customer_number).strip()
             print("商户查询结果：", query_str, resp_data)
-            display_type = ""
             list = []
             if resp_data and len(resp_data) == 0:
                 return {"success": "true", "data": []}
@@ -72,18 +70,6 @@ class MerchantSearchTool(BaseTool):
                     "saleName": saleName if saleName is not None else "",
                     "customerNo": customerNo if customerNo is not None else ""
                 })
-
-            # display_type = "form"
-            # resp = lark_message_util.send_card_message(
-            #     receive_id=conv_id,
-            #     content=card_templates.create_merchant_list_card_content(
-            #         template_variable={
-            #             "query_str": query_str,
-            #             "merchant_list": list
-            #         }
-            #     )
-            # )
-            # lark_message_id = resp["message_id"]
 
             return {
                 "success": "true",

@@ -8,8 +8,8 @@ from dbgpt.util.lark import ssoutil
 from datetime import datetime
 
 
-def daily_report_search(open_id,create_user):
-    #url = envutils.getenv("CREM_ENDPOINT") +'/workReportInfo/findWorkReportInfo'
+def daily_report_search(open_id, create_user):
+    # url = envutils.getenv("CREM_ENDPOINT") +'/workReportInfo/findWorkReportInfo'
     url = 'https://cem.yeepay.com/cem-api/workReportInfo/findWorkReportInfo'
 
     headers = {
@@ -47,7 +47,6 @@ def daily_report_search(open_id,create_user):
         }
         extracted_data.append(report_data)
     return extracted_data
-
 
 # # 使用示例
 # results = daily_report_search("张华雪")
