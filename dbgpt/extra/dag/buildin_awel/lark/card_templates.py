@@ -50,7 +50,7 @@ class create_crm_bus_customer_card_content:
     @staticmethod
     def Web3_or_ForeignComprehensiveService(template_variable: Dict):
         template_id = "AAqkEJ9hph8Ij"
-        template_version_name = "1.0.22"
+        template_version_name = "1.0.24"
         card = {
             "type": "template",
             "data": {
@@ -64,7 +64,7 @@ class create_crm_bus_customer_card_content:
     @staticmethod
     def Finance_or_CrossBorder(template_variable: Dict):
         template_id = "AAqkooGVViOUK"
-        template_version_name = "1.0.2"
+        template_version_name = "1.0.4"
         card = {
             "type": "template",
             "data": {
@@ -74,11 +74,10 @@ class create_crm_bus_customer_card_content:
             }
         }
         return card
-
     @staticmethod
     def Retail(template_variable: Dict):
         template_id = "AAqklNZ65v58c"
-        template_version_name = "1.0.1"
+        template_version_name = "1.0.3"
         card = {
             "type": "template",
             "data": {
@@ -88,7 +87,19 @@ class create_crm_bus_customer_card_content:
             }
         }
         return card
-
+    @staticmethod
+    def Government(template_variable: Dict):
+        template_id = "AAq3O0CfLPZJu"
+        template_version_name = "1.0.0"
+        card = {
+            "type": "template",
+            "data": {
+                "template_id": template_id,
+                "template_version_name": template_version_name,
+                "template_variable": template_variable
+            }
+        }
+        return card
 
 def create_interactive_update_daily_report_card_content(template_variable: Dict):
     """交互更新日报表单"""
@@ -180,6 +191,7 @@ def search_daily_report_id_card_content(template_variable: Dict):
     }
     return card
 
+
 def requirement_search_card_content(template_variable: Dict):
     """需求查询"""
     template_id = "AAqk5wmyPFr8z"
@@ -193,6 +205,8 @@ def requirement_search_card_content(template_variable: Dict):
         }
     }
     return card
+
+
 def requirement_search_list_card_content(template_variable: Dict):
     """需求查询列表展示"""
     template_id = "AAqklS3kyRc0R"

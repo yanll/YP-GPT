@@ -171,9 +171,26 @@ def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
     industry_line = form_value['industry_line']
     business_type = form_value['business_type']
 
+    # 大零售独有字段
     product_type = ''
     if industry_line == '大零售行业线':
         product_type = form_value['product_type']
+
+    #政务行业线独有字段
+    zw_client_assets = ''
+    zw_business_type = ''
+    zw_province = ''
+    zw_system_vendor = ''
+    zw_signed_annual_gross_profit = ''
+    zw_customer_level = ''
+    if industry_line == '政务行业线':
+        zw_client_assets = form_value['zw_client_assets']
+        zw_business_type = form_value['zw_business_type']
+        zw_province = form_value['zw_province']
+        zw_system_vendor = form_value['zw_system_vendor']
+        zw_signed_annual_gross_profit = form_value['zw_signed_annual_gross_profit']
+        zw_customer_level = form_value['zw_customer_level']
+
 
     customer_visit_record = crem_api_wrapper.add_crm_bus_customer(
         open_id=open_id,
@@ -184,7 +201,15 @@ def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
         sale_name=sale_name,
         industry_line=industry_line,
         business_type=business_type,
-        product_type=product_type
+        product_type=product_type,
+
+        zw_client_assets=zw_client_assets,
+        zw_business_type=zw_business_type,
+        zw_province=zw_province,
+        zw_system_vendor=zw_system_vendor,
+        zw_signed_annual_gross_profit=zw_signed_annual_gross_profit,
+        zw_customer_level=zw_customer_level
+
     )
 
     print("添加报单客户信息结果:", customer_visit_record)
