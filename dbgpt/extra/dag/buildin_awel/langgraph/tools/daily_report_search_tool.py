@@ -7,8 +7,6 @@ from langchain_core.callbacks import (
 )
 from pydantic import BaseModel, Field
 
-from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import larkutil, lark_message_util
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_daily_report_search
 
 
@@ -54,7 +52,6 @@ class DailyReportSearchTool(BaseTool):
             resp_data = data
             query_str = (sales_name + "").strip()
             print("日报查询结果：", query_str, resp_data)
-            display_type = ""
             list = []
             if resp_data and len(resp_data) == 0:
                 return {"success": "true", "data": []}
