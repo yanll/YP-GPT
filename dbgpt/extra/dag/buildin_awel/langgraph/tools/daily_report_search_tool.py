@@ -41,55 +41,47 @@ class DailyReportSearchTool(BaseTool):
     ):
         """Use the tool."""
         print("开始执行日报信息查询工具：", conv_id, sales_name, self.max_results)
-        lark_message_id = ""
 
         try:
             resp_data = {}
             if sales_name == "":
-                resp = {"success": "false", "response_message": "the description of  sales_name"}
-            else:
-                data = crem_daily_report_search.daily_report_search(
-                    open_id=conv_id,
-                    create_user=sales_name,
+                return {"success": "false", "response_message": "the description of  sales_name"}
+            data = crem_daily_report_search.daily_report_search(
+                open_id=conv_id,
+                create_user=sales_name,
 
-                )
-                resp_data = data  # 直接从查询结果中获取data列表
+            )
+            resp_data = data
             query_str = (sales_name + "").strip()
             print("日报查询结果：", query_str, resp_data)
             display_type = ""
             list = []
-            if resp_data and len(resp_data) > 0:
-                for m in resp_data:
-                    reportTime = m.get("reportTime", "")
-                    createUser = m.get("createUser", "")
-                    senders = m.get("senders", "")
-                    workSummaryString = m.get("workSummaryString", "")
-                    id = m.get("id", "")
-                    list.append({
-                        "reportTime": reportTime if reportTime is not None else "",
-                        "createUser": createUser if createUser is not None else "",
-                        "senders": senders if senders is not None else "",
-                        "workSummaryString": workSummaryString if workSummaryString is not None else "",
-                        "id": id if id is not None else ""
-                    })
-                display_type = "form"
-                resp = lark_message_util.send_card_message(
-                    receive_id=conv_id,
-                    content=card_templates.search_daily_report_card_content(
-                        template_variable={
-                            "query_str": query_str,
-                            "daily_report_list": list
-                        }
-                    )
-                )
-                lark_message_id = resp["message_id"]
-
+            if resp_data and len(resp_data) == 0:
+                return {"success": "true", "data": []}
+            for m in resp_data:
+                reportTime = m.get("reportTime", "")
+                createUser = m.get("createUser", "")
+                senders = m.get("senders", "")
+                workSummaryString = m.get("workSummaryString", "")
+                id = m.get("id", "")
+                list.append({
+                    "reportTime": reportTime if reportTime is not None else "",
+                    "createUser": createUser if createUser is not None else "",
+                    "senders": senders if senders is not None else "",
+                    "workSummaryString": workSummaryString if workSummaryString is not None else "",
+                    "id": id if id is not None else ""
+                })
             return {
                 "success": "true",
                 "error_message": "",
-                "display_type": display_type,
-                "lark_message_id": lark_message_id,
-                "data": list
+                "action": {
+                    "action_name": "send_lark_form_card",
+                    "card_name": "daily_report_list_card"
+                },
+                "data": {
+                    "list": list,
+                    "query_str": query_str
+                }
             }
         except Exception as e:
             logging.error("日报查询工具运行异常：", e)
