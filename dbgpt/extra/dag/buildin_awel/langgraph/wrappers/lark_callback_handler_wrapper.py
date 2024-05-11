@@ -25,9 +25,11 @@ async def a_call(app_chat_service, event: Dict):
     if "action" in event:
         action = event['action']
         action_value = action['value']
-        if "event_source" in action_value:
+        if "event_type" in action_value:
             event_type = action_value["event_type"]
+        if "event_source" in action_value:
             event_source = action_value["event_source"]
+        if "event_data" in action_value:
             event_data = action_value["event_data"]
 
     if event_type == "new_chat":
