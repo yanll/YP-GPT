@@ -23,5 +23,19 @@ create table app_chat_history_message
     modified_time   datetime null default current_timestamp on update current_timestamp comment '更新时间'
 ) comment '应用会话历史';
 
+drop table app_feedback;
+create table app_feedback
+(
+    id              varchar(64) primary key comment '主键',
+    scope           varchar(64)  not null default '' comment '',
+    conv_uid        varchar(64)  not null default '' comment '会话用户',
+    lark_message_id varchar(128) not null default '' comment '飞书消息主键',
+    feedback        text null comment '反馈内容',
+    recommendation  text null comment '意见建议',
+    status          varchar(32)  not null default 'ENABLED' comment 'ENABLED、DISABLED、DELETED',
+    created_time    datetime null default current_timestamp comment '创建时间',
+    modified_time   datetime null default current_timestamp on update current_timestamp comment '更新时间'
+) comment '问题反馈';
+
 
 
