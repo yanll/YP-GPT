@@ -70,6 +70,15 @@ class DailyReportCollectTool(BaseTool):
                 return {"success": "false", "response_message": "the description of daily_report_content"}
             elif create_date == "":
                 return {"success": "false", "response_message": "the description of create_date"}
+
+            reuqires = []
+            if daily_report_content == "":
+                reuqires.append("daily_report_content")
+            if create_date == "":
+                reuqires.append("create_date")
+            if len(reuqires) > 0:
+                return {"success": "false", "response_message": "the description of " + str(reuqires)}
+
             return handle(
                 conv_id=conv_id,
                 daily_report_content=daily_report_content,
