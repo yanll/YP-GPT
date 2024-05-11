@@ -123,7 +123,7 @@ class LarkEventHandlerWrapper:
         if card_name == "weekly_report_collect":
             resp = lark_message_util.send_card_message(
                 receive_id=sender_open_id,
-                content=card_templates.create_requirement_card_content(
+                content=card_templates.create_weekly_report_card_content(
                     template_variable={
                         "card_metadata": {
                             "card_name": card_name,
@@ -154,7 +154,7 @@ class LarkEventHandlerWrapper:
         if card_name == "customer_visit_record_collect":
             resp = lark_message_util.send_card_message(
                 receive_id=sender_open_id,
-                content=card_templates.create_requirement_card_content(
+                content=card_templates.create_customer_visit_record_card_content(
                     template_variable={
                         "card_metadata": {
                             "card_name": card_name,
