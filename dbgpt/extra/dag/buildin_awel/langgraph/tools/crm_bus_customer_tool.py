@@ -144,12 +144,14 @@ def do_collect(
         客户重要程度：一般商户
         """
         print("发送飞书提报卡片：", conv_id)
-        if industry_line == "Web3.0行业线" or industry_line == "外综服行业线":
+        if industry_line == "Web3.0行业线" or industry_line == "外综服行业线" or industry_line == "大出行项目组":
             business_type = ''
             if industry_line == "Web3.0行业线":
                 business_type = 'Web3.0'
             elif industry_line == "外综服行业线":
                 business_type = '外综服'
+            elif industry_line == "大出行项目组":
+                business_type = '其他'
             lark_message_util.send_card_message(
                 receive_id=conv_id,
                 content=card_templates.create_crm_bus_customer_card_content.Web3_or_ForeignComprehensiveService(

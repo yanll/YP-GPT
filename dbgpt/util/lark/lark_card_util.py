@@ -127,6 +127,7 @@ def card_options_for_industry_line() -> list:
         {"action_index": 3, "action_value": "大零售行业线", "text": "大零售行业线"},
         {"action_index": 4, "action_value": "跨境行业线", "text": "跨境行业线"},
         {"action_index": 5, "action_value": "外综服行业线", "text": "外综服行业线"},
+        {"action_index": 6, "action_value": "大出行项目组", "text": "大出行项目组"},
     ]
     return options
 
