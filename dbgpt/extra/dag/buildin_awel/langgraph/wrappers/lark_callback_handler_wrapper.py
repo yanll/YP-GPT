@@ -62,10 +62,6 @@ async def a_call(app_chat_service, event: Dict):
             return create_crm_bus_customer_for_crem(
                 open_id=open_id, form_value=form_value
             )
-        if event_source == 'requirement_search':
-            return create_requirement_search_for_lark_project(
-                token=token, union_id=union_id, form_value=form_value, event=event
-            )
         return result
 
     if "button_type" in action_value:
