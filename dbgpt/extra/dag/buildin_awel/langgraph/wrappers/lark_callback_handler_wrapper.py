@@ -72,7 +72,7 @@ async def a_call(app_chat_service, event: Dict):
             return create_crm_bus_customer_for_crem(
                 open_id=open_id, form_value=form_value
             )
-        if event_source == 'comment_collect':
+        if event_source == 'feedback_collect':
             print(str(event_data))
             print(str(form_value))
         return {}
@@ -279,11 +279,45 @@ def do_unlike(app_chat_service, open_id, original_message_id, message):
 
     lark_message_util.send_card_message(
         receive_id=open_id,
-        content=card_templates.comment_card_content(
+        content=card_templates.feedback_card_content(
             template_variable={
                 "submit_callback_event": {
                     "event_type": "submit",
-                    "event_source": "comment_collect",
+                    "event_source": "feedback_collect",
+                    "event_data": {
+                        "original_message_id": original_message_id
+                    }
+                },
+                "message": message
+            }
+        )
+    )
+
+    return {
+        "toast": {
+            "type": "info",
+            "content": "温馨提示",
+            "i18n": {
+                "zh_cn": "感谢您的反馈，我们会努力改进哦！",
+                "en_us": "submitted"
+            }
+        }
+    }
+
+def do_feedback(app_chat_service, open_id, original_message_id, message):
+    if original_message_id != "":
+        app_chat_service.a_update_app_chat_his_message_like_by_uid_mid(
+            comment_type="unlike", conv_uid=open_id,
+            message_id=original_message_id
+        )
+
+    lark_message_util.send_card_message(
+        receive_id=open_id,
+        content=card_templates.feedback_card_content(
+            template_variable={
+                "submit_callback_event": {
+                    "event_type": "submit",
+                    "event_source": "feedback_collect",
                     "event_data": {
                         "original_message_id": original_message_id
                     }
