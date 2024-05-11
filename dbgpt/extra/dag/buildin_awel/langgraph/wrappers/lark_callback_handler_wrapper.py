@@ -202,8 +202,9 @@ def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
     purchasing_channels=''
     payment_scene=''
     sales_channel=''
-    if industry_line == '航旅事业部':
-        purchasing_channels = form_value['purchasing_channels']
+    if industry_line == '航旅事业部' and 'sales_channel' in form_value:
+        purchasing_channels_raw = form_value['purchasing_channels']
+        purchasing_channels=[purchasing_channels_raw.split(':')[0], purchasing_channels_raw.split(':')[-1]]
         payment_scene = form_value['payment_scene']
         sales_channel = form_value['sales_channel']
 
