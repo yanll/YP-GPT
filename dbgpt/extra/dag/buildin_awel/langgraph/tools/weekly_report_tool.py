@@ -113,7 +113,7 @@ def handle(
         #         template_variable={
         #             "card_metadata": {
         #                 "card_name": "weekly_report_collect",
-        #                 "description": "周报收集表单"
+        #                 "card_description": "周报收集表单"
         #             },
         #             "weekly_report_next_week_plans": plans_description,
         #             "create_date": create_date,

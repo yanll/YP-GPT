@@ -1,3 +1,4 @@
+import asyncio
 import time
 from typing import Dict
 
@@ -9,31 +10,74 @@ from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_30DaysTrxTre_ca
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_api_wrapper
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_requirement_search
 
-
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import Day_30_TrxTre_card_tool
-from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import xxxxxx_card_send_requirement_search
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import card_send_requirement_search
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import larkutil
+from dbgpt.util.lark import larkutil, lark_card_util
 
 
-async def a_call(event: Dict):
+async def a_call(app_chat_service, event: Dict):
     print("lark_callback_handler_wrapper_a_call", event)
     result = {}
-    card_name = ""
     operator = event['operator']
     action = event['action']
+    action_value = None
     token = event['token']
+    event_type = ""
+    event_source = ""
+    event_data = None
     button_type = ""
     open_id = operator['open_id']
     union_id = operator['union_id']
-    # open_id or union_id
 
-    if "value" in action:
+    if "action" in event:
+        action = event['action']
         action_value = action['value']
-        if "card_name" in action_value:
-            card_name = action_value['card_name']
-        if "button_type" in action_value:
-            button_type = action_value['button_type']
+        if "event_source" in action_value:
+            event_type = action_value["event_type"]
+            event_source = action_value["event_source"]
+            event_data = action_value["event_data"]
+
+    if event_type == "new_chat":
+        return do_new_chat(app_chat_service, open_id)
+
+    if event_type == "like":
+        return do_like(app_chat_service, open_id, event["context"]["open_message_id"])
+
+    if event_type == "unlike":
+        return do_unlike(app_chat_service, open_id, event["context"]["open_message_id"])
+
+    if event_type == "submit":
+        form_value = action['form_value']
+        # 需求收集表单
+        if event_source == "requirement_collect":
+            return create_requirement_for_lark_project(
+                token=token, union_id=union_id, form_value=form_value
+            )
+        if event_source == "daily_report_collect":
+            return create_daily_report_for_crem(
+                open_id=open_id, form_value=form_value
+            )
+        if event_source == "weekly_report_collect":
+            return create_weekly_report_for_crem(
+                open_id=open_id, form_value=form_value
+            )
+        if event_source == "customer_visit_record_collect":
+            return create_customer_visit_record_for_crem(
+                open_id=open_id, form_value=form_value
+            )
+        if event_source == 'crm_bus_customer_collect':
+            return create_crm_bus_customer_for_crem(
+                open_id=open_id, form_value=form_value
+            )
+        if event_source == 'requirement_search':
+            return create_requirement_search_for_lark_project(
+                token=token, union_id=union_id, form_value=form_value, event=event
+            )
+        return result
+
+    if "button_type" in action_value:
+        button_type = action_value['button_type']
     if button_type == 'merchant_detail':
         customerNo = action['value']['customerNo']
         customerName = action['value']['customerName']
@@ -55,43 +99,7 @@ async def a_call(event: Dict):
             report_id=id,
             report_time=report_time,
             conv_id=conv_id)
-    if "form_value" not in action:
-        # 非表单回调，按钮回调
-        print("表单内容为空，跳过执行：", event)
-        return result
-    form_value = action['form_value']
 
-    # 需求收集表单
-    if card_name == "requirement_collect":
-        result = create_requirement_for_lark_project(
-            token=token, union_id=union_id, form_value=form_value
-        )
-    elif card_name == "daily_report_collect":
-        result = create_daily_report_for_crem(
-            open_id=open_id, form_value=form_value
-        )
-    elif card_name == "weekly_report_collect":
-        result = create_weekly_report_for_crem(
-            open_id=open_id, form_value=form_value
-        )
-    elif card_name == "customer_visit_record_collect":
-        result = create_customer_visit_record_for_crem(
-            open_id=open_id, form_value=form_value
-        )
-    elif card_name == 'crm_bus_customer_collect':
-        result = create_crm_bus_customer_for_crem(
-            open_id=open_id, form_value=form_value
-        )
-    # elif card_name == 'requirement_search':
-    #     result = create_requirement_search_for_lark_project(
-    #         token=token, union_id=union_id, form_value=form_value,event = event
-    #     )
-    # elif card_name == 'requirement_search_callback':
-    #     result = card_send_requirement_callbacksearch(
-    #         token=token, union_id=union_id, form_value=form_value
-    #     )
-
-    print("lark_callback_handler_wrapper_a_call_result:", result)
     return result
 
 
@@ -162,6 +170,7 @@ def create_customer_visit_record_for_crem(open_id, form_value: Dict):
     print("拜访结果:", customer_visit_record)
     return {}
 
+
 def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
     customer_name = form_value['customer_name']
     customer_role = form_value['customer_role']
@@ -176,7 +185,7 @@ def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
     if industry_line == '大零售行业线':
         product_type = form_value['product_type']
 
-    #政务行业线独有字段
+    # 政务行业线独有字段
     zw_client_assets = ''
     zw_business_type = ''
     zw_province = ''
@@ -190,12 +199,6 @@ def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
         zw_system_vendor = form_value['zw_system_vendor']
         zw_signed_annual_gross_profit = form_value['zw_signed_annual_gross_profit']
         zw_customer_level = form_value['zw_customer_level']
-
-    #航旅事业部独有字段
-    customer_size = form_value['customer_size']
-    customer_profile = form_value['customer_profile']
-    important_step = form_value['important_step']
-
 
     customer_visit_record = crem_api_wrapper.add_crm_bus_customer(
         open_id=open_id,
@@ -213,24 +216,69 @@ def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
         zw_province=zw_province,
         zw_system_vendor=zw_system_vendor,
         zw_signed_annual_gross_profit=zw_signed_annual_gross_profit,
-        zw_customer_level=zw_customer_level,
+        zw_customer_level=zw_customer_level
 
-        customer_size=customer_size,
-        customer_profile=customer_profile,
-        important_step=important_step
     )
 
     print("添加报单客户信息结果:", customer_visit_record)
     return {}
 
-# def create_requirement_search_for_lark_project(token, event,union_id: str, form_value: Dict):
-#     return card_send_requirement_search.card_send_requirement_callbacksearch(
-#         conv_id=event['operator']['open_id'],
-#         token=token,
-#         project_key="ypgptapi",
-#         union_id=union_id,
-#         business_value=form_value['industry_line'],
-#         priority_value=form_value['emergency_level'],
-#         requirement_create_name=form_value['requirement_create_name']
-#
-#     )
+
+def create_requirement_search_for_lark_project(token, event, union_id: str, form_value: Dict):
+    return card_send_requirement_search.card_send_requirement_callbacksearch(
+        conv_id=event['operator']['open_id'],
+        token=token,
+        project_key="ypgptapi",
+        union_id=union_id,
+        business_value=form_value['industry_line'],
+        priority_value=form_value['emergency_level'],
+        requirement_create_name=form_value['requirement_create_name'],
+
+    )
+
+
+def do_new_chat(app_chat_service, open_id):
+    asyncio.create_task(
+        app_chat_service.a_disable_app_chat_his_message_by_uid(open_id)
+    )
+    lark_card_util.send_message_with_welcome(
+        receive_id=open_id,
+        template_variable={
+            "message_content": "已开启新会话！"
+        }
+    )
+    return {}
+
+
+def do_like(app_chat_service, open_id, open_message_id):
+    app_chat_service.a_update_app_chat_his_message_like_by_uid_mid(
+        comment_type="like", conv_uid=open_id,
+        message_id=open_message_id
+    )
+    return {
+        "toast": {
+            "type": "info",
+            "content": "温馨提示",
+            "i18n": {
+                "zh_cn": "感谢您的点赞！",
+                "en_us": "submitted"
+            }
+        }
+    }
+
+
+def do_unlike(app_chat_service, open_id, open_message_id):
+    app_chat_service.a_update_app_chat_his_message_like_by_uid_mid(
+        comment_type="unlike", conv_uid=open_id,
+        message_id=open_message_id
+    )
+    return {
+        "toast": {
+            "type": "info",
+            "content": "温馨提示",
+            "i18n": {
+                "zh_cn": "感谢您的反馈，我们会努力改进哦！",
+                "en_us": "submitted"
+            }
+        }
+    }

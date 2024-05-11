@@ -21,55 +21,11 @@ class LarkCallbackHandler:
         event_id = headers['event_id']
         event = input_body['event']
         asyncio.create_task(
-            lark_callback_handler_wrapper.a_call(event)
+            lark_callback_handler_wrapper.a_call(self.app_chat_service, event)
         )
-        # my_thread = threading.Thread(target=lark_callback_handler_wrapper.a_call, args=(event,))
+        # my_thread = threading.Thread(target=lark_callback_handler_wrapper.a_call, args=(self.app_chat_service, event,))
         # my_thread.daemon = True
         # my_thread.start()
-        print("回复需求卡片交互")
-        operator = event['operator']
-        open_id = operator['open_id']
-        if "action" in event:
-            action = event['action']
-            action_value = action['value']
-            self.app_chat_service.a_update_app_chat_his_message_like_by_uid_mid(
-                comment_type=action_value, conv_uid=open_id,
-                message_id=event["context"]["open_message_id"]
-            )
-            if action_value == "like":
-                return {
-                    "toast": {
-                        "type": "info",
-                        "content": "温馨提示",
-                        "i18n": {
-                            "zh_cn": "感谢您的点赞！",
-                            "en_us": "submitted"
-                        }
-                    }
-                }
-            if action_value == "unlike":
-                return {
-                    "toast": {
-                        "type": "info",
-                        "content": "温馨提示",
-                        "i18n": {
-                            "zh_cn": "感谢您的反馈，我们会努力改进哦！",
-                            "en_us": "submitted"
-                        }
-                    }
-                }
-            if action_value == "new_chat":
-                asyncio.create_task(
-                    self.app_chat_service.a_disable_app_chat_his_message_by_uid(open_id)
-                )
-                lark_card_util.send_message_with_welcome(
-                    receive_id=open_id,
-                    template_variable={
-                        "message_content": "已开启新会话！"
-                    }
-                )
-                return {}
-        print("需求交互操作成功")
         return {
             "toast": {
                 "type": "info",
