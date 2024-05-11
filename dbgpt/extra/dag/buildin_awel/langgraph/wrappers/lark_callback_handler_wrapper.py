@@ -191,6 +191,11 @@ def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
         zw_signed_annual_gross_profit = form_value['zw_signed_annual_gross_profit']
         zw_customer_level = form_value['zw_customer_level']
 
+    #航旅事业部独有字段
+    customer_size = form_value['customer_size']
+    customer_profile = form_value['customer_profile']
+    important_step = form_value['important_step']
+
 
     customer_visit_record = crem_api_wrapper.add_crm_bus_customer(
         open_id=open_id,
@@ -208,8 +213,11 @@ def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
         zw_province=zw_province,
         zw_system_vendor=zw_system_vendor,
         zw_signed_annual_gross_profit=zw_signed_annual_gross_profit,
-        zw_customer_level=zw_customer_level
+        zw_customer_level=zw_customer_level,
 
+        customer_size=customer_size,
+        customer_profile=customer_profile,
+        important_step=important_step
     )
 
     print("添加报单客户信息结果:", customer_visit_record)

@@ -104,7 +104,7 @@ class create_crm_bus_customer_card_content:
     @staticmethod
     def AirTravel(template_variable: Dict):
         template_id = "AAq3OtM7vxU1e"
-        template_version_name = "1.0.0"
+        template_version_name = "1.0.2"
         card = {
             "type": "template",
             "data": {
