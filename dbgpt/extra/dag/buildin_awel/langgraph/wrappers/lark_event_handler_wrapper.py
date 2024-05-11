@@ -240,7 +240,7 @@ class LarkEventHandlerWrapper:
                             }
                         },
                         "query_str": data["query_str"],
-                        "merchant_list": data["list"]
+                        "requirement_search_list": data["list"]
                     }
                 )
             )
