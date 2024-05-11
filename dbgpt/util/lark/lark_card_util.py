@@ -310,7 +310,7 @@ def card_options_for_customer_size() -> list:
 
 def card_options_for_important_step() -> list:
     data = [
-        "潜在客户", "确认合作意向", "方案阶段", "洽谈签约", "洽谈签约"
+        "潜在客户", "确认合作意向", "方案阶段", "洽谈签约", "提单阶段"
     ]
     """值必须和飞书项目一致"""
     options = []
