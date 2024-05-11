@@ -11,7 +11,6 @@ from dbgpt.util.lark import lark_card_util
 
 async def a_call(app_chat_service, event: Dict):
     print("lark_callback_handler_wrapper_a_call", event)
-    result = {}
     operator = event['operator']
     action = event['action']
     action_value = None
@@ -19,7 +18,6 @@ async def a_call(app_chat_service, event: Dict):
     event_type = ""
     event_source = ""
     event_data = None
-    button_type = ""
     open_id = operator['open_id']
     union_id = operator['union_id']
 
@@ -68,33 +66,30 @@ async def a_call(app_chat_service, event: Dict):
             return create_crm_bus_customer_for_crem(
                 open_id=open_id, form_value=form_value
             )
-        return result
+        return {}
 
     if event_type == 'merchant_detail':
         customerNo = action_value['customerNo']
         customerName = action_value['customerName']
         print('查询商户的编号', customerNo)
-        result = Day_30_TrxTre_card_tool.user_crem_30DaysTrxTre_card(
+        return Day_30_TrxTre_card_tool.user_crem_30DaysTrxTre_card(
             open_id=open_id,
             customer_id=customerNo,
             customerName=customerName,
             conv_id=open_id)
 
-    if "button_type" in action_value:
-        button_type = action_value['button_type']
-    elif button_type == 'daily_report_detail':
+    if event_type == 'daily_report_detail':
         id = action['value']['id']
         report_time = action['value']['report_time']
         conv_id = event['operator']['open_id']
         print('查询日报的编号', id)
         print('对应销售的名称', report_time)
-        result = card_send_daily_report_search.card_send_daily_report_search(
+        return card_send_daily_report_search.card_send_daily_report_search(
             open_id=open_id,
             report_id=id,
             report_time=report_time,
             conv_id=conv_id)
-
-    return result
+    return {}
 
 
 def create_requirement_for_lark_project(token, union_id: str, form_value: Dict):
