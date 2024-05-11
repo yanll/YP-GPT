@@ -16,7 +16,7 @@ def create_card_content_by_template(template_id: str, template_version_name: str
 def create_requirement_card_content(template_variable: Dict):
     """需求提报表单"""
     template_id = "AAqkjMFhiuVwF"
-    template_version_name = "1.0.58"
+    template_version_name = "1.0.59"
 
     card = {
         "type": "template",
@@ -149,7 +149,7 @@ def create_weekly_report_card_content(template_variable: Dict):
 def create_customer_visit_record_card_content(template_variable: Dict):
     """拜访表单"""
     template_id = "AAqkjMxmwdE8s"
-    template_version_name = "1.0.19"
+    template_version_name = "1.0.21"
 
     card = {
         "type": "template",
