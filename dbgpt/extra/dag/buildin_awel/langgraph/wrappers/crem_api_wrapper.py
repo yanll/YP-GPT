@@ -77,7 +77,10 @@ def add_crm_bus_customer(open_id: str,
                          zw_customer_level: str = '',
                          customer_size: str = '',
                          customer_profile: str = '',
-                         important_step: str = ''
+                         important_step: str = '',
+                         purchasing_channels: str = '',
+                         payment_scene: str = '',
+                         sales_channel: str = '',
                          ):
     url = envutils.getenv("CREM_ENDPOINT") + "/crmCustomer/addCrmBusCustomer"
     headers = {
@@ -117,7 +120,6 @@ def add_crm_bus_customer(open_id: str,
         "customerSize": customer_size,
         "customerProfile": customer_profile,
         "importantStep": important_step
-
 
     }
     print("提交添加报单客户信息到CREM：", data)
