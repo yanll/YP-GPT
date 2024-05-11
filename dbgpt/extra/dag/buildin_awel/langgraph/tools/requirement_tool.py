@@ -30,7 +30,7 @@ class RequirementCollectInput(BaseModel):
     )
     industry_line: str = Field(
         name="行业线",
-        description="行业线，" +
+        description="行业线：" +
                     lark_card_util.card_options_to_input_field_description(
                         lark_card_util.card_options_for_requirement_industry_line()
                     ),
@@ -54,10 +54,11 @@ class RequirementCollectInput(BaseModel):
 class RequirementCollectTool(BaseTool):
     name: str = "requirement_collect_tool"
     description: str = (
-        "这是一个需求收集工具，用于收集用户工作中的需求、对某个事物的要求、或其他痛点等信息，但是你不能查询需求，只能收集和填写需求，不能查询需求"
-        "当需要收集需求数据时非常有用。 "
-        "能够尽可能全的收集需求信息。"
-        "调用本工具需要的参数值均来自用户的输入，可以默认为空，但是禁止随意编造。"
+        "这是一个需求收集工具，用于收集用户工作中的需求、对某个事物的要求、或其他痛点等信息。\n"
+        "当需要提交需要或收集需求数据时非常有用。 \n"
+        "能够尽可能全的收集需求信息。\n"
+        "请注意：\n"
+        "1、调用本工具需要的参数值来自用户输入，可以默认为空，但是禁止随意编造。\n"
         ""
     )
     args_schema: Type[BaseModel] = RequirementCollectInput
@@ -73,14 +74,17 @@ class RequirementCollectTool(BaseTool):
     ):
         print("开始运行需求收集工具：", conv_id, requirement_content)
         try:
+            reuqires = []
             if requirement_content == "":
-                return {"success": "false", "response_message": "the description of requirement_content"}
-            elif industry_line == "":
-                return {"success": "false", "response_message": "the description of industry_line"}
-            elif expected_completion_date == "":
-                return {"success": "false", "response_message": "the description of expected_completion_date"}
-            elif emergency_level == "":
-                return {"success": "false", "response_message": "the description of emergency_level"}
+                reuqires.append("requirement_content")
+            if industry_line == "":
+                reuqires.append("industry_line")
+            if expected_completion_date == "":
+                reuqires.append("expected_completion_date")
+            if emergency_level == "":
+                reuqires.append("emergency_level")
+            if len(reuqires) > 0:
+                return {"success": "false", "response_message": "the description of " + str(reuqires)}
             return handle(
                 conv_id=conv_id,
                 requirement_content=requirement_content,
