@@ -66,10 +66,6 @@ class DailyReportCollectTool(BaseTool):
         """Use the tool."""
         print("开始运行日报填写工具：", conv_id, daily_report_content)
         try:
-            if daily_report_content == "":
-                return {"success": "false", "response_message": "the description of daily_report_content"}
-            elif create_date == "":
-                return {"success": "false", "response_message": "the description of create_date"}
 
             reuqires = []
             if daily_report_content == "":
