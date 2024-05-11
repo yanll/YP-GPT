@@ -89,7 +89,7 @@ def card_options_for_requirement_emergency_level() -> list:
         {"action_index": 3, "action_value": "2", "text": "高"},
         {"action_index": 4, "action_value": "99", "text": "中"},
         {"action_index": 5, "action_value": "1sdyyo6lh", "text": "低"}
-        #1sdyyo6lh
+        # 1sdyyo6lh
     ]
     return options
 
@@ -197,21 +197,41 @@ class card_options_for_business_type:
         ]
         return options
 
-    @staticmethod
-    def AirTravel():
+    class AirTravel:
+        @staticmethod
+        def Category_I():
+            data = {
+                '出行': ['出行平台商及服务商', '共享出行', '火车票', '汽车票', '出行周边服务商'],
+                '通信': ['通信'],
+                '酒店住宿': ['单体酒店', '民俗公寓等集团', '酒店集团', '系统商', '酒店周边', '酒店代理/包房商']
+            }
+            """值必须和飞书项目一致"""
+            options = []
+            for index, aspect in enumerate(data):
+                for sub_aspect in data[aspect]:
+                    option = {"action_index": index + 1, "action_value": f"{aspect}:{sub_aspect}",
+                              "text": f"{aspect}:{sub_aspect}"}
+                    options.append(option)
+            return options
 
-        data = {
-            '出行':['出行平台商及服务商','共享出行','火车票','汽车票','出行周边服务商'],
-            '通信': ['通信'],
-            '酒店住宿': ['单体酒店','民俗公寓等集团','酒店集团','系统商','酒店周边','酒店代理/包房商']
-        }
-        """值必须和飞书项目一致"""
-        options = []
-        for index, aspect in enumerate(data):
-            for sub_aspect in data[aspect]:
-                option={"action_index": index + 1, "action_value": f"{aspect}:{sub_aspect}", "text": f"{aspect}:{sub_aspect}"}
-                options.append(option)
-        return options
+        @staticmethod
+        def Category_II():
+            data = {
+                '旅游': ['文旅集团/综合体', '旅行社', '景区', '周边游/本地生活', '旅游周边'],
+                '航空': ['航司', '票代', 'TMC', 'OTA', '其他航空业务', '票代TMC']
+            }
+            """值必须和飞书项目一致"""
+            options = []
+            for index, aspect in enumerate(data):
+                for sub_aspect in data[aspect]:
+                    option = {"action_index": index + 1, "action_value": f"{aspect}:{sub_aspect}",
+                              "text": f"{aspect}:{sub_aspect}"}
+                    options.append(option)
+            return options
+
+        @staticmethod
+        def description():
+            return "所属行业的分类，共有两个选项：第一类、第二类。第一类中包括出行、通信、酒店住宿。第二类包括旅游、航空。"
 
 
 def card_options_for_customer_source() -> list:
@@ -276,9 +296,10 @@ def card_options_for_zw_province() -> list:
         options.append({"action_index": index + 1, "action_value": option, "text": option})
     return options
 
+
 def card_options_for_customer_size() -> list:
     data = [
-        "10人以内","10-20人","21人-50人","51人-200人","201人-500人","500人以上"
+        "10人以内", "10-20人", "21人-50人", "51人-200人", "201人-500人", "500人以上"
     ]
     """值必须和飞书项目一致"""
     options = []
@@ -286,14 +307,57 @@ def card_options_for_customer_size() -> list:
         options.append({"action_index": index + 1, "action_value": option, "text": option})
     return options
 
+
 def card_options_for_important_step() -> list:
     data = [
-        "潜在客户","确认合作意向","方案阶段","洽谈签约","洽谈签约"
+        "潜在客户", "确认合作意向", "方案阶段", "洽谈签约", "洽谈签约"
     ]
     """值必须和飞书项目一致"""
     options = []
     for index, option in enumerate(data):
         options.append({"action_index": index + 1, "action_value": option, "text": option})
+    return options
+
+
+def card_options_for_purchasing_channels() -> list:
+    data = {
+        '机票': ['无', '携程', '去哪儿', '同程', '美团', '飞猪', '航旅纵横', '智行', '航司直采', '其他渠道'],
+        '旅游': ['无', '携程', '去哪儿', '同程', '美团', '途牛', '智行', '喜玩', '其他渠道'],
+        '酒店': ['无', '携程', '去哪儿', '同程', '美团', '途牛', '艺龙', '喜玩', '汇智酒店B2B', '绿云酒店库存',
+                 '龙腾捷旅', 'Agoda', 'Booking', 'Taap-Expedia', 'Webbeds', 'Hotelbeds', '其他渠道'],
+    }
+    """值必须和飞书项目一致"""
+    options = []
+    for index, aspect in enumerate(data):
+        for sub_aspect in data[aspect]:
+            option = {"action_index": index + 1, "action_value": f"{aspect}:{sub_aspect}",
+                      "text": f"{aspect}:{sub_aspect}"}
+            options.append(option)
+    return options
+
+
+def card_options_for_payment_scene() -> list:
+    """值必须和飞书项目一致"""
+    options = [
+        {"action_index": 1, "action_value": "线上", "text": "线上"},
+        {"action_index": 2, "action_value": "线下", "text": "线下"},
+    ]
+    return options
+
+def card_options_for_sales_channel() -> list:
+    """值必须和飞书项目一致"""
+    options = [
+        {"action_index": 1, "action_value": "无", "text": "无"},
+        {"action_index": 2, "action_value": "抖音APP", "text": "抖音APP"},
+        {"action_index": 3, "action_value": "微信小程序", "text": "微信小程序"},
+        {"action_index": 4, "action_value": "微信公众号", "text": "微信公众号"},
+        {"action_index": 5, "action_value": "支付宝小程序", "text": "支付宝小程序"},
+        {"action_index": 6, "action_value": "支付宝生活号", "text": "支付宝生活号"},
+        {"action_index": 7, "action_value": "小红书APP", "text": "小红书APP"},
+        {"action_index": 8, "action_value": "自营官网", "text": "自营官网"},
+        {"action_index": 9, "action_value": "APP", "text": "APP"},
+        {"action_index": 10, "action_value": "其他", "text": "其他"},
+    ]
     return options
 
 
