@@ -45,11 +45,9 @@ class SalesAssistant:
                 SystemMessagePromptTemplate.from_template(
                     template="You are a helpful ai assistant."
                              "\n"
-                             "Please answer in simplified Chinese.\n"
-                             "\n"
-                             "Answer the following questions as best you can.\n"
+                             "Answer the following questions as best you can and answer in simplified Chinese.\n"
                              "You can access to the provided tools.\n"
-                             "The value of parameters in tools must be extract from human's message, It can be an empty string, but fabrication is not allowed.\n"
+                             "The value of parameters in tools must be extract from human's input, It can be an empty string, but fabrication is not allowed.\n"
                              ""
                 ),
                 SystemMessagePromptTemplate.from_template(

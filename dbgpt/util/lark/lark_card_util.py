@@ -128,13 +128,15 @@ def card_options_for_industry_line() -> list:
         {"action_index": 3, "action_value": "大零售行业线", "text": "大零售行业线"},
         {"action_index": 4, "action_value": "跨境行业线", "text": "跨境行业线"},
         {"action_index": 5, "action_value": "外综服行业线", "text": "外综服行业线"},
+        {"action_index": 6, "action_value": "大出行项目组", "text": "大出行项目组"},
+        {"action_index": 7, "action_value": "政务行业线", "text": "政务行业线"},
     ]
     return options
 
 
 class card_options_for_business_type:
-
     """值必须和飞书项目一致"""
+
     @staticmethod
     def Finance():
         options = [
@@ -179,6 +181,20 @@ class card_options_for_business_type:
         ]
         return options
 
+    @staticmethod
+    def Government():
+        options = [
+            {"action_index": 1, "action_value": "公立院校", "text": "加油站/能源"},
+            {"action_index": 2, "action_value": "民办学院", "text": "供应链平台"},
+            {"action_index": 3, "action_value": "私立学校", "text": "撮合型平台(电商)"},
+            {"action_index": 4, "action_value": "事业单位", "text": "品牌连锁直/分销"},
+            {"action_index": 5, "action_value": "政府机构", "text": "二手市场买卖"},
+            {"action_index": 6, "action_value": "协会性质", "text": "人力资源劳务发放"},
+            {"action_index": 7, "action_value": "基金会及下属关联企业项目(有函件或批文证明关联关系)",
+             "text": "税务科技"},
+            {"action_index": 8, "action_value": "其他", "text": "其他"},
+        ]
+        return options
 
 
 def card_options_for_customer_source() -> list:
@@ -206,6 +222,55 @@ def card_options_for_customer_importance() -> list:
     ]
     return options
 
+
+def card_options_for_zw_client_assets() -> list:
+    """值必须和飞书项目一致"""
+    options = [
+        {"action_index": 1, "action_value": "是", "text": "是"},
+        {"action_index": 2, "action_value": "否", "text": "否"},
+    ]
+    return options
+
+
+def card_options_for_zw_business_type() -> list:
+    """值必须和飞书项目一致"""
+    options = [
+        {"action_index": 1, "action_value": "支付", "text": "支付"},
+        {"action_index": 2, "action_value": "支付+票据", "text": "支付+票据"},
+        {"action_index": 3, "action_value": "票据", "text": "票据"},
+        {"action_index": 4, "action_value": "系统服务", "text": "系统服务"},
+        {"action_index": 5, "action_value": "其他", "text": "其他"},
+    ]
+    return options
+
+
+def card_options_for_zw_province() -> list:
+    data = [
+        "北京市",
+        "天津市", "上海市", "河北省", "山西省", "辽宁省", "吉林省", "黑龙江省", "江苏省", "浙江省", "安徽省", "福建省",
+        "江西省", "山东省", "河南省", "湖北省", "湖南省", "广东省", "海南省", "四川省", "贵州省", "云南省", "陕西省",
+        "甘肃省", "青海省", "台湾省", "内蒙古自治区", "广西壮族自治区", "西藏自治区",
+        "宁夏回族自治区", "新疆维吾尔自治区", "香港特别行政区", "澳门特别行政区",
+
+    ]
+    """值必须和飞书项目一致"""
+    options = []
+    for index, option in enumerate(data):
+        options.append({"action_index": index + 1, "action_value": option, "text": option})
+    return options
+
+
+def card_options_for_zw_customer_level() -> list:
+    """值必须和飞书项目一致"""
+    options = [
+        {"action_index": 1, "action_value": "中央", "text": "中央"},
+        {"action_index": 2, "action_value": "省级", "text": "省级"},
+        {"action_index": 3, "action_value": "地市", "text": "地市"},
+        {"action_index": 4, "action_value": "其他", "text": "其他"},
+    ]
+    return options
+
+
 def card_options_for_product_type() -> list:
     """值必须和飞书项目一致"""
     options = [
@@ -216,6 +281,7 @@ def card_options_for_product_type() -> list:
         {"action_index": 5, "action_value": "网站", "text": "网站"}
     ]
     return options
+
 
 def card_options_for_visit_methods() -> list:
     """拜访形式"""
