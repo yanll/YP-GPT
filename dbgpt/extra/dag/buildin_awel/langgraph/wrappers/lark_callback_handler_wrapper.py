@@ -11,6 +11,7 @@ from dbgpt.util.lark import lark_card_util
 
 async def a_call(app_chat_service, event: Dict):
     print("lark_callback_handler_wrapper_a_call", event)
+    result = {}
     operator = event['operator']
     action = event['action']
     action_value = None
@@ -18,6 +19,7 @@ async def a_call(app_chat_service, event: Dict):
     event_type = ""
     event_source = ""
     event_data = None
+    button_type = ""
     open_id = operator['open_id']
     union_id = operator['union_id']
 
@@ -66,30 +68,33 @@ async def a_call(app_chat_service, event: Dict):
             return create_crm_bus_customer_for_crem(
                 open_id=open_id, form_value=form_value
             )
-        return {}
+        return result
 
     if event_type == 'merchant_detail':
         customerNo = action_value['customerNo']
         customerName = action_value['customerName']
         print('查询商户的编号', customerNo)
-        return Day_30_TrxTre_card_tool.user_crem_30DaysTrxTre_card(
+        result = Day_30_TrxTre_card_tool.user_crem_30DaysTrxTre_card(
             open_id=open_id,
             customer_id=customerNo,
             customerName=customerName,
             conv_id=open_id)
 
-    if event_type == 'daily_report_detail':
+    if "button_type" in action_value:
+        button_type = action_value['button_type']
+    elif button_type == 'daily_report_detail':
         id = action['value']['id']
         report_time = action['value']['report_time']
         conv_id = event['operator']['open_id']
         print('查询日报的编号', id)
         print('对应销售的名称', report_time)
-        return card_send_daily_report_search.card_send_daily_report_search(
+        result = card_send_daily_report_search.card_send_daily_report_search(
             open_id=open_id,
             report_id=id,
             report_time=report_time,
             conv_id=conv_id)
-    return {}
+
+    return result
 
 
 def create_requirement_for_lark_project(token, union_id: str, form_value: Dict):
@@ -194,13 +199,17 @@ def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
     if industry_line == '航旅事业部':
         important_step = form_value['important_step']
     # 航旅中第二类
-    purchasing_channels = ''
-    payment_scene = ''
-    sales_channel = ''
-    if industry_line == '航旅事业部':
-        purchasing_channels = form_value['purchasing_channels']
+    purchasing_channels=''
+    payment_scene=''
+    sales_channel=''
+    if industry_line == '航旅事业部' and 'sales_channel' in form_value:
+        purchasing_channels_raw = form_value['purchasing_channels']
+        purchasing_channels=[purchasing_channels_raw.split(':')[0], purchasing_channels_raw.split(':')[-1]]
         payment_scene = form_value['payment_scene']
         sales_channel = form_value['sales_channel']
+
+
+
 
     customer_visit_record = crem_api_wrapper.add_crm_bus_customer(
         open_id=open_id,
