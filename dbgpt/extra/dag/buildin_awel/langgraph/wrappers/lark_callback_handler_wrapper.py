@@ -67,6 +67,9 @@ async def a_call(app_chat_service, event: Dict):
             return create_crm_bus_customer_for_crem(
                 open_id=open_id, form_value=form_value
             )
+        if event_source == 'comment_collect':
+            print(str(event_data))
+            print(str(form_value))
         return {}
 
     if event_type == 'merchant_detail':
@@ -274,7 +277,10 @@ def do_unlike(app_chat_service, open_id, open_message_id, message):
             template_variable={
                 "submit_callback_event": {
                     "event_type": "submit",
-                    "event_source": "comment_collect"
+                    "event_source": "comment_collect",
+                    "event_data": {
+                        "original_message_id": open_message_id
+                    }
                 },
                 "open_message_id": open_message_id,
                 "message": message
