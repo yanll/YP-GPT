@@ -3,9 +3,8 @@ import json
 import logging
 from typing import Dict, List, Optional, Union, Tuple
 
-from dbgpt.agent import AgentMessage
-from dbgpt.agent.actions.action import ActionOutput
-from dbgpt.agent.actions.demand_action import DemandAction
+from dbgpt.agent import AgentMessage, ActionOutput
+from dbgpt.agent.expand.actions.demand_action import DemandAction
 from dbgpt.agent.resource.resource_api import ResourceType
 from dbgpt.agent.resource.resource_lark_api import ResourceLarkClient
 from dbgpt.core import ModelMessageRoleType
