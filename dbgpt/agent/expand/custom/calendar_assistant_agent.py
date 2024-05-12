@@ -3,10 +3,9 @@ import logging
 import time
 from typing import Dict, List, Optional, Union, Tuple
 
-from dbgpt.agent import AgentMessage
-from dbgpt.agent.actions.action import ActionOutput
-from dbgpt.agent.actions.calendar_action import CalendarAction
+from dbgpt.agent import AgentMessage, ActionOutput
 from dbgpt.agent.core.base_agent import ConversableAgent
+from dbgpt.agent.expand.actions.calendar_action import CalendarAction
 from dbgpt.agent.resource.resource_api import ResourceType, ResourceClient
 from dbgpt.agent.resource.resource_lark_api import ResourceLarkClient
 from dbgpt.core import ModelMessageRoleType
