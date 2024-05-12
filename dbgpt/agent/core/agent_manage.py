@@ -79,8 +79,8 @@ class AgentManager(BaseComponent):
         core_agents.add(self.register_agent(DataScientistAgent))
         core_agents.add(self.register_agent(SummaryAssistantAgent))
         core_agents.add(self.register_agent(PluginAssistantAgent))
-        core_agents.add(self.register_agent(CalendarAssistantAgent))
-        core_agents.add(self.register_agent(ProductionAssistantAgent))
+        # core_agents.add(self.register_agent(CalendarAssistantAgent))
+        # core_agents.add(self.register_agent(ProductionAssistantAgent))
         self._core_agents = core_agents
 
     def register_agent(
