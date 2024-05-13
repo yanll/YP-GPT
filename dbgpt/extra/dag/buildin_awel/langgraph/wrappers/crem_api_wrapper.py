@@ -167,6 +167,33 @@ def get_crm_user_industry_line(open_id: str) -> str:
     return ''
 
 
+def query_crm_bus_customer(open_id: str, data={}):
+    url = envutils.getenv("CREM_ENDPOINT") + "/crmCustomer/findCrmBusCustomer"
+    headers = {
+        "pagetype": "cemPortal",
+        "Content-Type": "application/json; charset=utf-8",
+        "yuiassotoken": ssoutil.get_sso_credential(open_id=open_id)
+    }
+
+    print("开始查询报单")
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    try:
+        print(response.json())
+        resp = response.json()
+        if response.status_code != 200:
+            logging.error("用户凭证接口异常：" + str(response.status_code))
+            raise ValueError("获取开始查询报单" + str(response.status_code))
+        print(resp['data']['list'])
+        if len(resp['data']['list']) == 0:
+            return '查询结果为空'
+        return resp['data']['list']
+
+    except Exception as e:
+        logging.error("解析查询报单出错", e)
+        raise e
+    return '解析查询报单出错'
+
+
 def get_crm_user_name(open_id: str) -> str:
     url = envutils.getenv("CREM_ENDPOINT") + "/user/userInfoByUserId"
     headers = {
