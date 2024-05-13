@@ -210,7 +210,7 @@ class LarkEventHandlerWrapper:
         if card_name == "daily_report_list_card":
             resp = lark_message_util.send_card_message(
                 receive_id=sender_open_id,
-                content=card_templates.search_daily_report_card_content(
+                content=card_templates.create_search_daily_report_card_content(
                     template_variable={
                         "unlike_callback_event": {
                             "event_type": "unlike",
@@ -230,7 +230,7 @@ class LarkEventHandlerWrapper:
         if card_name == "requirement_search_list":
             resp = lark_message_util.send_card_message(
                 receive_id=sender_open_id,
-                content=card_templates.requirement_search_list_card_content(
+                content=card_templates.create_requirement_search_list_card_content(
                     template_variable={
                         "unlike_callback_event": {
                             "event_type": "unlike",

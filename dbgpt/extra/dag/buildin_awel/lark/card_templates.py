@@ -194,7 +194,7 @@ def create_merchant_list_card_content(template_variable: Dict):
     return card
 
 
-def search_daily_report_card_content(template_variable: Dict):
+def create_search_daily_report_card_content(template_variable: Dict):
     """日报查询"""
     template_id = "AAqkZz4JvpXQR"
     template_version_name = "1.0.8"
@@ -209,7 +209,7 @@ def search_daily_report_card_content(template_variable: Dict):
     return card
 
 
-def search_daily_report_id_card_content(template_variable: Dict):
+def create_search_daily_report_id_card_content(template_variable: Dict):
     """日报详情查询"""
     template_id = "AAqkart7DnGFW"
     template_version_name = "1.0.5"
@@ -224,7 +224,7 @@ def search_daily_report_id_card_content(template_variable: Dict):
     return card
 
 
-def requirement_search_card_content(template_variable: Dict):
+def create_requirement_search_card_content(template_variable: Dict):
     """需求查询"""
     template_id = "AAqk5wmyPFr8z"
     template_version_name = "1.0.2"
@@ -239,7 +239,7 @@ def requirement_search_card_content(template_variable: Dict):
     return card
 
 
-def requirement_search_list_card_content(template_variable: Dict):
+def create_requirement_search_list_card_content(template_variable: Dict):
     """需求查询列表展示"""
     template_id = "AAqklS3kyRc0R"
     template_version_name = "1.0.9"
@@ -254,7 +254,7 @@ def requirement_search_list_card_content(template_variable: Dict):
     return card
 
 
-def feedback_card_content(template_variable: Dict):
+def create_feedback_card_content(template_variable: Dict):
     """需求查询列表展示"""
     template_id = "AAqkEvmXj7MSH"
     template_version_name = "1.0.6"
