@@ -257,7 +257,7 @@ def create_requirement_search_list_card_content(template_variable: Dict):
 def create_feedback_card_content(template_variable: Dict):
     """需求查询列表展示"""
     template_id = "AAqkEvmXj7MSH"
-    template_version_name = "1.0.11"
+    template_version_name = "1.0.8"
 
     card = {
         "type": "template",
