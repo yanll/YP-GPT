@@ -45,6 +45,7 @@ def get_sso_credential(open_id: str):
         text = resp.text
         logging.info("UIA用户：" + text)
         dict = json.loads(text)
+        print("UIA用户加载完成")
         code = dict['code']
         if code != "200":
             logging.error("UIA用户查询业务异常：" + resp.text)
