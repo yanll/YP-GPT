@@ -101,7 +101,6 @@ class RAGLarkHandler:
                 if idx == 0 :
                     response += '\r\n---'
                 
-                response += '\r\n'
                 name = chunk['docnm_kwd']
                 names = name.split("$$_$$")
                 file_name = names[len(names) - 1]
