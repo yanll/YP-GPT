@@ -182,7 +182,7 @@ def create_customer_visit_record_card_content(template_variable: Dict):
 def create_merchant_list_card_content(template_variable: Dict):
     """商户查询"""
     template_id = "AAqkXYlYpaLEf"
-    template_version_name = "1.0.21"
+    template_version_name = "1.0.30"
 
     card = {
         "type": "template",
@@ -242,7 +242,7 @@ def create_requirement_search_card_content(template_variable: Dict):
 def create_requirement_search_list_card_content(template_variable: Dict):
     """需求查询列表展示"""
     template_id = "AAqklS3kyRc0R"
-    template_version_name = "1.0.9"
+    template_version_name = "1.0.11"
 
     card = {
         "type": "template",
@@ -255,9 +255,9 @@ def create_requirement_search_list_card_content(template_variable: Dict):
 
 
 def create_feedback_card_content(template_variable: Dict):
-    """需求查询列表展示"""
+    """吐槽"""
     template_id = "AAqkEvmXj7MSH"
-    template_version_name = "1.0.6"
+    template_version_name = "1.0.8"
 
     card = {
         "type": "template",
@@ -272,7 +272,7 @@ def create_feedback_card_content(template_variable: Dict):
 def create_tool_tips_content(template_variable: Dict):
     """需求查询列表展示"""
     template_id = "AAq3fRz6x3j5O"
-    template_version_name = "1.0.0"
+    template_version_name = "1.0.1"
 
     card = {
         "type": "template",

@@ -31,6 +31,8 @@ create table app_feedback
     conv_uid        varchar(64)  not null default '' comment '会话用户',
     lark_message_id varchar(128) not null default '' comment '飞书消息主键',
     feedback        text null comment '反馈内容',
+    effect          text null comment '影响范围',
+    reference_url   varchar(512) null comment '参考链接',
     recommendation  text null comment '意见建议',
     status          varchar(32)  not null default 'ENABLED' comment 'ENABLED、DISABLED、DELETED',
     created_time    datetime null default current_timestamp comment '创建时间',
@@ -38,4 +40,3 @@ create table app_feedback
 ) comment '问题反馈';
 
 
-insert into app_feedback(id, scope, conv_uid, lark_message_id, feedback, recommendation)

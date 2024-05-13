@@ -80,7 +80,11 @@ async def a_call(app_chat_service, event: Dict):
             original_message_id = event_data["original_message_id"]
             feedback = form_value["feedback"]
             recommendation = form_value["recommendation"]
-            return do_feedback(app_chat_service, open_id, original_message_id, feedback, recommendation)
+            effect = form_value["effect"]
+            reference_url = form_value["reference_url"]
+            return do_feedback(
+                app_chat_service, open_id, original_message_id, feedback, recommendation, effect, reference_url
+            )
 
         return {}
 
@@ -88,7 +92,16 @@ async def a_call(app_chat_service, event: Dict):
         customerNo = action_value['customerNo']
         customerName = action_value['customerName']
         print('查询商户的编号', customerNo)
-        return Day_30_TrxTre_card_tool.user_crem_30DaysTrxTre_card(
+        return Day_30_TrxTre_card_tool.user_crem_30DaysTrxTre_card_maoli(
+            open_id=open_id,
+            customer_id=customerNo,
+            customerName=customerName,
+            conv_id=open_id)
+    if event_type == 'merchant_detail_two':
+        customerNo = action_value['customerNo']
+        customerName = action_value['customerName']
+        print('查询商户的编号', customerNo)
+        return Day_30_TrxTre_card_tool.user_crem_30DaysTrxTre_card_jiaoyi(
             open_id=open_id,
             customer_id=customerNo,
             customerName=customerName,
@@ -302,14 +315,16 @@ def do_unlike(app_chat_service, open_id, original_message_id, message):
     return {}
 
 
-def do_feedback(app_chat_service, conv_uid, lark_message_id, feedback, recommendation):
+def do_feedback(app_chat_service, conv_uid, lark_message_id, feedback, recommendation, effect, reference_url):
     rec = {
         "id": str(uuid.uuid1()),
         "scope": "SalesAssistant",
         "conv_uid": conv_uid,
         "lark_message_id": lark_message_id,
         "feedback": feedback,
-        "recommendation": recommendation
+        "recommendation": recommendation,
+        "effect": effect,
+        "reference_url": reference_url
     }
     app_chat_service.add_app_feedback(rec)
 
@@ -330,11 +345,74 @@ def do_send_tips(app_chat_service, open_id, event_source):
         content = card_templates.create_tool_tips_content({
             "description": "客户拜访记录填写工具，帮助用户填写客户拜访记录、客户拜访信息总结。\n",
             "example": "我要填写跟进拜访记录：\n" +
-                       " - 拜访内容：\n" +
-                       " - 行业线：\n"
+                       " - 客户名称：报单客户测试\n" +
+                       " - 拜访形式：电话/微信拜访\n" +
+                       " - 拜访类型：初次拜访\n" +
+                       " - 拜访内容：测试拜访情况\n" +
+                       " - 拜访日期：2024-04-22\n" +
+                       " - 联系人：XXX\n"
+        })
+
+        lark_message_util.send_card_message(open_id, content)
+    if event_source == "商户查询":
+        content = card_templates.create_tool_tips_content({
+            "description": "商户查询工具，帮助用户查询商户的具体信息、对应商户的毛利与交易金额情况。\n",
+            "example": "我要查询商户信息：\n" +
+                       " - 商户名称：易宝支付 \n" +
+                       "或\n" +
+                       "我要查询商户信息：\n" +
+                       " - 客户编号：KA2024-XXX\n"
         })
         lark_message_util.send_card_message(open_id, content)
-    if event_source == "XXXX":
-        pass
+    if event_source == "周报填写":
+        content = card_templates.create_tool_tips_content({
+            "description": "周报记录填写工具，帮助用户填写周报记录、周报信息情况。\n",
+            "example": "我要填写周报：\n" +
+                       " - 周报内容：本周完成了一次客户回访，进展正常 \n" +
+                       " - 填写日期：2024-04-22 \n" +
+                       " - 下周计划：1、继续跟进客户，2、完成3次回访，3、制定阅读计划\n"
+        })
+        lark_message_util.send_card_message(open_id, content)
+    if event_source == "日报填写":
+        content = card_templates.create_tool_tips_content({
+            "description": "日报记录填写工具，帮助用户填写日报记录、日报信息情况。\n",
+            "example": "我要填写日报：\n" +
+                       " - 日报内容：今天完成了一次客户回访，进展正常。 \n" +
+                       " - 填写日期：2024-04-22 \n" +
+                       " - 明日计划：继续跟进\n"
+        })
+        lark_message_util.send_card_message(open_id, content)
+    if event_source == "日报查询":
+        content = card_templates.create_tool_tips_content({
+            "description": "日报查询工具，帮助用户查询日报信息情况。\n",
+            "example": "我要查询日报（或我要查询XXX的日报）：\n" +
+                       " - 销售名称：XXX \n"
+        })
+        lark_message_util.send_card_message(open_id, content)
+    if event_source == "需求收集":
+        content = card_templates.create_tool_tips_content({
+            "description": "需求收集填写工具，帮助用户填写需求收集、需求信息情况。\n",
+            "example": "我要提交一个需求：\n" +
+                       " - 行业线：大零售 \n" +
+                       " - 需求内容：在运营后台实现一个数据导出功能。 \n" +
+                       " - 期望完成日期：2024-04-22\n" +
+                       " - 紧急程度：中\n"
+        })
+        lark_message_util.send_card_message(open_id, content)
+    if event_source == "需求查询":
+        content = card_templates.create_tool_tips_content({
+            "description": "需求查询工具，帮助用户查询需求情况、需求所处流程与紧急程度等信息。\n",
+            "example": "查一下我的需求（可同时输入行业线、紧急程度、需求状态等辅助查询）：\n" +
+                       " - 行业线：大零售行业线 \n" +
+                       " - 紧急程度：中 \n" +
+                       " - 需求状态：受理中\n"
+        })
+        lark_message_util.send_card_message(open_id, content)
+    if event_source == "找人":
+        content = card_templates.create_tool_tips_content({
+            "description": "功能完善中，敬请期待。\n",
+            "example": "功能完善中，敬请期待。\n"
+        })
+        lark_message_util.send_card_message(open_id, content)
 
     return {}

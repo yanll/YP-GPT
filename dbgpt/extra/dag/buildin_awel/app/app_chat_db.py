@@ -70,7 +70,7 @@ class AppChatDao(BaseDao):
         session = self.get_raw_session()
         statement = text(
             """
-            insert into app_feedback(id, scope, conv_uid, lark_message_id, feedback, recommendation) values (:id, :scope, :conv_uid, :lark_message_id, :feedback, :recommendation)
+            insert into app_feedback(id, scope, conv_uid, lark_message_id, feedback, recommendation, effect, reference_url) values (:id, :scope, :conv_uid, :lark_message_id, :feedback, :recommendation, :effect, :reference_url)
             """
         )
         session.execute(statement, rec)

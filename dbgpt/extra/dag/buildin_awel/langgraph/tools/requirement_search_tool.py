@@ -86,6 +86,7 @@ class RequirementSearchTool(BaseTool):
             }
             work_status_mapping = {
                 "受理中": "sub_stage_1659349204962",
+                "分配版本中": "sub_stage_1659349290983",
             }
             business_value = industry_line_mapping.get(industry_line, "")
             priority_value = emergency_level_mapping.get(emergency_level, "")
@@ -149,7 +150,8 @@ class RequirementSearchTool(BaseTool):
                     "662db5c3a55775e2c9c83bf9": "金融行业线"
                 }
                 work_status_mapping_fan = {
-                    "sub_stage_1659349204962": "受理中"
+                    "sub_stage_1659349204962": "受理中",
+                    "sub_stage_1659349290983": "分配版本中",
                 }
                 if business_id in industry_line_mapping_fan:
                     business_id = industry_line_mapping_fan[business_id]
