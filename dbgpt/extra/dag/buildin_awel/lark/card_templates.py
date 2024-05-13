@@ -121,7 +121,7 @@ class create_crm_bus_customer_card_content:
         @staticmethod
         def Category_II(template_variable: Dict):
             template_id = "AAq3Ob7zQPV6t"
-            template_version_name = "1.0.0"
+            template_version_name = "1.0.1"
             card = {
                 "type": "template",
                 "data": {

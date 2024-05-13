@@ -126,8 +126,8 @@ class CrmBusCustomerCollectInput(BaseModel):
         default=""
     )
     customer_profile: str = Field(
-        name="客户用户描述",
-        description="客户用户描述",
+        name="客户业务描述",
+        description="客户业务描述",
         default=""
     )
     important_step: str = Field(
