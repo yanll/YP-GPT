@@ -3,8 +3,9 @@ from dbgpt.util import envutils
 from dbgpt.util.lark import ssoutil
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
 
+
 def daily_report_id_search(open_id, report_id):
-    url = 'https://cem.yeepay.com/cem-api/workReportInfo/findWorkReportInfo'
+    url = envutils.getenv("CREM_ENDPOINT") + '/workReportInfo/findWorkReportInfo'
     headers = {
         "Content-Type": "application/json; charset=utf-8",
         'pageType': 'cemPortal',
