@@ -35,12 +35,11 @@ class CrmBusCustomerCollectInput(BaseModel):
     #     ),
     #     default=""
     # )
-
-    # business_type: str = Field(
-    #     name="所属行业",
-    #     description="所属行业",
-    #     default=""
-    # )
+    business_type: str = Field(
+        name="所属行业",
+        description="所属行业",
+        default=""
+    )
 
     air_travel_business_type: str = Field(
         name="所属行业的分类",
@@ -68,10 +67,95 @@ class CrmBusCustomerCollectInput(BaseModel):
         ),
         default=""
     )
+
+    # 大零售特有字段
     product_type: str = Field(
         name="产品形态",
         description="产品形态, " + lark_card_util.card_options_to_input_field_description(
             lark_card_util.card_options_for_product_type()
+        ),
+        default=""
+    )
+
+    # 政务行业线特有字段
+    zw_client_assets: str = Field(
+        name="客户资产",
+        description="客户资产, " + lark_card_util.card_options_to_input_field_description(
+            lark_card_util.card_options_for_zw_client_assets()
+        ),
+        default=""
+    )
+    zw_business_type: str = Field(
+        name="业务类型",
+        description="业务类型, " + lark_card_util.card_options_to_input_field_description(
+            lark_card_util.card_options_for_zw_business_type()
+        ),
+        default=""
+    )
+    zw_province: str = Field(
+        name="省份",
+        description="省份, " + lark_card_util.card_options_to_input_field_description(
+            lark_card_util.card_options_for_zw_province()
+        ),
+        default=""
+    )
+    zw_system_vendor: str = Field(
+        name="系统商",
+        description="系统商",
+        default=""
+    )
+    zw_signed_annual_gross_profit: str = Field(
+        name="签约年毛利(万元)",
+        description="签约年毛利(万元)",
+        default=""
+    )
+    zw_customer_level: str = Field(
+        name="省份",
+        description="省份, " + lark_card_util.card_options_to_input_field_description(
+            lark_card_util.card_options_for_zw_customer_level()
+        ),
+        default=""
+    )
+
+    # 航旅事业部特有字段
+    customer_size: str = Field(
+        name="客户规模",
+        description="客户规模, " + lark_card_util.card_options_to_input_field_description(
+            lark_card_util.card_options_for_customer_size()
+        ),
+        default=""
+    )
+    customer_profile: str = Field(
+        name="客户用户描述",
+        description="客户用户描述",
+        default=""
+    )
+    important_step: str = Field(
+        name="客户所处阶段",
+        description="客户所处阶段, " + lark_card_util.card_options_to_input_field_description(
+            lark_card_util.card_options_for_important_step()
+        ),
+        default=""
+    )
+    # 航旅第二类特有字段
+    purchasing_channels: str = Field(
+        name="采购渠道",
+        description="采购渠道, " + lark_card_util.card_options_to_input_field_description(
+            lark_card_util.card_options_for_purchasing_channels()
+        ),
+        default=""
+    )
+    payment_scene: str = Field(
+        name="支付场景",
+        description="支付场景, " + lark_card_util.card_options_to_input_field_description(
+            lark_card_util.card_options_for_payment_scene()
+        ),
+        default=""
+    )
+    sales_channel: str = Field(
+        name="销售渠道",
+        description="销售渠道, " + lark_card_util.card_options_to_input_field_description(
+            lark_card_util.card_options_for_sales_channel()
         ),
         default=""
     )
@@ -97,14 +181,25 @@ class CrmBusCustomerCollectTool(BaseTool):
             customer_role: str = "",
             customer_source_default: str = "",
             customer_importance_default: str = "",
+            # 大零售
             product_type: str = "",
+            # 政务
             zw_client_assets: str = "",
             zw_business_type: str = "",
             zw_province: str = "",
             zw_system_vendor: str = "",
             zw_signed_annual_gross_profit: str = "",
             zw_customer_level: str = "",
+
+            # 航旅特有字段
+            customer_size: str = "",
+            customer_profile: str = "",
             air_travel_business_type: str = "",
+            important_step: str = "",
+            purchasing_channels: str = "",
+            payment_scene: str = "",
+            sales_channel: str = "",
+
     ):
         """Use the tool."""
         print("开始运行添加报单客户信息填写工具：", conv_id, customer_name, customer_role, customer_source_default,
@@ -131,6 +226,20 @@ class CrmBusCustomerCollectTool(BaseTool):
                     crem_user_name=crem_user_name,
                     air_travel_business_type=air_travel_business_type,
 
+                    zw_client_assets=zw_client_assets,
+                    zw_business_type=zw_business_type,
+                    zw_province=zw_business_type,
+                    zw_system_vendor=zw_system_vendor,
+                    zw_signed_annual_gross_profit=zw_signed_annual_gross_profit,
+                    zw_customer_level=zw_customer_level,
+
+                    important_step=important_step,
+                    customer_size=customer_size,
+                    customer_profile=customer_profile,
+                    purchasing_channels=purchasing_channels,
+                    payment_scene=payment_scene,
+                    sales_channel=sales_channel,
+
                 )
             return resp
         except Exception as e:
@@ -149,6 +258,19 @@ def do_collect(
         product_type: str = "",
         crem_user_name: str = '',
         air_travel_business_type: str = '',
+        zw_client_assets: str = "",
+        zw_business_type: str = "",
+        zw_province: str = "",
+        zw_system_vendor: str = "",
+        zw_signed_annual_gross_profit: str = "",
+        zw_customer_level: str = "",
+
+        important_step: str = "",
+        customer_size: str = "",
+        customer_profile: str = "",
+        purchasing_channels: str = "",
+        payment_scene: str = "",
+        sales_channel: str = "",
 ):
     """
     处理并收集提报信息，返回收集结果。
@@ -218,6 +340,10 @@ def do_collect(
                         },
                         "industry_line": industry_line,
                         "customer_name": customer_name,
+                        "business_type": lark_card_util.get_action_index_by_text_from_options(
+                            business_type,
+                            business_type_options
+                        ),
                         "customer_role": lark_card_util.get_action_index_by_text_from_options(
                             customer_role,
                             lark_card_util.card_options_for_customer_role()
@@ -248,7 +374,10 @@ def do_collect(
                             "card_description": "添加报单客户信息表单"
                         },
                         "customer_name": customer_name,
-                        # "business_type": business_type,
+                        "business_type": lark_card_util.get_action_index_by_text_from_options(
+                            business_type,
+                            lark_card_util.card_options_for_business_type.Retail(),
+                        ),
                         "customer_role": lark_card_util.get_action_index_by_text_from_options(
                             customer_role,
                             lark_card_util.card_options_for_customer_role()
@@ -285,7 +414,12 @@ def do_collect(
                             "card_description": "添加报单客户信息表单"
                         },
                         "industry_line": industry_line,
+
                         "customer_name": customer_name,
+                        "business_type": lark_card_util.get_action_index_by_text_from_options(
+                            business_type,
+                            lark_card_util.card_options_for_business_type.Government(),
+                        ),
                         "customer_role": lark_card_util.get_action_index_by_text_from_options(
                             customer_role,
                             lark_card_util.card_options_for_customer_role()
@@ -299,8 +433,22 @@ def do_collect(
                             lark_card_util.card_options_for_customer_importance()
                         ),
                         "zw_client_assets": lark_card_util.get_action_index_by_text_from_options(
-                            customer_importance_default,
-                            lark_card_util.card_options_for_customer_importance()
+                            zw_client_assets,
+                            lark_card_util.card_options_for_zw_client_assets()
+                        ),
+                        "zw_business_type": lark_card_util.get_action_index_by_text_from_options(
+                            zw_business_type,
+                            lark_card_util.card_options_for_zw_business_type()
+                        ),
+                        "zw_province": lark_card_util.get_action_index_by_text_from_options(
+                            zw_province,
+                            lark_card_util.card_options_for_zw_province()
+                        ),
+                        'zw_system_vendor': zw_system_vendor,
+                        'zw_signed_annual_gross_profit': zw_signed_annual_gross_profit,
+                        "zw_customer_level": lark_card_util.get_action_index_by_text_from_options(
+                            zw_customer_level,
+                            lark_card_util.card_options_for_zw_customer_level()
                         ),
 
                         "crem_user_name": crem_user_name,
@@ -328,6 +476,15 @@ def do_collect(
                             },
                             "industry_line": industry_line,
                             "customer_name": customer_name,
+                            "customer_size": lark_card_util.get_action_index_by_text_from_options(
+                                customer_size,
+                                lark_card_util.card_options_for_customer_size(),
+                            ),
+                            "customer_profile": customer_profile,
+                            "business_type": lark_card_util.get_action_index_by_text_from_options(
+                                business_type,
+                                lark_card_util.card_options_for_business_type.AirTravel.Category_I(),
+                            ),
                             "customer_role": lark_card_util.get_action_index_by_text_from_options(
                                 customer_role,
                                 lark_card_util.card_options_for_customer_role()
@@ -340,6 +497,10 @@ def do_collect(
                                 customer_importance_default,
                                 lark_card_util.card_options_for_customer_importance()
                             ),
+                            "important_step": lark_card_util.get_action_index_by_text_from_options(
+                                important_step,
+                                lark_card_util.card_options_for_customer_importance(),
+                            ),
                             "crem_user_name": crem_user_name,
 
                             "business_type_options": business_type_options,
@@ -347,6 +508,7 @@ def do_collect(
                             "customer_source_options": lark_card_util.card_options_for_customer_source(),
                             "customer_importance_options": lark_card_util.card_options_for_customer_importance(),
                             "customer_size_options": lark_card_util.card_options_for_customer_size(),
+
                             "important_step_options": lark_card_util.card_options_for_important_step()
                         }
                     )
@@ -363,6 +525,15 @@ def do_collect(
                             },
                             "industry_line": industry_line,
                             "customer_name": customer_name,
+                            "customer_size": lark_card_util.get_action_index_by_text_from_options(
+                                customer_size,
+                                lark_card_util.card_options_for_customer_size(),
+                            ),
+                            "customer_profile": customer_profile,
+                            "business_type": lark_card_util.get_action_index_by_text_from_options(
+                                business_type,
+                                lark_card_util.card_options_for_business_type.AirTravel.Category_II(),
+                            ),
                             "customer_role": lark_card_util.get_action_index_by_text_from_options(
                                 customer_role,
                                 lark_card_util.card_options_for_customer_role()
@@ -374,6 +545,22 @@ def do_collect(
                             "customer_importance_default": lark_card_util.get_action_index_by_text_from_options(
                                 customer_importance_default,
                                 lark_card_util.card_options_for_customer_importance()
+                            ),
+                            "important_step": lark_card_util.get_action_index_by_text_from_options(
+                                important_step,
+                                lark_card_util.card_options_for_customer_importance(),
+                            ),
+                            "purchasing_channels": lark_card_util.get_action_index_by_text_from_options(
+                                purchasing_channels,
+                                lark_card_util.card_options_for_purchasing_channels()
+                            ),
+                            "payment_scene": lark_card_util.get_action_index_by_text_from_options(
+                                payment_scene,
+                                lark_card_util.card_options_for_payment_scene()
+                            ),
+                            "sales_channel": lark_card_util.get_action_index_by_text_from_options(
+                                sales_channel,
+                                lark_card_util.card_options_for_sales_channel()
                             ),
                             "crem_user_name": crem_user_name,
 
@@ -391,7 +578,7 @@ def do_collect(
                 )
         # 没有行业线表单
         else:
-            return {"success": "false", "response_message": f"无{industry_line}表单"}
+            return {"success": "false", "response_message": "无报单权限"}
     except Exception as e:
         logging.error("飞书添加报单客户信息卡片发送失败：", e)
 
