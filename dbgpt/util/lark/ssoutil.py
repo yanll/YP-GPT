@@ -43,7 +43,7 @@ def get_sso_credential(open_id: str):
             logging.error("用户凭证接口异常：" + str(resp.status_code))
             return None
         text = resp.text
-        logging.info("UIA用户：")
+        logging.info("UIA用户：\n")
         dict = json.loads(text)
         print("UIA用户加载完成")
         code = dict['code']
