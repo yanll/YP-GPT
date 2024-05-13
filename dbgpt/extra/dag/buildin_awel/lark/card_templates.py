@@ -121,7 +121,7 @@ class create_crm_bus_customer_card_content:
         @staticmethod
         def Category_II(template_variable: Dict):
             template_id = "AAq3Ob7zQPV6t"
-            template_version_name = "1.0.0"
+            template_version_name = "1.0.1"
             card = {
                 "type": "template",
                 "data": {
@@ -242,7 +242,7 @@ def create_requirement_search_card_content(template_variable: Dict):
 def create_requirement_search_list_card_content(template_variable: Dict):
     """需求查询列表展示"""
     template_id = "AAqklS3kyRc0R"
-    template_version_name = "1.0.11"
+    template_version_name = "1.0.9"
 
     card = {
         "type": "template",
@@ -257,7 +257,7 @@ def create_requirement_search_list_card_content(template_variable: Dict):
 def create_feedback_card_content(template_variable: Dict):
     """需求查询列表展示"""
     template_id = "AAqkEvmXj7MSH"
-    template_version_name = "1.0.8"
+    template_version_name = "1.0.7"
 
     card = {
         "type": "template",
@@ -270,7 +270,7 @@ def create_feedback_card_content(template_variable: Dict):
 
 
 def create_tool_tips_content(template_variable: Dict):
-    """（新会话展示页）需求查询列表展示"""
+    """需求查询列表展示"""
     template_id = "AAq3fRz6x3j5O"
     template_version_name = "1.0.0"
 
