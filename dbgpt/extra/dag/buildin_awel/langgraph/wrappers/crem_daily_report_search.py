@@ -9,7 +9,7 @@ from datetime import datetime
 
 
 def daily_report_search(open_id, create_user):
-    url = envutils.getenv("CREM_ENDPOINT_PROD") +'/workReportInfo/findWorkReportInfo'
+    url = envutils.getenv("CREM_ENDPOINT") +'/workReportInfo/findWorkReportInfo'
 
     headers = {
         "Content-Type": "application/json; charset=utf-8",
@@ -47,4 +47,7 @@ def daily_report_search(open_id, create_user):
         extracted_data.append(report_data)
     return extracted_data
 
-
+# # 使用示例
+# results = daily_report_search("张华雪")
+# for result in results:
+#     print(result)
