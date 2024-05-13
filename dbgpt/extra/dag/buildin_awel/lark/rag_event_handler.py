@@ -99,7 +99,7 @@ class RAGLarkHandler:
             for idx, chunk in enumerate(chunks):
                 print("current: ", chunk)
                 if idx == 0 :
-                    response += '\r\n---'
+                    response += '\r\n---\r\n'
                 
                 name = chunk['docnm_kwd']
                 names = name.split("$$_$$")
