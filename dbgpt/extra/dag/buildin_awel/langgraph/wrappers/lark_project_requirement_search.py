@@ -175,7 +175,9 @@ def requirement_search(union_id, requirement_create_name, project_key,
             "business_id": '',
             "start_time": None,
             "owner": get_name_cn(union_id),
-            "state_key": None  # 添加state_key字段
+            "state_key": None,  # 添加state_key字段
+            "current_status_operator": None  # 添加current_status_operator字段
+
         }
         fields = item.get('fields', [])
         for field in fields:
@@ -183,15 +185,17 @@ def requirement_search(union_id, requirement_create_name, project_key,
                 extracted_item['exp_time'] = timestamp_to_date(field['field_value'])
             elif field['field_key'] == 'priority':
                 extracted_item['priority_label'] = field['field_value']['label']
-
             elif field['field_key'] == 'business':
                 extracted_item['business_id'] = field['field_value']
             elif field['field_key'] == 'start_time':
                 extracted_item['start_time'] = timestamp_to_date(field['field_value'])
+            elif field['field_key'] == 'current_status_operator':
+                extracted_item['current_status_operator'] = field['field_value']
             # elif field['field_key'] == 'state_key':
             #     extracted_item['state_key'] = timestamp_to_date(field['field_value'])
             extracted_item['state_key'] = item.get('work_item_status', {}).get('state_key', '')
-            #extracted_item.append(extracted_item)
+
+
 
         extracted_data.append(extracted_item)
 

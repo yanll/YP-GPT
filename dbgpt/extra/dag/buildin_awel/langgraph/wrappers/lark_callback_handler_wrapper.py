@@ -334,7 +334,24 @@ def do_send_tips(app_chat_service, open_id, event_source):
                        " - 行业线：\n"
         })
         lark_message_util.send_card_message(open_id, content)
-    if event_source == "XXXX":
-        pass
+    if event_source == "商户查询":
+        content = card_templates.create_tool_tips_content({
+            "description": "商户查询工具，帮助用户查询商户的具体信息、对应商户的毛利与交易金额情况。\n",
+            "example": "我要查询商户信息：\n" +
+                       " - 商户名称：易宝支付 \n" +
+                       "     或\n" +
+                       "我要查询商户信息：\n" +
+                       " - 客户编号：KA2024-xxxxxxxxx\n"
+        })
+        lark_message_util.send_card_message(open_id, content)
+    if event_source == "周报填写":
+        content = card_templates.create_tool_tips_content({
+            "description": "周报记录填写工具，帮助用户填写周报记录、周报信息情况。\n",
+            "example": "我要填写周报：\n" +
+                       " - 周报内容：本周完成了一次客户回访，进展正常 \n" +
+                       " - 填写日期：2024-04-22 \n" +
+                       " - 下周计划：1、继续跟进客户，2、完成3次回访，3、制定阅读计划\n"
+        })
+        lark_message_util.send_card_message(open_id, content)
 
     return {}
