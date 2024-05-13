@@ -9,9 +9,9 @@ import aiohttp
 TENANT_ACCESS_TOKEN_URI = "/open-apis/auth/v3/tenant_access_token/internal"
 MESSAGE_URI = "/open-apis/im/v1/messages"
 # RAG_FLOW_BASE_URL = "http://localhost"
-RAG_FLOW_BASE_URL = "http://172.31.91.206:8066"
-RAG_FLOW_CHAT_TOKEN = "Bearer ragflow-Y0NDlmNTQ2MTEwMDExZWZiZTMzMDI0Mm"
 # RAG_FLOW_CHAT_TOKEN = "Bearer ragflow-Y0NDlmNTQ2MTEwMDExZWZiZTMzMDI0Mm"
+RAG_FLOW_BASE_URL = "http://172.31.91.206:8066"
+RAG_FLOW_CHAT_TOKEN = "Bearer ragflow-M4MDBhYmNjMDFlMDExZWZhYWY2MDI0Mm"
 
 
 class RAGApiClient(object):
