@@ -334,7 +334,7 @@ def do_send_tips(app_chat_service, open_id, event_source):
                        " - 拜访形式：电话 / 微信拜访\n" +
                        " - 拜访类型：初次拜访\n" +
                        " - 拜访内容：测试拜访情况\n" +
-                       " - 拜访日期：2024年5月2日\n"+
+                       " - 拜访日期：2024-04-22\n"+
                        " - 联系人：xxx\n"
         })
 
@@ -388,7 +388,7 @@ def do_send_tips(app_chat_service, open_id, event_source):
         content = card_templates.create_tool_tips_content({
             "description": "需求查询工具，帮助用户查询需求情况、需求所处流程与紧急程度等信息。\n",
             "example": "查一下我的需求：\n" +
-                       " - 或输入行业线、紧急程度、需求状态的信息辅助查询 \n" +
+                       "（亦可输入行业线、紧急程度、需求状态的信息辅助查询） \n" +
                        " - 行业线：大零售行业线 \n" +
                        " - 紧急程度：中 \n" +
                        " - 需求状态：受理中\n"
@@ -396,7 +396,7 @@ def do_send_tips(app_chat_service, open_id, event_source):
         lark_message_util.send_card_message(open_id, content)
     if event_source == "找人":
         content = card_templates.create_tool_tips_content({
-            "description": "可以帮助用户查询，对应的任务或权限所对应的负责人，或找谁可以完成用户的需求。\n",
+            "description": "可以帮助用户查询对应的任务、权限所属的负责人，或找谁可以完成用户的需求。\n",
             "example": "功能完善中，敬请期待\n"
 
         })
