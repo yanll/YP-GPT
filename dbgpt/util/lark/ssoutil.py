@@ -37,7 +37,7 @@ def get_sso_credential(open_id: str):
             headers={
                 "Content-Type": "application/json; charset=utf-8"
             },
-            params={}, data=json.dumps(data), timeout=consts.request_time_out),
+            params={}, data=json.dumps(data), timeout=consts.request_time_out)
 
         if resp.status_code != 200:
             logging.error("用户凭证接口异常：" + str(resp.status_code))
