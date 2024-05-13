@@ -95,6 +95,7 @@ class RAGLarkHandler:
             #     return jsonify()
         
             cache_files = []
+            reduce_count = 0
             for idx, chunk in enumerate(chunks):
                 print("current: ", chunk)
                 if idx == 0 :
@@ -105,11 +106,12 @@ class RAGLarkHandler:
                 names = name.split("$$_$$")
                 file_name = names[len(names) - 1]
                 if (file_name in cache_files) == True:
+                    reduce_count += 1
                     continue
                 cache_files.append(file_name)
                 print(file_name,cache_files)
                 if len(names) == 1 :
-                    n = f"{idx+1}. {file_name}"
+                    n = f"{idx+1 - reduce_count}. {file_name}"
                     response += n
                     response += "\r\n"
                     continue
@@ -118,7 +120,7 @@ class RAGLarkHandler:
                 f = open(os.path.join(cur_dir_path,'dbgpt/extra/dag/buildin_awel/lark/static/ragfiles',names[0] + '.json'))
                 f_json = json.load(f)
                 f_metadata = json.loads(f_json[name])
-                n = f"[{idx+1}. {file_name}]({f_metadata['url']})"
+                n = f"[{idx+1 - reduce_count}. {file_name}]({f_metadata['url']})"
                 response += n
                 response += "\r\n"
                 
