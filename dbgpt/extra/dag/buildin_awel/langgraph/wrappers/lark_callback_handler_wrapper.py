@@ -330,7 +330,7 @@ def do_send_tips(app_chat_service, open_id, event_source):
     if event_source == "跟进拜访":
         content = card_templates.create_tool_tips_content({
             "description": "客户拜访记录填写工具，帮助用户填写客户拜访记录、客户拜访信息总结。\n",
-            "example": "我要填写跟进记录：\n" +
+            "example": "我要填写跟进拜访记录：\n" +
                        " - 拜访内容：\n" +
                        " - 行业线：\n"
         })
