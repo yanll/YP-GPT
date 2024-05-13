@@ -1,6 +1,6 @@
 import requests
 
-from dbgpt.util import envutils
+from dbgpt.util import envutils, consts
 from dbgpt.util.lark import ssoutil
 
 
@@ -33,6 +33,6 @@ def add_customer_visit_record(open_id,
         "contacts": contacts
     }
 
-    response = requests.post(url, headers=headers, json=data)
+    response = requests.post(url, headers=headers, json=data, timeout=consts.request_time_out)
 
     return response.text

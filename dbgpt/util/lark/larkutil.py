@@ -30,7 +30,7 @@ def get_tenant_access_token():
             'tenant_access_token': token
         }
     else:
-        resp = requests.post(url=url, headers=headers, params=params)
+        resp = requests.post(url=url, headers=headers, params=params, timeout=consts.request_time_out)
         token = resp.json()['tenant_access_token']
         redis_client.set(redis_key, token, 30 * 60)
         print('\n飞书租户令牌返回结果：', resp.json())
@@ -44,7 +44,7 @@ def get_app_access_token():
         'app_id': envutils.getenv("LARK_APP_ID"),
         'app_secret': envutils.getenv("LARK_APP_SK")
     }
-    resp = requests.post(url=url, headers=headers, params=params)
+    resp = requests.post(url=url, headers=headers, params=params, timeout=consts.request_time_out)
     print('飞书应用令牌返回结果：', resp.json())
     return resp.json()
 

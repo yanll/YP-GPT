@@ -1,11 +1,11 @@
 import requests
-from dbgpt.util import envutils
+from dbgpt.util import envutils, consts
 import datetime
 
 from dbgpt.util.lark import ssoutil
 
 
-def get_crem_30DaysTrxTre_card(open_id, customer_id,customerName):
+def get_crem_30DaysTrxTre_card(open_id, customer_id, customerName):
     url = (envutils.getenv("CREM_ENDPOINT_PROD") +
            '/doggiex-daportal/wrap/apis/CEMCustomerPortraitCustomerInfo_30DaysTrxTrenew')
     headers = {
@@ -21,7 +21,7 @@ def get_crem_30DaysTrxTre_card(open_id, customer_id,customerName):
     }
 
     # 发出 POST 请求
-    response = requests.post(url, headers=headers, json=data)
+    response = requests.post(url, headers=headers, json=data, timeout=consts.request_time_out)
 
     # 返回结果
     if response.status_code == 200:
@@ -57,7 +57,7 @@ def get_crem_30DaysTrxTre_card(open_id, customer_id,customerName):
                     "tag": "chart",
                     "chart_spec": {
                         "type": "area",
-                        "title": {"text": customerName +"近30天毛利"},
+                        "title": {"text": customerName + "近30天毛利"},
                         "data": {"values": formatted_data},  # 更新数据部分
                         "xField": "time",
                         "yField": "value",
@@ -77,7 +77,7 @@ def get_crem_30DaysTrxTre_card(open_id, customer_id,customerName):
                     "tag": "chart",
                     "chart_spec": {
                         "type": "area",
-                        "title": {"text": customerName+"近30天交易金额"},
+                        "title": {"text": customerName + "近30天交易金额"},
                         "data": {"values": formatted_data_jiaoyijine},  # 更新数据部分
                         "xField": "time",
                         "yField": "value",
