@@ -43,8 +43,7 @@ async def a_call(app_chat_service, event: Dict):
         return do_like(app_chat_service, open_id, event["context"]["open_message_id"])
 
     if event_type == "tool_tips":
-        if event_source == "跟进拜访":
-            return do_send_tips(app_chat_service, open_id, event_source)
+        return do_send_tips(app_chat_service, open_id, event_source)
 
     if event_type == "unlike":
         original_message_id = ""
