@@ -38,4 +38,4 @@ create table app_feedback
 ) comment '问题反馈';
 
 
-
+insert into app_feedback(id, scope, conv_uid, lark_message_id, feedback, recommendation)

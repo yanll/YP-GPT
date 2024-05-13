@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import uuid
 from typing import Dict
 
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import Day_30_TrxTre_card_tool
@@ -73,8 +74,11 @@ async def a_call(app_chat_service, event: Dict):
                 open_id=open_id, form_value=form_value
             )
         if event_source == 'feedback_collect':
-            print(str(event_data))
-            print(str(form_value))
+            original_message_id = event_data["original_message_id"]
+            feedback = form_value["feedback"]
+            recommendation = form_value["recommendation"]
+            return do_feedback(app_chat_service, open_id, original_message_id, feedback, recommendation)
+
         return {}
 
     if event_type == 'merchant_detail':
@@ -292,40 +296,19 @@ def do_unlike(app_chat_service, open_id, original_message_id, message):
             }
         )
     )
+    return {}
 
-    return {
-        "toast": {
-            "type": "info",
-            "content": "温馨提示",
-            "i18n": {
-                "zh_cn": "感谢您的反馈，我们会努力改进哦！",
-                "en_us": "submitted"
-            }
-        }
+
+def do_feedback(app_chat_service, conv_uid, lark_message_id, feedback, recommendation):
+    rec = {
+        "id": str(uuid.uuid1()),
+        "scope": "SalesAssistant",
+        "conv_uid": conv_uid,
+        "lark_message_id": lark_message_id,
+        "feedback": feedback,
+        "recommendation": recommendation
     }
-
-def do_feedback(app_chat_service, open_id, original_message_id, message):
-    if original_message_id != "":
-        app_chat_service.a_update_app_chat_his_message_like_by_uid_mid(
-            comment_type="unlike", conv_uid=open_id,
-            message_id=original_message_id
-        )
-
-    lark_message_util.send_card_message(
-        receive_id=open_id,
-        content=card_templates.feedback_card_content(
-            template_variable={
-                "submit_callback_event": {
-                    "event_type": "submit",
-                    "event_source": "feedback_collect",
-                    "event_data": {
-                        "original_message_id": original_message_id
-                    }
-                },
-                "message": message
-            }
-        )
-    )
+    app_chat_service.add_app_feedback()
 
     return {
         "toast": {

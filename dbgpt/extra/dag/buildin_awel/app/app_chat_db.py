@@ -64,3 +64,16 @@ class AppChatDao(BaseDao):
             dic = row._asdict()
             rs.append(dic)
         return rs
+
+
+    def add_app_feedback(self, rec: Dict) -> int:
+        session = self.get_raw_session()
+        statement = text(
+            """
+            insert into app_feedback(id, scope, conv_uid, lark_message_id, feedback, recommendation) values (:id, :scope, :conv_uid, :lark_message_id, :feedback, :recommendation)
+            """
+        )
+        session.execute(statement, rec)
+        session.commit()
+        session.close()
+        return 0

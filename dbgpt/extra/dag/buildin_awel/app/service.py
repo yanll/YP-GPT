@@ -47,3 +47,6 @@ class AppChatService:
                 "content": row["content"]
             })
         return rs
+
+    def add_app_feedback(self, rec: Dict) -> int:
+        return self.app_chat_dao.add_app_feedback(rec)
