@@ -1,9 +1,13 @@
 #! /usr/bin/env python3.8
 import logging
 import time
+import uuid
+
 import requests
 import json
 from typing import Dict
+
+from dbgpt.extra.dag.buildin_awel.app.service import AppChatService
 from dbgpt.extra.dag.buildin_awel.langgraph.rag.rag_assistant import MessageApiClient
 from dbgpt.extra.dag.buildin_awel.langgraph.rag.rag_assistant import RAGApiClient
 import copy
@@ -29,10 +33,23 @@ message_api_client = MessageApiClient(APP_ID, APP_SECRET, LARK_HOST)
 
 class RAGLarkHandler:
     def __init__(self, **kwargs):
+        self.app_chat_service = AppChatService()
         self.rag_api_client = RAGApiClient(rag_api_endpoint, rag_api_key)
         super().__init__(**kwargs)
 
     async def handle(self, input_body: Dict):
+
+        self.app_chat_service.add_app_chat_his_message({
+            "id": str(uuid.uuid1()),
+            "agent_name": "RAG",
+            "node_name": "start",
+            "conv_uid": "xxxxxxxxg飞书OPENID",
+            "message_type": "human/ai",
+            "content": "xxxxx",
+            "message_detail": "xxxxxxxxx",
+            "display_type": "rag_card",
+            "lark_message_id": "飞书发消息后返回的ID"
+        })
 
         # res = await self.rag_api_client.test_slow_http()
         # print("result ", res)
@@ -45,47 +62,47 @@ class RAGLarkHandler:
         open_id = sender_id['open_id']
         text_content = message['content']
         # res = await self.rag_api_client.async_coversation_start(user_id = open_id)
-        res = self.rag_api_client.coversation_start(user_id = open_id).json()
+        res = self.rag_api_client.coversation_start(user_id=open_id).json()
         id = res['data']['id']
         message_init = res['data']['message']
         new_message = {
-            'content':json.loads(text_content)['text'],
-            'role':'user'
+            'content': json.loads(text_content)['text'],
+            'role': 'user'
         }
         message_init.append(new_message)
         # res = await self.rag_api_client.async_chat(conversation_id = id,messages = message_init)
-        res = self.rag_api_client.chat(conversation_id = id,messages = message_init).json()
+        res = self.rag_api_client.chat(conversation_id=id, messages=message_init).json()
         response = res['data']['answer']
         chunks = res['data']['reference']['chunks']
         # document_name = []
         # translation_table = str.maketrans(reference_number_replace)
         # response = response.translate(translation_table)
-        response = response.replace("##","[").replace("$$","]")
+        response = response.replace("##", "[").replace("$$", "]")
         main_text = {
-                "tag": "column_set",
-                "flex_mode": "none",
-                "background_style": "default",
-                "horizontal_spacing": "8px",
-                "horizontal_align": "left",
-                "columns": [
-                    {
-                        "tag": "column",
-                        "width": "weighted",
-                        "vertical_align": "top",
-                        "vertical_spacing": "8px",
-                        "background_style": "default",
-                        "elements": [
-                            {
-                                "tag": "markdown",
-                                "content": response,
-                                "text_align": "left",
-                                "text_size": "normal"
-                            }
-                        ],
-                        "weight": 1
-                    }
-                ],
-                "margin": "16px 0px 0px 0px"
+            "tag": "column_set",
+            "flex_mode": "none",
+            "background_style": "default",
+            "horizontal_spacing": "8px",
+            "horizontal_align": "left",
+            "columns": [
+                {
+                    "tag": "column",
+                    "width": "weighted",
+                    "vertical_align": "top",
+                    "vertical_spacing": "8px",
+                    "background_style": "default",
+                    "elements": [
+                        {
+                            "tag": "markdown",
+                            "content": response,
+                            "text_align": "left",
+                            "text_size": "normal"
+                        }
+                    ],
+                    "weight": 1
+                }
+            ],
+            "margin": "16px 0px 0px 0px"
         }
         # if '知识库中未找到您要的答案！' in response:
         #     message_api_client.send_text_with_open_id(open_id, main_text)
@@ -138,9 +155,9 @@ class RAGLarkHandler:
         card = []
         card.append(main_text)
         ref_text = {
-                    "tag": "markdown",
-                    "content": "similarity",
-                }
+            "tag": "markdown",
+            "content": "similarity",
+        }
         doc_aggs = res['data']['reference']['doc_aggs']
         for chunk in chunks:
             # print("current: ", chunk)
@@ -163,7 +180,7 @@ class RAGLarkHandler:
             ref_text_self['content'] = chunk['content_with_weight']
             temp['elements'] = [ref_text_self]
             card.append(temp)
-            i = i+1
+            i = i + 1
 
         content = {
             "config": {},
@@ -172,12 +189,11 @@ class RAGLarkHandler:
             },
             "i18n_header": {}
         }
-        
+
         # print(f"response card {card}")
         message_api_client.send_text_with_open_id(open_id, content)
         # # message_api_client.send_text_with_open_id(open_id, content2)
         # return jsonify()
-
 
     async def debug_handle(self, input_body: Dict):
 
@@ -195,53 +211,53 @@ class RAGLarkHandler:
                 return
             open_id = sender_id['open_id']
             text_content = message['content']
-            org_res = await self.rag_api_client.async_coversation_start(user_id = open_id)
+            org_res = await self.rag_api_client.async_coversation_start(user_id=open_id)
             # res = self.rag_api_client.coversation_start(user_id = open_id).json()
             res = await org_res.json()
-            print("res",res)
+            print("res", res)
             id = res['data']['id']
             message_init = res['data']['message']
             new_message = {
-                'content':json.loads(text_content)['text'],
-                'role':'user'
+                'content': json.loads(text_content)['text'],
+                'role': 'user'
             }
             message_init.append(new_message)
-            chat_org_res = await self.rag_api_client.async_chat(conversation_id = id,messages = message_init)
+            chat_org_res = await self.rag_api_client.async_chat(conversation_id=id, messages=message_init)
             # res = self.rag_api_client.chat(conversation_id = id,messages = message_init).json()
             chat_res = await chat_org_res.json()
 
-            print("chat_res",chat_res)
+            print("chat_res", chat_res)
             response = chat_res['data']['answer']
             chunks = chat_res['data']['reference']['chunks']
             # document_name = []
             # translation_table = str.maketrans(reference_number_replace)
             # response = response.translate(translation_table)
-            response = response.replace("##","[").replace("$$","]")
+            response = response.replace("##", "[").replace("$$", "]")
             main_text = {
-                    "tag": "column_set",
-                    "flex_mode": "none",
-                    "background_style": "default",
-                    "horizontal_spacing": "8px",
-                    "horizontal_align": "left",
-                    "columns": [
-                        {
-                            "tag": "column",
-                            "width": "weighted",
-                            "vertical_align": "top",
-                            "vertical_spacing": "8px",
-                            "background_style": "default",
-                            "elements": [
-                                {
-                                    "tag": "markdown",
-                                    "content": response,
-                                    "text_align": "left",
-                                    "text_size": "normal"
-                                }
-                            ],
-                            "weight": 1
-                        }
-                    ],
-                    "margin": "16px 0px 0px 0px"
+                "tag": "column_set",
+                "flex_mode": "none",
+                "background_style": "default",
+                "horizontal_spacing": "8px",
+                "horizontal_align": "left",
+                "columns": [
+                    {
+                        "tag": "column",
+                        "width": "weighted",
+                        "vertical_align": "top",
+                        "vertical_spacing": "8px",
+                        "background_style": "default",
+                        "elements": [
+                            {
+                                "tag": "markdown",
+                                "content": response,
+                                "text_align": "left",
+                                "text_size": "normal"
+                            }
+                        ],
+                        "weight": 1
+                    }
+                ],
+                "margin": "16px 0px 0px 0px"
             }
             # if '知识库中未找到您要的答案！' in response:
             #     message_api_client.send_text_with_open_id(open_id, main_text)
@@ -294,9 +310,9 @@ class RAGLarkHandler:
             card = []
             card.append(main_text)
             ref_text = {
-                        "tag": "markdown",
-                        "content": "similarity",
-                    }
+                "tag": "markdown",
+                "content": "similarity",
+            }
             # doc_aggs = res['data']['reference']['doc_aggs']
             for chunk in chunks:
                 # print("current: ", chunk)
@@ -319,7 +335,7 @@ class RAGLarkHandler:
                 ref_text_self['content'] = chunk['content_with_weight']
                 temp['elements'] = [ref_text_self]
                 card.append(temp)
-                i = i+1
+                i = i + 1
 
             content = {
                 "config": {},
@@ -328,7 +344,7 @@ class RAGLarkHandler:
                 },
                 "i18n_header": {}
             }
-            
+
             # print(f"response card {card}")
             message_api_client.send_text_with_open_id(open_id, content)
             # # message_api_client.send_text_with_open_id(open_id, content2)
