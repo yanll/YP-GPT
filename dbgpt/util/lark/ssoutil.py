@@ -50,7 +50,9 @@ def get_sso_credential(open_id: str):
             logging.error("UIA用户查询业务异常：" + resp.text)
             return None
         data = dict['data']
+        print("开始解析UIA用户")
         credential = aesutil.decrypt_from_base64(envutils.getenv("AES_KEY"), data)
+        print("解析UIA用户完成")
         redis_client.set(redis_key, credential, 5 * 60)
         print('\n用户凭证信息结果：', open_id, data, "END")
 
