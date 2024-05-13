@@ -50,7 +50,7 @@ class create_crm_bus_customer_card_content:
     @staticmethod
     def Web3_or_ForeignComprehensiveService(template_variable: Dict):
         template_id = "AAqkEJ9hph8Ij"
-        template_version_name = "1.0.24"
+        template_version_name = "1.0.25"
         card = {
             "type": "template",
             "data": {
@@ -64,7 +64,7 @@ class create_crm_bus_customer_card_content:
     @staticmethod
     def Finance_or_CrossBorder(template_variable: Dict):
         template_id = "AAqkooGVViOUK"
-        template_version_name = "1.0.4"
+        template_version_name = "1.0.5"
         card = {
             "type": "template",
             "data": {
@@ -78,7 +78,7 @@ class create_crm_bus_customer_card_content:
     @staticmethod
     def Retail(template_variable: Dict):
         template_id = "AAqklNZ65v58c"
-        template_version_name = "1.0.3"
+        template_version_name = "1.0.4"
         card = {
             "type": "template",
             "data": {
@@ -92,7 +92,7 @@ class create_crm_bus_customer_card_content:
     @staticmethod
     def Government(template_variable: Dict):
         template_id = "AAq3O0CfLPZJu"
-        template_version_name = "1.0.0"
+        template_version_name = "1.0.1"
         card = {
             "type": "template",
             "data": {
@@ -107,7 +107,7 @@ class create_crm_bus_customer_card_content:
         @staticmethod
         def Category_I(template_variable: Dict):
             template_id = "AAq3OtM7vxU1e"
-            template_version_name = "1.0.2"
+            template_version_name = "1.0.3"
             card = {
                 "type": "template",
                 "data": {
@@ -121,7 +121,7 @@ class create_crm_bus_customer_card_content:
         @staticmethod
         def Category_II(template_variable: Dict):
             template_id = "AAq3Ob7zQPV6t"
-            template_version_name = "1.0.1"
+            template_version_name = "1.0.2"
             card = {
                 "type": "template",
                 "data": {

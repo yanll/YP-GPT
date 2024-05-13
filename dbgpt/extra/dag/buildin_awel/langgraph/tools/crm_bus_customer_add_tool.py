@@ -164,7 +164,7 @@ class CrmBusCustomerCollectInput(BaseModel):
 class CrmBusCustomerCollectAddTool(BaseTool):
     name: str = "crm_bus_customer_collect_tool"
     description: str = (
-        "这是一个报单客户信息填写工具，帮助销售用户填写报单客户信息。"
+        "这是一个填写报单的工具，帮助用户填写报单。"
         "当需要填写报单客户时非常有用。 "
         "能够尽可能全的收集报单信息。"
         "调用本工具需要的参数值均来自用户的输入，可以默认为空，但是禁止随意编造。"
@@ -292,37 +292,36 @@ def do_collect(
                 business_type = '外综服'
             elif industry_line == "大出行项目组":
                 business_type = '其他'
-            lark_message_util.send_card_message(
-                receive_id=conv_id,
-                content=card_templates.create_crm_bus_customer_card_content.Web3_or_ForeignComprehensiveService(
-                    template_variable={
-                        "card_metadata": {
-                            "card_name": "crm_bus_customer_collect",
-                            "card_description": "添加报单客户信息表单"
-                        },
-                        "industry_line": industry_line,
-                        "customer_name": customer_name,
-                        "business_type": business_type,
-                        "customer_role": lark_card_util.get_action_index_by_text_from_options(
-                            customer_role,
-                            lark_card_util.card_options_for_customer_role()
-                        ),
-                        "customer_source_default": lark_card_util.get_action_index_by_text_from_options(
-                            customer_source_default,
-                            lark_card_util.card_options_for_customer_source()
-                        ),
-                        "customer_importance_default": lark_card_util.get_action_index_by_text_from_options(
-                            customer_importance_default,
-                            lark_card_util.card_options_for_customer_importance()
-                        ),
-                        "crem_user_name": crem_user_name,
 
-                        "customer_role_options": lark_card_util.card_options_for_customer_role(),
-                        "customer_source_options": lark_card_util.card_options_for_customer_source(),
-                        "customer_importance_options": lark_card_util.card_options_for_customer_importance()
-                    }
-                )
+            content = card_templates.create_crm_bus_customer_card_content.Web3_or_ForeignComprehensiveService(
+                template_variable={
+                    "card_metadata": {
+                        "card_name": "crm_bus_customer_collect",
+                        "card_description": "添加报单客户信息表单"
+                    },
+                    "industry_line": industry_line,
+                    "customer_name": customer_name,
+                    "business_type": business_type,
+                    "customer_role": lark_card_util.get_action_index_by_text_from_options(
+                        customer_role,
+                        lark_card_util.card_options_for_customer_role()
+                    ),
+                    "customer_source_default": lark_card_util.get_action_index_by_text_from_options(
+                        customer_source_default,
+                        lark_card_util.card_options_for_customer_source()
+                    ),
+                    "customer_importance_default": lark_card_util.get_action_index_by_text_from_options(
+                        customer_importance_default,
+                        lark_card_util.card_options_for_customer_importance()
+                    ),
+                    "crem_user_name": crem_user_name,
+
+                    "customer_role_options": lark_card_util.card_options_for_customer_role(),
+                    "customer_source_options": lark_card_util.card_options_for_customer_source(),
+                    "customer_importance_options": lark_card_util.card_options_for_customer_importance()
+                }
             )
+
         elif industry_line == "金融行业线" or industry_line == "跨境行业线":
             business_type_options = []
             if industry_line == "金融行业线":
@@ -330,95 +329,155 @@ def do_collect(
             elif industry_line == "跨境行业线":
                 business_type_options = lark_card_util.card_options_for_business_type.CrossBorder()
 
-            lark_message_util.send_card_message(
-                receive_id=conv_id,
-                content=card_templates.create_crm_bus_customer_card_content.Finance_or_CrossBorder(
-                    template_variable={
-                        "card_metadata": {
-                            "card_name": "crm_bus_customer_collect",
-                            "card_description": "添加报单客户信息表单"
-                        },
-                        "industry_line": industry_line,
-                        "customer_name": customer_name,
-                        "business_type": lark_card_util.get_action_index_by_text_from_options(
-                            business_type,
-                            business_type_options
-                        ),
-                        "customer_role": lark_card_util.get_action_index_by_text_from_options(
-                            customer_role,
-                            lark_card_util.card_options_for_customer_role()
-                        ),
-                        "customer_source_default": lark_card_util.get_action_index_by_text_from_options(
-                            customer_source_default,
-                            lark_card_util.card_options_for_customer_source()
-                        ),
-                        "customer_importance_default": lark_card_util.get_action_index_by_text_from_options(
-                            customer_importance_default,
-                            lark_card_util.card_options_for_customer_importance()
-                        ),
-                        "crem_user_name": crem_user_name,
-                        "business_type_options": business_type_options,
-                        "customer_role_options": lark_card_util.card_options_for_customer_role(),
-                        "customer_source_options": lark_card_util.card_options_for_customer_source(),
-                        "customer_importance_options": lark_card_util.card_options_for_customer_importance()
-                    }
-                )
+            content = card_templates.create_crm_bus_customer_card_content.Finance_or_CrossBorder(
+                template_variable={
+                    "card_metadata": {
+                        "card_name": "crm_bus_customer_collect",
+                        "card_description": "添加报单客户信息表单"
+                    },
+                    "industry_line": industry_line,
+                    "customer_name": customer_name,
+                    "business_type": lark_card_util.get_action_index_by_text_from_options(
+                        business_type,
+                        business_type_options
+                    ),
+                    "customer_role": lark_card_util.get_action_index_by_text_from_options(
+                        customer_role,
+                        lark_card_util.card_options_for_customer_role()
+                    ),
+                    "customer_source_default": lark_card_util.get_action_index_by_text_from_options(
+                        customer_source_default,
+                        lark_card_util.card_options_for_customer_source()
+                    ),
+                    "customer_importance_default": lark_card_util.get_action_index_by_text_from_options(
+                        customer_importance_default,
+                        lark_card_util.card_options_for_customer_importance()
+                    ),
+                    "crem_user_name": crem_user_name,
+                    "business_type_options": business_type_options,
+                    "customer_role_options": lark_card_util.card_options_for_customer_role(),
+                    "customer_source_options": lark_card_util.card_options_for_customer_source(),
+                    "customer_importance_options": lark_card_util.card_options_for_customer_importance()
+                }
             )
+
         elif industry_line == "大零售行业线":
-            lark_message_util.send_card_message(
-                receive_id=conv_id,
-                content=card_templates.create_crm_bus_customer_card_content.Retail(
-                    template_variable={
-                        "card_metadata": {
-                            "card_name": "crm_bus_customer_collect",
-                            "card_description": "添加报单客户信息表单"
-                        },
-                        "customer_name": customer_name,
-                        "business_type": lark_card_util.get_action_index_by_text_from_options(
-                            business_type,
-                            lark_card_util.card_options_for_business_type.Retail(),
-                        ),
-                        "customer_role": lark_card_util.get_action_index_by_text_from_options(
-                            customer_role,
-                            lark_card_util.card_options_for_customer_role()
-                        ),
-                        "customer_source_default": lark_card_util.get_action_index_by_text_from_options(
-                            customer_source_default,
-                            lark_card_util.card_options_for_customer_source()
-                        ),
-                        "customer_importance_default": lark_card_util.get_action_index_by_text_from_options(
-                            customer_importance_default,
-                            lark_card_util.card_options_for_customer_importance()
-                        ),
-                        "product_type": lark_card_util.get_action_index_by_text_from_options(
-                            customer_importance_default,
-                            lark_card_util.card_options_for_product_type()
-                        ),
-                        "crem_user_name": crem_user_name,
-                        "business_type_options": lark_card_util.card_options_for_business_type.Retail(),
-                        "customer_role_options": lark_card_util.card_options_for_customer_role(),
-                        "customer_source_options": lark_card_util.card_options_for_customer_source(),
-                        "customer_importance_options": lark_card_util.card_options_for_customer_importance(),
-                        "product_type_options": lark_card_util.card_options_for_product_type()
-                    }
-                )
+
+            content = card_templates.create_crm_bus_customer_card_content.Retail(
+                template_variable={
+                    "card_metadata": {
+                        "card_name": "crm_bus_customer_collect",
+                        "card_description": "添加报单客户信息表单"
+                    },
+                    "customer_name": customer_name,
+                    "business_type": lark_card_util.get_action_index_by_text_from_options(
+                        business_type,
+                        lark_card_util.card_options_for_business_type.Retail(),
+                    ),
+                    "customer_role": lark_card_util.get_action_index_by_text_from_options(
+                        customer_role,
+                        lark_card_util.card_options_for_customer_role()
+                    ),
+                    "customer_source_default": lark_card_util.get_action_index_by_text_from_options(
+                        customer_source_default,
+                        lark_card_util.card_options_for_customer_source()
+                    ),
+                    "customer_importance_default": lark_card_util.get_action_index_by_text_from_options(
+                        customer_importance_default,
+                        lark_card_util.card_options_for_customer_importance()
+                    ),
+
+                    "product_type": lark_card_util.get_action_index_by_text_from_options(
+                        product_type,
+                        lark_card_util.card_options_for_product_type()
+                    ),
+                    "crem_user_name": crem_user_name,
+                    "business_type_options": lark_card_util.card_options_for_business_type.Retail(),
+                    "customer_role_options": lark_card_util.card_options_for_customer_role(),
+                    "customer_source_options": lark_card_util.card_options_for_customer_source(),
+                    "customer_importance_options": lark_card_util.card_options_for_customer_importance(),
+                    "product_type_options": lark_card_util.card_options_for_product_type()
+                }
             )
+
         elif industry_line == "政务行业线":
             business_type_options = lark_card_util.card_options_for_business_type.Government()
-            lark_message_util.send_card_message(
-                receive_id=conv_id,
-                content=card_templates.create_crm_bus_customer_card_content.Government(
+
+            content = card_templates.create_crm_bus_customer_card_content.Government(
+                template_variable={
+                    "card_metadata": {
+                        "card_name": "crm_bus_customer_collect",
+                        "card_description": "添加报单客户信息表单"
+                    },
+                    "industry_line": industry_line,
+
+                    "customer_name": customer_name,
+                    "business_type": lark_card_util.get_action_index_by_text_from_options(
+                        business_type,
+                        lark_card_util.card_options_for_business_type.Government(),
+                    ),
+                    "customer_role": lark_card_util.get_action_index_by_text_from_options(
+                        customer_role,
+                        lark_card_util.card_options_for_customer_role()
+                    ),
+                    "customer_source_default": lark_card_util.get_action_index_by_text_from_options(
+                        customer_source_default,
+                        lark_card_util.card_options_for_customer_source()
+                    ),
+                    "customer_importance_default": lark_card_util.get_action_index_by_text_from_options(
+                        customer_importance_default,
+                        lark_card_util.card_options_for_customer_importance()
+                    ),
+                    "zw_client_assets": lark_card_util.get_action_index_by_text_from_options(
+                        zw_client_assets,
+                        lark_card_util.card_options_for_zw_client_assets()
+                    ),
+                    "zw_business_type": lark_card_util.get_action_index_by_text_from_options(
+                        zw_business_type,
+                        lark_card_util.card_options_for_zw_business_type()
+                    ),
+                    "zw_province": lark_card_util.get_action_index_by_text_from_options(
+                        zw_province,
+                        lark_card_util.card_options_for_zw_province()
+                    ),
+                    'zw_system_vendor': zw_system_vendor,
+                    'zw_signed_annual_gross_profit': zw_signed_annual_gross_profit,
+                    "zw_customer_level": lark_card_util.get_action_index_by_text_from_options(
+                        zw_customer_level,
+                        lark_card_util.card_options_for_zw_customer_level()
+                    ),
+
+                    "crem_user_name": crem_user_name,
+                    "business_type_options": business_type_options,
+                    "customer_role_options": lark_card_util.card_options_for_customer_role(),
+                    "customer_source_options": lark_card_util.card_options_for_customer_source(),
+                    "customer_importance_options": lark_card_util.card_options_for_customer_importance(),
+                    "zw_client_assets_options": lark_card_util.card_options_for_zw_client_assets(),
+                    "zw_business_type_options": lark_card_util.card_options_for_zw_business_type(),
+                    "zw_province_options": lark_card_util.card_options_for_zw_province(),
+                    "zw_customer_level_options": lark_card_util.card_options_for_zw_customer_level(),
+                }
+            )
+
+        elif industry_line == "航旅事业部":
+            if air_travel_business_type == '第一类':
+
+                content = card_templates.create_crm_bus_customer_card_content.AirTravel.Category_I(
                     template_variable={
                         "card_metadata": {
                             "card_name": "crm_bus_customer_collect",
-                            "card_description": "添加报单客户信息表单"
+                            "description": "添加报单客户信息表单"
                         },
                         "industry_line": industry_line,
-
                         "customer_name": customer_name,
+                        "customer_size": lark_card_util.get_action_index_by_text_from_options(
+                            customer_size,
+                            lark_card_util.card_options_for_customer_size(),
+                        ),
+                        "customer_profile": customer_profile,
                         "business_type": lark_card_util.get_action_index_by_text_from_options(
                             business_type,
-                            lark_card_util.card_options_for_business_type.Government(),
+                            lark_card_util.card_options_for_business_type.AirTravel.Category_I(),
                         ),
                         "customer_role": lark_card_util.get_action_index_by_text_from_options(
                             customer_role,
@@ -432,166 +491,114 @@ def do_collect(
                             customer_importance_default,
                             lark_card_util.card_options_for_customer_importance()
                         ),
-                        "zw_client_assets": lark_card_util.get_action_index_by_text_from_options(
-                            zw_client_assets,
-                            lark_card_util.card_options_for_zw_client_assets()
+                        "important_step": lark_card_util.get_action_index_by_text_from_options(
+                            important_step,
+                            lark_card_util.card_options_for_customer_importance(),
                         ),
-                        "zw_business_type": lark_card_util.get_action_index_by_text_from_options(
-                            zw_business_type,
-                            lark_card_util.card_options_for_zw_business_type()
-                        ),
-                        "zw_province": lark_card_util.get_action_index_by_text_from_options(
-                            zw_province,
-                            lark_card_util.card_options_for_zw_province()
-                        ),
-                        'zw_system_vendor': zw_system_vendor,
-                        'zw_signed_annual_gross_profit': zw_signed_annual_gross_profit,
-                        "zw_customer_level": lark_card_util.get_action_index_by_text_from_options(
-                            zw_customer_level,
-                            lark_card_util.card_options_for_zw_customer_level()
-                        ),
-
                         "crem_user_name": crem_user_name,
+
                         "business_type_options": business_type_options,
                         "customer_role_options": lark_card_util.card_options_for_customer_role(),
                         "customer_source_options": lark_card_util.card_options_for_customer_source(),
                         "customer_importance_options": lark_card_util.card_options_for_customer_importance(),
-                        "zw_client_assets_options": lark_card_util.card_options_for_zw_client_assets(),
-                        "zw_business_type_options": lark_card_util.card_options_for_zw_business_type(),
-                        "zw_province_options": lark_card_util.card_options_for_zw_province(),
-                        "zw_customer_level_options": lark_card_util.card_options_for_zw_customer_level(),
+                        "customer_size_options": lark_card_util.card_options_for_customer_size(),
+
+                        "important_step_options": lark_card_util.card_options_for_important_step()
                     }
                 )
-            )
-        elif industry_line == "航旅事业部":
-            if air_travel_business_type == '第一类':
-                business_type_options = lark_card_util.card_options_for_business_type.AirTravel.Category_I()
-                lark_message_util.send_card_message(
-                    receive_id=conv_id,
-                    content=card_templates.create_crm_bus_customer_card_content.AirTravel.Category_I(
-                        template_variable={
-                            "card_metadata": {
-                                "card_name": "crm_bus_customer_collect",
-                                "description": "添加报单客户信息表单"
-                            },
-                            "industry_line": industry_line,
-                            "customer_name": customer_name,
-                            "customer_size": lark_card_util.get_action_index_by_text_from_options(
-                                customer_size,
-                                lark_card_util.card_options_for_customer_size(),
-                            ),
-                            "customer_profile": customer_profile,
-                            "business_type": lark_card_util.get_action_index_by_text_from_options(
-                                business_type,
-                                lark_card_util.card_options_for_business_type.AirTravel.Category_I(),
-                            ),
-                            "customer_role": lark_card_util.get_action_index_by_text_from_options(
-                                customer_role,
-                                lark_card_util.card_options_for_customer_role()
-                            ),
-                            "customer_source_default": lark_card_util.get_action_index_by_text_from_options(
-                                customer_source_default,
-                                lark_card_util.card_options_for_customer_source()
-                            ),
-                            "customer_importance_default": lark_card_util.get_action_index_by_text_from_options(
-                                customer_importance_default,
-                                lark_card_util.card_options_for_customer_importance()
-                            ),
-                            "important_step": lark_card_util.get_action_index_by_text_from_options(
-                                important_step,
-                                lark_card_util.card_options_for_customer_importance(),
-                            ),
-                            "crem_user_name": crem_user_name,
 
-                            "business_type_options": business_type_options,
-                            "customer_role_options": lark_card_util.card_options_for_customer_role(),
-                            "customer_source_options": lark_card_util.card_options_for_customer_source(),
-                            "customer_importance_options": lark_card_util.card_options_for_customer_importance(),
-                            "customer_size_options": lark_card_util.card_options_for_customer_size(),
-
-                            "important_step_options": lark_card_util.card_options_for_important_step()
-                        }
-                    )
-                )
             else:
                 business_type_options = lark_card_util.card_options_for_business_type.AirTravel.Category_II()
-                lark_message_util.send_card_message(
-                    receive_id=conv_id,
-                    content=card_templates.create_crm_bus_customer_card_content.AirTravel.Category_II(
-                        template_variable={
-                            "card_metadata": {
-                                "card_name": "crm_bus_customer_collect",
-                                "description": "添加报单客户信息表单"
-                            },
-                            "industry_line": industry_line,
-                            "customer_name": customer_name,
-                            "customer_size": lark_card_util.get_action_index_by_text_from_options(
-                                customer_size,
-                                lark_card_util.card_options_for_customer_size(),
-                            ),
-                            "customer_profile": customer_profile,
-                            "business_type": lark_card_util.get_action_index_by_text_from_options(
-                                business_type,
-                                lark_card_util.card_options_for_business_type.AirTravel.Category_II(),
-                            ),
-                            "customer_role": lark_card_util.get_action_index_by_text_from_options(
-                                customer_role,
-                                lark_card_util.card_options_for_customer_role()
-                            ),
-                            "customer_source_default": lark_card_util.get_action_index_by_text_from_options(
-                                customer_source_default,
-                                lark_card_util.card_options_for_customer_source()
-                            ),
-                            "customer_importance_default": lark_card_util.get_action_index_by_text_from_options(
-                                customer_importance_default,
-                                lark_card_util.card_options_for_customer_importance()
-                            ),
-                            "important_step": lark_card_util.get_action_index_by_text_from_options(
-                                important_step,
-                                lark_card_util.card_options_for_customer_importance(),
-                            ),
-                            "purchasing_channels": lark_card_util.get_action_index_by_text_from_options(
-                                purchasing_channels,
-                                lark_card_util.card_options_for_purchasing_channels()
-                            ),
-                            "payment_scene": lark_card_util.get_action_index_by_text_from_options(
-                                payment_scene,
-                                lark_card_util.card_options_for_payment_scene()
-                            ),
-                            "sales_channel": lark_card_util.get_action_index_by_text_from_options(
-                                sales_channel,
-                                lark_card_util.card_options_for_sales_channel()
-                            ),
-                            "crem_user_name": crem_user_name,
 
-                            "business_type_options": business_type_options,
-                            "customer_role_options": lark_card_util.card_options_for_customer_role(),
-                            "customer_source_options": lark_card_util.card_options_for_customer_source(),
-                            "customer_importance_options": lark_card_util.card_options_for_customer_importance(),
-                            "customer_size_options": lark_card_util.card_options_for_customer_size(),
-                            "important_step_options": lark_card_util.card_options_for_important_step(),
-                            "purchasing_channels_options": lark_card_util.card_options_for_purchasing_channels(),
-                            "payment_scene_options": lark_card_util.card_options_for_payment_scene(),
-                            'sales_channel_options': lark_card_util.card_options_for_sales_channel(),
-                        }
-                    )
+                content = card_templates.create_crm_bus_customer_card_content.AirTravel.Category_II(
+                    template_variable={
+                        "card_metadata": {
+                            "card_name": "crm_bus_customer_collect",
+                            "description": "添加报单客户信息表单"
+                        },
+                        "industry_line": industry_line,
+                        "customer_name": customer_name,
+                        "customer_size": lark_card_util.get_action_index_by_text_from_options(
+                            customer_size,
+                            lark_card_util.card_options_for_customer_size(),
+                        ),
+                        "customer_profile": customer_profile,
+                        "business_type": lark_card_util.get_action_index_by_text_from_options(
+                            business_type,
+                            lark_card_util.card_options_for_business_type.AirTravel.Category_II(),
+                        ),
+                        "customer_role": lark_card_util.get_action_index_by_text_from_options(
+                            customer_role,
+                            lark_card_util.card_options_for_customer_role()
+                        ),
+                        "customer_source_default": lark_card_util.get_action_index_by_text_from_options(
+                            customer_source_default,
+                            lark_card_util.card_options_for_customer_source()
+                        ),
+                        "customer_importance_default": lark_card_util.get_action_index_by_text_from_options(
+                            customer_importance_default,
+                            lark_card_util.card_options_for_customer_importance()
+                        ),
+                        "important_step": lark_card_util.get_action_index_by_text_from_options(
+                            important_step,
+                            lark_card_util.card_options_for_customer_importance(),
+                        ),
+                        "purchasing_channels": lark_card_util.get_action_index_by_text_from_options(
+                            purchasing_channels,
+                            lark_card_util.card_options_for_purchasing_channels()
+                        ),
+                        "payment_scene": lark_card_util.get_action_index_by_text_from_options(
+                            payment_scene,
+                            lark_card_util.card_options_for_payment_scene()
+                        ),
+                        "sales_channel": lark_card_util.get_action_index_by_text_from_options(
+                            sales_channel,
+                            lark_card_util.card_options_for_sales_channel()
+                        ),
+                        "crem_user_name": crem_user_name,
+
+                        "business_type_options": business_type_options,
+                        "customer_role_options": lark_card_util.card_options_for_customer_role(),
+                        "customer_source_options": lark_card_util.card_options_for_customer_source(),
+                        "customer_importance_options": lark_card_util.card_options_for_customer_importance(),
+                        "customer_size_options": lark_card_util.card_options_for_customer_size(),
+                        "important_step_options": lark_card_util.card_options_for_important_step(),
+                        "purchasing_channels_options": lark_card_util.card_options_for_purchasing_channels(),
+                        "payment_scene_options": lark_card_util.card_options_for_payment_scene(),
+                        'sales_channel_options': lark_card_util.card_options_for_sales_channel(),
+                    }
                 )
+
         # 没有行业线表单
         else:
             return {"success": "false", "response_message": "无报单权限"}
+        content['data']['template_variable']['submit_callback_event'] = {
+            "event_type": "submit",
+            "event_source": 'crm_bus_customer_collect'
+        }
+        content['data']['template_variable']['unlike_callback_event'] = {
+            "event_type": "unlike",
+            "event_source": 'crm_bus_customer_collect',
+            "event_data": {
+                "message": "填写报单"
+            }
+        }
+        return {
+            "success": "true",
+            "error_message": "",
+            "action": {
+                "action_name": "send_lark_form_card",
+                "card_name": "crm_bus_customer_collect"
+            },
+            "data": {
+                "conv_id": conv_id,
+                "content": content
+
+            }
+        }
+
+
     except Exception as e:
         logging.error("飞书添加报单客户信息卡片发送失败：", e)
 
     # 创建并返回结果字典
-    return {
-        "success": "true",
-        "error_message": "",
-        "display_type": "form",
-        # "data": {
-        #     "conv_id": conv_id,
-        #     "daily_report_content": daily_report_content,
-        #     "create_date": create_date,
-        #     "daily_report_tomorrow_plans": plans_description,
-        #     "senders_name": senders_name
-        # }
-    }
