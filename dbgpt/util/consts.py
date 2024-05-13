@@ -1,1 +1,1 @@
-request_time_out = 15
+request_time_out = 10
