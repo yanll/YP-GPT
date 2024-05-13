@@ -134,6 +134,14 @@ def card_options_for_industry_line() -> list:
     ]
     return options
 
+def card_options_for_customer_service_levels() -> list:
+    """值必须和飞书项目一致"""
+    options = [
+        {"action_index": 1, "action_value": "0", "text": "普通"},
+        {"action_index": 2, "action_value": "1", "text": "VIP"},
+        {"action_index": 3, "action_value": "2", "text": "SVIP"},
+    ]
+    return options
 
 class card_options_for_business_type:
     """值必须和飞书项目一致"""
