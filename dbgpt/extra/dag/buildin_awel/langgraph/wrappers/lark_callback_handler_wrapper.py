@@ -88,7 +88,16 @@ async def a_call(app_chat_service, event: Dict):
         customerNo = action_value['customerNo']
         customerName = action_value['customerName']
         print('查询商户的编号', customerNo)
-        return Day_30_TrxTre_card_tool.user_crem_30DaysTrxTre_card(
+        return Day_30_TrxTre_card_tool.user_crem_30DaysTrxTre_card_maoli(
+            open_id=open_id,
+            customer_id=customerNo,
+            customerName=customerName,
+            conv_id=open_id)
+    if event_type == 'merchant_detail_two':
+        customerNo = action_value['customerNo']
+        customerName = action_value['customerName']
+        print('查询商户的编号', customerNo)
+        return Day_30_TrxTre_card_tool.user_crem_30DaysTrxTre_card_jiaoyi(
             open_id=open_id,
             customer_id=customerNo,
             customerName=customerName,

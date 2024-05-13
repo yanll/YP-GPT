@@ -5,7 +5,7 @@ from dbgpt.extra.dag.buildin_awel.langgraph.wrappers.crem_30DaysTrxTre_card impo
 import logging
 
 
-def user_crem_30DaysTrxTre_card(open_id, customer_id, customerName,conv_id):  # 添加 conv_id 参数
+def user_crem_30DaysTrxTre_card_maoli(open_id, customer_id, customerName,conv_id):  # 添加 conv_id 参数
 
     try:
         if customer_id == "":
@@ -38,6 +38,47 @@ def user_crem_30DaysTrxTre_card(open_id, customer_id, customerName,conv_id):  # 
             receive_id=conv_id,
             content=var
         )
+
+
+        return {}
+
+    except Exception as e:
+        # 记录异常日志并返回错误信息
+        logging.error("商户查询工具运行异常：", e)
+        return str(e)
+
+
+
+def user_crem_30DaysTrxTre_card_jiaoyi(open_id, customer_id, customerName,conv_id):  # 添加 conv_id 参数
+
+    try:
+        if customer_id == "":
+            # 商编ID为空，返回错误消息
+            return {"success": False, "response_message": "商编ID不能为空"}
+
+        # 调用外部函数获取商户信息分析结果
+        else:
+            # customer_id = "KA2022-A09150004"
+            customer_analysis = get_crem_30DaysTrxTre_card(open_id, customer_id,customerName)
+
+            print("完整返回结果", customer_analysis)
+            # 分解返回结果
+            customer_analysis, formatted_data, formatted_data_jiaoyijine, var, var2 = customer_analysis
+            acc = json.dumps(var)
+
+            # 检查并打印每个变量以确认内容
+            print("Customer Analysis:", customer_analysis)
+            print("Formatted Data:", formatted_data)
+            print("Formatted Data Jiaoyijine:", formatted_data_jiaoyijine)
+            print("Var for chart 1:", var)
+            print("Var for chart 2:", var2)
+            print("绘图数据", acc)
+
+        # 输出商户信息分析结果
+        print("30天毛利与交易金额:", customer_analysis)
+
+        # 发送信息卡片给用户
+
         lark_message_util.send_card_message(
             receive_id=conv_id,
             content=var2
@@ -49,3 +90,4 @@ def user_crem_30DaysTrxTre_card(open_id, customer_id, customerName,conv_id):  # 
         # 记录异常日志并返回错误信息
         logging.error("商户查询工具运行异常：", e)
         return str(e)
+
