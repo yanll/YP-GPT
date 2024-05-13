@@ -272,7 +272,7 @@ def create_feedback_card_content(template_variable: Dict):
 def create_tool_tips_content(template_variable: Dict):
     """需求查询列表展示"""
     template_id = "AAq3fRz6x3j5O"
-    template_version_name = "1.0.0"
+    template_version_name = "1.0.1"
 
     card = {
         "type": "template",

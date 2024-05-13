@@ -330,12 +330,12 @@ def do_send_tips(app_chat_service, open_id, event_source):
         content = card_templates.create_tool_tips_content({
             "description": "客户拜访记录填写工具，帮助用户填写客户拜访记录、客户拜访信息总结。\n",
             "example": "我要填写跟进拜访记录：\n" +
-                       " - 客户名称：YP - GPT报单客户测试\n" +
-                       " - 拜访形式：电话 / 微信拜访\n" +
+                       " - 客户名称：报单客户测试\n" +
+                       " - 拜访形式：电话/微信拜访\n" +
                        " - 拜访类型：初次拜访\n" +
                        " - 拜访内容：测试拜访情况\n" +
-                       " - 拜访日期：2024-04-22\n"+
-                       " - 联系人：xxx\n"
+                       " - 拜访日期：2024-04-22\n" +
+                       " - 联系人：XXX\n"
         })
 
         lark_message_util.send_card_message(open_id, content)
@@ -344,9 +344,9 @@ def do_send_tips(app_chat_service, open_id, event_source):
             "description": "商户查询工具，帮助用户查询商户的具体信息、对应商户的毛利与交易金额情况。\n",
             "example": "我要查询商户信息：\n" +
                        " - 商户名称：易宝支付 \n" +
-                       "     或\n" +
+                       "或\n" +
                        "我要查询商户信息：\n" +
-                       " - 客户编号：KA2024-xxxxxxxxx\n"
+                       " - 客户编号：KA2024-XXX\n"
         })
         lark_message_util.send_card_message(open_id, content)
     if event_source == "周报填写":
@@ -370,8 +370,8 @@ def do_send_tips(app_chat_service, open_id, event_source):
     if event_source == "日报查询":
         content = card_templates.create_tool_tips_content({
             "description": "日报查询工具，帮助用户查询日报信息情况。\n",
-            "example": "我要查询日报：\n" +
-                       " - 销售名称：xxx \n"
+            "example": "我要查询日报（或我要查询XXX的日报）：\n" +
+                       " - 销售名称：XXX \n"
         })
         lark_message_util.send_card_message(open_id, content)
     if event_source == "需求收集":
@@ -380,15 +380,14 @@ def do_send_tips(app_chat_service, open_id, event_source):
             "example": "我要提交一个需求：\n" +
                        " - 行业线：大零售 \n" +
                        " - 需求内容：在运营后台实现一个数据导出功能。 \n" +
-                       " - 期望完成日期：2024-04-22 \n" +
+                       " - 期望完成日期：2024-04-22\n" +
                        " - 紧急程度：中\n"
         })
         lark_message_util.send_card_message(open_id, content)
     if event_source == "需求查询":
         content = card_templates.create_tool_tips_content({
             "description": "需求查询工具，帮助用户查询需求情况、需求所处流程与紧急程度等信息。\n",
-            "example": "查一下我的需求：\n" +
-                       "（亦可输入行业线、紧急程度、需求状态的信息辅助查询） \n" +
+            "example": "查一下我的需求（可同时输入行业线、紧急程度、需求状态等辅助查询）：\n" +
                        " - 行业线：大零售行业线 \n" +
                        " - 紧急程度：中 \n" +
                        " - 需求状态：受理中\n"
@@ -396,11 +395,9 @@ def do_send_tips(app_chat_service, open_id, event_source):
         lark_message_util.send_card_message(open_id, content)
     if event_source == "找人":
         content = card_templates.create_tool_tips_content({
-            "description": "可以帮助用户查询对应的任务、权限所属的负责人，或找谁可以完成用户的需求。\n",
-            "example": "功能完善中，敬请期待\n"
-
+            "description": "功能完善中，敬请期待。\n",
+            "example": "功能完善中，敬请期待。\n"
         })
         lark_message_util.send_card_message(open_id, content)
-
 
     return {}
