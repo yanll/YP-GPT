@@ -1,45 +1,67 @@
 import asyncio
 import json
 import logging
-from typing import Dict, List, Optional, Union, Tuple
+from typing import List, Optional, Tuple
 
-from dbgpt.agent import AgentMessage, ActionOutput
+from dbgpt.agent import AgentMessage, ActionOutput, ProfileConfig
+from dbgpt.agent.core.base_agent import ConversableAgent
 from dbgpt.agent.expand.actions.demand_action import DemandAction
 from dbgpt.agent.resource.resource_api import ResourceType
 from dbgpt.agent.resource.resource_lark_api import ResourceLarkClient
 from dbgpt.core import ModelMessageRoleType
+from dbgpt.util.configure import DynConfig
 from dbgpt.util.error_types import LLMChatError
-from dbgpt.agent.core.base_agent import ConversableAgent
-from dbgpt.serve.agent.db.gpts_conversations_db import GptsConversationsDao, GptsConversationsEntity
 
 logger = logging.getLogger(__name__)
 
 
 class ProductionAssistantAgent(ConversableAgent):
-    name: str = "Listen"
-    profile: str = "ProductionAssistant"
-    goal: str = "提取我输入信息中的需求点并按字段要求拆解，最后将拆解后的信息按我要求的格式返回。"
-    constraints: List[str] = [
-        "必须按照我提供的格式返回。",
-        "首先你具备通用AI助手的能力，不要作出奇怪的回答。",
-        "如果我不想继续了，提醒我可以随时继续提问。",
-        "如果类似的信息我多次输入，以最后输入的为准。",
-        "注意你是一个需求内容专家，目标是提取信息，如果提取不到有用的信息，告诉我你能做什么。",
-        "请仔细理解我的输入，客观真实的识别，按照：{fields} 将我输入的内容拆解出来。",
-        "需求必须是有意义的内容，包含并不限于我的痛点、槽点、需求、期望、愿景等,不要改变我的需求内容。",
-        "需求要明确客观，不随意编造内容。紧急程度根据我的输入的语义判断级别，按照【“非常紧急”，“比较紧急”，“不紧急”】处理。期望完成时间尽量提取准确的时间信息。",
-        "如果我输入的信息太少或没有提取到有用信息，提醒我输入更详细的内容。",
-        "如果没有提取到“需求内容”信息，按照“”处理并提醒我输入“需求内容”，不要胡乱编造需求。",
-        "提取的“需求内容”至少10个字以上，否则按照“”处理并提醒我输入更详细的“需求内容”，不要胡乱处理。",
-        "如果没有提取到“期望完成时间”信息，按照“”处理并提醒我输入“期望完成时间”，不要胡乱编造时间",
-        "如果没有提取到“紧急程度”信息，按照“比较紧急”处理，不要胡乱处理。",
-        "如果没有提取到“是否确认提交”信息，按照“”处理，不要胡乱处理，不用提醒我输入。",
-        "“是否确认提交”要客观明确，根据上下文和我输入的语义判断，不要随意编造结果，只能按照【“是”，“否”】处理。",
-        "如果无法理解我输入的信息，按照通用AI回复并告诉我你能做什么，引导我正确的输入。",
-        "回复的内容不要包含情绪、主观思维信息。",
+    profile: ProfileConfig = ProfileConfig(
+        name=DynConfig(
+            "Listen",
+            category="agent",
+            key="dbgpt_agent_expand_product_assistant_agent_profile_name",
+        ),
+        role=DynConfig(
+            "ProductionAssistant",
+            category="agent",
+            key="dbgpt_agent_expand_product_assistant_agent__profile_role",
+        ),
+        goal=DynConfig(
+            "提取我输入信息中的需求点并按字段要求拆解，最后将拆解后的信息按我要求的格式返回。",
+            category="agent",
+            key="dbgpt_agent_expand_product_assistant_agent__profile_goal",
+        ),
+        constraints=DynConfig(
+            [
+                "必须按照我提供的格式返回。",
+                "首先你具备通用AI助手的能力，不要作出奇怪的回答。",
+                "如果我不想继续了，提醒我可以随时继续提问。",
+                "如果类似的信息我多次输入，以最后输入的为准。",
+                "注意你是一个需求内容专家，目标是提取信息，如果提取不到有用的信息，告诉我你能做什么。",
+                "请仔细理解我的输入，客观真实的识别，按照：{fields} 将我输入的内容拆解出来。",
+                "需求必须是有意义的内容，包含并不限于我的痛点、槽点、需求、期望、愿景等,不要改变我的需求内容。",
+                "需求要明确客观，不随意编造内容。紧急程度根据我的输入的语义判断级别，按照【“非常紧急”，“比较紧急”，“不紧急”】处理。期望完成时间尽量提取准确的时间信息。",
+                "如果我输入的信息太少或没有提取到有用信息，提醒我输入更详细的内容。",
+                "如果没有提取到“需求内容”信息，按照“”处理并提醒我输入“需求内容”，不要胡乱编造需求。",
+                "提取的“需求内容”至少10个字以上，否则按照“”处理并提醒我输入更详细的“需求内容”，不要胡乱处理。",
+                "如果没有提取到“期望完成时间”信息，按照“”处理并提醒我输入“期望完成时间”，不要胡乱编造时间",
+                "如果没有提取到“紧急程度”信息，按照“比较紧急”处理，不要胡乱处理。",
+                "如果没有提取到“是否确认提交”信息，按照“”处理，不要胡乱处理，不用提醒我输入。",
+                "“是否确认提交”要客观明确，根据上下文和我输入的语义判断，不要随意编造结果，只能按照【“是”，“否”】处理。",
+                "如果无法理解我输入的信息，按照通用AI回复并告诉我你能做什么，引导我正确的输入。",
+                "回复的内容不要包含情绪、主观思维信息。"
+            ],
+            category="agent",
+            key="dbgpt_agent_expand_product_assistant_agent__profile_constraints",
+        ),
+        desc=DynConfig(
+            "提取输入中的 {fields} 信息”",
+            category="agent",
+            key="dbgpt_agent_expand_product_assistant_agent__profile_desc",
+        ),
+    ),
 
-    ]
-    desc: str = "提取输入中的 {fields} 信息”"
     max_retry_count: int = 1
 
     def __init__(self, **kwargs):

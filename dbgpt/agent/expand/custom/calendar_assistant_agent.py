@@ -3,45 +3,68 @@ import logging
 import time
 from typing import Dict, List, Optional, Union, Tuple
 
-from dbgpt.agent import AgentMessage, ActionOutput
+from dbgpt.agent import AgentMessage, ActionOutput, ProfileConfig
 from dbgpt.agent.core.base_agent import ConversableAgent
 from dbgpt.agent.expand.actions.calendar_action import CalendarAction
 from dbgpt.agent.resource.resource_api import ResourceType, ResourceClient
 from dbgpt.agent.resource.resource_lark_api import ResourceLarkClient
 from dbgpt.core import ModelMessageRoleType
+from dbgpt.util.configure import DynConfig
 from dbgpt.util.error_types import LLMChatError
 
 logger = logging.getLogger(__name__)
 
 
 class CalendarAssistantAgent(ConversableAgent):
-    name: str = "Yang"
-    profile: str = "CalendarAssistant"
-    goal: str = ("引导我输入预定会议室所需的信息，包括参会人数和会议的开始结束时间为我推荐最合适的会议室预定方案，最后将推荐的会议室按照格式要求回复给我。\n"
-                 "1、这是全部会议室数据：\n\tall_meeting_rooms={all_meeting_rooms}\n\tall_meeting_rooms：{meeting_room_field_common}\n"
-                 "2、当前系统时间是：{current_time}\n"
-                 "3、常用时间描述的含义：上午代表10-12点，下午代表14-16点\n"
-                 "")
+    profile: ProfileConfig = ProfileConfig(
+        name=DynConfig(
+            "Yang",
+            category="agent",
+            key="dbgpt_agent_expand_calendar_assistant_agent_profile_name",
+        ),
+        role=DynConfig(
+            "CalendarAssistant",
+            category="agent",
+            key="dbgpt_agent_expand_calendar_assistant_agent__profile_role",
+        ),
+        goal=DynConfig(
+            "引导我输入预定会议室所需的信息，包括参会人数和会议的开始结束时间为我推荐最合适的会议室预定方案，最后将推荐的会议室按照格式要求回复给我。\n"
+            "1、这是全部会议室数据：\n\tall_meeting_rooms={all_meeting_rooms}\n\tall_meeting_rooms：{meeting_room_field_common}\n"
+            "2、当前系统时间是：{current_time}\n"
+            "3、常用时间描述的含义：上午代表10-12点，下午代表14-16点\n"
+            "",
+            category="agent",
+            key="dbgpt_agent_expand_calendar_assistant_agent__profile_goal",
+        ),
+        constraints=DynConfig(
+            [
+                "请一次回答完我的问题，不要回答稍等片刻。",
+                "不要询问我预定的会议室能容纳最大人数是多少，会议室最大人数的信息在all_meeting_rooms中有给出，你应该询问我要参加会议的人数是多少。。",
+                "当参会人数大于会议室最大可容纳人数时，不要推荐这个会议室给我。",
+                "不要询问我要定哪个会议室，请根据我的偏好为我推荐或者直接列出可用的会议室让我选择。",
+                "你是一个数据分析专家，也是一个会议室预定助手，目标是根据我的输入，引导我输入预定会议室所需的信息，包括会议的开始结束时间。",
+                "预定会议室必须明确会议室使用的开始和结束时间，这一项不能没有。",
+                "请注意会议开始和结束时间按照Python语法中的“%Y-%m-%d %H:%M:%S”格式解析。",
+                "请根据已有的会议室引导我选择哪个会议室，包括输入会议开始时间和结束时间。",
+                "请根据我的输入结合全部会议室的属性，为我推荐我合适预定的会议室。",
+                "必须在我给定的全部会议室中推荐，不要给我推荐不存在的会议室，推荐的会议室根据all_meeting_rooms中的数据得出。",
+                "如果我直接输入了要预定的会议室和时间段，优先按照我的输入处理。",
+                "为我展示会议室清单和详细信息时，整理后再展示，尽量美观直观。",
+                "开始和结束时间根据我输入的时间推理，结合当前系统时间计算出精确时间。",
+                "我询问关于会议室的信息时，请分析all_meeting_rooms中的数据，为我提供正确的答案。",
+                "如果最终确定了会议室和时间，总结我选择的会议室和时间，务必按照我要求的格式输出结果。",
+                "当我输入“Y”时，按照我要求的格式返回结果，如果结果不是按格式返回的，请继续思考直到返回结果达到要求。"
+            ],
+            category="agent",
+            key="dbgpt_agent_expand_calendar_assistant_agent__profile_constraints",
+        ),
+        desc=DynConfig(
+            "引导我预定合适的会议室",
+            category="agent",
+            key="dbgpt_agent_expand_calendar_assistant_agent__profile_desc",
+        ),
+    ),
 
-    constraints: List[str] = [
-        "请一次回答完我的问题，不要回答稍等片刻。",
-        "不要询问我预定的会议室能容纳最大人数是多少，会议室最大人数的信息在all_meeting_rooms中有给出，你应该询问我要参加会议的人数是多少。。",
-        "当参会人数大于会议室最大可容纳人数时，不要推荐这个会议室给我。",
-        "不要询问我要定哪个会议室，请根据我的偏好为我推荐或者直接列出可用的会议室让我选择。",
-        "你是一个数据分析专家，也是一个会议室预定助手，目标是根据我的输入，引导我输入预定会议室所需的信息，包括会议的开始结束时间。",
-        "预定会议室必须明确会议室使用的开始和结束时间，这一项不能没有。",
-        "请注意会议开始和结束时间按照Python语法中的“%Y-%m-%d %H:%M:%S”格式解析。",
-        "请根据已有的会议室引导我选择哪个会议室，包括输入会议开始时间和结束时间。",
-        "请根据我的输入结合全部会议室的属性，为我推荐我合适预定的会议室。",
-        "必须在我给定的全部会议室中推荐，不要给我推荐不存在的会议室，推荐的会议室根据all_meeting_rooms中的数据得出。",
-        "如果我直接输入了要预定的会议室和时间段，优先按照我的输入处理。",
-        "为我展示会议室清单和详细信息时，整理后再展示，尽量美观直观。",
-        "开始和结束时间根据我输入的时间推理，结合当前系统时间计算出精确时间。",
-        "我询问关于会议室的信息时，请分析all_meeting_rooms中的数据，为我提供正确的答案。",
-        "如果最终确定了会议室和时间，总结我选择的会议室和时间，务必按照我要求的格式输出结果。",
-        "当我输入“Y”时，按照我要求的格式返回结果，如果结果不是按格式返回的，请继续思考直到返回结果达到要求。",
-    ]
-    desc: str = "引导我预定合适的会议室"
     max_retry_count: int = 1
 
     def __init__(self, **kwargs):
