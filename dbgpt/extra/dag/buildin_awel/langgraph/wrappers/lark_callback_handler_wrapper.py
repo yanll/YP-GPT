@@ -308,7 +308,7 @@ def do_feedback(app_chat_service, conv_uid, lark_message_id, feedback, recommend
         "feedback": feedback,
         "recommendation": recommendation
     }
-    app_chat_service.add_app_feedback()
+    app_chat_service.add_app_feedback(rec)
 
     return {
         "toast": {
