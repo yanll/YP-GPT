@@ -572,6 +572,17 @@ def do_collect(
         # 没有行业线表单
         else:
             return {"success": "false", "response_message": "无报单权限"}
+        content['data']['template_variable']['submit_callback_event'] = {
+            "event_type": "submit",
+            "event_source": 'crm_bus_customer_collect'
+        }
+        content['data']['template_variable']['unlike_callback_event'] = {
+            "event_type": "unlike",
+            "event_source": 'crm_bus_customer_collect',
+            "event_data": {
+                "message": "填写报单"
+            }
+        }
         return {
             "success": "true",
             "error_message": "",
