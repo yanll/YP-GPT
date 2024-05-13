@@ -2,6 +2,8 @@ import requests
 import json
 import jwt
 
+from dbgpt.util import consts
+
 
 def test_lark_event_endpoint():
     url = "http://127.0.0.1:5670/api/v1/awel/trigger/lark_event_endpoint"
@@ -18,7 +20,7 @@ def test_lark_event_endpoint():
                               'union_id': 'on_0ee3e44cbecb75e4e680bc62eabbebf5',
                               'user_id': 'ecd502d4-2e68-44b5-a25f-f21fd33b1520'}, 'sender_type': 'user',
                 'tenant_key': '2cfa3e0dad8cd75d'}}}
-    resp = requests.request('POST', headers=headers, url=url, data=json.dumps(data))
+    resp = requests.request('POST', headers=headers, url=url, data=json.dumps(data), timeout=consts.request_time_out)
     print("\n调用返回结果：", resp.text)
     assert True
 
@@ -39,7 +41,6 @@ def test_calendar_endpoint():
                               'union_id': 'on_0ee3e44cbecb75e4e680bc62eabbebf5',
                               'user_id': 'ecd502d4-2e68-44b5-a25f-f21fd33b1520'}, 'sender_type': 'user',
                 'tenant_key': '2cfa3e0dad8cd75d'}}}
-    resp = requests.request('POST', headers=headers, url=url, data=json.dumps(data))
+    resp = requests.request('POST', headers=headers, url=url, data=json.dumps(data), timeout=consts.request_time_out)
     print("\n调用返回结果：", resp.text)
     assert True
-

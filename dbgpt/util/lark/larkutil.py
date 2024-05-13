@@ -5,7 +5,7 @@ from typing import Dict
 import requests
 
 from dbgpt.extra.cache.redis_cli import RedisClient
-from dbgpt.util import envutils
+from dbgpt.util import envutils, consts
 
 redis_client = RedisClient()
 
@@ -65,7 +65,8 @@ def select_userinfo_batch(token: str = None, open_id: str = None):
         "user_id_type": "open_id",
         "user_ids": [open_id]
     }
-    resp = requests.request('GET', url=url, headers=build_headers(token), params=params)
+    resp = requests.request('GET', url=url, headers=build_headers(token), params=params,
+                            timeout=consts.request_time_out)
     print('用户列表信息返回结果：', resp.json())
     return resp.json()
 
@@ -85,7 +86,7 @@ def select_userinfo(token: str = None, open_id: str = None):
         print("缓存读取的飞书用户详细信息：", rs)
         return rs
     else:
-        resp = requests.request('GET', url=url, headers=build_headers(token))
+        resp = requests.request('GET', url=url, headers=build_headers(token), timeout=consts.request_time_out)
         if resp.status_code != 200:
             logging.error("飞书用户查询接口异常：" + str(resp.status_code))
             return None
@@ -116,4 +117,3 @@ def select_userinfo(token: str = None, open_id: str = None):
         redis_client.set(redis_key, json.dumps(userinfo), 10 * 60)
         print('\n用户详细信息返回结果：', userinfo)
         return userinfo
-

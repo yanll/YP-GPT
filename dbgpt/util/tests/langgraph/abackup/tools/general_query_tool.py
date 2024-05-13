@@ -10,6 +10,8 @@ from langchain_core.tools import BaseTool
 
 import requests
 
+from dbgpt.util import consts
+
 
 class GeneralQueryToolInput(BaseModel):
     """通用查询工具的输入参数"""
@@ -42,7 +44,8 @@ class GeneralQueryResults(BaseTool):
                 method=input_body["method"],
                 headers=input_body["headers"],
                 params=input_body["params"],
-                data=input_body["data"]
+                data=input_body["data"],
+                timeout=consts.request_time_out
             )
             return resp
         except Exception as e:
@@ -72,7 +75,8 @@ class GeneralQueryAnswer(BaseTool):
                 method=input_body["method"],
                 headers=input_body["headers"],
                 params=input_body["params"],
-                data=input_body["data"]
+                data=input_body["data"],
+                timeout=consts.request_time_out
             )
             return [resp, "answer"]
         except Exception as e:

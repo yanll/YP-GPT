@@ -5,6 +5,7 @@ from typing import Dict
 import requests
 
 from dbgpt.extra.cache.redis_cli import RedisClient
+from dbgpt.util import consts
 from dbgpt.util.lark.larkutil import build_headers
 
 redis_client = RedisClient()
@@ -22,7 +23,8 @@ def send_message(receive_id: str, content: Dict, receive_id_type: str = "email",
         "msg_type": msg_type,
         "content": json.dumps(content)
     }
-    resp = requests.request('POST', url=url, headers=build_headers(), params=params, data=json.dumps(data))
+    resp = requests.request('POST', url=url, headers=build_headers(), params=params, data=json.dumps(data),
+                            timeout=consts.request_time_out)
     rs = resp.json()
     print('发送消息返回结果：', type, receive_id, resp.json())
     if rs["code"] != 0:
@@ -42,6 +44,7 @@ def send_interactive_update_message(token: str, content: Dict):
         "token": token,
         "card": content
     }
-    resp = requests.request('POST', url=url, headers=build_headers(), data=json.dumps(data))
+    resp = requests.request('POST', url=url, headers=build_headers(), data=json.dumps(data),
+                            timeout=consts.request_time_out)
     print('发送交互更新卡片返回结果：', resp.json())
     return resp.json()

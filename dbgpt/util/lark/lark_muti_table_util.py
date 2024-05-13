@@ -2,6 +2,7 @@ import json
 
 import requests
 
+from dbgpt.util import consts
 from dbgpt.util.lark.larkutil import build_headers
 
 
@@ -14,7 +15,8 @@ def muti_table_create(name: str, folder_token: str):
         "name": name,
         "folder_token": folder_token
     }
-    resp = requests.request('POST', url=url, headers=build_headers(), params={}, data=json.dumps(data))
+    resp = requests.request('POST', url=url, headers=build_headers(), params={}, data=json.dumps(data),
+                            timeout=consts.request_time_out)
     print('多维表格创建返回结果：', resp.json())
     if resp.json().get('code') == 0:
         print('多维表格创建完成：', resp.json()['data'])
@@ -33,7 +35,8 @@ def muti_table_add_record(app_id, table_id, record):
         "ts": "123456"
     }
     data = json.dumps(record)
-    resp = requests.request('POST', url=url, headers=build_headers(), params=params, data=data)
+    resp = requests.request('POST', url=url, headers=build_headers(), params=params, data=data,
+                            timeout=consts.request_time_out)
     print('多维表格添加记录返回结果：', resp.json())
     if resp.json().get('code') == 0:
         print('添加记录完成：', resp.json()['data'])
