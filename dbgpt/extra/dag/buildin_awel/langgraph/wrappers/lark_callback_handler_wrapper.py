@@ -328,14 +328,13 @@ def do_feedback(app_chat_service, conv_uid, lark_message_id, feedback, recommend
 
 def do_send_tips(app_chat_service, open_id, event_source):
     if event_source == "跟进拜访":
-        content = ("客户拜访记录填写工具，帮助用户填写客户拜访记录、客户拜访信息总结。\n"
-                   "以下是输入示例：\n"
-                   "\n"
-                   "我要填写跟进记录：\n"
-                   " - 拜访内容：XXX\n"
-                   " - 行业线：大零售\n")
-
-        lark_message_util.send_message(open_id, {"text": content}, receive_id_type="receive_id_type")
+        content = card_templates.create_tool_tips_content({
+            "description": "客户拜访记录填写工具，帮助用户填写客户拜访记录、客户拜访信息总结。\n",
+            "example": "我要填写跟进记录：\n" +
+                       " - 拜访内容：XXX\n" +
+                       " - 行业线：大零售\n"
+        })
+        lark_message_util.send_card_message(open_id, content)
     if event_source == "XXXX":
         pass
 
