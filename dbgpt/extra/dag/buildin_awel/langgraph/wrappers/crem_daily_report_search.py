@@ -9,8 +9,7 @@ from datetime import datetime
 
 
 def daily_report_search(open_id, create_user):
-    # url = envutils.getenv("CREM_ENDPOINT") +'/workReportInfo/findWorkReportInfo'
-    url = 'https://cem.yeepay.com/cem-api/workReportInfo/findWorkReportInfo'
+    url = envutils.getenv("CREM_ENDPOINT") +'/workReportInfo/findWorkReportInfo'
 
     headers = {
         "Content-Type": "application/json; charset=utf-8",

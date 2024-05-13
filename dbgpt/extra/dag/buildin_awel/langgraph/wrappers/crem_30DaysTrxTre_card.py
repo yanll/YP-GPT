@@ -6,7 +6,7 @@ from dbgpt.util.lark import ssoutil
 
 
 def get_crem_30DaysTrxTre_card(open_id, customer_id,customerName):
-    url = (envutils.getenv("CREM_ENDPOINT") +
+    url = (envutils.getenv("CREM_ENDPOINT_PROD") +
            '/doggiex-daportal/wrap/apis/CEMCustomerPortraitCustomerInfo_30DaysTrxTrenew')
     headers = {
         'yuiassotoken': ssoutil.get_sso_credential(open_id),
