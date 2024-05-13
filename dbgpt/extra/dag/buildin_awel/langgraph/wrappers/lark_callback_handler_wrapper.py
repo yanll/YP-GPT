@@ -331,8 +331,8 @@ def do_send_tips(app_chat_service, open_id, event_source):
         content = card_templates.create_tool_tips_content({
             "description": "客户拜访记录填写工具，帮助用户填写客户拜访记录、客户拜访信息总结。\n",
             "example": "我要填写跟进记录：\n" +
-                       " - 拜访内容：XXX\n" +
-                       " - 行业线：大零售\n"
+                       " - 拜访内容：\n" +
+                       " - 行业线：\n"
         })
         lark_message_util.send_card_message(open_id, content)
     if event_source == "XXXX":
