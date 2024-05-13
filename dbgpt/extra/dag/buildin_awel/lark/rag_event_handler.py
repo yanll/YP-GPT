@@ -111,6 +111,7 @@ class RAGLarkHandler:
                 if len(names) == 1 :
                     n = f"{idx+1}. {file_name}"
                     response += n
+                    response += "\r\n"
                     continue
                 cur_dir_path = os.getcwd()
                 print(os.path.join(cur_dir_path,'dbgpt/extra/dag/buildin_awel/lark/static/ragfiles',names[0] + '.json'))
@@ -119,6 +120,7 @@ class RAGLarkHandler:
                 f_metadata = json.loads(f_json[name])
                 n = f"[{idx+1}. {file_name}]({f_metadata['url']})"
                 response += n
+                response += "\r\n"
                 
             
             
