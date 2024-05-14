@@ -351,7 +351,7 @@ def do_unlike_rag(app_chat_service, open_id, original_message_id, message):
             message_id=original_message_id
         )
 
-    lark_message_util.send_card_message(
+    lark_message_util.send_card_message_rag(
         receive_id=open_id,
         content=card_templates.create_feedback_card_content(
             template_variable={
