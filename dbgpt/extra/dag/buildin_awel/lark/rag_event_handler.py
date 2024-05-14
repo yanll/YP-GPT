@@ -114,12 +114,13 @@ class RAGLarkHandler:
                     response += n
                     response += "\r\n"
                     continue
-                cur_dir_path = os.getcwd()
-                print(os.path.join(cur_dir_path,'dbgpt/extra/dag/buildin_awel/lark/static/ragfiles',names[0] + '.json'))
-                f = open(os.path.join(cur_dir_path,'dbgpt/extra/dag/buildin_awel/lark/static/ragfiles',names[0] + '.json'))
-                f_json = json.load(f)
-                f_metadata = json.loads(f_json[name])
-                n = f"[{idx+1 - reduce_count}. {file_name}]({f_metadata['url']})"
+                # cur_dir_path = os.getcwd()
+                # print(os.path.join(cur_dir_path,'dbgpt/extra/dag/buildin_awel/lark/static/ragfiles',names[0] + '.json'))
+                # f = open(os.path.join(cur_dir_path,'dbgpt/extra/dag/buildin_awel/lark/static/ragfiles',names[0] + '.json'))
+                # f_json = json.load(f)
+                # f_metadata = json.loads(f_json[name])
+                # n = f"[{idx+1 - reduce_count}. {file_name}]({f_metadata['url']})"
+                n = file_name
                 response += n
                 response += "\r\n"
                 
