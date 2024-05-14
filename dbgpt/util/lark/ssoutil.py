@@ -4,7 +4,7 @@ import logging
 import requests
 
 from dbgpt.extra.cache.redis_cli import RedisClient
-from dbgpt.util import envutils
+from dbgpt.util import envutils, consts
 from dbgpt.util.lark import larkutil, aesutil
 
 redis_client = RedisClient()
@@ -37,20 +37,23 @@ def get_sso_credential(open_id: str):
             headers={
                 "Content-Type": "application/json; charset=utf-8"
             },
-            params={}, data=json.dumps(data))
+            params={}, data=json.dumps(data), timeout=consts.request_time_out)
 
         if resp.status_code != 200:
             logging.error("用户凭证接口异常：" + str(resp.status_code))
             return None
         text = resp.text
-        logging.info("UIA用户：" + text)
+        logging.info("UIA用户：\n")
         dict = json.loads(text)
+        print("UIA用户加载完成")
         code = dict['code']
         if code != "200":
             logging.error("UIA用户查询业务异常：" + resp.text)
             return None
         data = dict['data']
+        print("开始解析UIA用户")
         credential = aesutil.decrypt_from_base64(envutils.getenv("AES_KEY"), data)
+        print("解析UIA用户完成")
         redis_client.set(redis_key, credential, 5 * 60)
         print('\n用户凭证信息结果：', open_id, data, "END")
 

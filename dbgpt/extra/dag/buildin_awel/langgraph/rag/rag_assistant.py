@@ -8,6 +8,10 @@ import aiohttp
 # const
 TENANT_ACCESS_TOKEN_URI = "/open-apis/auth/v3/tenant_access_token/internal"
 MESSAGE_URI = "/open-apis/im/v1/messages"
+# RAG_FLOW_BASE_URL = "http://localhost"
+# RAG_FLOW_CHAT_TOKEN = "Bearer ragflow-Y0NDlmNTQ2MTEwMDExZWZiZTMzMDI0Mm"
+RAG_FLOW_BASE_URL = "http://172.31.91.206:8066"
+RAG_FLOW_CHAT_TOKEN = "Bearer ragflow-M4MDBhYmNjMDFlMDExZWZhYWY2MDI0Mm"
 
 
 class RAGApiClient(object):
@@ -17,9 +21,9 @@ class RAGApiClient(object):
 
     async def test_slow_http(self,user_id):
         # https://httpbin.org/delay/10
-        url = "http://172.31.91.206:8066/v1/api/new_conversation?name="+user_id
+        url = RAG_FLOW_BASE_URL + "/v1/api/new_conversation?name="+user_id
         headers = {'Content-Type': 'application/json; charset=utf-8',
-                   'Authorization': 'Bearer ragflow-M4MDBhYmNjMDFlMDExZWZhYWY2MDI0Mm'}
+                   'Authorization': RAG_FLOW_CHAT_TOKEN}
         async with aiohttp.ClientSession(headers=headers) as session:
             async with session.get('http://httpbin.org/delay/8') as response:
                 print("Status:", response.status)
@@ -32,9 +36,9 @@ class RAGApiClient(object):
 
     async def async_coversation_start(self,user_id):
         headers = {'Content-Type': 'application/json; charset=utf-8',
-                   'Authorization': 'Bearer ragflow-M4MDBhYmNjMDFlMDExZWZhYWY2MDI0Mm'}
+                   'Authorization': RAG_FLOW_CHAT_TOKEN}
         async with aiohttp.ClientSession(headers=headers) as session:
-            async with session.get("http://172.31.91.206:8066/v1/api/new_conversation?name="+user_id) as resp:
+            async with session.get(RAG_FLOW_BASE_URL + "/v1/api/new_conversation?name="+user_id) as resp:
                 print(resp.status)
                 print(await resp.text())
                 return resp
@@ -42,7 +46,7 @@ class RAGApiClient(object):
     
     async def async_chat(self,conversation_id, messages):
         headers = {'Content-Type': 'application/json; charset=utf-8',
-                   'Authorization': 'Bearer ragflow-M4MDBhYmNjMDFlMDExZWZhYWY2MDI0Mm'}
+                   'Authorization': RAG_FLOW_CHAT_TOKEN}
         data = {
             "conversation_id": conversation_id,
             "messages": messages,
@@ -50,22 +54,22 @@ class RAGApiClient(object):
 
         print("rag start chat",conversation_id,messages,data)
         async with aiohttp.ClientSession(headers=headers) as session:
-            async with session.post("http://172.31.91.206:8066/v1/api/completion",data=data) as response:
+            async with session.post(RAG_FLOW_BASE_URL + "/v1/api/completion",data=data) as response:
                 print(response.status)
                 return response
     
     def coversation_start(self,user_id):
-        url = "http://172.31.91.206:8066/v1/api/new_conversation?name="+user_id
+        url = RAG_FLOW_BASE_URL + "/v1/api/new_conversation?name="+user_id
         headers = {'Content-Type': 'application/json; charset=utf-8',
-                   'Authorization': 'Bearer ragflow-M4MDBhYmNjMDFlMDExZWZhYWY2MDI0Mm'}
+                   'Authorization': RAG_FLOW_CHAT_TOKEN}
         data = {}
         resp = requests.request('GET', headers=headers, url=url, data=json.dumps(data))
         return resp
 
     def chat(self,conversation_id, messages):
-        url = "http://172.31.91.206:8066/v1/api/completion"
+        url = RAG_FLOW_BASE_URL + "/v1/api/completion"
         headers = {'Content-Type': 'application/json; charset=utf-8',
-                   'Authorization': 'Bearer ragflow-M4MDBhYmNjMDFlMDExZWZhYWY2MDI0Mm'}
+                   'Authorization': RAG_FLOW_CHAT_TOKEN}
         data = {
             "conversation_id": conversation_id,
             "messages": messages,
@@ -74,9 +78,9 @@ class RAGApiClient(object):
         return resp
 
     def get_image(self,image_id):
-        url = "http://172.31.91.206:8066/v1/api/document/get/"+image_id
+        url = RAG_FLOW_BASE_URL + "/v1/api/document/get/"+image_id
         headers = {'Content-Type': 'image/jpeg',
-                   'Authorization': 'Bearer ragflow-M4MDBhYmNjMDFlMDExZWZhYWY2MDI0Mm'}
+                   'Authorization': RAG_FLOW_CHAT_TOKEN}
         data = {}
         resp = requests.request('GET', headers=headers, url=url, data=json.dumps(data))
         return resp

@@ -3,7 +3,7 @@ import logging
 
 import requests
 
-from dbgpt.util import envutils
+from dbgpt.util import envutils, consts
 from dbgpt.util.lark import ssoutil
 
 
@@ -50,7 +50,7 @@ def add_daily_or_weekly_report(open_id: str, report_type: str = "", report_time:
     # "busWorkScheduleInfoList": [],
     # "busAnnexInfos": []
     print("提交日报到CREM：", data)
-    response = requests.post(url, headers=headers, data=json.dumps(data))
+    response = requests.post(url, headers=headers, data=json.dumps(data), timeout=consts.request_time_out)
     try:
         print(response.json())
     except Exception as e:
@@ -127,14 +127,17 @@ def add_crm_bus_customer(open_id: str,
 
     }
     print("提交添加报单客户信息到CREM：", data)
-    response = requests.post(url, headers=headers, data=json.dumps(data))
+    response = requests.post(url, headers=headers, data=json.dumps(data), timeout=consts.request_time_out)
     try:
         print(response.json())
+        resp = response.json()
+        resp = resp['msg']
     except Exception as e:
         print(response)
         logging.error("CREM添加报单客户信息调用失败：", e)
+        resp = 'CREM添加报单客户信息调用失败'
         raise e
-    return response
+    return resp
 
 
 def get_crm_user_industry_line(open_id: str) -> str:
@@ -149,7 +152,7 @@ def get_crm_user_industry_line(open_id: str) -> str:
         "type": "49"
     }
     print("开始获取用户行业线")
-    response = requests.post(url, headers=headers, data=json.dumps(data))
+    response = requests.post(url, headers=headers, data=json.dumps(data), timeout=consts.request_time_out)
     try:
         print(response.json())
         resp = response.json()
@@ -159,6 +162,7 @@ def get_crm_user_industry_line(open_id: str) -> str:
         print(resp['data'])
         if len(resp['data']) == 0:
             return ''
+        return '跨境行业线'
         return resp['data'][0]['typename']
 
     except Exception as e:
@@ -176,7 +180,7 @@ def query_crm_bus_customer(open_id: str, data={}):
     }
 
     print("开始查询报单")
-    response = requests.post(url, headers=headers, data=json.dumps(data))
+    response = requests.post(url, headers=headers, data=json.dumps(data), timeout=consts.request_time_out)
     try:
         print(response.json())
         resp = response.json()
@@ -205,7 +209,7 @@ def get_crm_user_name(open_id: str) -> str:
     data = {
     }
     print("开始获取用户信息")
-    response = requests.post(url, headers=headers, data=json.dumps(data))
+    response = requests.post(url, headers=headers, data=json.dumps(data), timeout=consts.request_time_out)
     try:
         print(response.json())
         resp = response.json()

@@ -3,7 +3,7 @@ from typing import Dict
 import requests
 import json
 
-from dbgpt.util import envutils
+from dbgpt.util import envutils, consts
 
 
 class DmallClient:
@@ -23,7 +23,8 @@ class DmallClient:
             "version": api_version,
             "parameters": parameters
         }
-        resp = requests.request('POST', headers=headers, url=url, data=json.dumps(data))
+        resp = requests.request('POST', headers=headers, url=url, data=json.dumps(data),
+                                timeout=consts.request_time_out)
         print("商店调用返回结果：", resp.text)
         return resp
 

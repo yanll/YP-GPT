@@ -6,7 +6,7 @@ import time
 import requests
 
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util import envutils
+from dbgpt.util import envutils, consts
 from dbgpt.util.lark import lark_card_util, larkutil, lark_message_util
 
 
@@ -43,7 +43,7 @@ def get_project_app_token():
         "plugin_secret": envutils.getenv("LARK_PROJECT_PLUGIN_SECRET"),
         "type": 0
     }
-    response = requests.post(url, headers=headers, data=json.dumps(data))
+    response = requests.post(url, headers=headers, data=json.dumps(data), timeout=consts.request_time_out)
     return response.json()["data"]["token"]
 
 
@@ -58,7 +58,7 @@ def get_user_key(union_id):
     }
 
     try:
-        response = requests.post(url, headers=headers, data=json.dumps(data))
+        response = requests.post(url, headers=headers, data=json.dumps(data), timeout=consts.request_time_out)
         response_data = response.json()
         if response_data and 'data' in response_data and len(response_data['data']) > 0:
             return response_data['data'][0].get('user_key')
@@ -76,7 +76,7 @@ def get_template_id(project_key, union_id):
                'X-USER-KEY': get_user_key(union_id)}
 
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=consts.request_time_out)
         response_data = response.json()
         if response_data and 'data' in response_data and len(response_data['data']) > 0:
             return response_data['data'][0].get('template_id')
@@ -130,6 +130,6 @@ def create_and_send_work_item(project_key, union_id, name, business_value, prior
         ]
     }
     # 发送 POST 请求
-    response = requests.post(url, headers=headers, data=json.dumps(data))
+    response = requests.post(url, headers=headers, data=json.dumps(data), timeout=consts.request_time_out)
     print("飞书项目需求创建结果：", response.json())
     return response.json()

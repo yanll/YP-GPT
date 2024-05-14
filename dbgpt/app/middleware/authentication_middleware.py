@@ -6,6 +6,7 @@ from starlette.responses import Response
 
 from dbgpt.app.openapi.api_view_model import Result
 from dbgpt.app.user.service import UserService
+from dbgpt.util import consts
 from dbgpt.util.sutil import ssourl, enabledsso
 
 ignored_exp = [
@@ -24,7 +25,7 @@ def principal(token):
         'yuiassotoken': token
     }
     params = {}
-    resp = requests.post(url=ssourl(), headers=headers, params=params)
+    resp = requests.post(url=ssourl(), headers=headers, params=params, timeout=consts.request_time_out)
     print("用户信息校验结果：", resp)
     return resp.json()
 

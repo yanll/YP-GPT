@@ -53,8 +53,8 @@ class CrmBusCustomerCollectInput(BaseModel):
 class CrmBusCustomerCollectQueryTool(BaseTool):
     name: str = "crm_bus_customer_collect_tool"
     description: str = (
-        "这是一个查询报单工具，帮助销售用户查询报单客户信息。"
-        "当需要查询报单客户时非常有用。 "
+        "这是一个查询报单工具，帮助用户查询报单信息。"
+        "当需要查询报单时非常有用。 "
         "能够尽可能全的收集报单信息。"
         "调用本工具需要的参数值均来自用户的输入，可以默认为空，但是禁止随意编造。"
         ""
