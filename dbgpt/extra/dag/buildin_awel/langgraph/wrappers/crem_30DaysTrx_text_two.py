@@ -14,13 +14,13 @@ def format_num(num):
         return '{:.2f}亿'.format(num / 100000000)
 def format_percent(num):
     return '{:.2%}'.format(num)
-def get_crem_30DaysTrx_text_card(open_id=None, customer_id=None,conv_id=None):
+def get_crem_30DaysTrx_text_card(open_id=None, customer_id=None, conv_id=None, customer_name=None, ):
     try:
         if customer_id == "" and conv_id == "":
             return {"success": "false", "response_message": "the description of customer_id "}
         data = get_crem_30DaysTrx_text(open_id, customer_id)
         resp_data = [data]
-        query_str = (customer_id + "").strip()
+        query_str = (customer_name + "" + "("+customer_id+")").strip()
         print("近30天业务查询结果：", resp_data)
         list = []
         if resp_data and len(resp_data) == 0:
@@ -54,7 +54,8 @@ def get_crem_30DaysTrx_text_card(open_id=None, customer_id=None,conv_id=None):
                             "message": "近30天业务表现列表"
                         }
                     },
-                    "crem_30DaysTrx_text_list": da["list"]
+                    "crem_30DaysTrx_text_list": da["list"],
+                    "query_str": query_str
                 }
             )
         )

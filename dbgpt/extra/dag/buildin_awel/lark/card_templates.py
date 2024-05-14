@@ -197,7 +197,7 @@ def create_customer_visit_record_card_content(template_variable: Dict):
 def create_merchant_list_card_content(template_variable: Dict):
     """商户查询"""
     template_id = "AAqkXYlYpaLEf"
-    template_version_name = "1.0.31"
+    template_version_name = "1.0.33"
 
     card = {
         "type": "template",
@@ -301,7 +301,7 @@ def create_tool_tips_content(template_variable: Dict):
 def crem_30DaysTrx_text_content(template_variable: Dict):
     """近30天业务展示"""
     template_id = "AAq3usqoxtHSw"
-    template_version_name = "1.0.2"
+    template_version_name = "1.0.3"
 
     card = {
         "type": "template",
@@ -335,7 +335,7 @@ class create_rag_card_content:
 def crem_sales_details_content(template_variable: Dict):
     """销售详情展示"""
     template_id = "AAq3rInyQtnMC"
-    template_version_name = "1.0.9"
+    template_version_name = "1.0.10"
 
     card = {
         "type": "template",

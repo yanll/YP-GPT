@@ -57,7 +57,7 @@ def get_crem_30DaysTrxTre_card(open_id, customer_id, customerName):
                     "tag": "chart",
                     "chart_spec": {
                         "type": "area",
-                        "title": {"text": customerName + "近30天毛利"},
+                        "title": {"text": customerName + " 近30天毛利"},
                         "data": {"values": formatted_data},  # 更新数据部分
                         "xField": "time",
                         "yField": "value",
@@ -127,26 +127,7 @@ def get_crem_30DaysTrxTre_card(open_id, customer_id, customerName):
                             "vertical_align": "top",
                             "vertical_spacing": "8px",
                             "background_style": "default",
-                            "elements": [
-                                {
-                                    "tag": "button",
-                                    "text": {
-                                        "tag": "plain_text",
-                                        "content": ""
-                                    },
-                                    "type": "primary_text",
-                                    "complex_interaction": "true",
-                                    "width": "default",
-                                    "size": "medium",
-                                    "icon": {
-                                        "tag": "standard_icon",
-                                        "token": "thumbsup_outlined"
-                                    },
-                                    "value": {
-                                        "event_type": "like"
-                                    }
-                                }
-                            ],
+                            "elements": [],
                             "weight": 1
                         },
                         {
@@ -155,24 +136,7 @@ def get_crem_30DaysTrxTre_card(open_id, customer_id, customerName):
                             "vertical_align": "top",
                             "vertical_spacing": "8px",
                             "background_style": "default",
-                            "elements": [
-                                {
-                                    "tag": "button",
-                                    "text": {
-                                        "tag": "plain_text",
-                                        "content": ""
-                                    },
-                                    "type": "primary_text",
-                                    "complex_interaction": "true",
-                                    "width": "default",
-                                    "size": "medium",
-                                    "icon": {
-                                        "tag": "standard_icon",
-                                        "token": "thumbdown_outlined"
-                                    },
-                                    "value": "${unlike_callback_event}"
-                                }
-                            ],
+                            "elements": [],
                             "weight": 1
                         }
                     ],
@@ -192,7 +156,7 @@ def get_crem_30DaysTrxTre_card(open_id, customer_id, customerName):
                     "tag": "chart",
                     "chart_spec": {
                         "type": "area",
-                        "title": {"text": customerName + "近30天交易金额"},
+                        "title": {"text": customerName + " 近30天交易金额"},
                         "data": {"values": formatted_data_jiaoyijine},  # 更新数据部分
                         "xField": "time",
                         "yField": "value",
@@ -253,26 +217,7 @@ def get_crem_30DaysTrxTre_card(open_id, customer_id, customerName):
                             "vertical_align": "top",
                             "vertical_spacing": "8px",
                             "background_style": "default",
-                            "elements": [
-                                {
-                                    "tag": "button",
-                                    "text": {
-                                        "tag": "plain_text",
-                                        "content": ""
-                                    },
-                                    "type": "primary_text",
-                                    "complex_interaction": "true",
-                                    "width": "default",
-                                    "size": "medium",
-                                    "icon": {
-                                        "tag": "standard_icon",
-                                        "token": "thumbsup_outlined"
-                                    },
-                                    "value": {
-                                        "event_type": "like"
-                                    }
-                                }
-                            ],
+                            "elements": [],
                             "weight": 1
                         },
                         {
@@ -281,24 +226,7 @@ def get_crem_30DaysTrxTre_card(open_id, customer_id, customerName):
                             "vertical_align": "top",
                             "vertical_spacing": "8px",
                             "background_style": "default",
-                            "elements": [
-                                {
-                                    "tag": "button",
-                                    "text": {
-                                        "tag": "plain_text",
-                                        "content": ""
-                                    },
-                                    "type": "primary_text",
-                                    "complex_interaction": "true",
-                                    "width": "default",
-                                    "size": "medium",
-                                    "icon": {
-                                        "tag": "standard_icon",
-                                        "token": "thumbdown_outlined"
-                                    },
-                                    "value": "${unlike_callback_event}"
-                                }
-                            ],
+                            "elements": [],
                             "weight": 1
                         }
                     ],

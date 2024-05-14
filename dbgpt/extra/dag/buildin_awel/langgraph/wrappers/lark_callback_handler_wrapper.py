@@ -146,12 +146,14 @@ async def a_call(app_chat_service, event: Dict):
     #         conv_id=open_id)
     if event_type == 'merchant_detail_three':
         customerNo = action_value['customerNo']
+        customerName = action_value['customerName']
         print('查询商户的编号', customerNo)
-        return1 =  crem_30DaysTrx_text_two.get_crem_30DaysTrx_text_card(
+        return1=crem_30DaysTrx_text_two.get_crem_30DaysTrx_text_card(
             open_id=open_id,
             customer_id=customerNo,
+            customer_name=customerName,
             conv_id=open_id)
-        return2 = sales_details_daily.get_sales_details_daily_card(
+        return2=sales_details_daily.get_sales_details_daily_card(
             open_id=open_id,
             customer_id=customerNo,
             conv_id=open_id)
