@@ -84,7 +84,7 @@ class RAGLarkHandler:
             response = res['data']['answer']
             chunks = res['data']['reference']['chunks']
             
-            print("rag answer:",res)
+            # print("rag answer:",res)
             
             # response = response.replace("##", "[").replace("$$", "]")
             pattern = r"##(.*?)\$\$"
@@ -97,11 +97,12 @@ class RAGLarkHandler:
             cache_files = []
             reduce_count = 0
             for idx, chunk in enumerate(chunks):
-                print("current: ", chunk)
+                # print("current: ", chunk)
                 if idx == 0 :
                     response += '\r\n---\r\n'
                 
                 name = chunk['docnm_kwd']
+                # name = '产品能力全貌（标准）$$_$$老板管账$$_$$老板管账API接口能力梳理.pdf'
                 names = name.split("$$_$$")
                 file_name = names[len(names) - 1]
                 if (file_name in cache_files) == True:
@@ -114,17 +115,22 @@ class RAGLarkHandler:
                     response += n
                     response += "\r\n"
                     continue
-                # cur_dir_path = os.getcwd()
-                # print(os.path.join(cur_dir_path,'dbgpt/extra/dag/buildin_awel/lark/static/ragfiles',names[0] + '.json'))
-                # f = open(os.path.join(cur_dir_path,'dbgpt/extra/dag/buildin_awel/lark/static/ragfiles',names[0] + '.json'))
-                # f_json = json.load(f)
+                cur_dir_path = os.getcwd()
+                print(os.path.join(cur_dir_path,'dbgpt/extra/dag/buildin_awel/lark/static/ragfiles',names[0] + '.json'))
+                f = open(os.path.join(cur_dir_path,'dbgpt/extra/dag/buildin_awel/lark/static/ragfiles',names[0] + '.json'))
+                f_json = json.load(f)
+                for key, value in f_json.items():
+                    if key == name:
+                        f_metadata = json.loads(value)
+                        n = f"[{idx+1 - reduce_count}. {file_name}]({f_metadata['url']})"
+                        response += n
+                        response += "\r\n"
+                        break
                 # f_metadata = json.loads(f_json[name])
                 # n = f"[{idx+1 - reduce_count}. {file_name}]({f_metadata['url']})"
-                n = file_name
-                response += n
-                response += "\r\n"
+                # n = file_name
                 
-            
+            print('rag card response', response) 
             
             resp = lark_message_util.send_card_message_rag(
                     receive_id=open_id,

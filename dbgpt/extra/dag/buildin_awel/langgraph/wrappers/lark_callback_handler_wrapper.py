@@ -10,7 +10,7 @@ from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_wrapper, ca
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_api_wrapper
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers.lark_event_handler_wrapper import LarkEventHandlerWrapper
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import lark_card_util, lark_message_util
+from dbgpt.util.lark import lark_card_util, lark_message_util, larkutil
 
 
 async def a_call(app_chat_service, event: Dict):
@@ -40,12 +40,18 @@ async def a_call(app_chat_service, event: Dict):
 
     if event_type == "new_chat":
         return do_new_chat(app_chat_service, open_id)
+    
+    if event_type == "new_chat_rag":
+        return do_new_chat_rag(app_chat_service, open_id)
 
     if event_type == "like":
         return do_like(app_chat_service, open_id, event["context"]["open_message_id"])
 
     if event_type == "tool_tips":
         return do_send_tips(app_chat_service, open_id, event_source)
+    
+    if event_type == "ask_rag_question":
+        return do_send_answer(app_chat_service, open_id, event_source)
 
     if event_type == "unlike":
         original_message_id = ""
@@ -54,8 +60,7 @@ async def a_call(app_chat_service, event: Dict):
             message = event_data["message"]
             original_message_id = event["context"]["open_message_id"]
         return do_unlike(app_chat_service, open_id, original_message_id, message)
-    
-    
+
     if event_type == "unlike_rag":
         original_message_id = ""
         message = ""
@@ -97,12 +102,14 @@ async def a_call(app_chat_service, event: Dict):
                 app_chat_service, open_id, original_message_id, feedback, recommendation, effect, reference_url
             )
             return do_feedback(app_chat_service, open_id, original_message_id, feedback, recommendation)
-        
+
         if event_source == 'feedback_collect_rag':
             original_message_id = event_data["original_message_id"]
             feedback = form_value["feedback"]
             recommendation = form_value["recommendation"]
-            return do_feedback_rag(app_chat_service, open_id, original_message_id, feedback, recommendation)
+            effect = form_value["effect"] or 'None'
+            reference_url = form_value["reference_url"] or 'None'
+            return do_feedback_rag(app_chat_service, open_id, original_message_id, feedback, recommendation, effect, reference_url)
 
         return {}
 
@@ -293,7 +300,27 @@ def do_new_chat(app_chat_service, open_id):
     asyncio.create_task(
         app_chat_service.a_disable_app_chat_his_message_by_uid(open_id)
     )
+    nickname = ""
+    try:
+        userinfo = larkutil.select_userinfo(open_id=open_id)
+        if userinfo and "name" in userinfo:
+            nickname = userinfo["name"] + " "
+    except Exception as e:
+        logging.warning("用户姓名解析异常：", open_id)
     lark_card_util.send_message_with_welcome(
+        receive_id=open_id,
+        template_variable={
+            "message_content": "已开启新会话！",
+            "current_nickname": nickname
+        }
+    )
+    return {}
+
+def do_new_chat_rag(app_chat_service, open_id):
+    asyncio.create_task(
+        app_chat_service.a_disable_app_chat_his_message_by_uid(open_id)
+    )
+    lark_card_util.send_message_with_welcome_rag(
         receive_id=open_id,
         template_variable={
             "message_content": "已开启新会话！"
@@ -351,7 +378,7 @@ def do_unlike_rag(app_chat_service, open_id, original_message_id, message):
             message_id=original_message_id
         )
 
-    lark_message_util.send_card_message(
+    lark_message_util.send_card_message_rag(
         receive_id=open_id,
         content=card_templates.create_feedback_card_content(
             template_variable={
@@ -370,7 +397,6 @@ def do_unlike_rag(app_chat_service, open_id, original_message_id, message):
 
 
 def do_feedback(app_chat_service, conv_uid, lark_message_id, feedback, recommendation, effect, reference_url):
-
     rec = {
         "id": str(uuid.uuid1()),
         "scope": "SalesAssistant",
@@ -463,7 +489,7 @@ def do_send_tips(app_chat_service, open_id, event_source):
                        " - 需求状态：受理中\n"
         })
         lark_message_util.send_card_message(open_id, content)
-    if event_source == "找人":
+    if event_source in ["入网协议", "解决方案查询", "接口文档", "产品功能介绍"]:
         content = card_templates.create_tool_tips_content({
             "description": "功能完善中，敬请期待。\n",
             "example": "功能完善中，敬请期待。\n"
@@ -472,14 +498,17 @@ def do_send_tips(app_chat_service, open_id, event_source):
 
     return {}
 
-def do_feedback_rag(app_chat_service, conv_uid, lark_message_id, feedback, recommendation):
+
+def do_feedback_rag(app_chat_service, conv_uid, lark_message_id, feedback, recommendation, effect, reference_url):
     rec = {
         "id": str(uuid.uuid1()),
         "scope": "RAGAssistant",
         "conv_uid": conv_uid,
         "lark_message_id": lark_message_id,
         "feedback": feedback,
-        "recommendation": recommendation
+        "recommendation": recommendation,
+        "effect": effect,
+        "reference_url": reference_url
     }
     app_chat_service.add_app_feedback(rec)
 
@@ -493,3 +522,6 @@ def do_feedback_rag(app_chat_service, conv_uid, lark_message_id, feedback, recom
             }
         }
     }
+
+def do_send_answer(app_chat_service, open_id, event_source):
+    print(1)

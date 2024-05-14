@@ -99,6 +99,14 @@ class LarkEventHandlerWrapper:
             lark_message_id = resp["message_id"]
             self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
             return
+        if card_name == "crm_bus_customer_query_result":
+            resp = lark_message_util.send_card_message(
+                receive_id=sender_open_id,
+                content=data['content']
+            )
+            lark_message_id = resp["message_id"]
+            self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
+            return
         if card_name == "daily_report_collect":
             resp = lark_message_util.send_card_message(
                 receive_id=sender_open_id,
@@ -275,6 +283,28 @@ class LarkEventHandlerWrapper:
             )
             lark_message_id = resp["message_id"]
             self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
+            return
+
+        if card_name == "feedback_collect":
+            resp = lark_message_util.send_card_message(
+                receive_id=sender_open_id,
+                content=card_templates.create_feedback_card_content(
+                    template_variable={
+                        "submit_callback_event": {
+                            "event_type": "submit",
+                            "event_source": "feedback_collect",
+                            "event_data": {
+                                "original_message_id": ""
+                            }
+                        },
+                        "message": "",
+                        "feedback": data["feedback"],
+                        "effect": data["effect"],
+                        "recommendation": data["recommendation"],
+                        "reference_url": data["reference_url"]
+                    }
+                )
+            )
             return
 
     def lark_reply_general_message(self, sender_open_id, resp_msg):

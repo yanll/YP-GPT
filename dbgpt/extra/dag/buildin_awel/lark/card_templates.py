@@ -43,6 +43,21 @@ def create_daily_report_card_content(template_variable: Dict):
     }
     return card
 
+def crm_bus_customer_query_result(template_variable: Dict):
+    """查询报单结果"""
+    template_id = "AAq3r6C4zobmg"
+    template_version_name = "1.0.2"
+
+    card = {
+        "type": "template",
+        "data": {
+            "template_id": template_id,
+            "template_version_name": template_version_name,
+            "template_variable": template_variable
+        }
+    }
+    return card
+
 
 class create_crm_bus_customer_card_content:
     """报单客户信息表单"""
@@ -255,9 +270,9 @@ def create_requirement_search_list_card_content(template_variable: Dict):
 
 
 def create_feedback_card_content(template_variable: Dict):
-    """吐槽"""
+    """问题反馈/吐槽"""
     template_id = "AAqkEvmXj7MSH"
-    template_version_name = "1.0.8"
+    template_version_name = "1.0.9"
 
     card = {
         "type": "template",
@@ -306,7 +321,7 @@ class create_rag_card_content:
     @staticmethod
     def standard_response(template_variable: Dict):
         template_id = "AAq3fCQRCs1Ru"
-        template_version_name = "1.0.7"
+        template_version_name = "1.0.8"
         card = {
             "type": "template",
             "data": {
