@@ -9,6 +9,7 @@ from dbgpt.extra.dag.buildin_awel.langgraph.tools.crm_bus_customer_query_tool im
 from dbgpt.extra.dag.buildin_awel.langgraph.tools.customer_visit_record_tool import CustomerVisitRecordCollectTool
 from dbgpt.extra.dag.buildin_awel.langgraph.tools.daily_report_search_tool import DailyReportSearchTool
 from dbgpt.extra.dag.buildin_awel.langgraph.tools.daily_report_tool import DailyReportCollectTool
+from dbgpt.extra.dag.buildin_awel.langgraph.tools.feedback_tool import FeedbackCollectTool
 from dbgpt.extra.dag.buildin_awel.langgraph.tools.merchant_search_tool import MerchantSearchTool
 from dbgpt.extra.dag.buildin_awel.langgraph.tools.requirement_search_tool import RequirementSearchTool
 from dbgpt.extra.dag.buildin_awel.langgraph.tools.requirement_tool import RequirementCollectTool
@@ -28,7 +29,8 @@ class ToolsProvider:
             RequirementSearchTool(),
             RequirementCollectTool(),
             CrmBusCustomerCollectAddTool(),
-            CrmBusCustomerCollectQueryTool()
+            CrmBusCustomerCollectQueryTool(),
+            FeedbackCollectTool()
         ]
         pass
 

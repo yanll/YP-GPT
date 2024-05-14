@@ -61,6 +61,25 @@ def get_crem_30DaysTrxTre_card(open_id, customer_id, customerName):
                         "data": {"values": formatted_data},  # 更新数据部分
                         "xField": "time",
                         "yField": "value",
+                        "axes": [
+                            {
+                                "orient": 'left',
+                                "title": {
+                                    "visible": "true",
+                                    "text": "单位（元）"
+                                }
+                            }
+                        ],
+                        # "tooltip": {
+                        #     "visible": "true",
+                        #     "dimension": {
+                        #         "visible": "true",
+                        #         "title": {
+                        #             "visible": "true",
+                        #             "value": "近30天毛利"
+                        #         }
+                        #     }
+                        # },
                     },
                 }
             ]
