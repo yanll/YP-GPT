@@ -37,6 +37,6 @@ def get_crem_30DaysTrx_text(open_id, customer_id):
             return {"error": "未找到相关数据"}
     else:
         return {"error": "请求失败，状态码：" + str(response.status_code)}
-
+#
 
 
