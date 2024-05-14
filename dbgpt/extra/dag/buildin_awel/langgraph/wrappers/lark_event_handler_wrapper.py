@@ -268,6 +268,7 @@ class LarkEventHandlerWrapper:
                                 "message": "近30天业务表现列表"
                             }
                         },
+                        "query_str": data["query_str"],
                         "crem_30DaysTrx_text_list": data["list"]
                     }
                 )
