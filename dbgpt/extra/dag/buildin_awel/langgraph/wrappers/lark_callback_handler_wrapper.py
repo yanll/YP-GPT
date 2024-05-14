@@ -54,8 +54,7 @@ async def a_call(app_chat_service, event: Dict):
             message = event_data["message"]
             original_message_id = event["context"]["open_message_id"]
         return do_unlike(app_chat_service, open_id, original_message_id, message)
-    
-    
+
     if event_type == "unlike_rag":
         original_message_id = ""
         message = ""
@@ -97,7 +96,7 @@ async def a_call(app_chat_service, event: Dict):
                 app_chat_service, open_id, original_message_id, feedback, recommendation, effect, reference_url
             )
             return do_feedback(app_chat_service, open_id, original_message_id, feedback, recommendation)
-        
+
         if event_source == 'feedback_collect_rag':
             original_message_id = event_data["original_message_id"]
             feedback = form_value["feedback"]
@@ -370,7 +369,6 @@ def do_unlike_rag(app_chat_service, open_id, original_message_id, message):
 
 
 def do_feedback(app_chat_service, conv_uid, lark_message_id, feedback, recommendation, effect, reference_url):
-
     rec = {
         "id": str(uuid.uuid1()),
         "scope": "SalesAssistant",
@@ -463,7 +461,7 @@ def do_send_tips(app_chat_service, open_id, event_source):
                        " - 需求状态：受理中\n"
         })
         lark_message_util.send_card_message(open_id, content)
-    if event_source == "找人":
+    if event_source in ["入网协议", "解决方案查询", "接口文档", "产品功能介绍"]:
         content = card_templates.create_tool_tips_content({
             "description": "功能完善中，敬请期待。\n",
             "example": "功能完善中，敬请期待。\n"
@@ -471,6 +469,7 @@ def do_send_tips(app_chat_service, open_id, event_source):
         lark_message_util.send_card_message(open_id, content)
 
     return {}
+
 
 def do_feedback_rag(app_chat_service, conv_uid, lark_message_id, feedback, recommendation):
     rec = {
