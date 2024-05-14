@@ -1,5 +1,5 @@
 import requests
-from dbgpt.util import envutils
+from dbgpt.util import envutils, consts
 from dbgpt.util.lark import ssoutil
 
 
@@ -17,7 +17,7 @@ def get_crem_30DaysTrx_text(open_id, customer_id):
         "limit": ""
     }
 
-    response = requests.post(url, headers=headers, json=data)
+    response = requests.post(url, headers=headers, json=data, timeout=consts.request_time_out)
 
     if response.status_code == 200:
         json_data = response.json()

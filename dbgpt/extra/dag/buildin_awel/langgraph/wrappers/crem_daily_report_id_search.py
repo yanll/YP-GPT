@@ -1,5 +1,5 @@
 import requests
-from dbgpt.util import envutils
+from dbgpt.util import envutils, consts
 from dbgpt.util.lark import ssoutil
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
 
@@ -15,7 +15,7 @@ def daily_report_id_search(open_id, report_id):
         "id": report_id
     }
 
-    response = requests.post(url, headers=headers, json=data)
+    response = requests.post(url, headers=headers, json=data, timeout=consts.request_time_out)
     if response.status_code == 200:
         report_data = response.json()
         extracted_info_list = []

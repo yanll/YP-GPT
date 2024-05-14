@@ -53,6 +53,15 @@ async def a_call(app_chat_service, event: Dict):
             message = event_data["message"]
             original_message_id = event["context"]["open_message_id"]
         return do_unlike(app_chat_service, open_id, original_message_id, message)
+    
+    
+    if event_type == "unlike_rag":
+        original_message_id = ""
+        message = ""
+        if event_data and "message" in event_data:
+            message = event_data["message"]
+            original_message_id = event["context"]["open_message_id"]
+        return do_unlike_rag(app_chat_service, open_id, original_message_id, message)
 
     if event_type == "submit":
         form_value = action['form_value']
@@ -86,6 +95,13 @@ async def a_call(app_chat_service, event: Dict):
             return do_feedback(
                 app_chat_service, open_id, original_message_id, feedback, recommendation, effect, reference_url
             )
+            return do_feedback(app_chat_service, open_id, original_message_id, feedback, recommendation)
+        
+        if event_source == 'feedback_collect_rag':
+            original_message_id = event_data["original_message_id"]
+            feedback = form_value["feedback"]
+            recommendation = form_value["recommendation"]
+            return do_feedback_rag(app_chat_service, open_id, original_message_id, feedback, recommendation)
 
         return {}
 
@@ -320,7 +336,33 @@ def do_unlike(app_chat_service, open_id, original_message_id, message):
     return {}
 
 
+def do_unlike_rag(app_chat_service, open_id, original_message_id, message):
+    if original_message_id != "":
+        app_chat_service.a_update_app_chat_his_message_like_by_uid_mid(
+            comment_type="unlike", conv_uid=open_id,
+            message_id=original_message_id
+        )
+
+    lark_message_util.send_card_message(
+        receive_id=open_id,
+        content=card_templates.create_feedback_card_content(
+            template_variable={
+                "submit_callback_event": {
+                    "event_type": "submit",
+                    "event_source": "feedback_collect_rag",
+                    "event_data": {
+                        "original_message_id": original_message_id
+                    }
+                },
+                "message": message
+            }
+        )
+    )
+    return {}
+
+
 def do_feedback(app_chat_service, conv_uid, lark_message_id, feedback, recommendation, effect, reference_url):
+
     rec = {
         "id": str(uuid.uuid1()),
         "scope": "SalesAssistant",
@@ -421,3 +463,25 @@ def do_send_tips(app_chat_service, open_id, event_source):
         lark_message_util.send_card_message(open_id, content)
 
     return {}
+
+def do_feedback_rag(app_chat_service, conv_uid, lark_message_id, feedback, recommendation):
+    rec = {
+        "id": str(uuid.uuid1()),
+        "scope": "RAGAssistant",
+        "conv_uid": conv_uid,
+        "lark_message_id": lark_message_id,
+        "feedback": feedback,
+        "recommendation": recommendation
+    }
+    app_chat_service.add_app_feedback(rec)
+
+    return {
+        "toast": {
+            "type": "info",
+            "content": "温馨提示",
+            "i18n": {
+                "zh_cn": "感谢您的反馈，我们会努力改进哦！",
+                "en_us": "submitted"
+            }
+        }
+    }

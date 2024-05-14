@@ -282,3 +282,22 @@ def create_tool_tips_content(template_variable: Dict):
         }
     }
     return card
+
+
+
+class create_rag_card_content:
+    """RAG助手相关card"""
+
+    @staticmethod
+    def standard_response(template_variable: Dict):
+        template_id = "AAq3fCQRCs1Ru"
+        template_version_name = "1.0.7"
+        card = {
+            "type": "template",
+            "data": {
+                "template_id": template_id,
+                "template_version_name": template_version_name,
+                "template_variable": template_variable
+            }
+        }
+        return card

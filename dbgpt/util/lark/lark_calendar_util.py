@@ -2,6 +2,7 @@ import json
 
 import requests
 
+from dbgpt.util import consts
 from dbgpt.util.lark.larkutil import build_headers
 
 
@@ -15,7 +16,8 @@ def select_buildings(token: str = None):
         "fields": "*"
     }
     data = {}
-    resp = requests.request('POST', url=url, headers=build_headers(token), params=params, data=json.dumps(data))
+    resp = requests.request('POST', url=url, headers=build_headers(token), params=params, data=json.dumps(data),
+                            timeout=consts.request_time_out)
     print('建筑列表信息返回结果：', resp.json())
     return resp.json()
 
@@ -30,7 +32,8 @@ def select_rooms(token: str = None, building_id: str = None):
         "fields": "*"
     }
     data = {}
-    resp = requests.request('POST', url=url, headers=build_headers(token), params=params, data=json.dumps(data))
+    resp = requests.request('POST', url=url, headers=build_headers(token), params=params, data=json.dumps(data),
+                            timeout=consts.request_time_out)
     print('会议室列表信息返回结果：', resp.json())
     return resp.json()
 
@@ -44,7 +47,8 @@ def select_room_free_busy(token, room_ids, time_min, time_max):
         "time_max": time_max
     }
     data = {}
-    resp = requests.request('GET', url=url, headers=build_headers(token), params=params)
+    resp = requests.request('GET', url=url, headers=build_headers(token), params=params,
+                            timeout=consts.request_time_out)
     print('会议室忙闲返回结果：', resp.json())
     return resp.json()
 
@@ -54,7 +58,8 @@ def create_calendar_id(token):
     url = "https://open.feishu.cn/open-apis/calendar/v4/calendars/primary"
     params = {}
     data = {}
-    resp = requests.request('POST', url=url, headers=build_headers(token), params=params, data=data)
+    resp = requests.request('POST', url=url, headers=build_headers(token), params=params, data=data,
+                            timeout=consts.request_time_out)
     print('查询日历标识：', resp.json())
     if resp.json().get('code') == 0:
         print('查询日历标识完成：', resp.json()['data'])
@@ -79,7 +84,8 @@ def grant_calendar(token, calendar_id, role, user_open_id):
         }
     }
     data = json.dumps(data)
-    resp = requests.request('POST', url=url, headers=build_headers(token), params=params, data=data)
+    resp = requests.request('POST', url=url, headers=build_headers(token), params=params, data=data,
+                            timeout=consts.request_time_out)
     print('日历授权：', resp.json())
     if resp.json().get('code') == 0:
         print('日历授权完成：', resp.json()['data'])
@@ -95,7 +101,8 @@ def create_calendar(token, calendar_id, record):
     )
     params = {}
     data = json.dumps(record)
-    resp = requests.request('POST', url=url, headers=build_headers(token), params=params, data=data)
+    resp = requests.request('POST', url=url, headers=build_headers(token), params=params, data=data,
+                            timeout=consts.request_time_out)
     print('创建日历返回结果：', resp.json())
     if resp.json().get('code') == 0:
         print('创建日历完成：', resp.json()['data'])
@@ -112,7 +119,8 @@ def add_calendar_user(token, calendar_id, event_id, record):
     )
     params = {}
     data = json.dumps(record)
-    resp = requests.request('POST', url=url, headers=build_headers(token), params=params, data=data)
+    resp = requests.request('POST', url=url, headers=build_headers(token), params=params, data=data,
+                            timeout=consts.request_time_out)
     print('添加用户返回结果：', resp.json())
     if resp.json().get('code') == 0:
         print('添加用户完成：', resp.json()['data'])
@@ -129,7 +137,8 @@ def add_calendar_room(token, calendar_id, event_id, record):
     )
     params = {}
     data = json.dumps(record)
-    resp = requests.request('POST', url=url, headers=build_headers(token), params=params, data=data)
+    resp = requests.request('POST', url=url, headers=build_headers(token), params=params, data=data,
+                            timeout=consts.request_time_out)
     print('添加会议室返回结果：', resp.json())
     if resp.json().get('code') == 0:
         print('添加会议室完成：', resp.json()['data'])

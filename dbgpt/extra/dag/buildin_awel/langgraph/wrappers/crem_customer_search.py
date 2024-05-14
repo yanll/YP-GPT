@@ -1,12 +1,12 @@
 import requests
 import json
 import requests
-from dbgpt.util import envutils
+from dbgpt.util import envutils, consts
 from dbgpt.util.lark import ssoutil
 
 
 def customer_list_search(open_id: str, customer_name=None, customer_number=None):
-    url = envutils.getenv("CREM_ENDPOINT_PROD") +'/comprehensiveSearch/_search'
+    url = envutils.getenv("CREM_ENDPOINT_PROD") + '/comprehensiveSearch/_search'
     headers = {
         'yuiassotoken': ssoutil.get_sso_credential(open_id=open_id),  # 确保这个 token 获取函数已经被正确定义
         'Content-Type': 'application/json',
@@ -26,7 +26,7 @@ def customer_list_search(open_id: str, customer_name=None, customer_number=None)
         "pageNum": 1
     }
 
-    response = requests.post(url, headers=headers, data=json.dumps(data))
+    response = requests.post(url, headers=headers, data=json.dumps(data), timeout=consts.request_time_out)
     if response.status_code == 200:
         json_data = response.json()
         customers = json_data.get('data', {}).get('list', [])

@@ -3,13 +3,13 @@ import logging
 
 import requests
 
-from dbgpt.util import envutils
+from dbgpt.util import envutils, consts
 from dbgpt.util.lark import ssoutil
 from datetime import datetime
 
 
 def daily_report_search(open_id, create_user):
-    url = envutils.getenv("CREM_ENDPOINT") +'/workReportInfo/findWorkReportInfo'
+    url = envutils.getenv("CREM_ENDPOINT") + '/workReportInfo/findWorkReportInfo'
 
     headers = {
         "Content-Type": "application/json; charset=utf-8",
@@ -26,7 +26,7 @@ def daily_report_search(open_id, create_user):
         "pageNum": 1
     }
 
-    response = requests.post(url, headers=headers, json=data)
+    response = requests.post(url, headers=headers, json=data, timeout=consts.request_time_out)
     response_json = response.json()
 
     # 数据提取
