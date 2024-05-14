@@ -306,7 +306,7 @@ class create_rag_card_content:
     @staticmethod
     def standard_response(template_variable: Dict):
         template_id = "AAq3fCQRCs1Ru"
-        template_version_name = "1.0.7"
+        template_version_name = "1.0.8"
         card = {
             "type": "template",
             "data": {

@@ -28,7 +28,20 @@ def send_message_with_welcome(receive_id: str, template_variable: Dict):
         msg_type="interactive"
     )
 
-
+def send_message_with_welcome_rag(receive_id: str, template_variable: Dict):
+    """欢迎卡片"""
+    card = create_card_content_by_template(
+        template_id="AAq3rrEyupkG1",
+        template_version_name="1.0.2",
+        template_variable=template_variable
+    )
+    return lark_message_util.send_message_rag(
+        receive_id=receive_id,
+        receive_id_type="open_id",
+        content=card,
+        msg_type="interactive"
+    )
+    
 def create_card_content_by_template(template_id: str, template_version_name: str, template_variable: Dict):
     """"""
     card = {
