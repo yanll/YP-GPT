@@ -1,3 +1,5 @@
+import logging
+
 import requests
 from dbgpt.util import envutils
 from dbgpt.util.lark import ssoutil
@@ -10,12 +12,12 @@ def get_crem_30DaysTrx_text(open_id, customer_id):
         'Content-Type': 'application/json'
     }
     data = {
-        "uid": "1191",
-        "rid": "843",
-        "querys": "{\"客户编号\":\"" + customer_id + "\",\"交易日期\":\"2024-03-30,2024-04-28\"}",
+        "querys": "{\"客户编号\":\"" + customer_id + "\",\"商编交易日期\":\",\"}",
         "apiName": "CEMCustomerPortraitCustomerInfo_30DaysTrxnew",
         "limit": ""
     }
+
+
 
     response = requests.post(url, headers=headers, json=data)
 
@@ -30,13 +32,11 @@ def get_crem_30DaysTrx_text(open_id, customer_id):
                 "近30天支付成功率": json_data['data']['data'][0]['jin30tianzhifuchenggonglv']
             }
             return result
+
         else:
             return {"error": "未找到相关数据"}
     else:
         return {"error": "请求失败，状态码：" + str(response.status_code)}
 
 
-# 调用示例
-customer_id = "KA2022-A09150004"  # 这里替换为你要查询的客户商编ID
-result = get_crem_30DaysTrx_text("", customer_id)
-print(result)
+

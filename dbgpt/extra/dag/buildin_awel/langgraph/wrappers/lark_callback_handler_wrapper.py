@@ -3,7 +3,8 @@ import logging
 import uuid
 from typing import Dict
 
-from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import Day_30_TrxTre_card_tool
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import Day_30_TrxTre_card_tool, crem_30DaysTrx_text, \
+    crem_30DaysTrx_text_two
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_customer_visit
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_wrapper, card_send_daily_report_search
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_api_wrapper
@@ -105,6 +106,13 @@ async def a_call(app_chat_service, event: Dict):
             open_id=open_id,
             customer_id=customerNo,
             customerName=customerName,
+            conv_id=open_id)
+    if event_type == 'merchant_detail_three':
+        customerNo = action_value['customerNo']
+        print('查询商户的编号', customerNo)
+        return crem_30DaysTrx_text_two.get_crem_30DaysTrx_text_card(
+            open_id=open_id,
+            customer_id=customerNo,
             conv_id=open_id)
 
     if event_type == 'daily_report_detail':

@@ -248,6 +248,26 @@ class LarkEventHandlerWrapper:
             self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
             return
 
+        if card_name == "crem_30DaysTrx_text_list":
+            resp = lark_message_util.send_card_message(
+                receive_id=sender_open_id,
+                content=card_templates.crem_30DaysTrx_text_content(
+                    template_variable={
+                        "unlike_callback_event": {
+                            "event_type": "unlike",
+                            "event_source": card_name,
+                            "event_data": {
+                                "message": "近30天业务表现列表"
+                            }
+                        },
+                        "crem_30DaysTrx_text_list": data["list"]
+                    }
+                )
+            )
+            lark_message_id = resp["message_id"]
+            self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
+            return
+
     def lark_reply_general_message(self, sender_open_id, resp_msg):
         resp = lark_card_util.send_message_with_bingo(
             receive_id=sender_open_id,
