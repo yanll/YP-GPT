@@ -71,7 +71,8 @@ async def a_call(app_chat_service, event: Dict):
         return do_unlike_rag(app_chat_service, open_id, original_message_id, message)
 
     if event_type == "submit":
-        form_value = action['form_value']
+        if 'form_value' in action:
+            form_value = action['form_value']
         # 需求收集表单
         if event_source == "requirement_collect":
             return create_requirement_for_lark_project(
@@ -92,6 +93,10 @@ async def a_call(app_chat_service, event: Dict):
         if event_source == 'crm_bus_customer_collect':
             return create_crm_bus_customer_for_crem(
                 open_id=open_id, form_value=form_value
+            )
+        if event_source == 'crm_bus_customer_delete':
+            return delete_crm_bus_customer_for_crem(
+                open_id=open_id, action_value=action_value
             )
         if event_source == 'feedback_collect':
             original_message_id = event_data["original_message_id"]
@@ -305,6 +310,27 @@ def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
     print('开始向用户发送报单结果')
     lark_event_handler_wrapper = LarkEventHandlerWrapper()
     lark_event_handler_wrapper.lark_reply_general_message(sender_open_id=open_id, resp_msg=bus_customer_add_record)
+
+    return {}
+
+def delete_crm_bus_customer_for_crem(open_id, action_value: Dict):
+
+    id = action_value['id']
+    customer_no = action_value['customer_no']
+
+
+
+
+    bus_customer_delete_record = crem_api_wrapper.delete_crm_bus_customer(
+        open_id=open_id,
+        id=id,
+        customer_no=customer_no,
+    )
+
+    print("添加报单客户信息结果:", bus_customer_delete_record)
+    print('开始向用户发送报单结果')
+    lark_event_handler_wrapper = LarkEventHandlerWrapper()
+    lark_event_handler_wrapper.lark_reply_general_message(sender_open_id=open_id, resp_msg=bus_customer_delete_record)
 
     return {}
 

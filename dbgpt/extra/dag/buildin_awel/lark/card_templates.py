@@ -46,7 +46,7 @@ def create_daily_report_card_content(template_variable: Dict):
 def crm_bus_customer_query_result(template_variable: Dict):
     """查询报单结果"""
     template_id = "AAq3r6C4zobmg"
-    template_version_name = "1.0.2"
+    template_version_name = "1.0.8"
 
     card = {
         "type": "template",

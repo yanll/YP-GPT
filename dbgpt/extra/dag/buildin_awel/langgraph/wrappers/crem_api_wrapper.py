@@ -60,6 +60,34 @@ def add_daily_or_weekly_report(open_id: str, report_type: str = "", report_time:
     return response
 
 
+def delete_crm_bus_customer(open_id: str,
+                            id,
+                            customer_no
+                            ):
+    url = envutils.getenv("CREM_ENDPOINT") + "/crmCustomer/delCustomersById"
+    headers = {
+        "pagetype": "cemPortal",
+        "Content-Type": "application/json; charset=utf-8",
+        "yuiassotoken": ssoutil.get_sso_credential(open_id=open_id)
+    }
+
+    data = {
+        "id": id
+    }
+    print("提交删除报单到CREM：", data)
+    response = requests.post(url, headers=headers, data=json.dumps(data), timeout=consts.request_time_out)
+    try:
+        print(response.json())
+        resp = response.json()
+        resp = resp['msg']
+    except Exception as e:
+        print(response)
+        logging.error("CREM删除报单调用失败：", e)
+        resp = 'CREM删除报单失败'
+        raise e
+    return resp
+
+
 def add_crm_bus_customer(open_id: str,
                          customer_name: str = "",
                          customer_role: str = "",
@@ -196,7 +224,6 @@ def query_crm_bus_customer(open_id: str, data={}):
         logging.error("解析查询报单出错", e)
         return '解析查询报单出错'
         # raise e
-
 
 
 def get_crm_user_name(open_id: str) -> str:
