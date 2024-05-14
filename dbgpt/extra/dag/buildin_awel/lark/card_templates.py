@@ -255,9 +255,9 @@ def create_requirement_search_list_card_content(template_variable: Dict):
 
 
 def create_feedback_card_content(template_variable: Dict):
-    """吐槽"""
+    """问题反馈/吐槽"""
     template_id = "AAqkEvmXj7MSH"
-    template_version_name = "1.0.8"
+    template_version_name = "1.0.9"
 
     card = {
         "type": "template",
