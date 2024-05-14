@@ -54,14 +54,6 @@ async def a_call(app_chat_service, event: Dict):
         return do_unlike(app_chat_service, open_id, original_message_id, message)
     
     
-    if event_type == "unlike":
-        original_message_id = ""
-        message = ""
-        if event_data and "message" in event_data:
-            message = event_data["message"]
-            original_message_id = event["context"]["open_message_id"]
-        return do_unlike(app_chat_service, open_id, original_message_id, message)
-    
     if event_type == "unlike_rag":
         original_message_id = ""
         message = ""
@@ -328,6 +320,31 @@ def do_unlike(app_chat_service, open_id, original_message_id, message):
                 "submit_callback_event": {
                     "event_type": "submit",
                     "event_source": "feedback_collect",
+                    "event_data": {
+                        "original_message_id": original_message_id
+                    }
+                },
+                "message": message
+            }
+        )
+    )
+    return {}
+
+
+def do_unlike_rag(app_chat_service, open_id, original_message_id, message):
+    if original_message_id != "":
+        app_chat_service.a_update_app_chat_his_message_like_by_uid_mid(
+            comment_type="unlike", conv_uid=open_id,
+            message_id=original_message_id
+        )
+
+    lark_message_util.send_card_message(
+        receive_id=open_id,
+        content=card_templates.create_feedback_card_content(
+            template_variable={
+                "submit_callback_event": {
+                    "event_type": "submit",
+                    "event_source": "feedback_collect_rag",
                     "event_data": {
                         "original_message_id": original_message_id
                     }
