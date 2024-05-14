@@ -84,7 +84,7 @@ class RAGLarkHandler:
             response = res['data']['answer']
             chunks = res['data']['reference']['chunks']
             
-            print("rag answer:",res)
+            # print("rag answer:",res)
             
             # response = response.replace("##", "[").replace("$$", "]")
             pattern = r"##(.*?)\$\$"
@@ -97,7 +97,7 @@ class RAGLarkHandler:
             cache_files = []
             reduce_count = 0
             for idx, chunk in enumerate(chunks):
-                print("current: ", chunk)
+                # print("current: ", chunk)
                 if idx == 0 :
                     response += '\r\n---\r\n'
                 
@@ -130,7 +130,7 @@ class RAGLarkHandler:
                 # n = f"[{idx+1 - reduce_count}. {file_name}]({f_metadata['url']})"
                 # n = file_name
                 
-            
+            print('rag card response', response) 
             
             resp = lark_message_util.send_card_message_rag(
                     receive_id=open_id,

@@ -40,12 +40,18 @@ async def a_call(app_chat_service, event: Dict):
 
     if event_type == "new_chat":
         return do_new_chat(app_chat_service, open_id)
+    
+    if event_type == "new_chat_rag":
+        return do_new_chat_rag(app_chat_service, open_id)
 
     if event_type == "like":
         return do_like(app_chat_service, open_id, event["context"]["open_message_id"])
 
     if event_type == "tool_tips":
         return do_send_tips(app_chat_service, open_id, event_source)
+    
+    if event_type == "ask_rag_question":
+        return do_send_answer(app_chat_service, open_id, event_source)
 
     if event_type == "unlike":
         original_message_id = ""
@@ -101,7 +107,9 @@ async def a_call(app_chat_service, event: Dict):
             original_message_id = event_data["original_message_id"]
             feedback = form_value["feedback"]
             recommendation = form_value["recommendation"]
-            return do_feedback_rag(app_chat_service, open_id, original_message_id, feedback, recommendation)
+            effect = form_value["effect"] or 'None'
+            reference_url = form_value["reference_url"] or 'None'
+            return do_feedback_rag(app_chat_service, open_id, original_message_id, feedback, recommendation, effect, reference_url)
 
         return {}
 
@@ -308,6 +316,18 @@ def do_new_chat(app_chat_service, open_id):
     )
     return {}
 
+def do_new_chat_rag(app_chat_service, open_id):
+    asyncio.create_task(
+        app_chat_service.a_disable_app_chat_his_message_by_uid(open_id)
+    )
+    lark_card_util.send_message_with_welcome_rag(
+        receive_id=open_id,
+        template_variable={
+            "message_content": "已开启新会话！"
+        }
+    )
+    return {}
+
 
 def do_like(app_chat_service, open_id, open_message_id):
     app_chat_service.a_update_app_chat_his_message_like_by_uid_mid(
@@ -479,14 +499,16 @@ def do_send_tips(app_chat_service, open_id, event_source):
     return {}
 
 
-def do_feedback_rag(app_chat_service, conv_uid, lark_message_id, feedback, recommendation):
+def do_feedback_rag(app_chat_service, conv_uid, lark_message_id, feedback, recommendation, effect, reference_url):
     rec = {
         "id": str(uuid.uuid1()),
         "scope": "RAGAssistant",
         "conv_uid": conv_uid,
         "lark_message_id": lark_message_id,
         "feedback": feedback,
-        "recommendation": recommendation
+        "recommendation": recommendation,
+        "effect": effect,
+        "reference_url": reference_url
     }
     app_chat_service.add_app_feedback(rec)
 
@@ -500,3 +522,6 @@ def do_feedback_rag(app_chat_service, conv_uid, lark_message_id, feedback, recom
             }
         }
     }
+
+def do_send_answer(app_chat_service, open_id, event_source):
+    print(1)
