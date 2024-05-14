@@ -107,9 +107,9 @@ async def a_call(app_chat_service, event: Dict):
             original_message_id = event_data["original_message_id"]
             feedback = form_value["feedback"]
             recommendation = form_value["recommendation"]
-            effect = form_value["effect"]
-            reference_url = form_value["reference_url"]
-            return do_feedback_rag(app_chat_service, open_id, original_message_id, feedback, recommendation)
+            effect = form_value["effect"] or 'None'
+            reference_url = form_value["reference_url"] or 'None'
+            return do_feedback_rag(app_chat_service, open_id, original_message_id, feedback, recommendation, effect, reference_url)
 
         return {}
 
@@ -499,14 +499,16 @@ def do_send_tips(app_chat_service, open_id, event_source):
     return {}
 
 
-def do_feedback_rag(app_chat_service, conv_uid, lark_message_id, feedback, recommendation):
+def do_feedback_rag(app_chat_service, conv_uid, lark_message_id, feedback, recommendation, effect, reference_url):
     rec = {
         "id": str(uuid.uuid1()),
         "scope": "RAGAssistant",
         "conv_uid": conv_uid,
         "lark_message_id": lark_message_id,
         "feedback": feedback,
-        "recommendation": recommendation
+        "recommendation": recommendation,
+        "effect": effect,
+        "reference_url": reference_url
     }
     app_chat_service.add_app_feedback(rec)
 
