@@ -10,7 +10,7 @@ from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_wrapper, ca
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_api_wrapper
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers.lark_event_handler_wrapper import LarkEventHandlerWrapper
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import lark_card_util, lark_message_util
+from dbgpt.util.lark import lark_card_util, lark_message_util, larkutil
 
 
 async def a_call(app_chat_service, event: Dict):
@@ -292,10 +292,18 @@ def do_new_chat(app_chat_service, open_id):
     asyncio.create_task(
         app_chat_service.a_disable_app_chat_his_message_by_uid(open_id)
     )
+    nickname = ""
+    try:
+        userinfo = larkutil.select_userinfo(open_id=open_id)
+        if userinfo and "name" in userinfo:
+            nickname = userinfo["name"] + " "
+    except Exception as e:
+        logging.warning("用户姓名解析异常：", open_id)
     lark_card_util.send_message_with_welcome(
         receive_id=open_id,
         template_variable={
-            "message_content": "已开启新会话！"
+            "message_content": "已开启新会话！",
+            "current_nickname": nickname
         }
     )
     return {}
