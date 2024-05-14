@@ -81,6 +81,102 @@ def get_crem_30DaysTrxTre_card(open_id, customer_id, customerName):
                         #     }
                         # },
                     },
+                },
+                {
+                    "tag": "column_set",
+                    "flex_mode": "none",
+                    "background_style": "default",
+                    "horizontal_spacing": "0px",
+                    "horizontal_align": "left",
+                    "columns": [
+                        {
+                            "tag": "column",
+                            "width": "weighted",
+                            "vertical_align": "top",
+                            "vertical_spacing": "8px",
+                            "background_style": "default",
+                            "elements": [
+                                {
+                                    "tag": "button",
+                                    "text": {
+                                        "tag": "plain_text",
+                                        "content": ""
+                                    },
+                                    "type": "primary_text",
+                                    "complex_interaction": "true",
+                                    "width": "default",
+                                    "size": "medium",
+                                    "icon": {
+                                        "tag": "standard_icon",
+                                        "token": "add-bold_outlined"
+                                    },
+                                    "hover_tips": {
+                                        "tag": "plain_text",
+                                        "content": "新会话"
+                                    },
+                                    "value": {
+                                        "event_type": "new_chat"
+                                    }
+                                }
+                            ],
+                            "weight": 5
+                        },
+                        {
+                            "tag": "column",
+                            "width": "weighted",
+                            "vertical_align": "top",
+                            "vertical_spacing": "8px",
+                            "background_style": "default",
+                            "elements": [
+                                {
+                                    "tag": "button",
+                                    "text": {
+                                        "tag": "plain_text",
+                                        "content": ""
+                                    },
+                                    "type": "primary_text",
+                                    "complex_interaction": "true",
+                                    "width": "default",
+                                    "size": "medium",
+                                    "icon": {
+                                        "tag": "standard_icon",
+                                        "token": "thumbsup_outlined"
+                                    },
+                                    "value": {
+                                        "event_type": "like"
+                                    }
+                                }
+                            ],
+                            "weight": 1
+                        },
+                        {
+                            "tag": "column",
+                            "width": "weighted",
+                            "vertical_align": "top",
+                            "vertical_spacing": "8px",
+                            "background_style": "default",
+                            "elements": [
+                                {
+                                    "tag": "button",
+                                    "text": {
+                                        "tag": "plain_text",
+                                        "content": ""
+                                    },
+                                    "type": "primary_text",
+                                    "complex_interaction": "true",
+                                    "width": "default",
+                                    "size": "medium",
+                                    "icon": {
+                                        "tag": "standard_icon",
+                                        "token": "thumbdown_outlined"
+                                    },
+                                    "value": "${unlike_callback_event}"
+                                }
+                            ],
+                            "weight": 1
+                        }
+                    ],
+                    "margin": "16px 0px 0px 0px"
                 }
             ]
         },
@@ -111,6 +207,102 @@ def get_crem_30DaysTrxTre_card(open_id, customer_id, customerName):
                         ],
 
                     },
+                },
+                {
+                    "tag": "column_set",
+                    "flex_mode": "none",
+                    "background_style": "default",
+                    "horizontal_spacing": "0px",
+                    "horizontal_align": "left",
+                    "columns": [
+                        {
+                            "tag": "column",
+                            "width": "weighted",
+                            "vertical_align": "top",
+                            "vertical_spacing": "8px",
+                            "background_style": "default",
+                            "elements": [
+                                {
+                                    "tag": "button",
+                                    "text": {
+                                        "tag": "plain_text",
+                                        "content": ""
+                                    },
+                                    "type": "primary_text",
+                                    "complex_interaction": "true",
+                                    "width": "default",
+                                    "size": "medium",
+                                    "icon": {
+                                        "tag": "standard_icon",
+                                        "token": "add-bold_outlined"
+                                    },
+                                    "hover_tips": {
+                                        "tag": "plain_text",
+                                        "content": "新会话"
+                                    },
+                                    "value": {
+                                        "event_type": "new_chat"
+                                    }
+                                }
+                            ],
+                            "weight": 5
+                        },
+                        {
+                            "tag": "column",
+                            "width": "weighted",
+                            "vertical_align": "top",
+                            "vertical_spacing": "8px",
+                            "background_style": "default",
+                            "elements": [
+                                {
+                                    "tag": "button",
+                                    "text": {
+                                        "tag": "plain_text",
+                                        "content": ""
+                                    },
+                                    "type": "primary_text",
+                                    "complex_interaction": "true",
+                                    "width": "default",
+                                    "size": "medium",
+                                    "icon": {
+                                        "tag": "standard_icon",
+                                        "token": "thumbsup_outlined"
+                                    },
+                                    "value": {
+                                        "event_type": "like"
+                                    }
+                                }
+                            ],
+                            "weight": 1
+                        },
+                        {
+                            "tag": "column",
+                            "width": "weighted",
+                            "vertical_align": "top",
+                            "vertical_spacing": "8px",
+                            "background_style": "default",
+                            "elements": [
+                                {
+                                    "tag": "button",
+                                    "text": {
+                                        "tag": "plain_text",
+                                        "content": ""
+                                    },
+                                    "type": "primary_text",
+                                    "complex_interaction": "true",
+                                    "width": "default",
+                                    "size": "medium",
+                                    "icon": {
+                                        "tag": "standard_icon",
+                                        "token": "thumbdown_outlined"
+                                    },
+                                    "value": "${unlike_callback_event}"
+                                }
+                            ],
+                            "weight": 1
+                        }
+                    ],
+                    "margin": "16px 0px 0px 0px"
                 }
             ]
         },
