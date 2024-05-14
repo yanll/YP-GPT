@@ -107,6 +107,8 @@ async def a_call(app_chat_service, event: Dict):
             original_message_id = event_data["original_message_id"]
             feedback = form_value["feedback"]
             recommendation = form_value["recommendation"]
+            effect = form_value["effect"]
+            reference_url = form_value["reference_url"]
             return do_feedback_rag(app_chat_service, open_id, original_message_id, feedback, recommendation)
 
         return {}
