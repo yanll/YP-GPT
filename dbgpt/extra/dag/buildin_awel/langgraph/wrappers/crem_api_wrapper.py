@@ -162,7 +162,7 @@ def get_crm_user_industry_line(open_id: str) -> str:
         print(resp['data'])
         if len(resp['data']) == 0:
             return ''
-        return '跨境行业线'
+        # return '跨境行业线'
         return resp['data'][0]['typename']
 
     except Exception as e:
@@ -194,8 +194,9 @@ def query_crm_bus_customer(open_id: str, data={}):
 
     except Exception as e:
         logging.error("解析查询报单出错", e)
-        raise e
-    return '解析查询报单出错'
+        return '解析查询报单出错'
+        # raise e
+
 
 
 def get_crm_user_name(open_id: str) -> str:
