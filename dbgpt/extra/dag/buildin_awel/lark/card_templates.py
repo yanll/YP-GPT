@@ -283,6 +283,21 @@ def create_tool_tips_content(template_variable: Dict):
     }
     return card
 
+def crem_30DaysTrx_text_content(template_variable: Dict):
+    """近30天业务展示"""
+    template_id = "AAq3usqoxtHSw"
+    template_version_name = "1.0.1"
+
+    card = {
+        "type": "template",
+        "data": {
+            "template_id": template_id, "template_version_name": template_version_name,
+            "template_variable": template_variable
+        }
+    }
+    return card
+
+
 
 
 class create_rag_card_content:

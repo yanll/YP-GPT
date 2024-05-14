@@ -20,10 +20,10 @@ def get_crem_30DaysTrx_text_card(open_id=None, customer_id=None,conv_id=None):
         if resp_data and len(resp_data) == 0:
             return {"success": "true", "data": []}
         for m in resp_data:
-            jin30tianmaoli = m.get("近30天交易金额", "")
-            jin30tianmaolipaiming = m.get("近30天支付成功率", "")
-            jin30tianjiaoyijine = m.get("近30天毛利", "")
-            jin30tianzhifuchenggonglv = m.get("近30天毛利排名", "")
+            jin30tianmaoli = m.get("近30天毛利", "")
+            jin30tianmaolipaiming = m.get("近30天毛利排名", "")
+            jin30tianjiaoyijine = m.get("近30天交易金额", "")
+            jin30tianzhifuchenggonglv = m.get("近30天支付成功率", "")
             list.append({
                 "jin30tianmaoli": jin30tianmaoli if jin30tianmaoli is not None else "",
                 "jin30tianmaolipaiming": jin30tianmaolipaiming if jin30tianmaolipaiming is not None else "",
