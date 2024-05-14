@@ -135,11 +135,12 @@ class CrmBusCustomerCollectQueryTool(BaseTool):
                         'important_step': item['importantStep'],
                         'create_time': item['createTime'],
                         'integrity': item['integrity'],
+                        "id": item['id']
                     })
                 content = card_templates.crm_bus_customer_query_result(
                     template_variable={
                         "card_metadata": {
-                            "card_name": "crm_bus_customer_query_result",
+                            "card_name": "crm_bus_customer_delete",
                             "description": "展示报单查询结果"
                         },
                         'query_result_summary': query_result_summary,
