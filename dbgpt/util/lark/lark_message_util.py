@@ -27,6 +27,7 @@ def send_message(receive_id: str, content: Dict, receive_id_type: str = "email",
     print('发送消息返回结果：', type, receive_id, resp.json())
     if rs["code"] != 0:
         logging.error("飞书消息发送失败：" + str(rs))
+        return "飞书消息发送失败：" + str(rs)
     return rs["data"]
 
 

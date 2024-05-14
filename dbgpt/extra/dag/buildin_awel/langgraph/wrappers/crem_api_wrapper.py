@@ -130,11 +130,14 @@ def add_crm_bus_customer(open_id: str,
     response = requests.post(url, headers=headers, data=json.dumps(data))
     try:
         print(response.json())
+        resp = response.json()
+        resp = resp['msg']
     except Exception as e:
         print(response)
         logging.error("CREM添加报单客户信息调用失败：", e)
+        resp = 'CREM添加报单客户信息调用失败'
         raise e
-    return response
+    return resp
 
 
 def get_crm_user_industry_line(open_id: str) -> str:
@@ -159,6 +162,7 @@ def get_crm_user_industry_line(open_id: str) -> str:
         print(resp['data'])
         if len(resp['data']) == 0:
             return ''
+        return '跨境行业线'
         return resp['data'][0]['typename']
 
     except Exception as e:

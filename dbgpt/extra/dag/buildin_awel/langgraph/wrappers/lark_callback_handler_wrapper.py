@@ -7,6 +7,7 @@ from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import Day_30_TrxTre_card_t
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_customer_visit
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_wrapper, card_send_daily_report_search
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_api_wrapper
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers.lark_event_handler_wrapper import LarkEventHandlerWrapper
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
 from dbgpt.util.lark import lark_card_util, lark_message_util
 
@@ -232,7 +233,7 @@ def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
         payment_scene = form_value['payment_scene']
         sales_channel = form_value['sales_channel']
 
-    customer_visit_record = crem_api_wrapper.add_crm_bus_customer(
+    bus_customer_add_record = crem_api_wrapper.add_crm_bus_customer(
         open_id=open_id,
         customer_name=customer_name,
         customer_role=customer_role,
@@ -256,7 +257,11 @@ def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
         sales_channel=sales_channel,
     )
 
-    print("添加报单客户信息结果:", customer_visit_record)
+    print("添加报单客户信息结果:", bus_customer_add_record)
+    print('开始向用户发送报单结果')
+    lark_event_handler_wrapper = LarkEventHandlerWrapper()
+    lark_event_handler_wrapper.lark_reply_general_message(sender_open_id=open_id, resp_msg=bus_customer_add_record)
+
     return {}
 
 
