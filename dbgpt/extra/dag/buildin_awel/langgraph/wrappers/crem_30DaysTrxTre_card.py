@@ -100,6 +100,16 @@ def get_crem_30DaysTrxTre_card(open_id, customer_id, customerName):
                         "data": {"values": formatted_data_jiaoyijine},  # 更新数据部分
                         "xField": "time",
                         "yField": "value",
+                        "axes": [
+                            {
+                                "orient": 'left',
+                                "title": {
+                                    "visible": "true",
+                                    "text": "单位（元）"
+                                }
+                            }
+                        ],
+
                     },
                 }
             ]

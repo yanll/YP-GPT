@@ -301,7 +301,7 @@ def create_tool_tips_content(template_variable: Dict):
 def crem_30DaysTrx_text_content(template_variable: Dict):
     """近30天业务展示"""
     template_id = "AAq3usqoxtHSw"
-    template_version_name = "1.0.1"
+    template_version_name = "1.0.2"
 
     card = {
         "type": "template",

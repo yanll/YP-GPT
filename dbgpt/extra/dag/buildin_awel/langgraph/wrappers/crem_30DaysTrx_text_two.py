@@ -5,11 +5,17 @@ from dbgpt.extra.dag.buildin_awel.lark import card_templates
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers.crem_30DaysTrx_text import get_crem_30DaysTrx_text
 
 
+def format_num(num):
+    if num < 10000:
+        return '{:.2f}'.format(num)
+    elif num < 100000000:
+        return '{:.2f}万'.format(num / 10000)
+    else:
+        return '{:.2f}亿'.format(num / 100000000)
+def format_percent(num):
+    return '{:.2%}'.format(num)
 def get_crem_30DaysTrx_text_card(open_id=None, customer_id=None,conv_id=None):
-    open_id = open_id
-
     try:
-        resp_data = {}
         if customer_id == "" and conv_id == "":
             return {"success": "false", "response_message": "the description of customer_id "}
         data = get_crem_30DaysTrx_text(open_id, customer_id)
@@ -25,17 +31,17 @@ def get_crem_30DaysTrx_text_card(open_id=None, customer_id=None,conv_id=None):
             jin30tianjiaoyijine = m.get("近30天交易金额", "")
             jin30tianzhifuchenggonglv = m.get("近30天支付成功率", "")
             list.append({
-                "jin30tianmaoli": jin30tianmaoli if jin30tianmaoli is not None else "",
-                "jin30tianmaolipaiming": jin30tianmaolipaiming if jin30tianmaolipaiming is not None else "",
-                "jin30tianjiaoyijine": jin30tianjiaoyijine if jin30tianjiaoyijine is not None else "",
-                "jin30tianzhifuchenggonglv": jin30tianzhifuchenggonglv if jin30tianzhifuchenggonglv is not None else "",
+                "jin30tianmaoli": format_num(float(jin30tianmaoli)) if jin30tianmaoli else "",
+                "jin30tianmaolipaiming": jin30tianmaolipaiming,
+                "jin30tianjiaoyijine": format_num(float(jin30tianjiaoyijine)) if jin30tianjiaoyijine else "",
+                "jin30tianzhifuchenggonglv": format_percent(float(jin30tianzhifuchenggonglv)) if jin30tianzhifuchenggonglv else "",
             })
 
-        da= {
-                        "list": list,
-                        "query_str": query_str
-                    }
 
+        da= {
+             "list": list,
+             "query_str": query_str
+        }
         # 发送信息卡片给用户
         lark_message_util.send_card_message(
             receive_id=conv_id,
@@ -52,10 +58,6 @@ def get_crem_30DaysTrx_text_card(open_id=None, customer_id=None,conv_id=None):
                 }
             )
         )
-
-
-
-        #
         # return {
         #     "success": "true",
         #     "error_message": "",
