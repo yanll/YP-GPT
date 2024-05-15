@@ -345,6 +345,7 @@ def do_new_chat(app_chat_service, open_id):
         userinfo = larkutil.select_userinfo(open_id=open_id)
         if userinfo and "name" in userinfo:
             nickname = userinfo["name"] + " "
+            # print("用户的姓名是",nickname)
     except Exception as e:
         logging.warning("用户姓名解析异常：", open_id)
     lark_card_util.send_message_with_welcome(

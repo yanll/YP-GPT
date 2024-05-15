@@ -7,7 +7,7 @@ from langchain_core.callbacks import (
 )
 from pydantic import BaseModel, Field
 
-from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_customer_search
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_customer_search, crem_sales_board_dispaly
 
 
 class MerchantSearchToolInput(BaseModel):
@@ -48,7 +48,12 @@ class MerchantSearchTool(BaseTool):
                 customer_name=customer_name,
                 customer_number=customer_number
             )
+            link = crem_sales_board_dispaly.process_data(
+                open_id=conv_id)
             resp_data = data
+            sales_diapaly = link
+            print("网址结果",sales_diapaly)
+
             query_str = (customer_name + "" + customer_number).strip()
             print("商户查询结果：", query_str, resp_data)
             list = []
@@ -78,7 +83,8 @@ class MerchantSearchTool(BaseTool):
                 },
                 "data": {
                     "list": list,
-                    "query_str": query_str
+                    "query_str": query_str,
+                    "sales_diapaly": sales_diapaly
                 }
             }
         except Exception as e:

@@ -216,6 +216,7 @@ class LarkEventHandlerWrapper:
                             }
                         },
                         "query_str": data["query_str"],
+                        "sales_diapaly": data["sales_diapaly"],
                         "merchant_list": data["list"]
                     }
                 )
