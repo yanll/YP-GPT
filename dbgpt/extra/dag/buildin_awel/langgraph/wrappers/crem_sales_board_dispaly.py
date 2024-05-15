@@ -94,7 +94,8 @@ def process_data(open_id):
                 return "销售管理其他"
         elif user_type == 1:
             if typename == "大零售行业线":
-                return "https://img.yeepay.com/hbird-ucm/feishu-web-app-entry/index.html#/app?appId=cli_a22c1bd8723a500e&appEncodeUrl=https://cem.yeepay.com/index.html#/workspace/workspace&exchangeMethod=uia"
+                return "https://img.yeepay.com/hbird-ucm/feishu-web-app-entry/index.html#/app?appId=cli_a22c1bd8723a500e&appEncodeUrl=https://atmgw.yeepay.com/mcem/index.html#/analyse/manage&exchangeMethod=uia"
+                #return "https://img.yeepay.com/hbird-ucm/feishu-web-app-entry/index.html#/app?appId=cli_a22c1bd8723a500e&appEncodeUrl=https://cem.yeepay.com/index.html#/workspace/workspace&exchangeMethod=uia"
             elif typename == "金融行业线":
                 return "销售金融"
             else:
