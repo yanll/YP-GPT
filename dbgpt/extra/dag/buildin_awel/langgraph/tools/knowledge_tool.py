@@ -45,7 +45,7 @@ class KnowledgeTool(BaseTool):
             if question == "":
                 reuqires.append("question")
             if len(reuqires) > 0:
-                return {"success": "false", "response_message": "the description of " + str(reuqires)}
+                return {"success": "false", "response_message": "the description of " + "[" + ".".join(reuqires) + "]"}
             return handle(
                 conv_id=conv_id,
                 question=question

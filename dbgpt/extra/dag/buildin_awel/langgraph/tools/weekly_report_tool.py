@@ -80,7 +80,7 @@ class WeeklyReportCollectTool(BaseTool):
             if create_date == "":
                 reuqires.append("create_date")
             if len(reuqires) > 0:
-                return {"success": "false", "response_message": "the description of " + str(reuqires)}
+                return {"success": "false", "response_message": "the description of " + "[" + ".".join(reuqires) + "]"}
 
             return handle(
                 conv_id=conv_id,

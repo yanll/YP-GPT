@@ -82,7 +82,7 @@ class RequirementCollectTool(BaseTool):
             if emergency_level == "":
                 reuqires.append("emergency_level")
             if len(reuqires) > 0:
-                return {"success": "false", "response_message": "the description of " + str(reuqires)}
+                return {"success": "false", "response_message": "the description of " + "[" + ".".join(reuqires) + "]"}
             return handle(
                 conv_id=conv_id,
                 requirement_content=requirement_content,
