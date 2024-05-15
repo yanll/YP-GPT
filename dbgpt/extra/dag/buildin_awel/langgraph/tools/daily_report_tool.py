@@ -46,10 +46,9 @@ class DailyReportCollectInput(BaseModel):
 class DailyReportCollectTool(BaseTool):
     name: str = "daily_report_collect_tool"
     description: str = (
-        "这是一个日报填写工具，帮助用户每天填写工作日报、每日工作总结。"
-        "当需要填写日报时非常有用。 "
-        "能够尽可能全的收集日报信息。"
-        "调用本工具需要的参数值均来自用户的输入，可以默认为空，但是禁止随意编造。"
+        "日报填写工具，辅助填写工作日报、每日工作总结。"
+        "请注意：\n"
+        "1、调用本工具需要的参数值来自用户输入，可以默认为空，但是禁止随意编造。\n"
         ""
     )
     args_schema: Type[BaseModel] = DailyReportCollectInput

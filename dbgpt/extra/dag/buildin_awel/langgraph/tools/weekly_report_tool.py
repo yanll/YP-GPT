@@ -54,10 +54,9 @@ class WeeklyReportCollectInput(BaseModel):
 class WeeklyReportCollectTool(BaseTool):
     name: str = "weekly_report_collect_tool"
     description: str = (
-        "这是一个周报填写工具，帮助用户填写工作周报、填写每周工作总结。"
-        "当需要填写周报/写周报/总结周报时非常有用。 "
-        "能够尽可能全的收集周报信息。"
-        "调用本工具需要的参数值均来自用户的输入，可以默认为空，但是禁止随意编造。"
+        "周报填写工具，辅助填写工作周报、每周工作总结。"
+        "请注意：\n"
+        "1、调用本工具需要的参数值来自用户输入，可以默认为空，但是禁止随意编造。\n"
         ""
     )
     args_schema: Type[BaseModel] = WeeklyReportCollectInput

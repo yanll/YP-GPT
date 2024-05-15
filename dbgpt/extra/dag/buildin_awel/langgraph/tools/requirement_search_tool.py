@@ -1,4 +1,3 @@
-
 import logging
 from typing import Optional, Type
 
@@ -37,15 +36,12 @@ class RequirementSearchToolInput(BaseModel):
     #     name="需求创建者名称", description="需求创建者名称", default="")
 
 
-
 class RequirementSearchTool(BaseTool):
     name: str = "requirement_search_tool"
     description: str = (
-        "你是一个需求信息查询工具，用于需求查询，结果准确、可信。 "
-        "当你需要通过调用工具查询需求信息时非常有用。 "
-        "输入参数应该是工具需要的全部参数。"
-        "调用本工具需要的参数值均来自用户的输入，可以默认为空，但是禁止随意编造。"
-        "请将查询结果数据整理并美化后输出。"
+        "需求查询工具"
+        "请注意：\n"
+        "1、调用本工具需要的参数值来自用户输入，可以默认为空，但是禁止随意编造。\n"
 
     )
     max_results: int = 20
@@ -57,14 +53,14 @@ class RequirementSearchTool(BaseTool):
             industry_line: str = "",
             emergency_level: str = "",
             work_status: str = "",
-            #requirement_create_name: str = "",
+            # requirement_create_name: str = "",
             run_manager: Optional[CallbackManagerForToolRun] = None,
     ):
         """Use the tool."""
         global industry_line_mapping
         """参数别动，我还用，-_-"""
-        #print("开始执行需求信息查询工具：", conv_id, industry_line,emergency_level,requirement_create_name, self.max_results)
-        print("开始执行需求信息查询工具：", conv_id, industry_line,emergency_level,work_status, self.max_results)
+        # print("开始执行需求信息查询工具：", conv_id, industry_line,emergency_level,requirement_create_name, self.max_results)
+        print("开始执行需求信息查询工具：", conv_id, industry_line, emergency_level, work_status, self.max_results)
         try:
             resp_data = {}
             if conv_id == "":
@@ -92,7 +88,6 @@ class RequirementSearchTool(BaseTool):
             priority_value = emergency_level_mapping.get(emergency_level, "")
             work_status_value = work_status_mapping.get(work_status, "")
 
-
             requirement_search_analysis = lark_project_requirement_search.create_requirement_search_for_lark_project(
                 union_id=conv_id,
                 project_key="ypgptapi",
@@ -102,11 +97,10 @@ class RequirementSearchTool(BaseTool):
                 work_status_value=work_status_value
             )
             print("完整返回结果", requirement_search_analysis)
-            #extracted_info = requirement_search_analysis[0]
+            # extracted_info = requirement_search_analysis[0]
             extracted_info = requirement_search_analysis
 
             print("需求查询返回结果", extracted_info)
-
 
             resp_data = {}
             resp_data = extracted_info
@@ -124,7 +118,7 @@ class RequirementSearchTool(BaseTool):
             # 构造查询字符串
             query_str = (
                     "行业线：" + industry_line + "\n" +
-                    "紧急程度：" + emergency_level + "\n"+
+                    "紧急程度：" + emergency_level + "\n" +
                     "需求状态：" + work_status + "\n"
             ).strip()
 
@@ -185,4 +179,3 @@ class RequirementSearchTool(BaseTool):
         except Exception as e:
             logging.error("商户查询工具运行异常：", e)
             return repr(e)
-

@@ -48,11 +48,10 @@ class FeedbackCollectInput(BaseModel):
 class FeedbackCollectTool(BaseTool):
     name: str = "feedback_collect_tool"
     description: str = (
-        "这是一个问题反馈和吐槽收集工具，用于收集用户提的反馈、意见、建议、吐槽、槽点等信息。\n"
-        "当需要吐槽或提交问题、反馈、意见、建议时非常有用。 \n"
-        "能够尽可能全的收集反馈信息。\n"
+        "问题反馈工具\n"
         "请注意：\n"
-        "1、调用本工具需要的参数值来自用户输入，可以默认为空，但是禁止随意编造。\n"
+        "1、当需要吐槽或提交问题、反馈、意见、建议时非常有用。\n"
+        "2、调用本工具需要的参数值来自用户输入，可以默认为空，但是禁止随意编造。\n"
         ""
     )
     args_schema: Type[BaseModel] = FeedbackCollectInput
