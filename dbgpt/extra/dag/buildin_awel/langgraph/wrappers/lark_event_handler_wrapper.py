@@ -28,7 +28,9 @@ class LarkEventHandlerWrapper:
                 if "last_output" in return_values:
                     last_output_str = return_values["last_output"]
                     try:
-                        if len(last_output_str) > 0:
+                        if last_output_str.startswith("Exception"):
+                            logging.error("上一步节点执行异常：" + last_output_str)
+                        elif len(last_output_str) > 0:
                             # TODO-YLL-FIXME 查询我的周报复现
                             last_output = json.loads(last_output_str.replace("'", "\""))
                             if last_output and "action" in last_output:
@@ -61,6 +63,8 @@ class LarkEventHandlerWrapper:
         self.app_chat_service.add_app_chat_his_message(rec)
 
     def lark_reply_form_card_message(self, sender_open_id: str, resp_msg: str, action: Dict, data: Dict):
+        if data is None:
+            return
         card_name = action["card_name"]
         if card_name == "requirement_collect":
             resp = lark_message_util.send_card_message(
