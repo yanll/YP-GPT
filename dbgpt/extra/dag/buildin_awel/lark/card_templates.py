@@ -43,10 +43,27 @@ def create_daily_report_card_content(template_variable: Dict):
     }
     return card
 
+
 def crm_bus_customer_query_result(template_variable: Dict):
     """查询报单结果"""
     template_id = "AAq3r6C4zobmg"
     template_version_name = "1.0.8"
+
+    card = {
+        "type": "template",
+        "data": {
+            "template_id": template_id,
+            "template_version_name": template_version_name,
+            "template_variable": template_variable
+        }
+    }
+    return card
+
+
+def welcome_and_ability_display(template_variable: Dict):
+    """欢迎能力卡片"""
+    template_id = "AAqkIeluuBZF2"
+    template_version_name = "1.0.22"
 
     card = {
         "type": "template",
@@ -298,6 +315,7 @@ def create_tool_tips_content(template_variable: Dict):
     }
     return card
 
+
 def crem_30DaysTrx_text_content(template_variable: Dict):
     """近30天业务展示"""
     template_id = "AAq3usqoxtHSw"
@@ -311,8 +329,6 @@ def crem_30DaysTrx_text_content(template_variable: Dict):
         }
     }
     return card
-
-
 
 
 class create_rag_card_content:
@@ -331,6 +347,7 @@ class create_rag_card_content:
             }
         }
         return card
+
 
 def crem_sales_details_content(template_variable: Dict):
     """销售详情展示"""

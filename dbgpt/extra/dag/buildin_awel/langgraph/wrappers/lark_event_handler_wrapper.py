@@ -107,6 +107,14 @@ class LarkEventHandlerWrapper:
             lark_message_id = resp["message_id"]
             self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
             return
+        if card_name == "ability_display":
+            resp = lark_message_util.send_card_message(
+                receive_id=sender_open_id,
+                content=data['content']
+            )
+            lark_message_id = resp["message_id"]
+            self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
+            return
         if card_name == "daily_report_collect":
             resp = lark_message_util.send_card_message(
                 receive_id=sender_open_id,
