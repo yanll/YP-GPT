@@ -3,16 +3,18 @@ import logging
 import requests
 
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_callback_handler_wrapper
+from dbgpt.util import envutils
 from dbgpt.util.lark import larkutil, ssoutil
 
 
 def sales_board_display(open_id=None):
     global nickname
-    url = 'https://nccemportal.yeepay.com/cem-api/crmCustomer/getSuperiorAndSubordinate'
+    url = envutils.getenv("CREM_ENDPOINT") + '/crmCustomer/getSuperiorAndSubordinate'
+
     headers = {
         'yuiassotoken': ssoutil.get_sso_credential(open_id),
         'pageType': 'cemPortal',
-        #'Content-Type': 'application/json',
+        # 'Content-Type': 'application/json',
 
     }
 
@@ -49,12 +51,15 @@ def sales_board_display(open_id=None):
             print("获取销售看板数据失败：", response.status_code)
     except Exception as e:
         print("获取销售看板数据时出现异常：", e)
+
+
 # # 调用函数以获取销售看板数据
 # sales_board_display()
 
 
 def industry_line(open_id=None):
-    url = 'https://nccemportal.yeepay.com/cem-api/common/treeDictionary'
+    url = envutils.getenv("CREM_ENDPOINT") + '/common/treeDictionary'
+
     headers = {
         'yuiassotoken': ssoutil.get_sso_credential(open_id),
         'pageType': 'cemPortal',
@@ -70,7 +75,7 @@ def industry_line(open_id=None):
             result = response.json()
             # 从返回结果中获取类型名并直接输出
             typename = result['data'][0]['typename']
-            print("typename的值为：",typename)
+            print("typename的值为：", typename)
             return typename
         else:
             print("请求失败：", response.status_code)
@@ -94,8 +99,7 @@ def process_data(open_id):
                 return "销售管理其他"
         elif user_type == 1:
             if typename == "大零售行业线":
-                return "https://img.yeepay.com/hbird-ucm/feishu-web-app-entry/index.html#/app?appId=cli_a22c1bd8723a500e&appEncodeUrl=https://atmgw.yeepay.com/mcem/index.html#/analyse/manage&exchangeMethod=uia"
-                #return "https://img.yeepay.com/hbird-ucm/feishu-web-app-entry/index.html#/app?appId=cli_a22c1bd8723a500e&appEncodeUrl=https://cem.yeepay.com/index.html#/workspace/workspace&exchangeMethod=uia"
+                return "https://applink.feishu.cn/client/web_url/open?mode=sidebar-semi&reload=false&url=https%3A%2F%2Fimg.yeepay.com%2Fhbird-ucm%2Ffeishu-web-app-entry%2Findex.html%23%2Fapp%3FappId%3Dcli_a22c1bd8723a500e%26appEncodeUrl%3Dhttps%3A%2F%2Fatmgw.yeepay.com%2Fmcem%2Findex.html%23%2Fanalyse%2Fmanage%26exchangeMethod%3Duia"
             elif typename == "金融行业线":
                 return "销售金融"
             else:
@@ -106,7 +110,6 @@ def process_data(open_id):
             return "未知用户类型"
     else:
         return "未能获取完整的用户类型和行业线类型，无法进行处理。"
-
 
 # # 获取用户类型和行业线类型
 # user_type = sales_board_display()
