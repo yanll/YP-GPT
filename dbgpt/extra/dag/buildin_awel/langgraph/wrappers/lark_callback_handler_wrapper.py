@@ -41,7 +41,7 @@ async def a_call(app_chat_service, event: Dict):
 
     if event_type == "new_chat":
         return do_new_chat(app_chat_service, open_id)
-    
+
     if event_type == "new_chat_rag":
         return do_new_chat_rag(app_chat_service, open_id)
 
@@ -50,7 +50,7 @@ async def a_call(app_chat_service, event: Dict):
 
     if event_type == "tool_tips":
         return do_send_tips(app_chat_service, open_id, event_source)
-    
+
     if event_type == "ask_rag_question":
         return do_send_answer(app_chat_service, open_id, event_source)
 
@@ -115,7 +115,8 @@ async def a_call(app_chat_service, event: Dict):
             recommendation = form_value["recommendation"]
             effect = form_value["effect"] or 'None'
             reference_url = form_value["reference_url"] or 'None'
-            return do_feedback_rag(app_chat_service, open_id, original_message_id, feedback, recommendation, effect, reference_url)
+            return do_feedback_rag(app_chat_service, open_id, original_message_id, feedback, recommendation, effect,
+                                   reference_url)
 
         return {}
 
@@ -144,7 +145,7 @@ async def a_call(app_chat_service, event: Dict):
         return crem_30DaysTrx_text_two.get_crem_30DaysTrx_text_card(
             open_id=open_id,
             customer_id=customerNo,
-            customer_name = customerName,
+            customer_name=customerName,
             conv_id=open_id)
     # if event_type == 'merchant_detail_three':
     #     customerNo = action_value['customerNo']
