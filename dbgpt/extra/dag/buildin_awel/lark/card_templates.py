@@ -335,7 +335,7 @@ class create_rag_card_content:
 def crem_sales_details_content(template_variable: Dict):
     """销售详情展示"""
     template_id = "AAq3rInyQtnMC"
-    template_version_name = "1.0.10"
+    template_version_name = "1.0.16"
 
     card = {
         "type": "template",
