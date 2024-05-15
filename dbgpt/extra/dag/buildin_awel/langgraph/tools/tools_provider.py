@@ -33,7 +33,7 @@ class ToolsProvider:
             CrmBusCustomerCollectAddTool(),
             CrmBusCustomerCollectQueryTool(),
             FeedbackCollectTool(),
-            AbilityDisplayTool()
+            AbilityDisplayTool(),
             FeedbackCollectTool(),
             KnowledgeTool()
         ]
