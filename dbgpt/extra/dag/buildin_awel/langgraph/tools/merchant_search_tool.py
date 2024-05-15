@@ -22,11 +22,9 @@ class MerchantSearchToolInput(BaseModel):
 class MerchantSearchTool(BaseTool):
     name: str = "merchant_search_tool"
     description: str = (
-        "你是一个全面优化的商户信息查询工具，结果准确、可信。 "
-        "当你需要通过调用工具查询商户信息时非常有用。 "
-        "输入参数应该是工具需要的全部参数。"
-        "调用本工具需要的参数值均来自用户的输入，可以默认为空，但是禁止随意编造。"
-        "请将查询结果数据整理并美化后输出。"
+        "商户信息查询工具。 "
+        "请注意：\n"
+        "1、调用本工具需要的参数值来自用户输入，可以默认为空，但是禁止随意编造。\n"
         ""
     )
     max_results: int = 20

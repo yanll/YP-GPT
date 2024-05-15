@@ -54,9 +54,7 @@ class RequirementCollectInput(BaseModel):
 class RequirementCollectTool(BaseTool):
     name: str = "requirement_collect_tool"
     description: str = (
-        "这是一个需求收集工具，用于收集用户工作中的需求、对某个事物的要求、或其他痛点等信息。\n"
-        "当需要提交需要或收集需求数据时非常有用。 \n"
-        "能够尽可能全的收集需求信息。\n"
+        "需求收集工具，用于收集需求、痛点。\n"
         "请注意：\n"
         "1、调用本工具需要的参数值来自用户输入，可以默认为空，但是禁止随意编造。\n"
         ""

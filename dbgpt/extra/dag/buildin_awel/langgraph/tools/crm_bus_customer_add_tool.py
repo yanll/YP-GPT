@@ -164,9 +164,10 @@ class CrmBusCustomerCollectInput(BaseModel):
 class CrmBusCustomerCollectAddTool(BaseTool):
     name: str = "crm_bus_customer_collect_tool"
     description: str = (
-        "这是一个填写报单的工具，帮助用户填写报单。"
-        # "当需要填写报单时非常有用。 "
-        "调用本工具需要的参数值可以默认为空，但是禁止随意编造。"
+        "报单填写工具"
+        "请注意：\n"
+        "1、填写报单信息时非常有用。\n"
+        "2、调用本工具需要的参数值来自用户输入，可以默认为空，但是禁止随意编造。\n"
         ""
     )
     args_schema: Type[BaseModel] = CrmBusCustomerCollectInput

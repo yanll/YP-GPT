@@ -69,10 +69,11 @@ class CustomerVisitRecordCollectInput(BaseModel):
 class CustomerVisitRecordCollectTool(BaseTool):
     name: str = "customer_visit_record_collect_tool"
     description: str = (
-        "这是一个客户拜访记录填写工具，帮助用户填写客户拜访记录、客户拜访信息总结。"
-        "当需要填写客户拜访记录时非常有用。 "
-        "能够尽可能全的收集拜访记录信息。"
-        "调用本工具需要的参数值均来自用户的输入，可以默认为空，但是禁止随意编造。"
+        "跟进拜访记录填写工具"
+        "请注意：\n"
+        "1、填写客户跟进拜访记录时非常有用。\n"
+        "2、调用本工具需要的参数值来自用户输入，可以默认为空，但是禁止随意编造。\n"
+        ""
         ""
     )
     args_schema: Type[BaseModel] = CustomerVisitRecordCollectInput
