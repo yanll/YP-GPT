@@ -312,7 +312,7 @@ class LarkEventHandlerWrapper:
                 receive_id=sender_open_id,
                 content=card_templates.create_rag_card_content.standard_response(
                     template_variable={
-                        'content': "response",
+                        'content': data["answer"],
                         "unlike_callback_event": {
                             "event_type": "unlike_rag",
                             "event_source": "rag_standard_response",

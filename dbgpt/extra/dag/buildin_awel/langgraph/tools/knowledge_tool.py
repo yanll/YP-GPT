@@ -66,8 +66,8 @@ def handle(
 
         response, origin_res = rag_api_client.single_round_chat(user_id=conv_id, content=question)
 
-        anwser = "结果："
-        print("知识库调用结果：", conv_id, question, anwser)
+        answer = response
+        print("知识库调用结果：", conv_id, question, answer)
 
         return {
             "success": "true",
@@ -79,7 +79,7 @@ def handle(
             "data": {
                 "conv_id": conv_id,
                 "question": question,
-                "anwser": anwser
+                "anwser": answer
             }
         }
     except Exception as e:
