@@ -7,39 +7,35 @@ from dbgpt.util import envutils
 from dbgpt.util.lark import larkutil, ssoutil
 
 
-def sales_board_display(open_id=None):
+def sales_board_display(open_id):
     global nickname
     url = envutils.getenv("CREM_ENDPOINT") + '/crmCustomer/getSuperiorAndSubordinate'
 
     headers = {
         'yuiassotoken': ssoutil.get_sso_credential(open_id),
         'pageType': 'cemPortal',
-        # 'Content-Type': 'application/json',
 
     }
 
-    # try:
-    #     ss = larkutil.select_userinfo(open_id)
-    #     if ss and "name" in ss:
-    #         nickname = ss["name"] + " "
-    # except Exception as e:
-    #     logging.warning("用户姓名解析异常：", open_id)
-    # # userinfo = larkutil.select_userinfo(open_id)
-    # # if userinfo and "name" in userinfo:
-    # #     nickname = userinfo["name"] + " "
-    # # print("用户的姓名是",nickname)
+    try:
+        userinfo = larkutil.select_userinfo(open_id=open_id)
+        if userinfo and "name" in userinfo:
+            nickname = userinfo["name"] + " "
+            print("用户的姓名是", nickname)
+    except Exception as e:
+        logging.warning("用户姓名解析异常：", open_id)
+
 
     data = {
         "requestParams": "SUPERIOR_NAME",
         "targetParams": "SALES_NAME",
-        "userName": "张华雪"
+        "userName": nickname
     }
 
     try:
         response = requests.post(url, headers=headers, json=data)
         if response.status_code == 200:
             result = response.json()
-            # user_type_value = result.get('data',{}).get('userType',"")
             user_type_value = result.get('data', {}).get('userType')
             if user_type_value:
                 print("成功获取销售看板数据！")
@@ -53,8 +49,7 @@ def sales_board_display(open_id=None):
         print("获取销售看板数据时出现异常：", e)
 
 
-# # 调用函数以获取销售看板数据
-# sales_board_display()
+
 
 
 def industry_line(open_id=None):
@@ -83,37 +78,41 @@ def industry_line(open_id=None):
         print("请求时出现异常：", e)
 
 
-# # 调用函数以获取行业线数据
-# industry_line()
+
 
 def process_data(open_id):
     user_type = sales_board_display(open_id)
     typename = industry_line(open_id)
     if user_type is not None and typename is not None:
+        base_url = "https://img.yeepay.com/hbird-ucm/feishu-web-app-entry/index.html#/app?appId=cli_a22c1bd8723a500e&appEncodeUrl=https://atmgw.yeepay.com/mcem/index.html#/"
         if user_type == 0:
-            if typename == "大零售行业线":
-                return "销售管理大零售"
+            if typename == "航旅行业线":
+                #"销售管理航旅"
+                return base_url + "hl/hlsalerMangerView&exchangeMethod=uia"
             elif typename == "金融行业线":
-                return "销售管理金融"
+                #"销售管理金融"
+                return base_url + "jinrong/saleManageBoard&exchangeMethod=uia"
             else:
-                return "销售管理其他"
+                #"销售管理其他"
+                return base_url + "analyse/saleManageBoard&exchangeMethod=uia"
+
         elif user_type == 1:
-            if typename == "大零售行业线":
-                return "https://applink.feishu.cn/client/web_url/open?mode=sidebar-semi&reload=false&url=https%3A%2F%2Fimg.yeepay.com%2Fhbird-ucm%2Ffeishu-web-app-entry%2Findex.html%23%2Fapp%3FappId%3Dcli_a22c1bd8723a500e%26appEncodeUrl%3Dhttps%3A%2F%2Fatmgw.yeepay.com%2Fmcem%2Findex.html%23%2Fanalyse%2Fmanage%26exchangeMethod%3Duia"
+            if typename == "航旅行业线":
+                #"销售航旅"
+                return base_url + "hl/hlsalerView&exchangeMethod=uia"
             elif typename == "金融行业线":
-                return "销售金融"
+                #"销售金融"
+                return base_url + "analyse/saleBoard&exchangeMethod=uia"
             else:
-                return "销售其他"
+                #"销售其他"
+                return base_url + "sale/chartView&exchangeMethod=uia"
+
         elif user_type == 2:
-            return "https://img.yeepay.com/hbird-ucm/feishu-web-app-entry/index.html#/app?appId=cli_a22c1bd8723a500e&appEncodeUrl=https://atmgw.yeepay.com/mcem/index.html#/analyse/manage&exchangeMethod=uia"
+            #运营权限
+            return base_url +"custom/app-list&exchangeMethod=uia"
         else:
             return "未知用户类型"
     else:
         return "未能获取完整的用户类型和行业线类型，无法进行处理。"
 
-# # 获取用户类型和行业线类型
-# user_type = sales_board_display()
-# typename = industry_line()
-# # 如果用户类型和行业线类型都不为None，则进行处理
-# result = process_data(user_type, typename)
-# print("处理后的结果为：", result)
+
