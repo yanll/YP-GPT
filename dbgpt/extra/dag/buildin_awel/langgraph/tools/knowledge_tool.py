@@ -52,7 +52,7 @@ class KnowledgeTool(BaseTool):
                 question=question
             )
         except Exception as e:
-            logging.error("需求收集工具运行异常：" + conv_id + " " + question, e)
+            logging.error("知识问答工具运行异常：" + conv_id + " " + question, e)
             return repr(e)
 
 
