@@ -26,7 +26,7 @@ class KnowledgeInput(BaseModel):
 
 
 class KnowledgeTool(BaseTool):
-    name: str = "requirement_collect_tool"
+    name: str = "knowledge_tool"
     description: str = (
         "知识问答工具，用于从知识库中检索答案。\n"
         ""
