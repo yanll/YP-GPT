@@ -70,8 +70,7 @@ class FeedbackCollectTool(BaseTool):
             if feedback == "":
                 reuqires.append("feedback")
             if len(reuqires) > 0:
-                s = str(reuqires)
-                return {"success": "false", "response_message": "the description of " + str(reuqires)}
+                return {"success": "false", "response_message": "the description of " + "[" + ".".join(reuqires) + "]"}
             return handle(
                 conv_id=conv_id,
                 feedback=feedback,

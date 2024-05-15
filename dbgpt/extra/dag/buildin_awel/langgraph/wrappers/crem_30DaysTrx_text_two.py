@@ -17,7 +17,7 @@ def format_percent(num):
 def get_crem_30DaysTrx_text_card(open_id=None, customer_id=None, conv_id=None, customer_name=None, ):
     try:
         if customer_id == "" and conv_id == "":
-            return {"success": "false", "response_message": "the description of customer_id "}
+            return {"success": "false", "response_message": "the description of customer_id"}
         data = get_crem_30DaysTrx_text(open_id, customer_id)
         resp_data = [data]
         query_str = (customer_name + "" + "("+customer_id+")").strip()
