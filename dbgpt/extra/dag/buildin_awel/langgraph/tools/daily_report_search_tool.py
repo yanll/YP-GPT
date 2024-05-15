@@ -42,7 +42,7 @@ class DailyReportSearchTool(BaseTool):
         try:
             resp_data = {}
             if sales_name == "":
-                return {"success": "false", "response_message": "the description of  sales_name"}
+                return {"success": "false", "response_message": "the description of sales_name"}
             data = crem_daily_report_search.daily_report_search(
                 open_id=conv_id,
                 create_user=sales_name,
