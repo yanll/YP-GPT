@@ -197,6 +197,24 @@ class MessageApiClient(object):
         resp = requests.post(url=url, headers=headers, json=req_body)
         MessageApiClient._check_error_response(resp)
         return resp
+    
+    
+    def update(self, message_id, content):
+        # send message to user, implemented based on Feishu open api capability. doc link: https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/create
+        self._authorize_tenant_access_token()
+        url = "{}{}/{}".format(
+            self._lark_host, MESSAGE_URI, message_id
+        )
+        headers = {
+            "Content-Type": "application/json; charset=utf-8",
+            "Authorization": "Bearer " + self.tenant_access_token,
+        }
+        req_body = {
+            "content": json.dumps(content),
+        }
+        resp = requests.patch(url=url, headers=headers, json=req_body)
+        MessageApiClient._check_error_response(resp)
+        return resp
 
     def _authorize_tenant_access_token(self):
         # get tenant_access_token and set, implemented based on Feishu open api capability. doc link: https://open.feishu.cn/document/ukTMukTMukTM/ukDNz4SO0MjL5QzM/auth-v3/auth/tenant_access_token_internal

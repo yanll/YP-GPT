@@ -48,6 +48,10 @@ class RAGLarkHandler:
             open_id = sender_id['open_id']
             text_content = message['content']
             req_text_content = json.loads(text_content)['text']
+            
+             # 发送loading卡片
+            message_id = lark_message_util.send_loading_message_rag(receive_id=open_id)
+            
               # 初始化ragflow的对话后，先存起来消息信息
             self.app_chat_service.add_app_chat_his_message({
                 "id": str(uuid.uuid1()),
@@ -61,34 +65,11 @@ class RAGLarkHandler:
                 "lark_message_id": ""
             })
             
-            # message_api_client.send_text_with_open_id(open_id, {
-            #     "zh_cn": {
-            #         "title": "我是一个标题",
-            #         "content": [
-            #             [
-            #                 {
-            #                     "tag": "img",
-            #                     "image_key": "img_v3_02at_b36049ff-89d1-4a52-bdeb-0fad1ba97ccg",
-            #                     "preview": False,
-            #                     "transparent": True,
-            #                     "scale_type": "crop_center",
-            #                     "size": "small"
-            #                 },
-            #                 {
-            #                     "tag": "text",
-            #                     "text": "正在使用企业知识库回答"
-            #                 },
-            #                 {
-            #                     "tag": "at",
-            #                     "user_id": "ou_1avnmsbv3k45jnk34j5",
-            #                     "style": ["lineThrough"]
-            #                 }
-            #             ]
-            #         ]
-            #     }
-            # })
             
             response, origin_res = self.rag_api_client.single_round_chat(user_id=open_id, content=req_text_content)
+            
+            # 更新loading卡片
+            lark_message_util.update_loading_message_rag(message_id=message_id)
             
             resp = lark_message_util.send_card_message_rag(
                     receive_id=open_id,
@@ -121,6 +102,7 @@ class RAGLarkHandler:
             })
 
         except Exception as e:
+            lark_message_util.update_loading_message_rag(message_id=message_id, type='error')
             resp = lark_message_util.send_card_message_rag(
                 receive_id=open_id,
                 content=card_templates.create_rag_card_content.standard_response(
@@ -139,4 +121,3 @@ class RAGLarkHandler:
             raise e
         # end try
         
-
