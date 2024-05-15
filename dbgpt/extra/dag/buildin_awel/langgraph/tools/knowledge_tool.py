@@ -29,6 +29,7 @@ class KnowledgeTool(BaseTool):
     name: str = "knowledge_tool"
     description: str = (
         "知识问答工具，用于从知识库中检索答案。\n"
+        "当询问公司相关的业务知识、公司制度、企业文化、办公流程、办事流程、知识库搜索、产品、名词定义，以及寻找业务负责人、寻找解决方案等等非常有用。\n"
         ""
     )
     args_schema: Type[BaseModel] = KnowledgeInput
