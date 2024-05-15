@@ -308,6 +308,25 @@ class LarkEventHandlerWrapper:
             )
             return
 
+        if card_name == "knowledge_result":
+            answer = data["answer"]
+            resp = lark_card_util.send_message_with_bingo(
+                receive_id=sender_open_id,
+                template_variable={
+                    "message_content": "",
+                    "muti_text": answer,
+                    "unlike_callback_event": {
+                        "event_type": "unlike",
+                        "event_source": "knowledge_result_card",
+                        "event_data": {
+                            "message": answer
+                        }
+                    }
+                }
+            )
+            self.store_his_message(sender_open_id, answer, "text", resp["message_id"])
+            return
+
     def lark_reply_general_message(self, sender_open_id, resp_msg):
         resp = lark_card_util.send_message_with_bingo(
             receive_id=sender_open_id,
