@@ -308,7 +308,7 @@ class LarkEventHandlerWrapper:
             return
 
         if card_name == "knowledge_result":
-            resp = lark_message_util.send_card_message_rag(
+            resp = lark_message_util.send_card_message(
                 receive_id=sender_open_id,
                 content=card_templates.create_rag_card_content.standard_response(
                     template_variable={
