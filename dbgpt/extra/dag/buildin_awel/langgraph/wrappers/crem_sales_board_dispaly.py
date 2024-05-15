@@ -101,7 +101,7 @@ def process_data(open_id):
             else:
                 return "销售其他"
         elif user_type == 2:
-            return "所有权限"
+            return "https://img.yeepay.com/hbird-ucm/feishu-web-app-entry/index.html#/app?appId=cli_a22c1bd8723a500e&appEncodeUrl=https://atmgw.yeepay.com/mcem/index.html#/analyse/manage&exchangeMethod=uia"
         else:
             return "未知用户类型"
     else:
