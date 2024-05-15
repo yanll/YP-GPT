@@ -25,9 +25,9 @@ class RAGApiClient(object):
             nothing
         '''
 
-    async def test_slow_http(self,user_id):
+    async def test_slow_http(self, user_id):
         # https://httpbin.org/delay/10
-        url = RAG_FLOW_BASE_URL + "/v1/api/new_conversation?name="+user_id
+        url = RAG_FLOW_BASE_URL + "/v1/api/new_conversation?name=" + user_id
         headers = {'Content-Type': 'application/json; charset=utf-8',
                    'Authorization': RAG_FLOW_CHAT_TOKEN}
         async with aiohttp.ClientSession(headers=headers) as session:
@@ -38,19 +38,17 @@ class RAGApiClient(object):
                 html = await response.json()
                 print("Body:", html, "...")
                 return html
-    
 
-    async def async_coversation_start(self,user_id):
+    async def async_coversation_start(self, user_id):
         headers = {'Content-Type': 'application/json; charset=utf-8',
                    'Authorization': RAG_FLOW_CHAT_TOKEN}
         async with aiohttp.ClientSession(headers=headers) as session:
-            async with session.get(RAG_FLOW_BASE_URL + "/v1/api/new_conversation?name="+user_id) as resp:
+            async with session.get(RAG_FLOW_BASE_URL + "/v1/api/new_conversation?name=" + user_id) as resp:
                 print(resp.status)
                 print(await resp.text())
                 return resp
-            
-    
-    async def async_chat(self,conversation_id, messages):
+
+    async def async_chat(self, conversation_id, messages):
         headers = {'Content-Type': 'application/json; charset=utf-8',
                    'Authorization': RAG_FLOW_CHAT_TOKEN}
         data = {
@@ -58,21 +56,21 @@ class RAGApiClient(object):
             "messages": messages,
         }
 
-        print("rag start chat",conversation_id,messages,data)
+        print("rag start chat", conversation_id, messages, data)
         async with aiohttp.ClientSession(headers=headers) as session:
-            async with session.post(RAG_FLOW_BASE_URL + "/v1/api/completion",data=data) as response:
+            async with session.post(RAG_FLOW_BASE_URL + "/v1/api/completion", data=data) as response:
                 print(response.status)
                 return response
-    
-    def coversation_start(self,user_id):
-        url = RAG_FLOW_BASE_URL + "/v1/api/new_conversation?name="+user_id
+
+    def coversation_start(self, user_id):
+        url = RAG_FLOW_BASE_URL + "/v1/api/new_conversation?name=" + user_id
         headers = {'Content-Type': 'application/json; charset=utf-8',
                    'Authorization': RAG_FLOW_CHAT_TOKEN}
         data = {}
-        resp = requests.request('GET', headers=headers, url=url, data=json.dumps(data))
+        resp = requests.request('GET', headers=headers, url=url, data=json.dumps(data), timeout=30)
         return resp
 
-    def chat(self,conversation_id, messages):
+    def chat(self, conversation_id, messages):
         url = RAG_FLOW_BASE_URL + "/v1/api/completion"
         headers = {'Content-Type': 'application/json; charset=utf-8',
                    'Authorization': RAG_FLOW_CHAT_TOKEN}
@@ -80,17 +78,16 @@ class RAGApiClient(object):
             "conversation_id": conversation_id,
             "messages": messages,
         }
-        resp = requests.request('POST', headers=headers, url=url, data=json.dumps(data))
+        resp = requests.request('POST', headers=headers, url=url, data=json.dumps(data), timeout=30)
         return resp
 
-    def get_image(self,image_id):
-        url = RAG_FLOW_BASE_URL + "/v1/api/document/get/"+image_id
+    def get_image(self, image_id):
+        url = RAG_FLOW_BASE_URL + "/v1/api/document/get/" + image_id
         headers = {'Content-Type': 'image/jpeg',
                    'Authorization': RAG_FLOW_CHAT_TOKEN}
         data = {}
-        resp = requests.request('GET', headers=headers, url=url, data=json.dumps(data))
+        resp = requests.request('GET', headers=headers, url=url, data=json.dumps(data), timeout=30)
         return resp
-
 
     def single_round_chat(self, user_id, content):
         # res = await self.rag_api_client.async_coversation_start(user_id = open_id)
@@ -102,11 +99,11 @@ class RAGApiClient(object):
             'role': 'user'
         }
         message_init.append(new_message)
-        
+
         origin_res = self.chat(conversation_id=id, messages=message_init).json()
         response = origin_res['data']['answer']
         chunks = origin_res['data']['reference']['chunks']
-        
+
         # print("rag answer:",origin_res)
         pattern = r"##(.*?)\$\$"
         response = re.sub(pattern, "", response)
@@ -118,9 +115,9 @@ class RAGApiClient(object):
         reduce_count = 0
         for idx, chunk in enumerate(chunks):
             # print("current: ", chunk)
-            if idx == 0 :
+            if idx == 0:
                 response += '\r\n---\r\n'
-            
+
             name = chunk['docnm_kwd']
             # name = '产品能力全貌（标准）$$_$$老板管账$$_$$老板管账API接口能力梳理.pdf'
             names = name.split("$$_$$")
@@ -129,34 +126,32 @@ class RAGApiClient(object):
                 reduce_count += 1
                 continue
             cache_files.append(file_name)
-            print(file_name,cache_files)
-            if len(names) == 1 :
-                n = f"{idx+1 - reduce_count}. {file_name}"
+            print(file_name, cache_files)
+            if len(names) == 1:
+                n = f"{idx + 1 - reduce_count}. {file_name}"
                 response += n
                 response += "\r\n"
                 continue
             proj_path = os.getcwd()
             # print(os.path.join(proj_path,'dbgpt/extra/dag/buildin_awel/lark/static/ragfiles',names[0] + '.json'))
-            f = open(os.path.join(proj_path,'dbgpt/extra/dag/buildin_awel/lark/static/ragfiles',names[0] + '.json'))
+            f = open(os.path.join(proj_path, 'dbgpt/extra/dag/buildin_awel/lark/static/ragfiles', names[0] + '.json'))
             f_json = json.load(f)
             for key, value in f_json.items():
                 if key == name:
                     f_metadata = json.loads(value)
-                    n = f"[{idx+1 - reduce_count}. {file_name}]({f_metadata['url']})"
+                    n = f"[{idx + 1 - reduce_count}. {file_name}]({f_metadata['url']})"
                     response += n
                     response += "\r\n"
                     break
             # f_metadata = json.loads(f_json[name])
             # n = f"[{idx+1 - reduce_count}. {file_name}]({f_metadata['url']})"
             # n = file_name
-            
-        print('rag card response', response) 
+
+        print('rag card response', response)
         return response, origin_res
-            
-        
+
     # end def
-    
-    
+
     @staticmethod
     def _check_error_response(resp):
         # check if the response contains error information
@@ -167,7 +162,6 @@ class RAGApiClient(object):
         if code != 0:
             logging.error(response_dict)
             raise LarkException(code=code, msg=response_dict.get("msg"))
-
 
 
 class MessageApiClient(object):
@@ -211,14 +205,14 @@ class MessageApiClient(object):
         response = requests.post(url, req_body)
         # response.to
         MessageApiClient._check_error_response(response)
-        
+
         self._tenant_access_token = response.json().get("tenant_access_token")
 
     @staticmethod
     def _check_error_response(resp):
         # check if the response contains error information
         if resp.status_code != 200:
-            print('feishu resp',resp.content)
+            print('feishu resp', resp.content)
             resp.raise_for_status()
         response_dict = resp.json()
         code = response_dict.get("code", -1)

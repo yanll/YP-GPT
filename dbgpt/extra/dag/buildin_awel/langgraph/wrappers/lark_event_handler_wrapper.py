@@ -307,6 +307,24 @@ class LarkEventHandlerWrapper:
             )
             return
 
+        if card_name == "knowledge_result":
+            resp = lark_message_util.send_card_message_rag(
+                receive_id=sender_open_id,
+                content=card_templates.create_rag_card_content.standard_response(
+                    template_variable={
+                        'content': "response",
+                        "unlike_callback_event": {
+                            "event_type": "unlike_rag",
+                            "event_source": "rag_standard_response",
+                            "event_data": {
+                                "message": "产品助手提问"
+                            }
+                        }
+                    }
+                )
+            )
+            return
+
     def lark_reply_general_message(self, sender_open_id, resp_msg):
         resp = lark_card_util.send_message_with_bingo(
             receive_id=sender_open_id,
