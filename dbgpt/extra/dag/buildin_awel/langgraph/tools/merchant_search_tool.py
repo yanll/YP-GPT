@@ -49,7 +49,8 @@ class MerchantSearchTool(BaseTool):
                 customer_number=customer_number
             )
             link = crem_sales_board_dispaly.process_data(
-                open_id=conv_id)
+                open_id=conv_id
+            )
             resp_data = data
             sales_diapaly = link
             print("网址结果",sales_diapaly)
