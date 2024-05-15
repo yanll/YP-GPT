@@ -20,7 +20,7 @@ class KnowledgeInput(BaseModel):
     )
     question: str = Field(
         name="问题",
-        description="问题",
+        description="问题：用户输入的原始问题，不要做任何修改。",
         default=""
     )
 
