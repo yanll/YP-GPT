@@ -79,7 +79,7 @@ def handle(
             "data": {
                 "conv_id": conv_id,
                 "question": question,
-                "anwser": answer
+                "answer": answer
             }
         }
     except Exception as e:
