@@ -1,8 +1,6 @@
 #! /usr/bin/env python3.8
 import logging
-import time
 import uuid
-import re
 import json
 from typing import Dict
 
@@ -15,7 +13,6 @@ import asyncio
 from dbgpt.util.lark import lark_message_util, lark_card_util
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
 
-import os
 
 # const
 TENANT_ACCESS_TOKEN_URI = "/open-apis/auth/v3/tenant_access_token/internal"
@@ -26,10 +23,6 @@ APP_SECRET = envutils.getenv('LARK_RAG_APP_SECRET')
 VERIFICATION_TOKEN = envutils.getenv('LARK_RAG_VERIFICATION_TOKEN')
 ENCRYPT_KEY = ""
 LARK_HOST = "https://open.feishu.cn"
-# rag_api_endpoint = "http://172.31.91.206:8066/v1/api/"
-# rag_api_key = "ragflow-dhN2M4NzFhMDBiNzExZWY5NGY0MDI0Mm"
-rag_api_endpoint = "https://demo.ragflow.io/v1/api/"
-rag_api_key = "ragflow-c0NGJmZTVhMDEzMTExZWZiN2NhMDI0Mm"
 
 message_api_client = MessageApiClient(APP_ID, APP_SECRET, LARK_HOST)
 
@@ -37,7 +30,7 @@ message_api_client = MessageApiClient(APP_ID, APP_SECRET, LARK_HOST)
 class RAGLarkHandler:
     def __init__(self, **kwargs):
         self.app_chat_service = AppChatService()
-        self.rag_api_client = RAGApiClient(rag_api_endpoint, rag_api_key)
+        self.rag_api_client = RAGApiClient()
         super().__init__(**kwargs)
 
     async def handle(self, input_body: Dict):
@@ -54,7 +47,7 @@ class RAGLarkHandler:
                 return
             open_id = sender_id['open_id']
             text_content = message['content']
-            
+            req_text_content = json.loads(text_content)['text']
               # 初始化ragflow的对话后，先存起来消息信息
             self.app_chat_service.add_app_chat_his_message({
                 "id": str(uuid.uuid1()),
@@ -62,75 +55,40 @@ class RAGLarkHandler:
                 "node_name": "start",
                 "conv_uid": open_id,
                 "message_type": "human",
-                "content": json.loads(text_content)['text'],
+                "content": req_text_content,
                 "message_detail": json.dumps(input_body),
                 "display_type": "rag_card",
                 "lark_message_id": ""
             })
             
-            # res = await self.rag_api_client.async_coversation_start(user_id = open_id)
-            res = self.rag_api_client.coversation_start(user_id=open_id).json()
-            id = res['data']['id']
-            message_init = res['data']['message']
-            new_message = {
-                'content': json.loads(text_content)['text'],
-                'role': 'user'
-            }
-            message_init.append(new_message)
+            # message_api_client.send_text_with_open_id(open_id, {
+            #     "zh_cn": {
+            #         "title": "我是一个标题",
+            #         "content": [
+            #             [
+            #                 {
+            #                     "tag": "img",
+            #                     "image_key": "img_v3_02at_b36049ff-89d1-4a52-bdeb-0fad1ba97ccg",
+            #                     "preview": False,
+            #                     "transparent": True,
+            #                     "scale_type": "crop_center",
+            #                     "size": "small"
+            #                 },
+            #                 {
+            #                     "tag": "text",
+            #                     "text": "正在使用企业知识库回答"
+            #                 },
+            #                 {
+            #                     "tag": "at",
+            #                     "user_id": "ou_1avnmsbv3k45jnk34j5",
+            #                     "style": ["lineThrough"]
+            #                 }
+            #             ]
+            #         ]
+            #     }
+            # })
             
-          
-            
-            res = self.rag_api_client.chat(conversation_id=id, messages=message_init).json()
-            response = res['data']['answer']
-            chunks = res['data']['reference']['chunks']
-            
-            # print("rag answer:",res)
-            
-            # response = response.replace("##", "[").replace("$$", "]")
-            pattern = r"##(.*?)\$\$"
-            response = re.sub(pattern, "", response)
-
-            # if '知识库中未找到您要的答案！' in response:
-            #     message_api_client.send_text_with_open_id(open_id, main_text)
-            #     return jsonify()
-        
-            cache_files = []
-            reduce_count = 0
-            for idx, chunk in enumerate(chunks):
-                # print("current: ", chunk)
-                if idx == 0 :
-                    response += '\r\n---\r\n'
-                
-                name = chunk['docnm_kwd']
-                # name = '产品能力全貌（标准）$$_$$老板管账$$_$$老板管账API接口能力梳理.pdf'
-                names = name.split("$$_$$")
-                file_name = names[len(names) - 1]
-                if (file_name in cache_files) == True:
-                    reduce_count += 1
-                    continue
-                cache_files.append(file_name)
-                print(file_name,cache_files)
-                if len(names) == 1 :
-                    n = f"{idx+1 - reduce_count}. {file_name}"
-                    response += n
-                    response += "\r\n"
-                    continue
-                cur_dir_path = os.getcwd()
-                print(os.path.join(cur_dir_path,'dbgpt/extra/dag/buildin_awel/lark/static/ragfiles',names[0] + '.json'))
-                f = open(os.path.join(cur_dir_path,'dbgpt/extra/dag/buildin_awel/lark/static/ragfiles',names[0] + '.json'))
-                f_json = json.load(f)
-                for key, value in f_json.items():
-                    if key == name:
-                        f_metadata = json.loads(value)
-                        n = f"[{idx+1 - reduce_count}. {file_name}]({f_metadata['url']})"
-                        response += n
-                        response += "\r\n"
-                        break
-                # f_metadata = json.loads(f_json[name])
-                # n = f"[{idx+1 - reduce_count}. {file_name}]({f_metadata['url']})"
-                # n = file_name
-                
-            print('rag card response', response) 
+            response, origin_res = self.rag_api_client.single_round_chat(user_id=open_id, content=req_text_content)
             
             resp = lark_message_util.send_card_message_rag(
                     receive_id=open_id,
@@ -157,7 +115,7 @@ class RAGLarkHandler:
                 "conv_uid": open_id,
                 "message_type": "ai",
                 "content": response,
-                "message_detail": json.dumps(res),
+                "message_detail": json.dumps(origin_res),
                 "display_type": "rag_card",
                 "lark_message_id": resp['message_id']
             })
