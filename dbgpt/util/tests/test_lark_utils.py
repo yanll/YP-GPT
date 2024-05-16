@@ -155,3 +155,11 @@ def test_lang():
     start_time = int(datetime.strptime("2024-04-04 12:00:00", "%Y-%m-%d %H:%M:%S").timestamp())
     print(start_time)
     assert True
+
+def test_upload_img(url):
+    """
+    Purpose: url
+    """
+    lark_message_util.upload_img_to_lark_by_url('http://localhost:8066/v1/document/image/eb62fe120f7811ef94bf0242ac130006-a14902df0557365439a28dd7a342f051')
+    
+# end def
