@@ -461,7 +461,7 @@ def do_collect(
 
         elif industry_line == "航旅事业部":
             if air_travel_business_type == '第一类':
-
+                business_type_options = lark_card_util.card_options_for_business_type.AirTravel.Category_I()
                 content = card_templates.create_crm_bus_customer_card_content.AirTravel.Category_I(
                     template_variable={
                         "card_metadata": {
