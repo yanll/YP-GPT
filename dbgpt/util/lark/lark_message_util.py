@@ -94,14 +94,15 @@ def send_loading_message_rag(receive_id):
                                  msg_type='interactive', type='card_message')
     return resp_data['message_id']
 
-
-def update_loading_message_rag(message_id, type='standard'):
+def update_loading_message_rag(message_id,type='standard',content="nothing"):
     resp_placeholder = None
     if type == 'standard':
         resp_placeholder = resp_standard_hint
     elif type == 'error':
         resp_placeholder = resp_error_hint
-    res = update_interactive_card_rag(message_id=message_id, content=resp_placeholder)
+    elif type == 'customize':
+        resp_placeholder = content
+    res = update_interactive_card_rag(message_id=message_id,content=resp_placeholder)
     return res
 
 
@@ -252,7 +253,7 @@ resp_error_hint = {
                                 "tag": "div",
                                 "text": {
                                     "tag": "plain_text",
-                                    "content": "生成失败！",
+                                    "content": "生成失败！请联系管理员。",
                                     "text_size": "normal",
                                     "text_align": "left",
                                     "text_color": "default"

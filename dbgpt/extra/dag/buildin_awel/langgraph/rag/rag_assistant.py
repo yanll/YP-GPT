@@ -8,6 +8,7 @@ import re
 import os
 from dbgpt.util import envutils
 from dbgpt.util.lark import lark_message_util, lark_card_util
+import time
 
 # const
 TENANT_ACCESS_TOKEN_URI = "/open-apis/auth/v3/tenant_access_token/internal"
@@ -229,12 +230,19 @@ def generate_rag_response_card(origin_res):
         "i18n_header": {}
     }
     response = origin_res['data']['answer']
-    chunks = origin_res['data']['reference']['chunks']
+    all_chunks = origin_res['data']['reference']['chunks']
     
     pattern = r"##(.*?)\$\$"
+    matches = re.findall(pattern, response)
     response = re.sub(pattern, "", response)
     
     res_card["i18n_elements"]['zh_cn'][0]['content'] = response
+    
+    matches = list(dict.fromkeys(matches))
+    chunks = []
+    
+    for idx_str in matches:
+        chunks.append(all_chunks[int(idx_str)])
     
     cache_files = []
     reduce_count = 0
@@ -286,9 +294,14 @@ def generate_rag_response_card(origin_res):
     # if len(cache_files) > 0:
     #     res_card['i18n_elements']['zh_cn'].append()
     
+    startTime = time.time()
     for f in cache_files:
         res_card['i18n_elements']['zh_cn'].append(generate_collapsible_panel(f))
     
+    endTime = time.time()
+    howMuchTime = endTime - startTime
+    
+    print("上传图片花费时间",str(howMuchTime) + " sec")
     
     res_card['i18n_elements']['zh_cn'].append(card_footer_template())
         
@@ -302,20 +315,26 @@ def generate_collapsible_panel(file):
     """
     Purpose: 生成单个折叠面板
     """
-    panel_title = file['name']
+    panel_title = None
     panel_content = ''
     if file['url']:
-        panel_title += "<link icon='file-link-docx-shortcut_outlined' url='{}' pc_url='' ios_url='' android_url=''>&ensp;</link>".format(file['url'])
+        panel_title = "<link icon='file-link-docx-shortcut_outlined' url='{0}' pc_url='{1}' ios_url='' android_url=''>{2}</link>".format(file['url'],file['url'],file['name'])
+    else:
+        panel_title = "<link icon='file-link-docx-shortcut_outlined' url='{0}' pc_url='{1}' ios_url='' android_url=''>{2}</link>".format(file['url'],file['url'],file['name'])
+        
+    count = 0
     for i, img_id in enumerate(file['imgs']):  # looping through row
         # comment: 
         if bool(img_id):
+            count += 1
             url = RAG_FLOW_BASE_URL + '/v1/document/image/' + img_id
             img_id = lark_message_util.upload_img_to_lark_by_url(url)
             panel_content += "![{}]({})".format(file['chunks_content'][i], img_id)
             
         else:
             panel_content += file['chunks_content'][i]
-            
+           
+    print('上传图片数量：', count) 
 
         
     # end for
@@ -337,10 +356,10 @@ def generate_collapsible_panel(file):
         "icon_position": "right",
         "icon_expanded_angle": -180
       },
-      "border": {
-        "color": "grey",
-        "corner_radius": "5px"
-      },
+    #   "border": {
+    #     "color": "grey",
+    #     "corner_radius": "5px"
+    #   },
       "vertical_spacing": "8px",
       "padding": "8px 8px 8px 8px",
       "elements": [

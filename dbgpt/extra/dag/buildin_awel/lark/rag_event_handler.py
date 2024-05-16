@@ -69,12 +69,15 @@ class RAGLarkHandler:
             response, origin_res = self.rag_api_client.single_round_chat(user_id=open_id, content=req_text_content, response_v="new")
             
             # 更新loading卡片
-            lark_message_util.update_loading_message_rag(message_id=message_id)
+            # lark_message_util.update_loading_message_rag(message_id=message_id)
             
-            resp = lark_message_util.send_card_message_rag(
-                    receive_id=open_id,
-                    content=response
-                )
+            
+            lark_message_util.update_loading_message_rag(message_id=message_id, type='customize',content=response)
+            
+            # resp = lark_message_util.send_card_message_rag(
+            #         receive_id=open_id,
+            #         content=response
+            #     )
             
             # print("send rag card resp:" , resp)
             
@@ -87,26 +90,28 @@ class RAGLarkHandler:
                 "content": json.dumps(response),
                 "message_detail": json.dumps(origin_res),
                 "display_type": "rag_card",
-                "lark_message_id": resp['message_id']
+                # "lark_message_id": resp['message_id']
+                "lark_message_id": message_id
+                
             })
 
         except Exception as e:
             lark_message_util.update_loading_message_rag(message_id=message_id, type='error')
-            resp = lark_message_util.send_card_message_rag(
-                receive_id=open_id,
-                content=card_templates.create_rag_card_content.standard_response(
-                    template_variable={
-                        'content':"系统错误，请联系管理员。",
-                        "unlike_callback_event": {
-                            "event_type": "unlike_rag",
-                            "event_source": "rag_standard_response",
-                            "event_data": {
-                                "message": "产品助手提问"
-                            }
-                        }
-                    }
-                )
-            )
+            # resp = lark_message_util.send_card_message_rag(
+            #     receive_id=open_id,
+            #     content=card_templates.create_rag_card_content.standard_response(
+            #         template_variable={
+            #             'content':"系统错误，请联系管理员。",
+            #             "unlike_callback_event": {
+            #                 "event_type": "unlike_rag",
+            #                 "event_source": "rag_standard_response",
+            #                 "event_data": {
+            #                     "message": "产品助手提问"
+            #                 }
+            #             }
+            #         }
+            #     )
+            # )
             raise e
         # end try
         
