@@ -1,0 +1,591 @@
+{
+  "config": {},
+  "i18n_elements": {
+    "zh_cn": [
+      {
+        "tag": "form",
+        "elements": [
+          {
+            "tag": "input",
+            "placeholder": {
+              "tag": "plain_text",
+              "content": "工作总结"
+            },
+            "default_value": "${daily_report_content}",
+            "width": "fill",
+            "disabled": false,
+            "label": {
+              "tag": "plain_text",
+              "content": "工作总结"
+            },
+            "label_position": "top",
+            "required": true,
+            "name": "daily_report_content",
+            "fallback": {
+              "tag": "fallback_text",
+              "text": {
+                "tag": "plain_text",
+                "content": "仅支持在 V6.8 及以上版本使用"
+              }
+            }
+          },
+          {
+            "tag": "markdown",
+            "content": "报告时间",
+            "text_align": "left",
+            "text_size": "normal"
+          },
+          {
+            "tag": "date_picker",
+            "placeholder": {
+              "tag": "plain_text",
+              "content": "日报日期"
+            },
+            "width": "fill",
+            "initial_date": "${create_date}",
+            "required": true,
+            "name": "create_date"
+          },
+          {
+            "tag": "column_set",
+            "flex_mode": "none",
+            "horizontal_spacing": "default",
+            "background_style": "default",
+            "columns": [
+              {
+                "tag": "column",
+                "elements": [
+                  {
+                    "tag": "div",
+                    "text": {
+                      "tag": "plain_text",
+                      "content": "抄送人员",
+                      "text_size": "normal",
+                      "text_align": "left",
+                      "text_color": "default"
+                    }
+                  }
+                ],
+                "width": "weighted",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "tag": "select_person",
+            "placeholder": {
+              "tag": "plain_text",
+              "content": "请选择"
+            },
+            "options": [],
+            "width": "fill",
+            "type": "default",
+            "name": "PersonSelect_y98ejfy40um"
+          },
+          {
+            "tag": "input",
+            "placeholder": {
+              "tag": "plain_text",
+              "content": "明日计划"
+            },
+            "default_value": "${daily_report_tomorrow_plans}",
+            "width": "fill",
+            "label": {
+              "tag": "plain_text",
+              "content": "明日计划"
+            },
+            "label_position": "top",
+            "required": false,
+            "name": "daily_report_tomorrow_plans",
+            "fallback": {
+              "tag": "fallback_text",
+              "text": {
+                "tag": "plain_text",
+                "content": "仅支持在 V6.8 及以上版本使用"
+              }
+            }
+          },
+          {
+            "tag": "column_set",
+            "flex_mode": "none",
+            "background_style": "default",
+            "horizontal_spacing": "8px",
+            "horizontal_align": "right",
+            "columns": [
+              {
+                "tag": "column",
+                "width": "auto",
+                "vertical_align": "bottom",
+                "vertical_spacing": "8px",
+                "background_style": "default",
+                "elements": [
+                  {
+                    "tag": "button",
+                    "text": {
+                      "tag": "plain_text",
+                      "content": "提交"
+                    },
+                    "type": "primary",
+                    "complex_interaction": true,
+                    "value": "${submit_callback_event}",
+                    "confirm": {
+                      "title": {
+                        "tag": "plain_text",
+                        "content": "温馨提醒"
+                      },
+                      "text": {
+                        "tag": "plain_text",
+                        "content": "确认要提交当前日报吗？"
+                      }
+                    },
+                    "action_type": "form_submit",
+                    "name": "Button_lvaqwnc1"
+                  }
+                ]
+              },
+              {
+                "tag": "column",
+                "width": "auto",
+                "vertical_align": "bottom",
+                "vertical_spacing": "8px",
+                "background_style": "default",
+                "elements": [
+                  {
+                    "tag": "button",
+                    "text": {
+                      "tag": "plain_text",
+                      "content": "取消"
+                    },
+                    "type": "default",
+                    "complex_interaction": true,
+                    "action_type": "form_reset",
+                    "name": "Button_lvaqwnc2"
+                  }
+                ]
+              }
+            ],
+            "margin": "16px 0px 8px 0px"
+          }
+        ],
+        "name": "Form_lvaqwnc0",
+        "fallback": {
+          "tag": "fallback_text",
+          "text": {
+            "tag": "plain_text",
+            "content": "仅支持在 V6.6 及以上版本使用"
+          }
+        }
+      },
+      {
+        "tag": "hr"
+      },
+      {
+        "tag": "column_set",
+        "flex_mode": "none",
+        "background_style": "default",
+        "horizontal_spacing": "0px",
+        "horizontal_align": "left",
+        "columns": [
+          {
+            "tag": "column",
+            "width": "weighted",
+            "vertical_align": "top",
+            "vertical_spacing": "8px",
+            "background_style": "default",
+            "elements": [
+              {
+                "tag": "button",
+                "text": {
+                  "tag": "plain_text",
+                  "content": ""
+                },
+                "type": "primary_text",
+                "complex_interaction": true,
+                "width": "default",
+                "size": "medium",
+                "icon": {
+                  "tag": "standard_icon",
+                  "token": "add-bold_outlined"
+                },
+                "value": {
+                  "event_type": "new_chat"
+                }
+              }
+            ],
+            "weight": 5
+          },
+          {
+            "tag": "column",
+            "width": "weighted",
+            "vertical_align": "top",
+            "vertical_spacing": "8px",
+            "background_style": "default",
+            "elements": [
+              {
+                "tag": "button",
+                "text": {
+                  "tag": "plain_text",
+                  "content": ""
+                },
+                "type": "primary_text",
+                "complex_interaction": true,
+                "width": "default",
+                "size": "medium",
+                "icon": {
+                  "tag": "standard_icon",
+                  "token": "thumbsup_outlined"
+                },
+                "value": {
+                  "event_type": "like"
+                }
+              }
+            ],
+            "weight": 1
+          },
+          {
+            "tag": "column",
+            "width": "weighted",
+            "vertical_align": "top",
+            "vertical_spacing": "8px",
+            "background_style": "default",
+            "elements": [
+              {
+                "tag": "button",
+                "text": {
+                  "tag": "plain_text",
+                  "content": ""
+                },
+                "type": "primary_text",
+                "complex_interaction": true,
+                "width": "default",
+                "size": "medium",
+                "icon": {
+                  "tag": "standard_icon",
+                  "token": "thumbdown_outlined"
+                },
+                "value": "${unlike_callback_event}"
+              }
+            ],
+            "weight": 1
+          }
+        ],
+        "margin": "16px 0px 0px 0px"
+      }
+    ],
+    "undefined": [
+      {
+        "tag": "form",
+        "elements": [
+          {
+            "tag": "column_set",
+            "flex_mode": "none",
+            "horizontal_spacing": "default",
+            "background_style": "default",
+            "columns": [
+              {
+                "tag": "column",
+                "elements": [
+                  {
+                    "tag": "div",
+                    "text": {
+                      "tag": "plain_text",
+                      "content": "销售日报表单",
+                      "text_size": "heading",
+                      "text_align": "center",
+                      "text_color": "default"
+                    }
+                  }
+                ],
+                "width": "weighted",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "tag": "date_picker",
+            "placeholder": {
+              "tag": "plain_text",
+              "content": "日报日期"
+            },
+            "width": "fill",
+            "initial_date": "${create_date}",
+            "name": "create_date"
+          },
+          {
+            "tag": "input",
+            "placeholder": {
+              "tag": "plain_text",
+              "content": "工作总结"
+            },
+            "default_value": "${daily_report_content}",
+            "width": "fill",
+            "disabled": false,
+            "label": {
+              "tag": "plain_text",
+              "content": "工作总结"
+            },
+            "label_position": "top",
+            "name": "daily_report_content",
+            "fallback": {
+              "tag": "fallback_text",
+              "text": {
+                "tag": "plain_text",
+                "content": "仅支持在 V6.8 及以上版本使用"
+              }
+            }
+          },
+          {
+            "tag": "input",
+            "placeholder": {
+              "tag": "plain_text",
+              "content": "明日工作内容"
+            },
+            "default_value": "${daily_report_tomorrow_plans}",
+            "width": "fill",
+            "name": "daily_report_tomorrow_plans",
+            "fallback": {
+              "tag": "fallback_text",
+              "text": {
+                "tag": "plain_text",
+                "content": "仅支持在 V6.8 及以上版本使用"
+              }
+            }
+          },
+          {
+            "tag": "column_set",
+            "flex_mode": "none",
+            "background_style": "default",
+            "horizontal_spacing": "8px",
+            "horizontal_align": "left",
+            "columns": [
+              {
+                "tag": "column",
+                "width": "auto",
+                "vertical_align": "top",
+                "vertical_spacing": "8px",
+                "background_style": "default",
+                "elements": [
+                  {
+                    "tag": "button",
+                    "text": {
+                      "tag": "plain_text",
+                      "content": "提交"
+                    },
+                    "type": "primary",
+                    "complex_interaction": true,
+                    "value": "${submit_callback_event}",
+                    "confirm": {
+                      "title": {
+                        "tag": "plain_text",
+                        "content": "温馨提醒"
+                      },
+                      "text": {
+                        "tag": "plain_text",
+                        "content": "确认要提交当前日报吗？"
+                      }
+                    },
+                    "action_type": "form_submit",
+                    "name": "Button_lvaqwnc1"
+                  }
+                ]
+              },
+              {
+                "tag": "column",
+                "width": "auto",
+                "vertical_align": "top",
+                "vertical_spacing": "8px",
+                "background_style": "default",
+                "elements": [
+                  {
+                    "tag": "button",
+                    "text": {
+                      "tag": "plain_text",
+                      "content": "取消"
+                    },
+                    "type": "default",
+                    "complex_interaction": true,
+                    "action_type": "form_reset",
+                    "name": "Button_lvaqwnc2"
+                  }
+                ]
+              }
+            ],
+            "margin": "0px 0px 0px 0px"
+          }
+        ],
+        "name": "Form_lvaqwnc0",
+        "fallback": {
+          "tag": "fallback_text",
+          "text": {
+            "tag": "plain_text",
+            "content": "仅支持在 V6.6 及以上版本使用"
+          }
+        }
+      }
+    ],
+    "en_us": [
+      {
+        "tag": "form",
+        "elements": [
+          {
+            "tag": "column_set",
+            "flex_mode": "none",
+            "horizontal_spacing": "default",
+            "background_style": "default",
+            "columns": [
+              {
+                "tag": "column",
+                "elements": [
+                  {
+                    "tag": "div",
+                    "text": {
+                      "tag": "plain_text",
+                      "content": "销售日报表单",
+                      "text_size": "heading",
+                      "text_align": "center",
+                      "text_color": "default"
+                    }
+                  }
+                ],
+                "width": "weighted",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "tag": "date_picker",
+            "placeholder": {
+              "tag": "plain_text",
+              "content": "日报日期"
+            },
+            "width": "fill",
+            "initial_date": "${create_date}",
+            "name": "create_date"
+          },
+          {
+            "tag": "input",
+            "placeholder": {
+              "tag": "plain_text",
+              "content": "工作总结"
+            },
+            "default_value": "${daily_report_content}",
+            "width": "fill",
+            "disabled": false,
+            "label": {
+              "tag": "plain_text",
+              "content": "工作总结"
+            },
+            "label_position": "top",
+            "name": "daily_report_content",
+            "fallback": {
+              "tag": "fallback_text",
+              "text": {
+                "tag": "plain_text",
+                "content": "仅支持在 V6.8 及以上版本使用"
+              }
+            }
+          },
+          {
+            "tag": "input",
+            "placeholder": {
+              "tag": "plain_text",
+              "content": "明日工作内容"
+            },
+            "default_value": "${daily_report_tomorrow_plans}",
+            "width": "fill",
+            "name": "daily_report_tomorrow_plans",
+            "fallback": {
+              "tag": "fallback_text",
+              "text": {
+                "tag": "plain_text",
+                "content": "仅支持在 V6.8 及以上版本使用"
+              }
+            }
+          },
+          {
+            "tag": "column_set",
+            "flex_mode": "none",
+            "background_style": "default",
+            "horizontal_spacing": "8px",
+            "horizontal_align": "left",
+            "columns": [
+              {
+                "tag": "column",
+                "width": "auto",
+                "vertical_align": "top",
+                "vertical_spacing": "8px",
+                "background_style": "default",
+                "elements": [
+                  {
+                    "tag": "button",
+                    "text": {
+                      "tag": "plain_text",
+                      "content": "提交"
+                    },
+                    "type": "primary",
+                    "complex_interaction": true,
+                    "value": "${submit_callback_event}",
+                    "confirm": {
+                      "title": {
+                        "tag": "plain_text",
+                        "content": "温馨提醒"
+                      },
+                      "text": {
+                        "tag": "plain_text",
+                        "content": "确认要提交当前日报吗？"
+                      }
+                    },
+                    "action_type": "form_submit",
+                    "name": "Button_lvaqwnc1"
+                  }
+                ]
+              },
+              {
+                "tag": "column",
+                "width": "auto",
+                "vertical_align": "top",
+                "vertical_spacing": "8px",
+                "background_style": "default",
+                "elements": [
+                  {
+                    "tag": "button",
+                    "text": {
+                      "tag": "plain_text",
+                      "content": "取消"
+                    },
+                    "type": "default",
+                    "complex_interaction": true,
+                    "action_type": "form_reset",
+                    "name": "Button_lvaqwnc2"
+                  }
+                ]
+              }
+            ],
+            "margin": "0px 0px 0px 0px"
+          }
+        ],
+        "name": "Form_lvaqwnc0",
+        "fallback": {
+          "tag": "fallback_text",
+          "text": {
+            "tag": "plain_text",
+            "content": "仅支持在 V6.6 及以上版本使用"
+          }
+        }
+      }
+    ]
+  },
+  "i18n_header": {
+    "zh_cn": {
+      "title": {
+        "tag": "plain_text",
+        "content": "日报填写"
+      },
+      "subtitle": {
+        "tag": "plain_text",
+        "content": ""
+      },
+      "template": "blue"
+    }
+  }
+}

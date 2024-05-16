@@ -21,7 +21,44 @@ def test_select_userinfo_batch():
 
 def test_select_userinfo():
     token = larkutil.get_tenant_access_token()['tenant_access_token']
-    larkutil.select_userinfo(token, "ou_8183ebf29633d5af91fa0b32a0c05bcf")
+    print("token", token)
+    names = []
+    ids = [
+        'ou_28fd96dcf278b21220a4502c39490ec9',
+        'ou_2aec3886afeb848a380c899925c5f92a',
+        'ou_382a5cb46372116853710769ba047edc',
+        'ou_39c77b8e164d852f58c4a4f95ed55fe4',
+        'ou_42af63537178f9ff6b40ba3c715d94b4',
+        'ou_438599576def032505c79a3b45010f70',
+        'ou_4f27eb3cb867d12406355b52b0f38da4',
+        'ou_4fd5f06f73576e8272af20fc0d823559',
+        'ou_5cb606bf965dba859cc1f9778f141b53',
+        'ou_619f2448d10228e6956c6461614514df',
+        'ou_7754ff70d606d5f2b6d77d24efc2f17a',
+        'ou_8b45d3928f4623831f61fbd121f149c8',
+        'ou_95216c3208bb0b623a0d7909ee3a12b4',
+        'ou_9924b3ee96cc80463162a845dc5c6e46',
+        'ou_9be8895d55c3101e52ea698041bdbfe0',
+        'ou_9d8b853093b6519390a7ae5b19732e7c',
+        'ou_9e50910457e0dfc896075dbe1b24b003',
+        'ou_a8ec7c2574ad78ebf639fa4cc700df18',
+        'ou_abdc61dc133fea9961eca56f9a6598b5',
+        'ou_af9bafc9259ca649a235cfdf98cb6c0e',
+        'ou_b92cf9fc6434eb8fc48e62d939821ae0',
+        'ou_ba1ae362b2ebb54f168d386358c7950c',
+        'ou_cb6afb37e14981eeade3e05716b00382',
+        'ou_cb88ac40aef299de2b031fd8a0535be1',
+        'ou_d493b76e4692a9e394620436a3b57ffa',
+        'ou_d952b0920da3807fec5f8d72442d1da1',
+        'ou_eafd5a2b9c7b868ee832326707cc054b',
+        'ou_f7fe9cbf58acc171bbc08581d2414301'
+    ]
+    for id in ids:
+        user = larkutil.select_userinfo(token, id)
+        print("user", token, id)
+        if user is not None:
+            names.append(user['name'])
+    print(str(names))
     assert True
 
 
@@ -155,3 +192,11 @@ def test_lang():
     start_time = int(datetime.strptime("2024-04-04 12:00:00", "%Y-%m-%d %H:%M:%S").timestamp())
     print(start_time)
     assert True
+
+def test_upload_img(url):
+    """
+    Purpose: url
+    """
+    lark_message_util.upload_img_to_lark_by_url('http://localhost:8066/v1/document/image/eb62fe120f7811ef94bf0242ac130006-a14902df0557365439a28dd7a342f051')
+    
+# end def

@@ -61,6 +61,12 @@ class SalesAssistant:
                              "You can calculate other times based on 'current_system_time_string', such as yesterday、tomorrow or next tuesday and so on.\n"
                              ""
                 ),
+                SystemMessagePromptTemplate.from_template(
+                    template=""
+                             "为了更好的回答用户的问题，以下名词可以作为参考：\n"
+                             "易宝：是一家企业，指“易宝支付有限公司”\n"
+                             ""
+                ),
                 MessagesPlaceholder(variable_name="chat_history", optional=True),
                 HumanMessagePromptTemplate.from_template(template="{input}"),
                 MessagesPlaceholder(variable_name="agent_scratchpad"),

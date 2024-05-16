@@ -3,15 +3,24 @@ from typing import Dict, List
 from sqlalchemy import text
 
 from dbgpt.storage.metadata import BaseDao
+from dbgpt.util.lark import larkutil
+import logging
 
 
 class AppChatDao(BaseDao):
 
     def add_app_chat_his_message(self, rec: Dict) -> int:
+        rec['nickname'] = ''
+        try:
+            userinfo = larkutil.select_userinfo(open_id=rec['id'])
+            if userinfo and "name" in userinfo:
+                rec['nickname'] = userinfo["name"]
+        except Exception as e:
+            logging.warning("用户姓名解析异常")
         session = self.get_raw_session()
         statement = text(
             """
-            insert into app_chat_history_message(id, agent_name, conv_uid, message_type, content, message_detail, display_type, lark_message_id) values (:id, :agent_name, :conv_uid, :message_type, :content, :message_detail, :display_type, :lark_message_id)
+            insert into app_chat_history_message(id, agent_name, conv_uid, message_type, content, message_detail, display_type, lark_message_id, nickname) values (:id, :agent_name, :conv_uid, :message_type, :content, :message_detail, :display_type, :lark_message_id, :nickname)
             """
         )
         session.execute(statement, rec)
@@ -64,7 +73,6 @@ class AppChatDao(BaseDao):
             dic = row._asdict()
             rs.append(dic)
         return rs
-
 
     def add_app_feedback(self, rec: Dict) -> int:
         session = self.get_raw_session()
