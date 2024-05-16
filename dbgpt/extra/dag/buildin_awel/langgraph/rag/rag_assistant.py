@@ -7,6 +7,7 @@ import aiohttp
 import re
 import os
 from dbgpt.util import envutils
+from dbgpt.util.lark import lark_message_util, lark_card_util
 
 # const
 TENANT_ACCESS_TOKEN_URI = "/open-apis/auth/v3/tenant_access_token/internal"
@@ -89,7 +90,8 @@ class RAGApiClient(object):
         resp = requests.request('GET', headers=headers, url=url, data=json.dumps(data), timeout=30)
         return resp
 
-    def single_round_chat(self, user_id, content):
+
+    def single_round_chat(self, user_id, content, response_v='stale'):
         # res = await self.rag_api_client.async_coversation_start(user_id = open_id)
         res = self.coversation_start(user_id=user_id).json()
         id = res['data']['id']
@@ -101,53 +103,11 @@ class RAGApiClient(object):
         message_init.append(new_message)
 
         origin_res = self.chat(conversation_id=id, messages=message_init).json()
-        response = origin_res['data']['answer']
-        chunks = origin_res['data']['reference']['chunks']
-
-        # print("rag answer:",origin_res)
-        pattern = r"##(.*?)\$\$"
-        response = re.sub(pattern, "", response)
-        # if '知识库中未找到您要的答案！' in response:
-        #     message_api_client.send_text_with_open_id(open_id, main_text)
-        #     return jsonify()
-
-        cache_files = []
-        reduce_count = 0
-        for idx, chunk in enumerate(chunks):
-            # print("current: ", chunk)
-            if idx == 0:
-                response += '\r\n---\r\n'
-
-            name = chunk['docnm_kwd']
-            # name = '产品能力全貌（标准）$$_$$老板管账$$_$$老板管账API接口能力梳理.pdf'
-            names = name.split("$$_$$")
-            file_name = names[len(names) - 1]
-            if (file_name in cache_files) == True:
-                reduce_count += 1
-                continue
-            cache_files.append(file_name)
-            print(file_name, cache_files)
-            if len(names) == 1:
-                n = f"{idx + 1 - reduce_count}. {file_name}"
-                response += n
-                response += "\r\n"
-                continue
-            proj_path = os.getcwd()
-            # print(os.path.join(proj_path,'dbgpt/extra/dag/buildin_awel/lark/static/ragfiles',names[0] + '.json'))
-            f = open(os.path.join(proj_path, 'dbgpt/extra/dag/buildin_awel/lark/static/ragfiles', names[0] + '.json'))
-            f_json = json.load(f)
-            for key, value in f_json.items():
-                if key == name:
-                    f_metadata = json.loads(value)
-                    n = f"[{idx + 1 - reduce_count}. {file_name}]({f_metadata['url']})"
-                    response += n
-                    response += "\r\n"
-                    break
-            # f_metadata = json.loads(f_json[name])
-            # n = f"[{idx+1 - reduce_count}. {file_name}]({f_metadata['url']})"
-            # n = file_name
-
-        print('rag card response', response)
+        response = None
+        if response_v == 'stale':
+            response = generate_rag_response_card_stale(origin_res=origin_res)
+        else:
+            response = generate_rag_response_card(origin_res=origin_res)
         return response, origin_res
 
     # end def
@@ -248,3 +208,310 @@ class LarkException(Exception):
         return "{}:{}".format(self.code, self.msg)
 
     __repr__ = __str__
+
+
+def generate_rag_response_card(origin_res):
+    """
+    Purpose: rag消息回复模板（拼接版本）
+    """
+    res_card = {
+        "config": {},
+        "i18n_elements": {
+            "zh_cn": [
+                {
+                    "tag": "markdown",
+                    "content": "test",
+                    "text_align": "left",
+                    "text_size": "normal"
+                }
+            ]
+        },
+        "i18n_header": {}
+    }
+    response = origin_res['data']['answer']
+    chunks = origin_res['data']['reference']['chunks']
+    
+    pattern = r"##(.*?)\$\$"
+    response = re.sub(pattern, "", response)
+    
+    res_card["i18n_elements"]['zh_cn'][0]['content'] = response
+    
+    cache_files = []
+    reduce_count = 0
+    for idx, chunk in enumerate(chunks):
+                
+        name = chunk['docnm_kwd']
+        # name = '产品能力全貌（标准）$$_$$老板管账$$_$$老板管账API接口能力梳理.pdf'
+        names = name.split("$$_$$")
+        file_name = names[len(names) - 1]
+        
+        # 根据文件名分类，并且存起来对应的img_id
+        need_continue = False
+        for cfile in cache_files:
+            if cfile['name'] == file_name:
+                reduce_count += 1
+                cfile['imgs'].append(chunk['img_id'] if ('img_id' in chunk) else '')
+                cfile['chunks_content'].append(chunk['content_ltks'] if ('content_ltks' in chunk) else None)
+                need_continue = True
+        if need_continue == True:
+            continue
+            
+        file_dict = {
+            'name': file_name,
+            'imgs': [chunk['img_id']],
+            'chunks_content':[chunk['content_ltks']],
+            'url': ''
+        }
+        
+        # print(file_name,cache_files)
+        if len(names) == 1 :
+            cache_files.append(file_dict)
+            continue
+        
+        # 打开json文件，获取文件对应的飞书URL
+        try:
+            proj_path = os.getcwd()
+            f = open(os.path.join(proj_path,'dbgpt/extra/dag/buildin_awel/lark/static/ragfiles',names[0] + '.json'))
+            f_json = json.load(f)
+            for key, value in f_json.items():
+                if key == name:
+                    f_metadata = json.loads(value)
+                    file_dict["url"] = f_metadata['url']
+                    break
+            cache_files.append(file_dict)
+        except Exception as e:
+            print("can't find file",e)
+
+
+    # if len(cache_files) > 0:
+    #     res_card['i18n_elements']['zh_cn'].append()
+    
+    for f in cache_files:
+        res_card['i18n_elements']['zh_cn'].append(generate_collapsible_panel(f))
+    
+    
+    res_card['i18n_elements']['zh_cn'].append(card_footer_template())
+        
+    
+    return res_card
+    
+# end def
+
+
+def generate_collapsible_panel(file):
+    """
+    Purpose: 生成单个折叠面板
+    """
+    panel_title = file['name']
+    panel_content = ''
+    if file['url']:
+        panel_title += "<link icon='file-link-docx-shortcut_outlined' url='{}' pc_url='' ios_url='' android_url=''>&ensp;</link>".format(file['url'])
+    for i, img_id in enumerate(file['imgs']):  # looping through row
+        # comment: 
+        if bool(img_id):
+            url = RAG_FLOW_BASE_URL + '/v1/document/image/' + img_id
+            img_id = lark_message_util.upload_img_to_lark_by_url(url)
+            panel_content += "![{}]({})".format(file['chunks_content'][i], img_id)
+            
+        else:
+            panel_content += file['chunks_content'][i]
+            
+
+        
+    # end for
+    return  {
+      "tag": "collapsible_panel",
+      "expanded": False,
+      "header": {
+        "title": {
+          "tag": "markdown",
+          "content": panel_title
+        },
+        "vertical_align": "center",
+        "icon": {
+            "tag": "standard_icon",
+            "token": "down-small-ccm_outlined",
+            "color": "",
+            "size": "16px 16px"
+        },
+        "icon_position": "right",
+        "icon_expanded_angle": -180
+      },
+      "border": {
+        "color": "grey",
+        "corner_radius": "5px"
+      },
+      "vertical_spacing": "8px",
+      "padding": "8px 8px 8px 8px",
+      "elements": [
+        {
+          "tag": "markdown",
+          "content": panel_content
+        }
+      ]
+    }
+# end def
+
+def generate_rag_response_card_stale(origin_res):
+    """
+    Purpose: 生成rag消息回复模板 (卡片模板版本)
+    """
+    response = origin_res['data']['answer']
+    chunks = origin_res['data']['reference']['chunks']
+    
+    pattern = r"##(.*?)\$\$"
+    response = re.sub(pattern, "", response)
+    
+    # print("rag answer:",origin_res)
+    # if '知识库中未找到您要的答案！' in response:
+    #     message_api_client.send_text_with_open_id(open_id, main_text)
+    #     return jsonify()
+
+    cache_files = []
+    reduce_count = 0
+    for idx, chunk in enumerate(chunks):
+        # print("current: ", chunk)
+        if idx == 0 :
+            response += '\r\n---\r\n'
+        
+        name = chunk['docnm_kwd']
+        # name = '产品能力全貌（标准）$$_$$老板管账$$_$$老板管账API接口能力梳理.pdf'
+        names = name.split("$$_$$")
+        file_name = names[len(names) - 1]
+        if (file_name in cache_files) == True:
+            reduce_count += 1
+            continue
+        cache_files.append(file_name)
+        print(file_name,cache_files)
+        if len(names) == 1 :
+            n = f"{idx+1 - reduce_count}. {file_name}"
+            response += n
+            response += "\r\n"
+            continue
+        proj_path = os.getcwd()
+        # print(os.path.join(proj_path,'dbgpt/extra/dag/buildin_awel/lark/static/ragfiles',names[0] + '.json'))
+        f = open(os.path.join(proj_path,'dbgpt/extra/dag/buildin_awel/lark/static/ragfiles',names[0] + '.json'))
+        f_json = json.load(f)
+        for key, value in f_json.items():
+            if key == name:
+                f_metadata = json.loads(value)
+                n = f"[{idx+1 - reduce_count}. {file_name}]({f_metadata['url']})"
+                response += n
+                response += "\r\n"
+                break
+        # f_metadata = json.loads(f_json[name])
+        # n = f"[{idx+1 - reduce_count}. {file_name}]({f_metadata['url']})"
+        # n = file_name
+        
+    print('rag card response', response) 
+    return response
+  
+# end def
+
+def card_footer_template():
+    """
+    Purpose: 
+    """
+    return {
+            "tag": "column_set",
+            "flex_mode": "none",
+            "background_style": "default",
+            "horizontal_spacing": "8px",
+            "horizontal_align": "left",
+            "columns": [
+                {
+                    "tag": "column",
+                    "width": "weighted",
+                    "vertical_align": "top",
+                    "vertical_spacing": "8px",
+                    "background_style": "default",
+                    "elements": [
+                        {
+                            "tag": "button",
+                            "text": {
+                                "tag": "plain_text",
+                                "content": ""
+                            },
+                            "type": "primary_text",
+                            "complex_interaction": True,
+                            "width": "default",
+                            "size": "medium",
+                            "icon": {
+                                "tag": "standard_icon",
+                                "token": "add-bold_outlined"
+                            },
+                            "hover_tips": {
+                                "tag": "plain_text",
+                                "content": "新会话"
+                            },
+                            "value": {
+                                "event_type": "new_chat_rag"
+                            }
+                        }
+                    ],
+                    "weight": 5
+                },
+                {
+                    "tag": "column",
+                    "width": "weighted",
+                    "vertical_align": "top",
+                    "vertical_spacing": "8px",
+                    "background_style": "default",
+                    "elements": [
+                        {
+                            "tag": "button",
+                            "text": {
+                                "tag": "plain_text",
+                                "content": ""
+                            },
+                            "type": "primary_text",
+                            "complex_interaction": False,
+                            "width": "fill",
+                            "size": "medium",
+                            "icon": {
+                                "tag": "standard_icon",
+                                "token": "thumbsup_outlined"
+                            },
+                            "value": {
+                                "event_type": "like"
+                            }
+                        }
+                    ],
+                    "weight": 1
+                },
+                {
+                    "tag": "column",
+                    "width": "weighted",
+                    "vertical_align": "top",
+                    "vertical_spacing": "8px",
+                    "background_style": "default",
+                    "elements": [
+                        {
+                            "tag": "button",
+                            "text": {
+                                "tag": "plain_text",
+                                "content": ""
+                            },
+                            "type": "primary_text",
+                            "complex_interaction": True,
+                            "width": "fill",
+                            "size": "medium",
+                            "icon": {
+                                "tag": "standard_icon",
+                                "token": "thumbdown_outlined"
+                            },
+                            "value": {
+                                "event_type": "unlike_rag",
+                                "event_source": "rag_standard_response",
+                                "event_data": {
+                                    "message": "产品助手提问"
+                                }
+                            }
+                        }
+                    ],
+                    "weight": 1
+                }
+            ],
+            "margin": "16px 0px 0px 0px"
+          }
+# end def

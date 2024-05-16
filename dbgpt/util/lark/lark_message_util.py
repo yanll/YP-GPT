@@ -7,6 +7,7 @@ import requests
 from dbgpt.extra.cache.redis_cli import RedisClient
 from dbgpt.util import consts
 from dbgpt.util.lark.larkutil import build_headers, build_headers_rag
+from requests_toolbelt import MultipartEncoder
 
 redis_client = RedisClient()
 
@@ -102,6 +103,29 @@ def update_loading_message_rag(message_id, type='standard'):
         resp_placeholder = resp_error_hint
     res = update_interactive_card_rag(message_id=message_id, content=resp_placeholder)
     return res
+
+
+def upload_img_to_lark_by_url(img_url):
+    url = "https://open.feishu.cn/open-apis/im/v1/images"
+    image_content = download_image(img_url)
+    form = {'image_type': 'message',
+            'image': image_content}  # 需要替换具体的path
+    multi_form = MultipartEncoder(form)
+    headers = build_headers_rag()
+    headers['Content-Type'] = multi_form.content_type
+    response = requests.request("POST", url, headers=headers, data=multi_form)
+    print(response.headers['X-Tt-Logid'])  # for debug or oncall
+    print(response.content)  # Print Response
+    return response.json()['data']['image_key']
+
+# end def
+
+def download_image(image_url):
+    response = requests.get(image_url)
+    if response.status_code == 200:
+        return response.content
+    else:
+        raise Exception(f"Failed to download image from {image_url}")
 
 
 resp_loading_hint = {
