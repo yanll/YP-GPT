@@ -38,10 +38,8 @@ def send_card_message(receive_id: str, content: Dict):
     return send_message(receive_id, content, "open_id", "interactive", "card_message")
 
 
-
-
 def send_message_rag(receive_id: str, content: Dict, receive_id_type: str = "email", msg_type: str = "text",
-                 type: str = None):
+                     type: str = None):
     url = 'https://open.feishu.cn/open-apis/im/v1/messages'
     params = {
         "receive_id_type": receive_id_type
@@ -57,14 +55,16 @@ def send_message_rag(receive_id: str, content: Dict, receive_id_type: str = "ema
     if rs["code"] != 0:
         logging.error("飞书消息发送失败：" + str(rs))
     return rs["data"]
+
+
 def send_card_message_rag(receive_id: str, content: Dict):
     return send_message_rag(receive_id, content, "open_id", "interactive", "card_message")
 
 
-
 # 发送应用发送的卡片消息
-def send_interactive_update_message(token: str, content: Dict):
+def send_interactive_update_message(open_id: str, token: str, content: Dict):
     url = 'https://open.feishu.cn/open-apis/interactive/v1/card/update'
+    content['open_ids'] = [open_id]
     data = {
         "token": token,
         "card": content
@@ -81,26 +81,27 @@ def update_interactive_card_rag(message_id, content: Dict):
     data = {
         "content": json.dumps(content)
     }
-    
+
     resp = requests.patch(url=url, headers=build_headers_rag(), json=data)
-    
+
     print('发送交互更新卡片返回结果：', resp.json())
     return resp.json()
 
 
 def send_loading_message_rag(receive_id):
-    resp_data = send_message_rag(receive_id=receive_id,content=resp_loading_hint,receive_id_type='open_id',msg_type='interactive',type='card_message')
+    resp_data = send_message_rag(receive_id=receive_id, content=resp_loading_hint, receive_id_type='open_id',
+                                 msg_type='interactive', type='card_message')
     return resp_data['message_id']
 
-def update_loading_message_rag(message_id,type='standard'):
+
+def update_loading_message_rag(message_id, type='standard'):
     resp_placeholder = None
     if type == 'standard':
         resp_placeholder = resp_standard_hint
     elif type == 'error':
         resp_placeholder = resp_error_hint
-    res = update_interactive_card_rag(message_id=message_id,content=resp_placeholder)
+    res = update_interactive_card_rag(message_id=message_id, content=resp_placeholder)
     return res
-
 
 
 resp_loading_hint = {

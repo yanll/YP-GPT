@@ -6,7 +6,7 @@ from typing import Dict
 from langchain_core.agents import AgentFinish
 
 from dbgpt.extra.dag.buildin_awel.app.service import AppChatService
-from dbgpt.extra.dag.buildin_awel.lark import card_templates
+from dbgpt.extra.dag.buildin_awel.lark import card_templates, lark_card_handler
 from dbgpt.util.lark import lark_card_util, lark_message_util
 
 
@@ -122,7 +122,31 @@ class LarkEventHandlerWrapper:
         if card_name == "daily_report_collect":
             resp = lark_message_util.send_card_message(
                 receive_id=sender_open_id,
-                content=card_templates.create_daily_report_card_content(
+                # content=card_templates.create_daily_report_card_content(
+                #     template_variable={
+                #         "card_metadata": {
+                #             "card_name": card_name,
+                #             "card_description": "日报收集表单"
+                #         },
+                #         "submit_callback_event": {
+                #             "event_type": "submit",
+                #             "event_source": card_name
+                #         },
+                #         "unlike_callback_event": {
+                #             "event_type": "unlike",
+                #             "event_source": card_name,
+                #             "event_data": {
+                #                 "message": "需求收集表单"
+                #             }
+                #         },
+                #         "ai_message": resp_msg,
+                #         "daily_report_content": data["daily_report_content"],
+                #         "create_date": data["create_date"],
+                #         "daily_report_tomorrow_plans": data["daily_report_tomorrow_plans"]
+                #     }
+                # )
+                content=lark_card_handler.get_lard_card_json(
+                    card_name='daily_report',
                     template_variable={
                         "card_metadata": {
                             "card_name": card_name,
@@ -136,7 +160,7 @@ class LarkEventHandlerWrapper:
                             "event_type": "unlike",
                             "event_source": card_name,
                             "event_data": {
-                                "message": "需求收集表单"
+                                "message": "日报收集表单"
                             }
                         },
                         "ai_message": resp_msg,
@@ -144,6 +168,7 @@ class LarkEventHandlerWrapper:
                         "create_date": data["create_date"],
                         "daily_report_tomorrow_plans": data["daily_report_tomorrow_plans"]
                     }
+
                 )
             )
             lark_message_id = resp["message_id"]
