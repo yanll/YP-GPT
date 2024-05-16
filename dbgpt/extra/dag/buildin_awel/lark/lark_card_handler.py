@@ -20,22 +20,25 @@ def replace_variables(data, variables):
                 break
     return data
 
-def disable_interactive(data, disabled_element_list):
+
+def disable_interactive(data, disabled_element_list, none_disabled_event_type_list, none_disabled_value_list):
     if isinstance(data, dict):
-        if 'tag' in data:
-            for element in disabled_element_list:
-                if data['tag'] == element:
-                    data['disabled'] = True
-                    data['required'] = False
+        if 'tag' in data and data['tag'] in disabled_element_list:
+            if not ('value' in data and (data['value'] in none_disabled_value_list or (
+                    'event_type' in data['value'] and data['value']['event_type'] in none_disabled_event_type_list))):
+                data['disabled'] = True
+                data['required'] = False
 
         for key, value in data.items():
-            disable_interactive(value, disabled_element_list)
+            disable_interactive(value, disabled_element_list, none_disabled_event_type_list, none_disabled_value_list)
 
     if isinstance(data, list):
         for i in range(len(data)):
-            data[i] = disable_interactive(data[i], disabled_element_list)
+            data[i] = disable_interactive(data[i], disabled_element_list, none_disabled_event_type_list,
+                                          none_disabled_value_list)
 
     return data
+
 
 def get_lard_card_json(card_name: str = 'daily_report',
                        template_variable: dict = {},
@@ -47,13 +50,21 @@ def get_lard_card_json(card_name: str = 'daily_report',
     else:
         raise FileNotFoundError(f'{file_path} does not exist')
 
+    # 交互成功后禁用的一些元素
+    disabled_element_list = ['input', 'date_picker', 'button', 'select_person']
+    none_disabled_event_type_list = ['new_chat', 'like']
+    none_disabled_value_list = ['${unlike_callback_event}']
+    if disabled:
+        try:
+            card_content = disable_interactive(card_content, disabled_element_list, none_disabled_event_type_list,
+                                               none_disabled_value_list)
+        except TypeError:
+            raise TypeError(f'{card_name} disable element wrong')
+
+    # 变量替换为值
     try:
         card_content = replace_variables(card_content, template_variable)
     except TypeError:
         raise TypeError(f'{card_name} template variable have something wrong')
-
-    disabled_element_list = ['input', 'date_picker', 'button']
-    if disabled:
-        card_content = disable_interactive(card_content, disabled_element_list)
 
     return card_content
