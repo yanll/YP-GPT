@@ -10,8 +10,9 @@ from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_customer_vi
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_wrapper, card_send_daily_report_search
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_api_wrapper
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers.lark_event_handler_wrapper import LarkEventHandlerWrapper
-from dbgpt.extra.dag.buildin_awel.lark import card_templates
+from dbgpt.extra.dag.buildin_awel.lark import card_templates, lark_card_handler
 from dbgpt.util.lark import lark_card_util, lark_message_util, larkutil
+from dbgpt.util.lark.lark_message_util import update_interactive_card_rag, send_interactive_update_message
 
 
 async def a_call(app_chat_service, event: Dict):
@@ -80,7 +81,7 @@ async def a_call(app_chat_service, event: Dict):
             )
         if event_source == "daily_report_collect":
             return create_daily_report_for_crem(
-                open_id=open_id, form_value=form_value
+                open_id=open_id, form_value=form_value, token=event["token"]
             )
         if event_source == "weekly_report_collect":
             return create_weekly_report_for_crem(
@@ -185,7 +186,7 @@ def create_requirement_for_lark_project(token, union_id: str, form_value: Dict):
     )
 
 
-def create_daily_report_for_crem(open_id, form_value: Dict):
+def create_daily_report_for_crem(open_id, form_value: Dict, token: str):
     daily_report_type = "日报"
     daily_report_time = form_value['create_date'].split()[0] + " 00:00:00"
     daily_work_summary = form_value['daily_report_content']
@@ -199,6 +200,16 @@ def create_daily_report_for_crem(open_id, form_value: Dict):
     )
     print("日报结果:", daily_result)
     print("开始更新日报卡片")
+    lark_event_handler_wrapper = LarkEventHandlerWrapper()
+    lark_event_handler_wrapper.lark_reply_general_message(sender_open_id=open_id,
+                                                          resp_msg=daily_result.json()['message'])
+
+    send_interactive_update_message(open_id=open_id,
+                                    token=token,
+                                    content=lark_card_handler.get_lard_card_json(
+                                        card_name='daily_report',
+                                        template_variable=form_value,
+                                        disabled=True))
 
     return {}
 
@@ -315,13 +326,10 @@ def create_crm_bus_customer_for_crem(open_id, form_value: Dict):
 
     return {}
 
-def delete_crm_bus_customer_for_crem(open_id, action_value: Dict):
 
+def delete_crm_bus_customer_for_crem(open_id, action_value: Dict):
     id = action_value['id']
     customer_no = action_value['customer_no']
-
-
-
 
     bus_customer_delete_record = crem_api_wrapper.delete_crm_bus_customer(
         open_id=open_id,
@@ -357,6 +365,7 @@ def do_new_chat(app_chat_service, open_id):
         }
     )
     return {}
+
 
 def do_new_chat_rag(app_chat_service, open_id):
     asyncio.create_task(
@@ -564,6 +573,7 @@ def do_feedback_rag(app_chat_service, conv_uid, lark_message_id, feedback, recom
             }
         }
     }
+
 
 def do_send_answer(app_chat_service, open_id, event_source):
     print(1)

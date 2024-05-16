@@ -23,7 +23,7 @@ class AbilityDisplayTool(BaseTool):
     description: str = (
         "这是一个展示能力的工具。\n"
         "当用户询问有什么能力时，调用此工具。\n"
-        "触发条件可以是'你有什么能力'、‘你会什么’等关键词。\n"
+        "触发条件可以是'你有什么能力'、'你会什么'等关键词。\n"
     )
     args_schema: Type[BaseModel] = ConvIdInput
 
