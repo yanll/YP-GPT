@@ -92,7 +92,7 @@ def handle(
                 "conv_id": conv_id,
                 "question": question,
                 "answer_from_knowledge": answer,
-                "answer_from_ai": ref
+                "answer_from_general_ai": ref
             }
         }
     except Exception as e:
