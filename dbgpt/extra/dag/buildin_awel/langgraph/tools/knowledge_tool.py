@@ -81,9 +81,9 @@ def handle(
         len = 0
         if "data" in origin_res:
             data = origin_res["data"]
-            if "references" in data:
-                references = data["references"]
-                len = references.__len__()
+            if "reference" in data:
+                reference = data["reference"]
+                len = reference.__len__()
         if len > 0:
             from_knowledge = "true"
             answer = response
