@@ -74,11 +74,24 @@ def handle(
         rag_api_client = RAGApiClient()
 
         response, origin_res = rag_api_client.single_round_chat(user_id=conv_id, content=question)
-
-        answer = response
-        print("知识库调用结果：", conv_id, question, answer)
+        answer_from_knowledge = response
+        answer_from_general_ai = ref
+        answer = ""
+        from_knowledge = "false"
+        len = 0
+        if "data" in origin_res:
+            data = origin_res["data"]
+            if "references" in data:
+                references = data["references"]
+                len = references.__len__()
+        if len > 0:
+            from_knowledge = "true"
+            answer = response
+        else:
+            answer = ref
+        print("知识库调用结果：", conv_id, question, response)
         print("知识工具_AI引用：", ref)
-        print("知识工具_知识引用：", answer)
+        print("知识工具_知识引用：", answer_from_knowledge)
         return {
             "success": "true",
             "error_message": "",
@@ -89,8 +102,10 @@ def handle(
             "data": {
                 "conv_id": conv_id,
                 "question": question,
-                "answer_from_knowledge": answer,
-                "answer_from_general_ai": ref
+                "answer_from_knowledge": answer_from_knowledge,
+                "answer_from_general_ai": ref,
+                "answer": answer,
+                "from_knowledge": from_knowledge
             }
         }
     except Exception as e:
