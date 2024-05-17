@@ -24,7 +24,7 @@ def test_select_userinfo():
     print("token", token)
     names = []
     ids = [
-        'ou_28fd96dcf278b21220a4502c39490ec9',
+        'ou_8183ebf29633d5af91fa0b32a0c05bcf',
         'ou_2aec3886afeb848a380c899925c5f92a',
         'ou_382a5cb46372116853710769ba047edc',
         'ou_39c77b8e164d852f58c4a4f95ed55fe4',
