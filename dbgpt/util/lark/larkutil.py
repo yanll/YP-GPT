@@ -36,6 +36,7 @@ def get_tenant_access_token():
         print('\n飞书租户令牌返回结果：', resp.json())
         return resp.json()
 
+
 def get_tenant_access_token_rag():
     url = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal"
     headers = {}
@@ -94,6 +95,7 @@ def build_headers_rag(token=None):
     }
     return headers
 
+
 def select_userinfo_batch(token: str = None, open_id: str = None):
     url = 'https://open.feishu.cn/open-apis/contact/v3/users/batch'
     params = {
@@ -106,7 +108,7 @@ def select_userinfo_batch(token: str = None, open_id: str = None):
     return resp.json()
 
 
-def select_userinfo(token: str = None, open_id: str = None):
+def select_userinfo(token: str = None, open_id: str = None, is_rag=False):
     url = ('https://open.feishu.cn/open-apis/contact/v3/users/{user_id}'.format(user_id=open_id))
 
     userinfo_str = ""
@@ -121,13 +123,16 @@ def select_userinfo(token: str = None, open_id: str = None):
         print("缓存读取的飞书用户详细信息：", rs)
         return rs
     else:
-        resp = requests.request('GET', url=url, headers=build_headers(token), timeout=consts.request_time_out)
+        headers = build_headers(token)
+        if is_rag:
+            headers = build_headers_rag(token)
+        resp = requests.request('GET', url=url, headers=headers, timeout=consts.request_time_out)
         if resp.status_code != 200:
-            logging.error("飞书用户查询接口异常：" + str(resp.status_code))
+            logging.error("飞书用户查询接口异常：" + str(resp.status_code) + "," + open_id + "," + resp.text)
             return None
         result = resp.json()
         if result["code"] != 0:
-            logging.error("飞书用户查询业务异常：" + resp.text)
+            logging.error("飞书用户查询业务异常：" + open_id + "," + resp.text)
             return None
         user = result['data']['user']
         name: str = user['name']
@@ -150,5 +155,5 @@ def select_userinfo(token: str = None, open_id: str = None):
             "mobile": mobile
         }
         redis_client.set(redis_key, json.dumps(userinfo), 10 * 60)
-        print('\n用户详细信息返回结果：', userinfo)
+        print('\n用户详细信息返回结果：', open_id, userinfo)
         return userinfo

@@ -72,6 +72,7 @@ async def a_call(app_chat_service, event: Dict):
         return do_unlike_rag(app_chat_service, open_id, original_message_id, message)
 
     if event_type == "submit":
+        form_value = None
         if 'form_value' in action:
             form_value = action['form_value']
         # 需求收集表单
@@ -108,7 +109,6 @@ async def a_call(app_chat_service, event: Dict):
             return do_feedback(
                 app_chat_service, open_id, original_message_id, feedback, recommendation, effect, reference_url
             )
-            return do_feedback(app_chat_service, open_id, original_message_id, feedback, recommendation)
 
         if event_source == 'feedback_collect_rag':
             original_message_id = event_data["original_message_id"]
@@ -561,7 +561,7 @@ def do_feedback_rag(app_chat_service, conv_uid, lark_message_id, feedback, recom
         "effect": effect,
         "reference_url": reference_url
     }
-    app_chat_service.add_app_feedback(rec)
+    app_chat_service.add_app_feedback(rec,is_rag=True)
 
     return {
         "toast": {

@@ -40,3 +40,24 @@ create table app_feedback
 ) comment '问题反馈';
 
 
+
+alter table app_chat_history_message
+    add nickname varchar(64) default '' not null comment '姓名';
+
+alter table app_chat_history_message
+    add en_name varchar(64) default '' not null comment '账号';
+
+alter table app_chat_history_message
+    add union_id varchar(64) default '' not null comment '飞书唯一用户ID';
+
+
+alter table app_feedback
+    add nickname varchar(64) default '' not null comment '姓名';
+
+alter table app_feedback
+    add en_name varchar(64) default '' not null comment '账号';
+
+alter table app_feedback
+    add union_id varchar(64) default '' not null comment '飞书唯一用户ID';
+
+

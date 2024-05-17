@@ -9,6 +9,7 @@ from dbgpt.extra.dag.buildin_awel.langgraph.assistants.sales_assistant import Sa
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers.lark_event_handler_wrapper import LarkEventHandlerWrapper
 from dbgpt.util import envutils
 from dbgpt.util.lark import ssoutil
+from dbgpt.util.lark import lark_message_util
 
 
 class LarkEventHandler:
@@ -23,8 +24,9 @@ class LarkEventHandler:
     def valid_event_type(self, input_body: Dict) -> bool:
         headers = input_body["header"]
         event_type = headers["event_type"]
+        event_type2 = input_body['event'].get('type')
 
-        if event_type == "p2p_chat_create":
+        if event_type == "p2p_chat_create" or event_type2 == "p2p_chat_create":
             print("机器人会话被创建", input_body)
         if event_type == "im.chat.member.bot.added_v1":
             print("机器人进群了", input_body)
@@ -39,9 +41,25 @@ class LarkEventHandler:
         ]
         if event_type in event_types:
             return True
+        
+        if event_type2 in event_types:
+            return True
         return False
 
     def valid_repeat(self, input_body: Dict) -> bool:
+        
+        # 首次进入会话校验，首次进入会话的event_id不能从heaer里拿
+        if input_body["event"].get("type") == 'p2p_chat_create':
+            event_id = input_body["uuid"]
+            redis_key = "lark_event_id_for_no_repeat_" + event_id
+            exists: str = self.redis_client.get(redis_key)
+            if exists == "true":
+                print("飞书事件已经存在，跳过执行：", input_body)
+                return False
+            self.redis_client.set(redis_key, "true", 12 * 60 * 60)
+            return True
+        
+        # 其他对话情况的校验
         headers = input_body["header"]
         event_id = headers["event_id"]
         redis_key = "lark_event_id_for_no_repeat_" + event_id
@@ -77,8 +95,17 @@ class LarkEventHandler:
             self.new_chat(sender_open_id)
             return None
 
-        assistant_response = self.sales_assistant._run(input=human_message, conv_uid=sender_open_id)
-        self.lark_event_handler_wrapper.a_reply(sender_open_id, human_message, assistant_response)
+        # 发送loading卡片
+        try:
+            # comment: 
+            message_id = lark_message_util.send_loading_message(receive_id=sender_open_id)
+            assistant_response = self.sales_assistant._run(input=human_message, conv_uid=sender_open_id)
+            self.lark_event_handler_wrapper.a_reply(sender_open_id, human_message, assistant_response)
+            lark_message_util.update_loading_message(message_id=message_id, type="standard", content="小助理已为您处理完成！")
+        except Exception as e:
+            lark_message_util.update_loading_message(message_id=message_id, type="error", content="小助理不堪重任了！")
+            raise e
+        # end try
 
     def new_chat(self, sender_open_id):
         if True:

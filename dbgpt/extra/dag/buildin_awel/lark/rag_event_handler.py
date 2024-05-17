@@ -12,6 +12,7 @@ from dbgpt.util import envutils
 import asyncio
 from dbgpt.util.lark import lark_message_util, lark_card_util
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_callback_handler_wrapper
 
 
 # const
@@ -32,10 +33,99 @@ class RAGLarkHandler:
         self.app_chat_service = AppChatService()
         self.rag_api_client = RAGApiClient()
         super().__init__(**kwargs)
-        
+
+
         
     async def handle(self, input_body: Dict):
 
+        # res = await self.rag_api_client.test_slow_http()
+        # print("result ", res)
+        # return
+        try:
+            # comment: 
+            sender_id = input_body['event']['sender']['sender_id']
+            message = input_body['event']['message']
+            if message['message_type'] != "text":
+                logging.warn("Other types of messages have not been processed yet")
+                return
+            open_id = sender_id['open_id']
+            text_content = message['content']
+            req_text_content = json.loads(text_content)['text']
+            
+             # 发送loading卡片
+            message_id = lark_message_util.send_loading_message_rag(receive_id=open_id)
+            
+              # 初始化ragflow的对话后，先存起来消息信息
+            self.app_chat_service.add_app_chat_his_message({
+                "id": str(uuid.uuid1()),
+                "agent_name": "RAG",
+                "node_name": "start",
+                "conv_uid": open_id,
+                "message_type": "human",
+                "content": req_text_content,
+                "message_detail": json.dumps(input_body),
+                "display_type": "rag_card",
+                "lark_message_id": ""
+            },is_rag=True)
+            
+            
+            response, origin_res = self.rag_api_client.single_round_chat(user_id=open_id, content=req_text_content, response_v="new")
+            
+            # 更新loading卡片
+            # lark_message_util.update_loading_message_rag(message_id=message_id)
+            
+            
+            lark_message_util.update_loading_message_rag(message_id=message_id, type='customize',content=response)
+            
+            # resp = lark_message_util.send_card_message_rag(
+            #         receive_id=open_id,
+            #         content=response
+            #     )
+            
+            # print("send rag card resp:" , resp)
+            
+            self.app_chat_service.add_app_chat_his_message({
+                "id": str(uuid.uuid1()),
+                "agent_name": "RAG",
+                "node_name": "start",
+                "conv_uid": open_id,
+                "message_type": "ai",
+                "content": json.dumps(response),
+                "message_detail": json.dumps(origin_res),
+                "display_type": "rag_card",
+                # "lark_message_id": resp['message_id']
+                "lark_message_id": message_id
+                
+            },is_rag=True)
+
+        except Exception as e:
+            lark_message_util.update_loading_message_rag(message_id=message_id, type='error')
+            # resp = lark_message_util.send_card_message_rag(
+            #     receive_id=open_id,
+            #     content=card_templates.create_rag_card_content.standard_response(
+            #         template_variable={
+            #             'content':"系统错误，请联系管理员。",
+            #             "unlike_callback_event": {
+            #                 "event_type": "unlike_rag",
+            #                 "event_source": "rag_standard_response",
+            #                 "event_data": {
+            #                     "message": "产品助手提问"
+            #                 }
+            #             }
+            #         }
+            #     )
+            # )
+            raise e
+        # end try
+                
+        
+    async def stale_handle(self, input_body: Dict):
+        
+        
+        # 首次进入会话
+        if input_body["event"].get("type") == 'p2p_chat_create':
+            open_id = input_body["event"]["operator"]["open_id"]
+            return lark_callback_handler_wrapper.do_new_chat_rag(app_chat_service=self.app_chat_service, open_id=open_id)
         # res = await self.rag_api_client.test_slow_http()
         # print("result ", res)
         # return
@@ -122,87 +212,4 @@ class RAGLarkHandler:
             raise e
         # end try
         
-        
-        
-    async def __handle(self, input_body: Dict):
-
-        # res = await self.rag_api_client.test_slow_http()
-        # print("result ", res)
-        # return
-        try:
-            # comment: 
-            sender_id = input_body['event']['sender']['sender_id']
-            message = input_body['event']['message']
-            if message['message_type'] != "text":
-                logging.warn("Other types of messages have not been processed yet")
-                return
-            open_id = sender_id['open_id']
-            text_content = message['content']
-            req_text_content = json.loads(text_content)['text']
-            
-             # 发送loading卡片
-            message_id = lark_message_util.send_loading_message_rag(receive_id=open_id)
-            
-              # 初始化ragflow的对话后，先存起来消息信息
-            self.app_chat_service.add_app_chat_his_message({
-                "id": str(uuid.uuid1()),
-                "agent_name": "RAG",
-                "node_name": "start",
-                "conv_uid": open_id,
-                "message_type": "human",
-                "content": req_text_content,
-                "message_detail": json.dumps(input_body),
-                "display_type": "rag_card",
-                "lark_message_id": ""
-            })
-            
-            
-            response, origin_res = self.rag_api_client.single_round_chat(user_id=open_id, content=req_text_content, response_v="new")
-            
-            # 更新loading卡片
-            # lark_message_util.update_loading_message_rag(message_id=message_id)
-            
-            
-            lark_message_util.update_loading_message_rag(message_id=message_id, type='customize',content=response)
-            
-            # resp = lark_message_util.send_card_message_rag(
-            #         receive_id=open_id,
-            #         content=response
-            #     )
-            
-            # print("send rag card resp:" , resp)
-            
-            self.app_chat_service.add_app_chat_his_message({
-                "id": str(uuid.uuid1()),
-                "agent_name": "RAG",
-                "node_name": "start",
-                "conv_uid": open_id,
-                "message_type": "ai",
-                "content": json.dumps(response),
-                "message_detail": json.dumps(origin_res),
-                "display_type": "rag_card",
-                # "lark_message_id": resp['message_id']
-                "lark_message_id": message_id
-                
-            })
-
-        except Exception as e:
-            lark_message_util.update_loading_message_rag(message_id=message_id, type='error')
-            # resp = lark_message_util.send_card_message_rag(
-            #     receive_id=open_id,
-            #     content=card_templates.create_rag_card_content.standard_response(
-            #         template_variable={
-            #             'content':"系统错误，请联系管理员。",
-            #             "unlike_callback_event": {
-            #                 "event_type": "unlike_rag",
-            #                 "event_source": "rag_standard_response",
-            #                 "event_data": {
-            #                     "message": "产品助手提问"
-            #                 }
-            #             }
-            #         }
-            #     )
-            # )
-            raise e
-        # end try
         

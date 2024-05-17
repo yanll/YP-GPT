@@ -28,17 +28,17 @@ class DailyReportCollectInput(BaseModel):
 
     create_date: str = Field(
         name="日报填写日期",
-        description="日报填写日期，格式：%Y-%m-%d",
+        description="日报填写日期",
         default=""
     )
     daily_report_tomorrow_plans: List[str] = Field(
         name="明日计划",
-        description="明日计划内容，可加多个，列表形式",
+        description="明日计划内容",
         default=[]
     )
     senders_name: str = Field(
         name="抄送人员",
-        description="抄送人员，抄送给谁",
+        description="抄送人员",
         default=""
     )
 

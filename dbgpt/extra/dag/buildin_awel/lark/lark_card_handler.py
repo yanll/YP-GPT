@@ -1,7 +1,7 @@
 import json
 import os
 
-lark_card_path = '../extra/dag/buildin_awel/lark/lark_card_by_json/'
+lark_card_path = os.path.dirname(os.path.abspath(__file__)) + '/lark_card_by_json/'
 
 
 def replace_variables(data, variables):
@@ -44,6 +44,7 @@ def get_lard_card_json(card_name: str = 'daily_report',
                        template_variable: dict = {},
                        disabled: bool = False):
     file_path = f'{lark_card_path}{card_name}.json'
+
     if os.path.exists(file_path):
         with open(file_path, 'r') as file:
             card_content = json.load(file)
