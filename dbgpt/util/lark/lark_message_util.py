@@ -76,7 +76,7 @@ def send_interactive_update_message(open_id: str, token: str, content: Dict):
     return resp.json()
 
 
-# 发送交互更新卡片
+# 发送交互更新卡片rag
 def update_interactive_card_rag(message_id, content: Dict):
     url = "https://open.feishu.cn/open-apis/im/v1/messages/{}".format(message_id)
     data = {
@@ -88,18 +88,45 @@ def update_interactive_card_rag(message_id, content: Dict):
     print('发送交互更新卡片返回结果：', resp.json())
     return resp.json()
 
+# 发送交互更新卡片agent
+def update_interactive_card(message_id, content: Dict):
+    url = "https://open.feishu.cn/open-apis/im/v1/messages/{}".format(message_id)
+    data = {
+        "content": json.dumps(content)
+    }
 
-def send_loading_message_rag(receive_id):
-    resp_data = send_message_rag(receive_id=receive_id, content=resp_loading_hint, receive_id_type='open_id',
+    resp = requests.patch(url=url, headers=build_headers(), json=data)
+
+    print('发送交互更新卡片返回结果：', resp.json())
+    return resp.json()
+
+def send_loading_message(receive_id):
+    resp_data = send_message(receive_id=receive_id, content=resp_loading_hint(text="小助理正在努力工作中"), receive_id_type='open_id',
                                  msg_type='interactive', type='card_message')
     return resp_data['message_id']
+
+def send_loading_message_rag(receive_id):
+    resp_data = send_message_rag(receive_id=receive_id, content=resp_loading_hint(), receive_id_type='open_id',
+                                 msg_type='interactive', type='card_message')
+    return resp_data['message_id']
+
+def update_loading_message(message_id,type='standard',content="nothing"):
+    resp_placeholder = None
+    if type == 'standard':
+        resp_placeholder = resp_standard_hint(content)
+    elif type == 'error':
+        resp_placeholder = resp_error_hint(content)
+    elif type == 'customize':
+        resp_placeholder = content
+    res = update_interactive_card(message_id=message_id,content=resp_placeholder)
+    return res
 
 def update_loading_message_rag(message_id,type='standard',content="nothing"):
     resp_placeholder = None
     if type == 'standard':
-        resp_placeholder = resp_standard_hint
+        resp_placeholder = resp_standard_hint()
     elif type == 'error':
-        resp_placeholder = resp_error_hint
+        resp_placeholder = resp_error_hint()
     elif type == 'customize':
         resp_placeholder = content
     res = update_interactive_card_rag(message_id=message_id,content=resp_placeholder)
@@ -129,7 +156,12 @@ def download_image(image_url):
         raise Exception(f"Failed to download image from {image_url}")
 
 
-resp_loading_hint = {
+
+def resp_loading_hint(text="正在使用企业知识库回答"):
+    """
+    Purpose: text
+    """
+    return {
     "config": {},
     "i18n_elements": {
         "zh_cn": [
@@ -179,7 +211,7 @@ resp_loading_hint = {
                                                 "tag": "div",
                                                 "text": {
                                                     "tag": "plain_text",
-                                                    "content": "正在使用企业知识库回答",
+                                                    "content": text,
                                                     "text_size": "normal",
                                                     "text_align": "left",
                                                     "text_color": "default"
@@ -201,71 +233,83 @@ resp_loading_hint = {
     },
     "i18n_header": {}
 }
+# end def
 
-resp_standard_hint = {
-    "config": {},
-    "i18n_elements": {
-        "zh_cn": [
-            {
-                "tag": "column_set",
-                "flex_mode": "none",
-                "horizontal_spacing": "default",
-                "background_style": "default",
-                "columns": [
-                    {
-                        "tag": "column",
-                        "elements": [
-                            {
-                                "tag": "div",
-                                "text": {
-                                    "tag": "plain_text",
-                                    "content": "已经根据企业知识库生成答案！",
-                                    "text_size": "normal",
-                                    "text_align": "left",
-                                    "text_color": "default"
+def resp_standard_hint(text="已经根据企业知识库生成答案！"):
+    """
+    Purpose: arg
+    """
+    return {
+        "config": {},
+        "i18n_elements": {
+            "zh_cn": [
+                {
+                    "tag": "column_set",
+                    "flex_mode": "none",
+                    "horizontal_spacing": "default",
+                    "background_style": "default",
+                    "columns": [
+                        {
+                            "tag": "column",
+                            "elements": [
+                                {
+                                    "tag": "div",
+                                    "text": {
+                                        "tag": "plain_text",
+                                        "content": text,
+                                        "text_size": "normal",
+                                        "text_align": "left",
+                                        "text_color": "default"
+                                    }
                                 }
-                            }
-                        ],
-                        "width": "weighted",
-                        "weight": 1
-                    }
-                ]
-            }
-        ]
-    },
-    "i18n_header": {}
-}
+                            ],
+                            "width": "weighted",
+                            "weight": 1
+                        }
+                    ]
+                }
+            ]
+        },
+        "i18n_header": {}
+    }
+# end def
 
-resp_error_hint = {
-    "config": {},
-    "i18n_elements": {
-        "zh_cn": [
-            {
-                "tag": "column_set",
-                "flex_mode": "none",
-                "horizontal_spacing": "default",
-                "background_style": "default",
-                "columns": [
-                    {
-                        "tag": "column",
-                        "elements": [
-                            {
-                                "tag": "div",
-                                "text": {
-                                    "tag": "plain_text",
-                                    "content": "生成失败！请联系管理员。",
-                                    "text_size": "normal",
-                                    "text_align": "left",
-                                    "text_color": "default"
+
+def resp_error_hint(text="生成失败！请联系管理员。"):
+    """
+    Purpose: arg
+    """
+    return {
+        "config": {},
+        "i18n_elements": {
+            "zh_cn": [
+                {
+                    "tag": "column_set",
+                    "flex_mode": "none",
+                    "horizontal_spacing": "default",
+                    "background_style": "default",
+                    "columns": [
+                        {
+                            "tag": "column",
+                            "elements": [
+                                {
+                                    "tag": "div",
+                                    "text": {
+                                        "tag": "plain_text",
+                                        "content": text,
+                                        "text_size": "normal",
+                                        "text_align": "left",
+                                        "text_color": "default"
+                                    }
                                 }
-                            }
-                        ],
-                        "width": "weighted",
-                        "weight": 1
-                    }
-                ]
-            }
-        ]
-    },
-    "i18n_header": {}
-}
+                            ],
+                            "width": "weighted",
+                            "weight": 1
+                        }
+                    ]
+                }
+            ]
+        },
+        "i18n_header": {}
+    }
+# end def
