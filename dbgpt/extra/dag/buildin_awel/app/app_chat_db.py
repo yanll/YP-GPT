@@ -82,10 +82,24 @@ class AppChatDao(BaseDao):
         return rs
 
     def add_app_feedback(self, rec: Dict) -> int:
+        rec['nickname'] = ''
+        rec['en_name'] = ''
+        rec['union_id'] = ''
+        try:
+            userinfo = larkutil.select_userinfo(open_id=rec['conv_uid'])
+            if userinfo:
+                if "name" in userinfo:
+                    rec['nickname'] = userinfo["name"]
+                if 'en_name' in userinfo:
+                    rec['en_name'] = userinfo["en_name"]
+                if 'union_id' in userinfo:
+                    rec['union_id'] = userinfo["union_id"]
+        except Exception as e:
+            logging.warning("用户姓名解析异常")
         session = self.get_raw_session()
         statement = text(
             """
-            insert into app_feedback(id, scope, conv_uid, lark_message_id, feedback, recommendation, effect, reference_url) values (:id, :scope, :conv_uid, :lark_message_id, :feedback, :recommendation, :effect, :reference_url)
+            insert into app_feedback(id, scope, conv_uid, lark_message_id, feedback, recommendation, effect, reference_url, nickname, en_name, union_id) values (:id, :scope, :conv_uid, :lark_message_id, :feedback, :recommendation, :effect, :reference_url, :nickname, :en_name, :union_id)
             """
         )
         session.execute(statement, rec)
