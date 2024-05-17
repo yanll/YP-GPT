@@ -78,13 +78,13 @@ def handle(
         answer_from_general_ai = ref
         answer = ""
         from_knowledge = "false"
-        lens = 0
+        c_len = 0
         if "data" in origin_res:
             data = origin_res["data"]
             if "reference" in data:
                 reference = data["reference"]
-                lens = reference.__len__()
-        if lens > 0:
+                c_len = reference["total"]
+        if c_len > 0:
             from_knowledge = "true"
             answer = response
         else:
