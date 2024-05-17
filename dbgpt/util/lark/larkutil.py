@@ -108,7 +108,7 @@ def select_userinfo_batch(token: str = None, open_id: str = None):
     return resp.json()
 
 
-def select_userinfo(token: str = None, open_id: str = None):
+def select_userinfo(token: str = None, open_id: str = None, is_rag=False):
     url = ('https://open.feishu.cn/open-apis/contact/v3/users/{user_id}'.format(user_id=open_id))
 
     userinfo_str = ""
@@ -123,7 +123,10 @@ def select_userinfo(token: str = None, open_id: str = None):
         print("缓存读取的飞书用户详细信息：", rs)
         return rs
     else:
-        resp = requests.request('GET', url=url, headers=build_headers(token), timeout=consts.request_time_out)
+        headers = build_headers(token)
+        if is_rag:
+            headers = build_headers_rag(token)
+        resp = requests.request('GET', url=url, headers=headers, timeout=consts.request_time_out)
         if resp.status_code != 200:
             logging.error("飞书用户查询接口异常：" + str(resp.status_code) + "," + open_id + "," + resp.text)
             return None

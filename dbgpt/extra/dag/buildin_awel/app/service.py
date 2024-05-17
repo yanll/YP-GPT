@@ -26,8 +26,8 @@ class AppChatService:
     def __init__(self):
         self.app_chat_dao = AppChatDao()
 
-    def add_app_chat_his_message(self, rec: Dict) -> int:
-        return self.app_chat_dao.add_app_chat_his_message(rec)
+    def add_app_chat_his_message(self, rec: Dict, is_rag=False) -> int:
+        return self.app_chat_dao.add_app_chat_his_message(rec,is_rag=is_rag)
 
     def disable_app_chat_his_message_by_uid(self, conv_uid: str) -> int:
         return self.app_chat_dao.disable_app_chat_his_message_by_uid(conv_uid)
@@ -48,5 +48,5 @@ class AppChatService:
             })
         return rs
 
-    def add_app_feedback(self, rec: Dict) -> int:
-        return self.app_chat_dao.add_app_feedback(rec)
+    def add_app_feedback(self, rec: Dict, is_rag=False) -> int:
+        return self.app_chat_dao.add_app_feedback(rec,is_rag=is_rag)
