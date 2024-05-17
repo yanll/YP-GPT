@@ -12,6 +12,7 @@ from dbgpt.util import envutils
 import asyncio
 from dbgpt.util.lark import lark_message_util, lark_card_util
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_callback_handler_wrapper
 
 
 # const
@@ -35,7 +36,12 @@ class RAGLarkHandler:
         
         
     async def handle(self, input_body: Dict):
-
+        
+        
+        # 首次进入会话
+        if input_body["event"].get("type") == 'p2p_chat_create':
+            open_id = input_body["event"]["operator"]["open_id"]
+            return lark_callback_handler_wrapper.do_new_chat_rag(app_chat_service=self.app_chat_service, open_id=open_id)
         # res = await self.rag_api_client.test_slow_http()
         # print("result ", res)
         # return
