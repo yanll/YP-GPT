@@ -114,7 +114,7 @@ def maolicase(trx_date, open_id):
             "TYPE": "航司,渠道,酒旅出行",
             "SCALE_TYPE": "DAY",
             "TRX_DATE": trx_date,
-            "STAT_SALES_NAME": nickname
+            "STAT_SALES_NAME": "段超"
         },
         "strategyKey": "saleOrdinaryApplicationMarketExecutor"
     }
@@ -226,7 +226,7 @@ def shujuqingk(open_id):
         profit_yesterday_x = float(result_yesterday['data']['TRX_PROFIT'])
         profit_day_before_yesterday_x = float(result_day_before_yesterday['data']['TRX_PROFIT'])
         yesterday_change_rate = ((profit_yesterday_x - profit_day_before_yesterday_x) / profit_day_before_yesterday_x) * 100
-
+        yesterday_change_rate_formatted = "{:.2f}%".format(yesterday_change_rate)
         # 计算上周同一时间的毛利变化率
         profit_weekly_before_today_x = float(result_weekly_before_today['data']['TRX_PROFIT'])
         weekly_change_rate = ((profit_yesterday_x - profit_weekly_before_today_x) / profit_weekly_before_today_x) * 100
@@ -236,7 +236,7 @@ def shujuqingk(open_id):
     return {
         '昨天的毛利': profit_yesterday,
         '前天的毛利': profit_day_before_yesterday,
-        '昨天相对于前天的同比变化率': yesterday_change_rate,
+        '昨天相对于前天的同比变化率':yesterday_change_rate_formatted,
         '上周同一时间的毛利变化率': weekly_change_rate_formatted,
         '前7天的毛利总额': profit_day7_before_yesterday,
         '前7天的平均毛利': average_day7_before_yesterday
