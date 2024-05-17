@@ -368,7 +368,9 @@ class LarkEventHandlerWrapper:
             return
 
         if card_name == "knowledge_result":
-            answer = data["answer"]
+            answer_from_knowledge = data["answer_from_knowledge"]
+            answer_from_general_ai = data["answer_from_general_ai"]
+            answer = "以下是知识库检索内容：\n" + answer_from_knowledge + "\n\n以下是通用AI回复内容：\n" + answer_from_general_ai
             resp = lark_card_util.send_message_with_bingo(
                 receive_id=sender_open_id,
                 template_variable={

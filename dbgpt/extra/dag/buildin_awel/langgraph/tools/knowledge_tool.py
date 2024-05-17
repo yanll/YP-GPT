@@ -18,9 +18,14 @@ class KnowledgeInput(BaseModel):
         name="conv_id",
         description="the value of conv_id",
     )
-    input: str = Field(
-        name="input",
-        description="the value of input",
+    question: str = Field(
+        name="question",
+        description="the value of question",
+        default=""
+    )
+    ref: str = Field(
+        name="ref",
+        description="the value of ref",
         default=""
     )
 
@@ -38,40 +43,46 @@ class KnowledgeTool(BaseTool):
     def _run(
             self,
             conv_id: str = "",
-            input: str = "",
+            question: str = "",
+            ref: str = "",
             run_manager: Optional[CallbackManagerForToolRun] = None
     ):
-        print("开始运行知识问答工具：", conv_id, input)
+        print("开始运行知识问答工具：", conv_id, question)
         try:
             reuqires = []
-            if input == "":
-                reuqires.append("input")
+            if question == "":
+                reuqires.append("question")
             if len(reuqires) > 0:
                 return {"success": "false", "response_message": "the description of " + "[" + ".".join(reuqires) + "]"}
             return handle(
                 conv_id=conv_id,
-                input=input
+                question=question,
+                ref=ref
             )
         except Exception as e:
-            logging.error("知识问答工具运行异常：" + conv_id + " " + input, e)
+            logging.error("知识问答工具运行异常：" + conv_id + " " + question, e)
             return repr(e)
 
 
 def handle(
         conv_id: str = "",
-        input: str = ""
+        question: str = "",
+        ref: str = ""
 ):
     print("发送知识问答结果卡片：", conv_id)
     try:
         rag_api_client = RAGApiClient()
 
-        response, origin_res = rag_api_client.single_round_chat(user_id=conv_id, content=input)
+        response, origin_res = rag_api_client.single_round_chat(user_id=conv_id, content=question)
 
         answer = response
-        print("知识库调用结果：", conv_id, input, answer)
+        print("知识库调用结果：", conv_id, question, answer)
 
         return {
             "success": "true",
+            "请注意": "\n" +
+                      "1、answer_from_knowledge是来自知识库的结果，answer_from_ai是来自通用AI的结果。\n" +
+                      "2、如果两者都有值，优先回复answer_from_knowledge原文，不要加工内容。\n",
             "error_message": "",
             "action": {
                 "action_name": "send_lark_form_card",
@@ -79,9 +90,10 @@ def handle(
             },
             "data": {
                 "conv_id": conv_id,
-                "question": input,
-                "answer": answer
+                "question": question,
+                "answer_from_knowledge": answer,
+                "answer_from_general_ai": ref
             }
         }
     except Exception as e:
-        raise Exception("知识问答数据组装失败：" + conv_id + " " + input, e)
+        raise Exception("知识问答数据组装失败：" + conv_id + " " + question, e)
