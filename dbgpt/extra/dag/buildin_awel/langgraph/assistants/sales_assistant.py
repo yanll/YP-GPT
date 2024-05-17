@@ -169,24 +169,49 @@ class SalesAssistant:
 
         return do_execute_tools_node
 
+    def create_do_knowledge_tool_node(self):
+        # 定义知识库工具的函数
+        def do_execute_knowledge_node(data) -> Any:
+            agent_outcome = data["agent_outcome"]
+            agent_action = AgentActionMessageLog(
+                message_log=[],
+                log="Invoking: knowledge_tool",
+                tool="knowledge_tool",
+                tool_input={
+                    "conv_id": data["conv_uid"],
+                    "question": data["input"],
+                    "ref": agent_outcome.log
+                }
+            )
+            output = self.tool_executor.invoke(agent_action)
+            tool_execute_result = {"intermediate_steps": [(agent_action, str(output))]}
+            print("tool_execute_result:", "knowledge_tool", tool_execute_result)
+            return tool_execute_result
+
+        return do_execute_knowledge_node
+
     def init_flow(self):
         # 开始节点，解析是否执行工具
         thought_function_call_node = self.create_function_call_node()
         # 工具执行节点
         do_execute_tools_node = self.create_do_execute_tools_node()
+        do_execute_knowledge_node = self.create_do_knowledge_tool_node()
 
         # 定义将用于确定要继续的条件边的逻辑
         def should_continue(data):
             # 如果代理结果是AgentFinish，则返回`exit`字符串
             # 这将在设置图形以定义流程时使用
             steps = data["intermediate_steps"]
-            if len(steps) >= 2:
+            if len(steps) >= 5:
                 return "end"
             if isinstance(data["agent_outcome"], AgentFinish):
+                agent_outcome: AgentFinish = data["agent_outcome"]
+                return_values = agent_outcome.return_values
+                last_output = return_values["last_output"]
+                # 没有执行过工具
+                if last_output == "":
+                    return "continue_knowledge"
                 return "end"
-            # 否则，将返回AgentAction
-            # 在这里我们返回`continue`字符串
-            # 这将在设置图形以定义流程时使用
             else:
                 return "continue"
 
@@ -196,6 +221,7 @@ class SalesAssistant:
         # 添加节点
         workflow.add_node("thought_function_call_node", thought_function_call_node)
         workflow.add_node("do_execute_tools_node", do_execute_tools_node)
+        workflow.add_node("do_execute_knowledge_node", do_execute_knowledge_node)
 
         # 设置入口节点
         workflow.set_entry_point("thought_function_call_node")
@@ -211,14 +237,14 @@ class SalesAssistant:
             # 将发生的是我们将调用`should_continue`，然后将其输出与此映射中的键进行匹配。
             # 根据匹配结果，然后将调用该节点。
             path_map={
-                # 如果是`tools`，那么我们调用工具节点。
                 "continue": "do_execute_tools_node",
-                # 否则我们结束。
+                "continue_knowledge": "do_execute_knowledge_node",
                 "end": END,
-            },
+            }
         )
         # 添加连线
         workflow.add_edge(start_key="do_execute_tools_node", end_key="thought_function_call_node")
+        workflow.add_edge(start_key="do_execute_knowledge_node", end_key="thought_function_call_node")
         app: CompiledGraph = workflow.compile()
         return app
 
@@ -272,5 +298,5 @@ class SalesAssistant:
 # rs = assistant._run(input=human_input, conv_uid="123456")
 # print(rs)
 
-# assistant = SalesAssistant()
-# assistant.printgraph()
+assistant = SalesAssistant()
+assistant.printgraph()

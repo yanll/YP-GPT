@@ -368,7 +368,7 @@ class LarkEventHandlerWrapper:
             return
 
         if card_name == "knowledge_result":
-            answer = data["answer"]
+            answer = resp_msg
             resp = lark_card_util.send_message_with_bingo(
                 receive_id=sender_open_id,
                 template_variable={
