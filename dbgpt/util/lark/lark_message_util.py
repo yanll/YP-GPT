@@ -103,6 +103,7 @@ def update_interactive_card(message_id, content: Dict):
 def send_loading_message(receive_id):
     resp_data = send_message(receive_id=receive_id, content=resp_loading_hint(text="小助理正在努力工作中"), receive_id_type='open_id',
                                  msg_type='interactive', type='card_message')
+    return resp_data['message_id']
 
 def send_loading_message_rag(receive_id):
     resp_data = send_message_rag(receive_id=receive_id, content=resp_loading_hint(), receive_id_type='open_id',
