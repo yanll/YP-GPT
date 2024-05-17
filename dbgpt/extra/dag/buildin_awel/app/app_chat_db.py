@@ -11,16 +11,23 @@ class AppChatDao(BaseDao):
 
     def add_app_chat_his_message(self, rec: Dict) -> int:
         rec['nickname'] = ''
+        rec['en_name'] = ''
+        rec['union_id'] = ''
         try:
-            userinfo = larkutil.select_userinfo(open_id=rec['id'])
-            if userinfo and "name" in userinfo:
-                rec['nickname'] = userinfo["name"]
+            userinfo = larkutil.select_userinfo(open_id=rec['conv_uid'])
+            if userinfo:
+                if "name" in userinfo:
+                    rec['nickname'] = userinfo["name"]
+                if 'en_name' in userinfo:
+                    rec['en_name'] = userinfo["en_name"]
+                if 'union_id' in userinfo:
+                    rec['union_id'] = userinfo["union_id"]
         except Exception as e:
             logging.warning("用户姓名解析异常")
         session = self.get_raw_session()
         statement = text(
             """
-            insert into app_chat_history_message(id, agent_name, conv_uid, message_type, content, message_detail, display_type, lark_message_id, nickname) values (:id, :agent_name, :conv_uid, :message_type, :content, :message_detail, :display_type, :lark_message_id, :nickname)
+            insert into app_chat_history_message(id, agent_name, conv_uid, message_type, content, message_detail, display_type, lark_message_id, nickname, en_name, union_id) values (:id, :agent_name, :conv_uid, :message_type, :content, :message_detail, :display_type, :lark_message_id, :nickname, :en_name, :union_id)
             """
         )
         session.execute(statement, rec)
