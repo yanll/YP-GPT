@@ -44,6 +44,10 @@ def get_lard_card_json(card_name: str = 'daily_report',
                        template_variable: dict = {},
                        disabled: bool = False):
     file_path = f'{lark_card_path}{card_name}.json'
+    absolute_file_path = os.path.abspath(file_path)
+    print('绝对路径：', absolute_file_path)
+    print('相对路径：', file_path)
+
     if os.path.exists(file_path):
         with open(file_path, 'r') as file:
             card_content = json.load(file)
