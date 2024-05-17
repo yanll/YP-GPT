@@ -372,6 +372,11 @@ class LarkEventHandlerWrapper:
             answer_from_general_ai = data["answer_from_general_ai"]
             answer = data["answer"]
             from_knowledge = data["from_knowledge"]
+            print("知识库输出answer_from_knowledge：", answer_from_knowledge)
+            print("知识库输出answer_from_general_ai：", answer_from_general_ai)
+            print("知识库输出answer：", answer)
+            print("知识库输出from_knowledge：", from_knowledge)
+            print("知识库输出resp_msg：", resp_msg)
             if from_knowledge == "true":
                 answer = "\n以下答案来自企业知识库：\n\n" + answer
             if answer == "":
