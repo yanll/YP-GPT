@@ -323,6 +323,28 @@ class LarkEventHandlerWrapper:
             self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
             return
 
+        if card_name == "daily_push_message_list_card":
+            resp = lark_message_util.send_card_message(
+                receive_id=sender_open_id,
+                content=card_templates.crem_sales_details_content(
+                    template_variable={
+                        "unlike_callback_event": {
+                            "event_type": "unlike",
+                            "event_source": card_name,
+                            "event_data": {
+                                "message": "人员分级销售详情展示"
+                            }
+                        },
+                        "query_str": data["query_str"],
+                        "daily_push_message_list": data["list"],
+                        "sales_diapaly": data["sales_diapaly"]
+                    }
+                )
+            )
+            lark_message_id = resp["message_id"]
+            self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
+            return
+
         if card_name == "feedback_collect":
             resp = lark_message_util.send_card_message(
                 receive_id=sender_open_id,

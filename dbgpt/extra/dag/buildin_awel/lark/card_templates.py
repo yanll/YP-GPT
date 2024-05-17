@@ -214,7 +214,7 @@ def create_customer_visit_record_card_content(template_variable: Dict):
 def create_merchant_list_card_content(template_variable: Dict):
     """商户查询"""
     template_id = "AAqkXYlYpaLEf"
-    template_version_name = "1.0.38"
+    template_version_name = "1.0.43"
 
     card = {
         "type": "template",
@@ -353,6 +353,20 @@ def crem_sales_details_content(template_variable: Dict):
     """销售详情展示"""
     template_id = "AAq3rInyQtnMC"
     template_version_name = "1.0.16"
+
+    card = {
+        "type": "template",
+        "data": {
+            "template_id": template_id, "template_version_name": template_version_name,
+            "template_variable": template_variable
+        }
+    }
+    return card
+
+def crem_sales_details_content(template_variable: Dict):
+    """人员分级销售详情展示"""
+    template_id = "AAq3mFaWoY9Ud"
+    template_version_name = "1.0.5"
 
     card = {
         "type": "template",
