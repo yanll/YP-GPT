@@ -9,12 +9,12 @@ import logging
 
 class AppChatDao(BaseDao):
 
-    def add_app_chat_his_message(self, rec: Dict) -> int:
+    def add_app_chat_his_message(self, rec: Dict, is_rag=False) -> int:
         rec['nickname'] = ''
         rec['en_name'] = ''
         rec['union_id'] = ''
         try:
-            userinfo = larkutil.select_userinfo(open_id=rec['conv_uid'])
+            userinfo = larkutil.select_userinfo(open_id=rec['conv_uid'],is_rag=is_rag)
             if userinfo:
                 if "name" in userinfo:
                     rec['nickname'] = userinfo["name"]
@@ -23,7 +23,7 @@ class AppChatDao(BaseDao):
                 if 'union_id' in userinfo:
                     rec['union_id'] = userinfo["union_id"]
         except Exception as e:
-            logging.warning("用户姓名解析异常")
+            logging.warning("用户姓名解析异常:" +  str(e))
         session = self.get_raw_session()
         statement = text(
             """
@@ -81,12 +81,12 @@ class AppChatDao(BaseDao):
             rs.append(dic)
         return rs
 
-    def add_app_feedback(self, rec: Dict) -> int:
+    def add_app_feedback(self, rec: Dict,is_rag=False) -> int:
         rec['nickname'] = ''
         rec['en_name'] = ''
         rec['union_id'] = ''
         try:
-            userinfo = larkutil.select_userinfo(open_id=rec['conv_uid'])
+            userinfo = larkutil.select_userinfo(open_id=rec['conv_uid'],is_rag=is_rag)
             if userinfo:
                 if "name" in userinfo:
                     rec['nickname'] = userinfo["name"]

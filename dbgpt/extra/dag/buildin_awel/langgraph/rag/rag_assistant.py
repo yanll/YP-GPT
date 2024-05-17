@@ -294,14 +294,33 @@ def generate_rag_response_card(origin_res):
     # if len(cache_files) > 0:
     #     res_card['i18n_elements']['zh_cn'].append()
     
-    startTime = time.time()
-    for f in cache_files:
-        res_card['i18n_elements']['zh_cn'].append(generate_collapsible_panel(f))
+    # startTime = time.time()
     
-    endTime = time.time()
-    howMuchTime = endTime - startTime
+    # 分割线
+    if len(cache_files) > 0:
+        res_card['i18n_elements']['zh_cn'].append({
+                "tag": "hr"
+        })
+        
+    # 参考文档
     
-    print("上传图片花费时间",str(howMuchTime) + " sec")
+    ref_mkd = ''
+    for idx,f in enumerate(cache_files):
+        # ref_mkd += res_card['i18n_elements']['zh_cn'].append(generate_collapsible_panel(f,idx+1))
+        ref_mkd += generate_collapsible_panel(f,idx+1)
+        ref_mkd += "\r\n"
+        
+    ref_shcema = {
+                    "tag": "markdown",
+                    "content": ref_mkd,
+                    "text_align": "left",
+                    "text_size": "normal"
+                }
+    res_card['i18n_elements']['zh_cn'].append(ref_shcema)
+    # endTime = time.time()
+    # howMuchTime = endTime - startTime
+    
+    # print("上传图片花费时间",str(howMuchTime) + " sec")
     
     res_card['i18n_elements']['zh_cn'].append(card_footer_template())
         
@@ -311,9 +330,14 @@ def generate_rag_response_card(origin_res):
 # end def
 
 
-def generate_collapsible_panel(file):
+def generate_collapsible_panel(file,idx=0):
+    # 富文本链接形式
+    if file['url']:
+        return "[{}. {}]({})".format(idx, file['name'],file['url'])
+    else:
+        return "{}. {}".format(idx, file['name'])
     """
-    Purpose: 生成单个折叠面板
+    Purpose: 生成单个折叠面板 折叠+图片版本
     """
     panel_title = None
     panel_content = ''

@@ -561,7 +561,7 @@ def do_feedback_rag(app_chat_service, conv_uid, lark_message_id, feedback, recom
         "effect": effect,
         "reference_url": reference_url
     }
-    app_chat_service.add_app_feedback(rec)
+    app_chat_service.add_app_feedback(rec,is_rag=True)
 
     return {
         "toast": {
