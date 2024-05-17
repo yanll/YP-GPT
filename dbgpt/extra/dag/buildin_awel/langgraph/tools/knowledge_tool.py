@@ -77,12 +77,10 @@ def handle(
 
         answer = response
         print("知识库调用结果：", conv_id, question, answer)
-
+        print("知识工具_AI引用：", ref)
+        print("知识工具_知识引用：", answer)
         return {
             "success": "true",
-            "请注意": "\n" +
-                      "1、answer_from_knowledge是来自知识库的结果，answer_from_ai是来自通用AI的结果。\n" +
-                      "2、如果两者都有值，优先回复answer_from_knowledge原文，不要加工内容。\n",
             "error_message": "",
             "action": {
                 "action_name": "send_lark_form_card",
