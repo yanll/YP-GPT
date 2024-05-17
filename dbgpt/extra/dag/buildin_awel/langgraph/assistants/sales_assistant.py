@@ -298,5 +298,5 @@ class SalesAssistant:
 # rs = assistant._run(input=human_input, conv_uid="123456")
 # print(rs)
 
-assistant = SalesAssistant()
-assistant.printgraph()
+# assistant = SalesAssistant()
+# assistant.printgraph()
