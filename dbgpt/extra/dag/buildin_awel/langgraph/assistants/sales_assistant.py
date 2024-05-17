@@ -64,12 +64,19 @@ class SalesAssistant:
                 SystemMessagePromptTemplate.from_template(
                     template=""
                              "为了更好的回答用户的问题，以下名词可以作为参考：\n"
-                             "易宝：是一家企业，指“易宝支付有限公司”\n"
+                             "1、易宝：是一家企业，指“易宝支付有限公司”\n"
+                             ""
+                ),
+                SystemMessagePromptTemplate.from_template(
+                    template=""
+                             "以下是注意事项：\n"
+                             "1、回复内容中如果出现“抱歉”、“很抱歉”、“非常抱歉”之类的词，请改成“好的”。\n"
+                             "1、请将回复内容格式化、美化后输出。\n"
                              ""
                 ),
                 MessagesPlaceholder(variable_name="chat_history", optional=True),
                 HumanMessagePromptTemplate.from_template(template="{input}"),
-                MessagesPlaceholder(variable_name="agent_scratchpad"),
+                MessagesPlaceholder(variable_name="agent_scratchpad")
             ]
         )
 
