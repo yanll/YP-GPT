@@ -9,7 +9,7 @@ from dbgpt.util.lark import larkutil, ssoutil
 
 def sales_board_display(open_id):
     global nickname
-    url = envutils.getenv("CREM_ENDPOINT") + '/crmCustomer/getSuperiorAndSubordinate'
+    url = envutils.getenv("CREM_ENDPOINT_PROD") + '/crmCustomer/getSuperiorAndSubordinate'
 
     headers = {
         'yuiassotoken': ssoutil.get_sso_credential(open_id),
@@ -32,31 +32,26 @@ def sales_board_display(open_id):
         "userName": nickname
     }
 
-    try:
-        response = requests.post(url, headers=headers, json=data)
-        if response.status_code == 200:
-            result = response.json()
-            user_type_value = result.get('data', {}).get('userType')
-            if user_type_value is not None:
-                print("成功获取销售看板数据！")
-                print("链接userType对应的值为：", user_type_value)
-                return user_type_value
-            else:
-                print("未找到userType对应的值")
+    response = requests.post(url, headers=headers, json=data)
+    if response.status_code == 200:
+        result = response.json()
+        if 'data' in result and 'userType' in result['data']:
+            user_type_value = result['data']['userType']
+            print("成功获取销售看板数据！")
+            print("数据userType对应的值为：", user_type_value)
+            return user_type_value
+
         else:
-            print("获取销售看板数据失败：", response.status_code)
-    except Exception as e:
-        print("获取销售看板数据时出现异常：", e)
-
-
-
+            print("未找到数据用户类型信息")
+    else:
+        print("请求失败：", response.status_code)
 
 
 def industry_line(open_id=None):
-    url = envutils.getenv("CREM_ENDPOINT") + '/common/treeDictionary'
+    url = envutils.getenv("CREM_ENDPOINT_PROD") + '/common/treeDictionary'
 
     headers = {
-        'yuiassotoken': ssoutil.get_sso_credential(open_id),
+        'yuiassotoken': "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJsb2dpbl90eXBlIjoiQUNDT1VOVCIsIm1vYmlsZSI6IjE4NzU0MzE2MjQwIiwibWlncmF0ZV91c2VyX2lkIjoiZWM4Z2ExYWYiLCJ4LWlwIjoiMTcyLjI1LjI1LjEwIiwicHJpbmNpcGFsX2lkIjoiMTc3OTUiLCJ0b2tlbiI6IjlkMGRhNzc4LWNkNWItNGFmMy05Njg5LTJlNTVlMzIwNzNhMSIsImxvZ2luX25hbWUiOiJodWF4dWUuemhhbmciLCJ0d29fZmFjdG9yX3ZhbGlkIjp0cnVlLCJsb2dpbl90aW1lIjoiMjAyNC0wNS0xOCAxOTo1ODoxNiIsInNjb3BlIjoiIiwiY2FsbGJhY2siOiJodHRwczovL2NlbS55ZWVwYXkuY29tL2luZGV4Lmh0bWwjL2NybS93b3JrUmVwb3J0Iiwic3NvdGlja2V0IjoiYjc3MzE4MWItYTZjOC00MjJhLTk2NTQtYzllMzA0ZDc3ZjE1IiwiZXhwIjoxNzE2MTE5ODk2LCJpYXQiOjE3MTYwMzE2OTYsImVtYWlsIjoiaHVheHVlLnpoYW5nQHllZXBheS5jb20iLCJ1c2VybmFtZSI6IuW8oOWNjumbqiJ9.xbmmYxaXvNDMb6PdxAbjIm9Ykld9wiwzq9brcmW72UhgnR_VDRc8gCIkxAQTUreqyj2mXaIdFcw6PdRyQz2zCA",
 
         'pageType': 'cemPortal',
 

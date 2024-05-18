@@ -10,10 +10,10 @@ from dbgpt.util import envutils
 from dbgpt.util.lark import larkutil, ssoutil
 
 global nickname
-
+# open_id = "ou_9d42bb88ec8940baf3ad183755131881"
 def sales_board_display(open_id):
     global nickname
-    url = envutils.getenv("CREM_ENDPOINT") + '/crmCustomer/getSuperiorAndSubordinate'
+    url = envutils.getenv("CREM_ENDPOINT_PROD") + '/crmCustomer/getSuperiorAndSubordinate'
 
     headers = {
         'yuiassotoken': ssoutil.get_sso_credential(open_id),
@@ -36,28 +36,26 @@ def sales_board_display(open_id):
         "userName": nickname
     }
 
-    try:
-        response = requests.post(url, headers=headers, json=data)
-        if response.status_code == 200:
-            result = response.json()
-            user_type_value = result.get('data', {}).get('userType')
-            if user_type_value:
-                print("成功获取销售看板数据！")
-                print("userType对应的值为：", user_type_value)
-                return user_type_value
-            else:
-                print("未找到userType对应的值")
+    response = requests.post(url, headers=headers, json=data)
+    if response.status_code == 200:
+        result = response.json()
+        if 'data' in result and 'userType' in result['data']:
+            user_type_value = result['data']['userType']
+            print("成功获取销售看板数据！")
+            print("数据userType对应的值为：", user_type_value)
+            return user_type_value
+
         else:
-            print("获取销售看板数据失败：", response.status_code)
-    except Exception as e:
-        print("获取销售看板数据时出现异常：", e)
+            print("未找到数据用户类型信息")
+    else:
+        print("请求失败：", response.status_code)
 
 
 
 
 
 def industry_line(open_id=None):
-    url = envutils.getenv("CREM_ENDPOINT") + '/common/treeDictionary'
+    url = envutils.getenv("CREM_ENDPOINT_PROD") + '/common/treeDictionary'
 
     headers = {
         'yuiassotoken': ssoutil.get_sso_credential(open_id),
@@ -74,7 +72,7 @@ def industry_line(open_id=None):
             result = response.json()
             # 从返回结果中获取类型名并直接输出
             typename = result['data'][0]['typename']
-            print("typename的值为：", typename)
+            print("数据typename的值为：", typename)
             return typename
         else:
             print("请求失败：", response.status_code)
@@ -102,8 +100,10 @@ def maolicase(trx_date, open_id):
     except Exception as e:
         logging.warning("用户姓名解析异常：", open_id)
 
-    user_type_value = 0
-    typename = "金融行业线"
+    #user_type_value = 2
+    #typename = "金融行业线"
+    user_type_value = sales_board_display(open_id)
+    typename = industry_line(open_id)
 
     url_map = {
         "航旅事业部": envutils.getenv("CREM_ENDPOINT_APP") + '/mobile/aggScript/wrap/apis/receive/handleApplicationMarketplace/hv_jf_day_summary_situate_one',
@@ -178,7 +178,7 @@ def maolicase(trx_date, open_id):
                     "dmallReq": {
                         "parameters": {
                             "TRX_DATE": trx_date,
-                            "MERCHANT_SALESNAME": "柳永亮"
+                            "MERCHANT_SALESNAME": nickname
                         },
                         "url": "crem_salesmanage_kj_ydd_hzqk",
                         "version": "V1.0"
@@ -228,7 +228,7 @@ def maolicase(trx_date, open_id):
                         "parameters": {
                             "TRX_DATE": trx_date,
                             "TYPE": "全部",
-                            "SUPERIOR_NAME": "刘刚-1"
+                            "SUPERIOR_NAME": nickname
                         },
                         "url": "package_salesmanagereport_ydd_hzqk",
                         "version": "V1.0"
@@ -256,24 +256,42 @@ def maolicase(trx_date, open_id):
         try:
             # 尝试解析JSON数据
             json_data = response.json()
-            # 判断返回值中是否有指定字段且不为null
-            if "data" in json_data and json_data["data"] and "TRX_PROFIT" in json_data["data"] and json_data["data"][
-                "TRX_PROFIT"] is not None:
-                trx_profit = float(json_data["data"]["TRX_PROFIT"])
-                print("航旅销售的值是", json_data)
-                result_dict = trx_profit
-                return result_dict
+            print(json_data)
+            # 航旅处理
+            if "data" in json_data and isinstance(json_data["data"], dict):
+                data = json_data["data"]
+                if "TRX_PROFIT" in data and data["TRX_PROFIT"] is not None:
+                    trx_profit = float(data["TRX_PROFIT"])
+                    print("航旅销售的值是", trx_profit)
+                    return trx_profit
 
-            elif "data" in json_data and json_data["data"] and isinstance(json_data["data"]["data"], list) and \
-                    len(json_data["data"]["data"]) > 0 and "TRX_PROFIT" in json_data["data"]["data"][0] and \
-                    json_data["data"]["data"][0]["TRX_PROFIT"] is not None:
-                print("跨境销售的值是", json_data)
-                trx_profit = float(json_data["data"]["data"][0]["TRX_PROFIT"])
-                result_dict = trx_profit
-                return result_dict
-            else:
-                # 返回提示消息
-                return {"error": "你不是销售"}
+            # 跨境处理
+            if "data" in json_data and isinstance(json_data["data"], dict) and "data" in json_data[
+                "data"] and isinstance(
+                    json_data["data"]["data"], list):
+                data_list = json_data["data"]["data"]
+                if len(data_list) > 0 and "TRX_PROFIT" in data_list[0] and data_list[0]["TRX_PROFIT"] is not None:
+                    trx_profit = float(data_list[0]["TRX_PROFIT"])
+                    print("跨境销售的值是", trx_profit)
+                    return trx_profit
+
+            # 金融处理
+            if "data" in json_data and isinstance(json_data["data"], dict):
+                data = json_data["data"]
+                if "chain" in data and isinstance(data["chain"], list) and len(data["chain"]) > 0 and "TRX_PROFIT" in \
+                        data["chain"][0] and data["chain"][0]["TRX_PROFIT"] is not None:
+                    trx_profit = float(data["chain"][0]["TRX_PROFIT"])
+                    print("金融链销售的值是", trx_profit)
+                    return trx_profit
+                if "data" in data and isinstance(data["data"], list) and len(data["data"]) > 0 and "TRX_PROFIT" in \
+                        data["data"][
+                            0] and data["data"][0]["TRX_PROFIT"] is not None:
+                    trx_profit = float(data["data"][0]["TRX_PROFIT"])
+                    print("金融数据销售的值是", trx_profit)
+                    return trx_profit
+
+            # 返回提示消息
+            return {"error": "你不是销售"}
         except json.decoder.JSONDecodeError:
             logging.error("无法解析JSON数据:", response.text)
             return {"error": "无法解析JSON数据"}
@@ -309,12 +327,12 @@ def shujuqingk(open_id):
        isinstance(result_day_before_yesterday, dict) and 'error' in result_day_before_yesterday or \
        isinstance(result_day7_before_yesterday, dict) and 'error' in result_day7_before_yesterday or \
        isinstance(result_weekly_before_today, dict) and 'error' in result_weekly_before_today:
-        profit_yesterday = "数据为空"
-        profit_day_before_yesterday = "数据为空"
-        profit_day7_before_yesterday = "数据为空"
-        average_day7_before_yesterday = "数据为空"
-        yesterday_change_rate_formatted = "数据为空"
-        weekly_change_rate_formatted = "数据为空"
+        profit_yesterday = "数据为空，你不是销售"
+        profit_day_before_yesterday = "数据为空，你不是销售"
+        profit_day7_before_yesterday = "数据为空，你不是销售"
+        average_day7_before_yesterday = "数据为空，你不是销售"
+        yesterday_change_rate_formatted = "数据为空，你不是销售"
+        weekly_change_rate_formatted = "数据为空，你不是销售"
     else:
         # 提取毛利数据并格式化
         profit_yesterday = format_profit(result_yesterday)
