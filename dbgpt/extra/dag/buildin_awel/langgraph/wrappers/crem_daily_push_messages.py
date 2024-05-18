@@ -104,12 +104,69 @@ def maolicase(trx_date, open_id):
     #typename = "金融行业线"
     user_type_value = sales_board_display(open_id)
     typename = industry_line(open_id)
-
     url_map = {
-        "航旅事业部": envutils.getenv("CREM_ENDPOINT_APP") + '/mobile/aggScript/wrap/apis/receive/handleApplicationMarketplace/hv_jf_day_summary_situate_one',
-        "跨境行业线": envutils.getenv("CREM_ENDPOINT_APP") + '/mobile/threeParty/wrap/apis/agg/package_crem_kjxm_jyfx_ydd_hzqk',
-        "金融行业线": envutils.getenv("CREM_ENDPOINT_APP") + '/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk'
+        "航旅事业部": {
+            0: envutils.getenv(
+                "CREM_ENDPOINT_APP") + "/mobile/aggScript/wrap/apis/receive/handleApplicationMarketplace/hv_jf_day_summary_situate_one",
+            1: envutils.getenv(
+                "CREM_ENDPOINT_APP") + "/mobile/aggScript/wrap/apis/receive/handleApplicationMarketplace/hv_jf_day_summary_situate_one",
+            2: envutils.getenv(
+                "CREM_ENDPOINT_APP") + "/mobile/aggScript/wrap/apis/receive/handleApplicationMarketplace/hv_jf_day_summary_situate_one",
+        },
+        "跨境行业线": {
+            0: envutils.getenv(
+                "CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_crem_kjxm_jyfx_ydd_hzqk",
+            1: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/crem_salesmanage_kj_ydd_hzqk",
+            2: envutils.getenv(
+                "CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_crem_kjxm_jyfx_ydd_hzqk",
+        },
+        "金融行业线": {
+            0: envutils.getenv(
+                "CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
+            1: envutils.getenv(
+                "CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
+            2: envutils.getenv(
+                "CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
+        },
+        "大零售行业线": {
+            0: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
+            1: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesreport_ydd_hzqk",
+            2: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
+        }
     }
+    # url_map = {
+    #     "航旅事业部": {
+    #         0: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/aggScript/wrap/apis/receive/handleApplicationMarketplace/hv_jf_day_summary_situate_one",
+    #         1: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/aggScript/wrap/apis/receive/handleApplicationMarketplace/hv_jf_day_summary_situate_one",
+    #         2: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/aggScript/wrap/apis/receive/handleApplicationMarketplace/hv_jf_day_summary_situate_one",
+    #
+    #     },
+    #     "跨境行业线": {
+    #         0: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_crem_kjxm_jyfx_ydd_hzqk",
+    #         1: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/crem_salesmanage_kj_ydd_hzqk",
+    #         2: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_crem_kjxm_jyfx_ydd_hzqk",
+    #
+    #     },
+    #     "金融行业线": {
+    #         0: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
+    #         1: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
+    #         2: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
+    #
+    #     },
+    #     "大零售行业线": {
+    #         0: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
+    #         1: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesreport_ydd_hzqk",
+    #         2: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
+    #     }
+    # }
+
+    # url_map = {
+    #     "航旅事业部": envutils.getenv("CREM_ENDPOINT_APP") + '/mobile/aggScript/wrap/apis/receive/handleApplicationMarketplace/hv_jf_day_summary_situate_one',
+    #     "跨境行业线": envutils.getenv("CREM_ENDPOINT_APP") + '/mobile/threeParty/wrap/apis/agg/package_crem_kjxm_jyfx_ydd_hzqk',
+    #     "金融行业线": envutils.getenv("CREM_ENDPOINT_APP") + '/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk',
+    #     "大零售行业线": envutils.getenv("CREM_ENDPOINT_APP") + '/mobile/threeParty/wrap/apis/agg/package_salesreport_ydd_hzqk'
+    #
+    # }
 
     data_map = {
         "航旅事业部": {
@@ -236,11 +293,63 @@ def maolicase(trx_date, open_id):
                     "LAST_DATE": "2024-04-01,2024-04-16"
                 }
             }
+        },
+        "大零售行业线": {
+            0: {
+                "tenant": "default",
+                "procDefKey": "15a8350f65a303736ebe606e3d30e5beM3",
+                "data": {
+                    "dmallReq": {
+                        "parameters": {
+                            "TRX_DATE": trx_date,
+                            "TYPE": "全部",
+                            "SUPERIOR_NAME": "田愉快"
+                        },
+                        "url": "package_salesmanagereport_ydd_hzqk",
+                        "version": "V1.0"
+                    },
+                    "LAST_DATE": "2024-04-01,2024-04-17",
+                    "team": "全部"
+                }
+            },
+            1: {
+                "tenant": "default",
+                "procDefKey": "15a8350f65a303736ebe606e3d30e5beM3",
+                "data": {
+                    "dmallReq": {
+                        "parameters": {
+                            "TRX_DATE": trx_date,
+                            "TYPE": "全部",
+                            "STAT_SALES_NAME": "刘鹏程"
+                        },
+                        "url": "package_salesreport_ydd_hzqk",
+                        "version": "V1.0"
+                    },
+                    "LAST_DATE": "2024-04-01,2024-04-17"
+                }
+            },
+            2: {
+                "tenant": "default",
+                "procDefKey": "15a8350f65a303736ebe606e3d30e5beM3",
+                "data": {
+                    "dmallReq": {
+                        "parameters": {
+                            "TRX_DATE": trx_date,
+                            "TYPE": "全部",
+                            "SUPERIOR_NAME": nickname
+                        },
+                        "url": "package_salesmanagereport_ydd_hzqk",
+                        "version": "V1.0"
+                    },
+                    "LAST_DATE": "2024-04-01,2024-04-17",
+                    "team": "全部"
+                }
+            }
         }
     }
 
     # 根据typename选择url和data
-    url = url_map.get(typename, "")
+    url = url_map.get(typename, {}).get(user_type_value, "")
     data = data_map.get(typename, {}).get(user_type_value, {})
 
     headers = {
@@ -278,17 +387,35 @@ def maolicase(trx_date, open_id):
             # 金融处理
             if "data" in json_data and isinstance(json_data["data"], dict):
                 data = json_data["data"]
-                if "chain" in data and isinstance(data["chain"], list) and len(data["chain"]) > 0 and "TRX_PROFIT" in \
-                        data["chain"][0] and data["chain"][0]["TRX_PROFIT"] is not None:
-                    trx_profit = float(data["chain"][0]["TRX_PROFIT"])
-                    print("金融链销售的值是", trx_profit)
-                    return trx_profit
+                # if "chain" in data and isinstance(data["chain"], list) and len(data["chain"]) > 0 and "TRX_PROFIT" in \
+                #         data["chain"][0] and data["chain"][0]["TRX_PROFIT"] is not None:
+                #     trx_profit = float(data["chain"][0]["TRX_PROFIT"])
+                #     print("金融链销售的值是", trx_profit)
+                #     return trx_profit
                 if "data" in data and isinstance(data["data"], list) and len(data["data"]) > 0 and "TRX_PROFIT" in \
                         data["data"][
                             0] and data["data"][0]["TRX_PROFIT"] is not None:
                     trx_profit = float(data["data"][0]["TRX_PROFIT"])
                     print("金融数据销售的值是", trx_profit)
                     return trx_profit
+
+            # 大零售处理
+            if "data" in json_data and isinstance(json_data["data"], dict):
+                data = json_data["data"]
+                # if "chain" in data and isinstance(data["chain"], list) and len(data["chain"]) > 0 and "TRX_PROFIT" in \
+                #         data["chain"][0] and data["chain"][0]["TRX_PROFIT"] is not None:
+                #     trx_profit = float(data["chain"][0]["TRX_PROFIT"])
+                #     print("大零售销售的值是", trx_profit)
+                #     return trx_profit
+                if "data" in data and isinstance(data["data"], list) and len(data["data"]) > 0 and "TRX_PROFIT" in \
+                        data["data"][
+                            0] and data["data"][0]["TRX_PROFIT"] is not None:
+                    trx_profit = float(data["data"][0]["TRX_PROFIT"])
+                    print("大零售数据销售的值是", trx_profit)
+                    return trx_profit
+
+
+
 
             # 返回提示消息
             return {"error": "你不是销售"}
