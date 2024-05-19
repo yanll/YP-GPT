@@ -79,12 +79,11 @@ def sales_board_display(open_id):
     return user_type_value
 
 
-def industry_line(open_id=None):
+def industry_line(open_id):
     url = envutils.getenv("CREM_ENDPOINT_PROD") + '/common/treeDictionary'
 
     headers = {
-        'yuiassotoken': "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJsb2dpbl90eXBlIjoiQUNDT1VOVCIsIm1vYmlsZSI6IjE4NzU0MzE2MjQwIiwibWlncmF0ZV91c2VyX2lkIjoiZWM4Z2ExYWYiLCJ4LWlwIjoiMTcyLjI1LjI1LjEwIiwicHJpbmNpcGFsX2lkIjoiMTc3OTUiLCJ0b2tlbiI6IjlkMGRhNzc4LWNkNWItNGFmMy05Njg5LTJlNTVlMzIwNzNhMSIsImxvZ2luX25hbWUiOiJodWF4dWUuemhhbmciLCJ0d29fZmFjdG9yX3ZhbGlkIjp0cnVlLCJsb2dpbl90aW1lIjoiMjAyNC0wNS0xOCAxOTo1ODoxNiIsInNjb3BlIjoiIiwiY2FsbGJhY2siOiJodHRwczovL2NlbS55ZWVwYXkuY29tL2luZGV4Lmh0bWwjL2NybS93b3JrUmVwb3J0Iiwic3NvdGlja2V0IjoiYjc3MzE4MWItYTZjOC00MjJhLTk2NTQtYzllMzA0ZDc3ZjE1IiwiZXhwIjoxNzE2MTE5ODk2LCJpYXQiOjE3MTYwMzE2OTYsImVtYWlsIjoiaHVheHVlLnpoYW5nQHllZXBheS5jb20iLCJ1c2VybmFtZSI6IuW8oOWNjumbqiJ9.xbmmYxaXvNDMb6PdxAbjIm9Ykld9wiwzq9brcmW72UhgnR_VDRc8gCIkxAQTUreqyj2mXaIdFcw6PdRyQz2zCA",
-
+        'yuiassotoken': ssoutil.get_sso_credential(open_id),
         'pageType': 'cemPortal',
 
     }
@@ -112,9 +111,15 @@ def mobile_process_data(open_id):
     # user_type = 0
     # typename = "金融行业线"
     user_type = sales_board_display(open_id)
+    print("链接的权限是",user_type)
     typename = industry_line(open_id)
-    if not user_type or not typename:
+    print("链接的行业线是", typename)
+
+    if user_type is None or typename is None:
+        jieguo = [user_type, typename]
+        print("选项集合", jieguo)
         return "https://applink.feishu.cn/client/web_url/open?mode=sidebar-semi&reload=false&url=https%3A%2F%2Fopen.feishu.cn%2Fopen-apis%2Fauthen%2Fv1%2Findex%3Fapp_id%3Dcli_a22c1bd8723a500e%26redirect_uri%3Dhttps%253A%252F%252Fhbirdapi.yeepay.com%252Fuia%252Ffeishu%252FexchangeToken%253FexchangeMethod%253Duia%2526appId%253Dcli_a22c1bd8723a500e%2526redirectUrl%253Dhttps%25253A%25252F%25252Fatmgw.yeepay.com%25252Fmcem%25252Findex.html%252523%25252Fcustom%25252Fapp-list%2526apikey%253DajqgGjXTDFQnL1GNKCQqxCiM5tOGmfNd"
+
     if user_type is not None and typename is not None:
         base_url = "https://img.yeepay.com/hbird-ucm/feishu-web-app-entry/index.html#/app?appId=cli_a22c1bd8723a500e&appEncodeUrl=https://atmgw.yeepay.com/mcem/index.html#/"
         if user_type == 0:
@@ -127,6 +132,12 @@ def mobile_process_data(open_id):
             elif typename == "跨境行业线":
                 # "销售管理跨境"
                 return "https://applink.feishu.cn/client/web_url/open?mode=sidebar-semi&reload=false&url=https%3A%2F%2Fopen.feishu.cn%2Fopen-apis%2Fauthen%2Fv1%2Findex%3Fapp_id%3Dcli_a22c1bd8723a500e%26redirect_uri%3Dhttps%253A%252F%252Fhbirdapi.yeepay.com%252Fuia%252Ffeishu%252FexchangeToken%253FexchangeMethod%253Duia%2526appId%253Dcli_a22c1bd8723a500e%2526redirectUrl%253Dhttps%25253A%25252F%25252Fatmgw.yeepay.com%25252Fmcem%25252Findex.html%252523%25252Fanalyse%25252Fmanage%2526apikey%253DajqgGjXTDFQnL1GNKCQqxCiM5tOGmfNd"
+            elif typename == "大零售行业线":
+                # "销售管理大零售"
+                return "https://applink.feishu.cn/client/web_url/open?mode=sidebar-semi&reload=false&url=https%3A%2F%2Fopen.feishu.cn%2Fopen-apis%2Fauthen%2Fv1%2Findex%3Fapp_id%3Dcli_a22c1bd8723a500e%26redirect_uri%3Dhttps%253A%252F%252Fhbirdapi.yeepay.com%252Fuia%252Ffeishu%252FexchangeToken%253FexchangeMethod%253Duia%2526appId%253Dcli_a22c1bd8723a500e%2526redirectUrl%253Dhttps%25253A%25252F%25252Fatmgw.yeepay.com%25252Fmcem%25252Findex.html%252523%25252Fanalyse%25252FsaleManageBoard%2526apikey%253DajqgGjXTDFQnL1GNKCQqxCiM5tOGmfNd"
+            elif typename == "政务行业线":
+                # "销售管理政务"
+                return "https://applink.feishu.cn/client/web_url/open?mode=sidebar-semi&reload=false&url=https%3A%2F%2Fopen.feishu.cn%2Fopen-apis%2Fauthen%2Fv1%2Findex%3Fapp_id%3Dcli_a22c1bd8723a500e%26redirect_uri%3Dhttps%253A%252F%252Fhbirdapi.yeepay.com%252Fuia%252Ffeishu%252FexchangeToken%253FexchangeMethod%253Duia%2526appId%253Dcli_a22c1bd8723a500e%2526redirectUrl%253Dhttps%25253A%25252F%25252Fatmgw.yeepay.com%25252Fmcem%25252Findex.html%252523%25252Fanalyse%25252FsaleManageBoard%2526apikey%253DajqgGjXTDFQnL1GNKCQqxCiM5tOGmfNd"
             else:
                 #"销售管理其他"
                 return "https://applink.feishu.cn/client/web_url/open?mode=sidebar-semi&reload=false&url=https%3A%2F%2Fopen.feishu.cn%2Fopen-apis%2Fauthen%2Fv1%2Findex%3Fapp_id%3Dcli_a22c1bd8723a500e%26redirect_uri%3Dhttps%253A%252F%252Fhbirdapi.yeepay.com%252Fuia%252Ffeishu%252FexchangeToken%253FexchangeMethod%253Duia%2526appId%253Dcli_a22c1bd8723a500e%2526redirectUrl%253Dhttps%25253A%25252F%25252Fatmgw.yeepay.com%25252Fmcem%25252Findex.html%252523%25252Fanalyse%25252FsaleManageBoard%2526apikey%253DajqgGjXTDFQnL1GNKCQqxCiM5tOGmfNd"
@@ -139,7 +150,14 @@ def mobile_process_data(open_id):
                 #"销售跨境"
                 return "https://applink.feishu.cn/client/web_url/open?mode=sidebar-semi&reload=false&url=https%3A%2F%2Fopen.feishu.cn%2Fopen-apis%2Fauthen%2Fv1%2Findex%3Fapp_id%3Dcli_a22c1bd8723a500e%26redirect_uri%3Dhttps%253A%252F%252Fhbirdapi.yeepay.com%252Fuia%252Ffeishu%252FexchangeToken%253FexchangeMethod%253Duia%2526appId%253Dcli_a22c1bd8723a500e%2526redirectUrl%253Dhttps%25253A%25252F%25252Fatmgw.yeepay.com%25252Fmcem%25252Findex.html%252523%25252Fsale%25252FchartView%2526apikey%253DajqgGjXTDFQnL1GNKCQqxCiM5tOGmfNd"
             elif typename == "金融行业线":
+                # "销售金融"
                 return "https://applink.feishu.cn/client/web_url/open?mode=sidebar-semi&reload=false&url=https%3A%2F%2Fopen.feishu.cn%2Fopen-apis%2Fauthen%2Fv1%2Findex%3Fapp_id%3Dcli_a22c1bd8723a500e%26redirect_uri%3Dhttps%253A%252F%252Fhbirdapi.yeepay.com%252Fuia%252Ffeishu%252FexchangeToken%253FexchangeMethod%253Duia%2526appId%253Dcli_a22c1bd8723a500e%2526redirectUrl%253Dhttps%25253A%25252F%25252Fatmgw.yeepay.com%25252Fmcem%25252Findex.html%252523%25252Fjinrong%25252FsaleBoard%2526apikey%253DajqgGjXTDFQnL1GNKCQqxCiM5tOGmfNd"
+            elif typename == "大零售行业线":
+                # "销售大零售"
+                return "https://applink.feishu.cn/client/web_url/open?mode=sidebar-semi&reload=false&url=https%3A%2F%2Fopen.feishu.cn%2Fopen-apis%2Fauthen%2Fv1%2Findex%3Fapp_id%3Dcli_a22c1bd8723a500e%26redirect_uri%3Dhttps%253A%252F%252Fhbirdapi.yeepay.com%252Fuia%252Ffeishu%252FexchangeToken%253FexchangeMethod%253Duia%2526appId%253Dcli_a22c1bd8723a500e%2526redirectUrl%253Dhttps%25253A%25252F%25252Fatmgw.yeepay.com%25252Fmcem%25252Findex.html%252523%25252Fanalyse%25252FsaleBoard%2526apikey%253DajqgGjXTDFQnL1GNKCQqxCiM5tOGmfNd"
+            elif typename == "政务行业线":
+                # "销售政务"
+                return "https://applink.feishu.cn/client/web_url/open?mode=sidebar-semi&reload=false&url=https%3A%2F%2Fopen.feishu.cn%2Fopen-apis%2Fauthen%2Fv1%2Findex%3Fapp_id%3Dcli_a22c1bd8723a500e%26redirect_uri%3Dhttps%253A%252F%252Fhbirdapi.yeepay.com%252Fuia%252Ffeishu%252FexchangeToken%253FexchangeMethod%253Duia%2526appId%253Dcli_a22c1bd8723a500e%2526redirectUrl%253Dhttps%25253A%25252F%25252Fatmgw.yeepay.com%25252Fmcem%25252Findex.html%252523%25252Fanalyse%25252FsaleBoard%2526apikey%253DajqgGjXTDFQnL1GNKCQqxCiM5tOGmfNd"
             else:
                 #"销售其他"
                 return "https://applink.feishu.cn/client/web_url/open?mode=sidebar-semi&reload=false&url=https%3A%2F%2Fopen.feishu.cn%2Fopen-apis%2Fauthen%2Fv1%2Findex%3Fapp_id%3Dcli_a22c1bd8723a500e%26redirect_uri%3Dhttps%253A%252F%252Fhbirdapi.yeepay.com%252Fuia%252Ffeishu%252FexchangeToken%253FexchangeMethod%253Duia%2526appId%253Dcli_a22c1bd8723a500e%2526redirectUrl%253Dhttps%25253A%25252F%25252Fatmgw.yeepay.com%25252Fmcem%25252Findex.html%252523%25252Fanalyse%25252FsaleBoard%2526apikey%253DajqgGjXTDFQnL1GNKCQqxCiM5tOGmfNd"

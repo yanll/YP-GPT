@@ -134,7 +134,10 @@ def maolicase(trx_date, open_id):
     #typename = "金融行业线"
     user_type_value = sales_board_display(open_id)
     typename = industry_line(open_id)
-    if not user_type_value or not typename:
+
+    if user_type_value is None or typename is None:
+        jieguo = [user_type_value, typename]
+        print("选项集合", jieguo)
         return {"error": "你不是销售"}  # 返回错误消息
     url_map = {
         "航旅事业部": {
@@ -148,7 +151,8 @@ def maolicase(trx_date, open_id):
         "跨境行业线": {
             0: envutils.getenv(
                 "CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_crem_kjxm_jyfx_ydd_hzqk",
-            1: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/crem_salesmanage_kj_ydd_hzqk",
+            1: envutils.getenv(
+                "CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/crem_salesmanage_kj_ydd_hzqk",
             2: envutils.getenv(
                 "CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_crem_kjxm_jyfx_ydd_hzqk",
         },
@@ -161,9 +165,20 @@ def maolicase(trx_date, open_id):
                 "CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
         },
         "大零售行业线": {
-            0: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
-            1: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesreport_ydd_hzqk",
-            2: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
+            0: envutils.getenv(
+                "CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
+            1: envutils.getenv(
+                "CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesreport_ydd_hzqk",
+            2: envutils.getenv(
+                "CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
+        },
+        "政务行业线": {
+            0: envutils.getenv(
+                "CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
+            1: envutils.getenv(
+                "CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesreport_ydd_hzqk",
+            2: envutils.getenv(
+                "CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
         }
     }
 
@@ -343,6 +358,53 @@ def maolicase(trx_date, open_id):
                     },
                     "LAST_DATE": "2024-04-01,2024-04-17",
                     "team": "全部"
+                }
+            }
+        },
+        "政务行业线": {
+            0: {
+                "tenant": "default",
+                "procDefKey": "15a8350f65a303736ebe606e3d30e5beM3",
+                "data": {
+                    "dmallReq": {
+                        "parameters": {
+                            "TRX_DATE": trx_date,
+                            "STAT_SALES_NAME": nickname
+                        },
+                        "url": "package_salesreport_ydd_hzqk",
+                        "version": "V1.0"
+                    },
+                    "LAST_DATE": "2024-04-01,2024-04-18"
+                }
+            },
+            1: {
+                "tenant": "default",
+                "procDefKey": "15a8350f65a303736ebe606e3d30e5beM3",
+                "data": {
+                    "dmallReq": {
+                        "parameters": {
+                            "TRX_DATE": trx_date,
+                            "STAT_SALES_NAME": "黄小翠"
+                        },
+                        "url": "package_salesreport_ydd_hzqk",
+                        "version": "V1.0"
+                    },
+                    "LAST_DATE": "2024-04-01,2024-04-18"
+                }
+            },
+            2: {
+                "tenant": "default",
+                "procDefKey": "15a8350f65a303736ebe606e3d30e5beM3",
+                "data": {
+                    "dmallReq": {
+                        "parameters": {
+                            "TRX_DATE": trx_date,
+                            "STAT_SALES_NAME": nickname
+                        },
+                        "url": "package_salesreport_ydd_hzqk",
+                        "version": "V1.0"
+                    },
+                    "LAST_DATE": "2024-04-01,2024-04-18"
                 }
             }
         }
