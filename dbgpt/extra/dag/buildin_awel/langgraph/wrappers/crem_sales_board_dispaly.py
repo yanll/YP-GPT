@@ -11,20 +11,28 @@ def sales_board_display(open_id):
     global nickname
     url = envutils.getenv("CREM_ENDPOINT_PROD") + '/crmCustomer/getSuperiorAndSubordinate'
 
+    # 增加日志信息
+    logging.info(f"请求的URL: {url}")
+    logging.info(f"请求的open_id: {open_id}")
+
     headers = {
         'yuiassotoken': ssoutil.get_sso_credential(open_id),
         'pageType': 'cemPortal',
-
     }
+
+    logging.info(f"请求的headers: {headers}")
 
     try:
         userinfo = larkutil.select_userinfo(open_id=open_id)
+        logging.info(f"获取的用户信息: {userinfo}")
         if userinfo and "name" in userinfo:
             nickname = userinfo["name"] + " "
             print("用户的姓名是", nickname)
+        else:
+            nickname = "Unknown "
     except Exception as e:
-        logging.warning("用户姓名解析异常：", open_id)
-
+        logging.warning(f"用户姓名解析异常：{e}")
+        nickname = "Unknown "
 
     data = {
         "requestParams": "SUPERIOR_NAME",
@@ -32,19 +40,43 @@ def sales_board_display(open_id):
         "userName": nickname
     }
 
-    response = requests.post(url, headers=headers, json=data)
-    if response.status_code == 200:
+    logging.info(f"请求的数据: {data}")
+
+    try:
+        response = requests.post(url, headers=headers, json=data)
+        response.raise_for_status()  # 检查HTTP请求是否成功
         result = response.json()
-        if 'data' in result and 'userType' in result['data']:
+        logging.info(f"响应的JSON数据: {result}")
+
+        # 检查'result'是否为None
+        if result is None:
+            logging.error("响应的JSON数据为空")
+            return 2
+
+        if 'data' in result and isinstance(result['data'], dict) and 'userType' in result['data']:
             user_type_value = result['data']['userType']
             print("成功获取销售看板数据！")
             print("数据userType对应的值为：", user_type_value)
-            return user_type_value
-
         else:
             print("未找到数据用户类型信息")
-    else:
-        print("请求失败：", response.status_code)
+            user_type_value = 2
+    except requests.exceptions.RequestException as e:
+        logging.error(f"请求失败：{e}")
+        user_type_value = 2
+    except ValueError as e:
+        logging.error(f"响应JSON解析失败：{e}")
+        user_type_value = 2
+    except KeyError as e:
+        logging.error(f"响应中缺少预期的键：{e}")
+        user_type_value = 2
+    except TypeError as e:
+        logging.error(f"类型错误：{e}")
+        user_type_value = 2
+    except Exception as e:
+        logging.error(f"未知错误：{e}")
+        user_type_value = 2
+
+    return user_type_value
 
 
 def industry_line(open_id=None):
@@ -81,6 +113,8 @@ def mobile_process_data(open_id):
     # typename = "金融行业线"
     user_type = sales_board_display(open_id)
     typename = industry_line(open_id)
+    if not user_type or not typename:
+        return "https://applink.feishu.cn/client/web_url/open?mode=sidebar-semi&reload=false&url=https%3A%2F%2Fopen.feishu.cn%2Fopen-apis%2Fauthen%2Fv1%2Findex%3Fapp_id%3Dcli_a22c1bd8723a500e%26redirect_uri%3Dhttps%253A%252F%252Fhbirdapi.yeepay.com%252Fuia%252Ffeishu%252FexchangeToken%253FexchangeMethod%253Duia%2526appId%253Dcli_a22c1bd8723a500e%2526redirectUrl%253Dhttps%25253A%25252F%25252Fatmgw.yeepay.com%25252Fmcem%25252Findex.html%252523%25252Fcustom%25252Fapp-list%2526apikey%253DajqgGjXTDFQnL1GNKCQqxCiM5tOGmfNd"
     if user_type is not None and typename is not None:
         base_url = "https://img.yeepay.com/hbird-ucm/feishu-web-app-entry/index.html#/app?appId=cli_a22c1bd8723a500e&appEncodeUrl=https://atmgw.yeepay.com/mcem/index.html#/"
         if user_type == 0:

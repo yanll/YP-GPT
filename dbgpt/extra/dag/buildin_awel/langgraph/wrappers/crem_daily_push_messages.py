@@ -15,20 +15,28 @@ def sales_board_display(open_id):
     global nickname
     url = envutils.getenv("CREM_ENDPOINT_PROD") + '/crmCustomer/getSuperiorAndSubordinate'
 
+    # 增加日志信息
+    logging.info(f"请求的URL: {url}")
+    logging.info(f"请求的open_id: {open_id}")
+
     headers = {
         'yuiassotoken': ssoutil.get_sso_credential(open_id),
         'pageType': 'cemPortal',
-
     }
+
+    logging.info(f"请求的headers: {headers}")
 
     try:
         userinfo = larkutil.select_userinfo(open_id=open_id)
+        logging.info(f"获取的用户信息: {userinfo}")
         if userinfo and "name" in userinfo:
             nickname = userinfo["name"] + " "
             print("用户的姓名是", nickname)
+        else:
+            nickname = "Unknown "
     except Exception as e:
-        logging.warning("用户姓名解析异常：", open_id)
-
+        logging.warning(f"用户姓名解析异常：{e}")
+        nickname = "Unknown "
 
     data = {
         "requestParams": "SUPERIOR_NAME",
@@ -36,21 +44,43 @@ def sales_board_display(open_id):
         "userName": nickname
     }
 
-    response = requests.post(url, headers=headers, json=data)
-    if response.status_code == 200:
+    logging.info(f"请求的数据: {data}")
+
+    try:
+        response = requests.post(url, headers=headers, json=data)
+        response.raise_for_status()  # 检查HTTP请求是否成功
         result = response.json()
-        if 'data' in result and 'userType' in result['data']:
+        logging.info(f"响应的JSON数据: {result}")
+
+        # 检查'result'是否为None
+        if result is None:
+            logging.error("响应的JSON数据为空")
+            return 2
+
+        if 'data' in result and isinstance(result['data'], dict) and 'userType' in result['data']:
             user_type_value = result['data']['userType']
             print("成功获取销售看板数据！")
             print("数据userType对应的值为：", user_type_value)
-            return user_type_value
-
         else:
             print("未找到数据用户类型信息")
-    else:
-        print("请求失败：", response.status_code)
+            user_type_value = 2
+    except requests.exceptions.RequestException as e:
+        logging.error(f"请求失败：{e}")
+        user_type_value = 2
+    except ValueError as e:
+        logging.error(f"响应JSON解析失败：{e}")
+        user_type_value = 2
+    except KeyError as e:
+        logging.error(f"响应中缺少预期的键：{e}")
+        user_type_value = 2
+    except TypeError as e:
+        logging.error(f"类型错误：{e}")
+        user_type_value = 2
+    except Exception as e:
+        logging.error(f"未知错误：{e}")
+        user_type_value = 2
 
-
+    return user_type_value
 
 
 
@@ -104,6 +134,8 @@ def maolicase(trx_date, open_id):
     #typename = "金融行业线"
     user_type_value = sales_board_display(open_id)
     typename = industry_line(open_id)
+    if not user_type_value or not typename:
+        return {"error": "你不是销售"}  # 返回错误消息
     url_map = {
         "航旅事业部": {
             0: envutils.getenv(
@@ -134,39 +166,6 @@ def maolicase(trx_date, open_id):
             2: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
         }
     }
-    # url_map = {
-    #     "航旅事业部": {
-    #         0: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/aggScript/wrap/apis/receive/handleApplicationMarketplace/hv_jf_day_summary_situate_one",
-    #         1: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/aggScript/wrap/apis/receive/handleApplicationMarketplace/hv_jf_day_summary_situate_one",
-    #         2: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/aggScript/wrap/apis/receive/handleApplicationMarketplace/hv_jf_day_summary_situate_one",
-    #
-    #     },
-    #     "跨境行业线": {
-    #         0: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_crem_kjxm_jyfx_ydd_hzqk",
-    #         1: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/crem_salesmanage_kj_ydd_hzqk",
-    #         2: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_crem_kjxm_jyfx_ydd_hzqk",
-    #
-    #     },
-    #     "金融行业线": {
-    #         0: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
-    #         1: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
-    #         2: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
-    #
-    #     },
-    #     "大零售行业线": {
-    #         0: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
-    #         1: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesreport_ydd_hzqk",
-    #         2: envutils.getenv("CREM_ENDPOINT_APP") + "/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk",
-    #     }
-    # }
-
-    # url_map = {
-    #     "航旅事业部": envutils.getenv("CREM_ENDPOINT_APP") + '/mobile/aggScript/wrap/apis/receive/handleApplicationMarketplace/hv_jf_day_summary_situate_one',
-    #     "跨境行业线": envutils.getenv("CREM_ENDPOINT_APP") + '/mobile/threeParty/wrap/apis/agg/package_crem_kjxm_jyfx_ydd_hzqk',
-    #     "金融行业线": envutils.getenv("CREM_ENDPOINT_APP") + '/mobile/threeParty/wrap/apis/agg/package_salesmanagereport_ydd_hzqk',
-    #     "大零售行业线": envutils.getenv("CREM_ENDPOINT_APP") + '/mobile/threeParty/wrap/apis/agg/package_salesreport_ydd_hzqk'
-    #
-    # }
 
     data_map = {
         "航旅事业部": {
@@ -191,10 +190,11 @@ def maolicase(trx_date, open_id):
             },
             2: {
                 "parameters": {
-                    "TYPE": "航司,渠道,酒旅出行",
+                    "TYPE": "航司",
                     "SCALE_TYPE": "DAY",
                     "TRX_DATE": trx_date,
-                    "STAT_SALES_NAME": nickname
+                    "SUPERIOR_NAME": nickname,
+                    "STAT_SALES_NAME": None
                 },
                 "strategyKey": "saleOrdinaryApplicationMarketExecutor"
             }
@@ -230,14 +230,14 @@ def maolicase(trx_date, open_id):
             },
             2: {
                 "tenant": "default",
-                "procDefKey": "dmallGeneral",
+                "procDefKey": "15a8350f65a303736ebe606e3d30e5beM2",
                 "data": {
                     "dmallReq": {
                         "parameters": {
                             "TRX_DATE": trx_date,
-                            "MERCHANT_SALESNAME": nickname
+                            "LAST_DATE": "2024-04-16,2024-04-16"
                         },
-                        "url": "crem_salesmanage_kj_ydd_hzqk",
+                        "url": "package_crem_kjxm_jyfx_ydd_hzqk",
                         "version": "V1.0"
                     }
                 }
