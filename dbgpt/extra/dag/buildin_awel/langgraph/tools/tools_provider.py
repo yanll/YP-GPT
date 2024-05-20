@@ -33,7 +33,6 @@ class ToolsProvider:
             RequirementCollectTool(),
             CrmBusCustomerCollectAddTool(),
             CrmBusCustomerCollectQueryTool(),
-            FeedbackCollectTool(),
             Dailypushmessagetool(),
             # AbilityDisplayTool(),
             FeedbackCollectTool()

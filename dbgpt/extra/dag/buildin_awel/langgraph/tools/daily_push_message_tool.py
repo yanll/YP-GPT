@@ -18,6 +18,7 @@ class DailypushmessagetoolInput(BaseModel):
         description="the value of conv_id",
     )
 
+
 class Dailypushmessagetool(BaseTool):
     name: str = "daily_push_message_tool"
     description: str = (
@@ -35,10 +36,10 @@ class Dailypushmessagetool(BaseTool):
             run_manager: Optional[CallbackManagerForToolRun] = None,
     ):
         """Use the tool."""
-        print("开始执行每日推送信息查询工具：", conv_id,  self.max_results)
+        print("开始执行每日推送信息查询工具：", conv_id, self.max_results)
         try:
             resp_data = []
-            if conv_id == "" :
+            if conv_id == "":
                 return {"success": "false", "response_message": "the description of conv_id"}
             data = crem_daily_push_messages.shujuqingk(
                 open_id=conv_id
@@ -53,10 +54,9 @@ class Dailypushmessagetool(BaseTool):
                 nickname = userinfo["name"] + " "
                 print("用户的姓名是", nickname)
 
-
             resp_data.append(data)
             sales_dispaly = link
-            print("移动端的链接",sales_dispaly)
+            print("移动端的链接", sales_dispaly)
             query_str = (nickname).strip()
             print("推送人结果：", query_str, resp_data)
             list = []
@@ -69,7 +69,7 @@ class Dailypushmessagetool(BaseTool):
                 yesterday_change_rate = m.get("昨天相对于前天的同比变化率", "")
                 weekly_change_rate_formatted = m.get("上周同一时间的毛利变化率", "")
                 profit_day7_before_yesterday = m.get("前7天的毛利总额", "")
-                average_day7_before_yesterday= m.get("前7天的平均毛利", "")
+                average_day7_before_yesterday = m.get("前7天的平均毛利", "")
                 list.append({
                     "profit_yesterday": profit_yesterday if profit_yesterday is not None else "",
                     "profit_day_before_yesterday": profit_day_before_yesterday if profit_day_before_yesterday is not None else "",
