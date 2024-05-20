@@ -48,16 +48,16 @@ class MerchantSearchTool(BaseTool):
                 customer_name=customer_name,
                 customer_number=customer_number
             )
-            link = crem_sales_board_dispaly.mobile_process_data(
-                open_id=conv_id
-            )
+           # link = crem_sales_board_dispaly.mobile_process_data(
+                #open_id=conv_id
+           # )
             # link_pc = crem_sales_board_dispaly.pc_process_data(
             #     open_id=conv_id
             # )
             resp_data = data
-            sales_dispaly = link
+           # sales_dispaly = link
             #pc_sales_display = link_pc
-            print("移动端的链接",sales_dispaly)
+           # print("移动端的链接",sales_dispaly)
             #print("pc端的链接",pc_sales_display)
 
             query_str = (customer_name + "" + customer_number).strip()
