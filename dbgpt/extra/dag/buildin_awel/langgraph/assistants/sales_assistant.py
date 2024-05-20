@@ -202,7 +202,7 @@ class SalesAssistant:
         thought_function_call_node = self.create_function_call_node()
         # 工具执行节点
         do_execute_tools_node = self.create_do_execute_tools_node()
-        do_execute_knowledge_node = self.create_do_knowledge_tool_node()
+        # do_execute_knowledge_node = self.create_do_knowledge_tool_node()
 
         # 定义将用于确定要继续的条件边的逻辑
         def should_continue(data):
@@ -216,8 +216,8 @@ class SalesAssistant:
                 return_values = agent_outcome.return_values
                 last_output = return_values["last_output"]
                 # 没有执行过工具
-                if last_output == "":
-                    return "continue_knowledge"
+                # if last_output == "":
+                #     return "continue_knowledge"
                 return "end"
             else:
                 return "continue"
@@ -228,7 +228,7 @@ class SalesAssistant:
         # 添加节点
         workflow.add_node("thought_function_call_node", thought_function_call_node)
         workflow.add_node("do_execute_tools_node", do_execute_tools_node)
-        workflow.add_node("do_execute_knowledge_node", do_execute_knowledge_node)
+        # workflow.add_node("do_execute_knowledge_node", do_execute_knowledge_node)
 
         # 设置入口节点
         workflow.set_entry_point("thought_function_call_node")
@@ -245,13 +245,13 @@ class SalesAssistant:
             # 根据匹配结果，然后将调用该节点。
             path_map={
                 "continue": "do_execute_tools_node",
-                "continue_knowledge": "do_execute_knowledge_node",
+                # "continue_knowledge": "do_execute_knowledge_node",
                 "end": END,
             }
         )
         # 添加连线
         workflow.add_edge(start_key="do_execute_tools_node", end_key="thought_function_call_node")
-        workflow.add_edge(start_key="do_execute_knowledge_node", end_key="thought_function_call_node")
+        # workflow.add_edge(start_key="do_execute_knowledge_node", end_key="thought_function_call_node")
         app: CompiledGraph = workflow.compile()
         return app
 

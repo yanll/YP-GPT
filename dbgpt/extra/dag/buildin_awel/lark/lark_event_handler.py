@@ -41,13 +41,13 @@ class LarkEventHandler:
         ]
         if event_type in event_types:
             return True
-        
+
         if event_type2 in event_types:
             return True
         return False
 
     def valid_repeat(self, input_body: Dict) -> bool:
-        
+
         # 首次进入会话校验，首次进入会话的event_id不能从heaer里拿
         if input_body["event"].get("type") == 'p2p_chat_create':
             event_id = input_body["uuid"]
@@ -58,7 +58,7 @@ class LarkEventHandler:
                 return False
             self.redis_client.set(redis_key, "true", 12 * 60 * 60)
             return True
-        
+
         # 其他对话情况的校验
         headers = input_body["header"]
         event_id = headers["event_id"]
@@ -101,9 +101,9 @@ class LarkEventHandler:
             message_id = lark_message_util.send_loading_message(receive_id=sender_open_id)
             assistant_response = self.sales_assistant._run(input=human_message, conv_uid=sender_open_id)
             self.lark_event_handler_wrapper.a_reply(sender_open_id, human_message, assistant_response)
-            lark_message_util.update_loading_message(message_id=message_id, type="standard", content="小助理已为您处理完成！")
+            # lark_message_util.update_loading_message(message_id=message_id, type="standard", content="小助理已为您处理完成！")
         except Exception as e:
-            lark_message_util.update_loading_message(message_id=message_id, type="error", content="小助理不堪重任了！")
+            # lark_message_util.update_loading_message(message_id=message_id, type="error", content="小助理不堪重任了！")
             raise e
         # end try
 

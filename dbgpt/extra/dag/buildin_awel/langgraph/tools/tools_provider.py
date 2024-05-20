@@ -36,8 +36,8 @@ class ToolsProvider:
             FeedbackCollectTool(),
             Dailypushmessagetool(),
             # AbilityDisplayTool(),
-            FeedbackCollectTool(),
-            KnowledgeTool()
+            FeedbackCollectTool()
+            # ,KnowledgeTool()
         ]
         pass
 

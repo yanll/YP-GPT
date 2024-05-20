@@ -35,7 +35,7 @@ class WeeklyReportCollectInput(BaseModel):
     )
     create_date: str = Field(
         name="创建日期",
-        description="创建日期",
+        description="创建日期，格式：%Y-%m-%d",
         default=""
     )
     weekly_report_next_week_plans: List[PlanDetail] = Field(
