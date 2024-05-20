@@ -101,9 +101,9 @@ class LarkEventHandler:
             message_id = lark_message_util.send_loading_message(receive_id=sender_open_id)
             assistant_response = self.sales_assistant._run(input=human_message, conv_uid=sender_open_id)
             self.lark_event_handler_wrapper.a_reply(sender_open_id, human_message, assistant_response)
-            # lark_message_util.update_loading_message(message_id=message_id, type="standard", content="小助理已为您处理完成！")
+            lark_message_util.update_loading_message(message_id=message_id, type="standard", content="小助理已为您处理完成！")
         except Exception as e:
-            # lark_message_util.update_loading_message(message_id=message_id, type="error", content="小助理不堪重任了！")
+            lark_message_util.update_loading_message(message_id=message_id, type="error", content="小助理不堪重任了！")
             raise e
         # end try
 
