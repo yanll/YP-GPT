@@ -20,7 +20,7 @@ export const apiInterceptors = <T = any, D = any>(promise: Promise<ApiResponse<T
       console.log("响应结果：", data);
       if (data.err_code === '401') {
         const delay = setTimeout(() => {
-            window.location.href = 'https://uiaservice.yeepay.com/yuia-service-boss/login.html?callback=http://ycenc.yeepay.com:5000/login/?id=10000'
+            window.location.href = 'https://uiaservice.yeepay.com/yuia-service-boss/login.html?callback=http://ycenc.yeepay.com:30899/login/?id=10000'
         }, 2000);
       }
 
