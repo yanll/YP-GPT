@@ -1,3 +1,4 @@
+import json
 import logging
 from typing import Optional, Type
 
@@ -36,6 +37,7 @@ class Dailypushmessagetool(BaseTool):
             run_manager: Optional[CallbackManagerForToolRun] = None,
     ):
         """Use the tool."""
+        global value_colour_yesterday_change_rate, value_colour_weekly_change_rate
         print("开始执行每日推送信息查询工具：", conv_id, self.max_results)
         try:
             resp_data = []
@@ -45,6 +47,22 @@ class Dailypushmessagetool(BaseTool):
                 open_id=conv_id
             )
             print("毛利详情", data)
+            yesterday_change_rate = data.get("昨天相对于前天的同比变化率", "")
+            weekly_change_rate_formatted = data.get("上周同一时间的毛利变化率", "")
+
+            # 颜色判断和富文本信息生成
+            numeric_change_rate_yesterday = float(yesterday_change_rate.strip('%'))
+            numeric_change_rate_weekly = float(weekly_change_rate_formatted.strip('%'))
+
+            colour_yesterday_change_rate = "green" if numeric_change_rate_yesterday > 0 else "red"
+            value_colour_yesterday_change_rate = f"昨天相对于前天的同比变化率：<text_tag color={colour_yesterday_change_rate}>{yesterday_change_rate}</text_tag>"
+            colour_weekly_change_rate = "green" if numeric_change_rate_weekly > 0 else "red"
+            value_colour_weekly_change_rate = f"上周同一时间的毛利变化率：<text_tag color={colour_weekly_change_rate}>{weekly_change_rate_formatted}</text_tag>"
+
+
+            print("昨日的颜色", value_colour_yesterday_change_rate)
+            print("上周的颜色", value_colour_weekly_change_rate)
+
             link = crem_sales_board_dispaly.mobile_process_data(
                 open_id=conv_id
             )
@@ -58,6 +76,8 @@ class Dailypushmessagetool(BaseTool):
             sales_dispaly = link
             print("移动端的链接", sales_dispaly)
             query_str = (nickname).strip()
+
+
             print("推送人结果：", query_str, resp_data)
             list = []
             if resp_data and len(resp_data) == 0:
@@ -70,13 +90,16 @@ class Dailypushmessagetool(BaseTool):
                 weekly_change_rate_formatted = m.get("上周同一时间的毛利变化率", "")
                 profit_day7_before_yesterday = m.get("前7天的毛利总额", "")
                 average_day7_before_yesterday = m.get("前7天的平均毛利", "")
+
+
+
                 list.append({
                     "profit_yesterday": profit_yesterday if profit_yesterday is not None else "",
                     "profit_day_before_yesterday": profit_day_before_yesterday if profit_day_before_yesterday is not None else "",
                     "yesterday_change_rate": yesterday_change_rate if yesterday_change_rate is not None else "",
                     "weekly_change_rate_formatted": weekly_change_rate_formatted if weekly_change_rate_formatted is not None else "",
                     "profit_day7_before_yesterday": profit_day7_before_yesterday if profit_day7_before_yesterday is not None else "",
-                    "average_day7_before_yesterday": average_day7_before_yesterday if average_day7_before_yesterday is not None else ""
+                    "average_day7_before_yesterday": average_day7_before_yesterday if average_day7_before_yesterday is not None else "",
 
                 })
 
@@ -90,7 +113,9 @@ class Dailypushmessagetool(BaseTool):
                 "data": {
                     "list": list,
                     "query_str": query_str,
-                    "sales_diapaly": sales_dispaly
+                    "sales_diapaly": sales_dispaly,
+                    "value_colour_yesterday_change_rate":value_colour_yesterday_change_rate,
+                    "value_colour_weekly_change_rate":value_colour_weekly_change_rate
 
                 }
             }
