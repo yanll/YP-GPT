@@ -2,6 +2,7 @@
 You can define your own models and DAOs here
 """
 import json
+import logging
 from typing import Any, Dict, List, Optional, Union
 
 from dbgpt.core import MessageStorageItem
@@ -85,9 +86,15 @@ class ServeDao(BaseDao[ServeEntity, ServeRequest, ServerResponse]):
             )
             if not entity:
                 return None
-            message_detail = (
-                json.loads(entity.message_detail) if entity.message_detail else {}
-            )
+
+            message_detail = {}
+            try:
+                message_detail = (
+                    json.loads(entity.message_detail) if entity.message_detail else {}
+                )
+            except Exception as e:
+                logging.error("历史消息加载异常：" + str(entity.id), e)
+
             return MessageStorageItem(entity.conv_uid, entity.index, message_detail)
 
     def _parse_old_messages(self, entity: ServeEntity) -> List[Dict[str, Any]]:
@@ -103,7 +110,7 @@ class ServeDao(BaseDao[ServeEntity, ServeRequest, ServerResponse]):
         return messages
 
     def get_conv_by_page(
-        self, req: ServeRequest, page: int, page_size: int
+            self, req: ServeRequest, page: int, page_size: int
     ) -> PaginationResult[ServerResponse]:
         """Get conversation by page
 
