@@ -80,56 +80,15 @@ with DAG("dbgpt_awel_lark_daily_push_event") as dag:
     trigger >> map_node
 
 
-# from typing import List, Dict
-# import logging
-# from fastapi import FastAPI, HTTPException
-# from pydantic import BaseModel
-# from dbgpt.extra.dag.buildin_awel.langgraph.tools.daily_push_message_tool import Dailypushmessagetool
-# from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
-# from dbgpt.util.azure_util import create_azure_llm
-# import json
+# import requests
 #
-# # Create FastAPI instance
-# app = FastAPI()
+# # 请求的数据，根据你的接口需要进行相应的设置
+# data = {
+#     }
 #
-# # Instantiate original tool class
-# daily_push_tool = Dailypushmessagetool()
+# # 发送 POST 请求
+# response = requests.post("http://172.31.91.206:5670/api/v1/awel/trigger/lark_daily_push_event", json=data)
 #
-# # Predefined conv_id list
-# conv_ids = [
-#     "ou_9d42bb88ec8940baf3ad183755131881",
-#     "ou_9d42bb88ec8940baf3ad183755131881",
-#     "ou_9d42bb88ec8940baf3ad183755131881",
-#     "ou_9d42bb88ec8940baf3ad183755131881"
-#
-# ]
-#
-# class RequestHandleOperator(MapOperator[None, List[Dict]]):
-#     llm = None
-#
-#     def __init__(self, **kwargs):
-#         self.llm = create_azure_llm()
-#         super().__init__(**kwargs)
-#
-#     async def map(self, input_value: None) -> List[Dict]:
-#         results = []
-#         for conv_id in conv_ids:
-#             print(f"Receive conv_id: {conv_id}")
-#             try:
-#                 result = daily_push_tool._run(conv_id=conv_id)
-#                 results.append(result)
-#             except Exception as e:
-#                 logging.error(f"Error occurred while handling daily push event for conv_id {conv_id}: {e}")
-#                 results.append({"conv_id": conv_id, "error": str(e)})
-#         return results
-#
-# with DAG("dbgpt_awel_lark_daily_push_event") as dag:
-#     trigger = HttpTrigger(
-#         endpoint="/lark_daily_push_event",
-#         methods="POST",
-#         request_body=Dict
-#     )
-#     map_node = RequestHandleOperator()
-#     trigger >> map_node
-#
-#
+# # 输出响应结果
+# print(response.status_code)
+# print(response.json())

@@ -56,7 +56,7 @@ class CustomerVisitRecordCollectInput(BaseModel):
     )
     visit_date: str = Field(
         name="拜访日期",
-        description="拜访日期，格式：%Y-%m-%d",
+        description="拜访日期",
         default=""
     )
     contacts: str = Field(

@@ -349,7 +349,7 @@ class create_rag_card_content:
         return card
 
 
-def crem_sales_details_content(template_variable: Dict):
+def no_crem_sales_details_content(template_variable: Dict):
     """销售详情展示"""
     template_id = "AAq3rInyQtnMC"
     template_version_name = "1.0.16"

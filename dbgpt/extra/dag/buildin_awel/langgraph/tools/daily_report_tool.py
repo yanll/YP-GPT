@@ -28,7 +28,7 @@ class DailyReportCollectInput(BaseModel):
 
     create_date: str = Field(
         name="日报填写日期",
-        description="日报填写日期，格式：%Y-%m-%d",
+        description="日报填写日期",
         default=""
     )
     daily_report_tomorrow_plans: List[str] = Field(

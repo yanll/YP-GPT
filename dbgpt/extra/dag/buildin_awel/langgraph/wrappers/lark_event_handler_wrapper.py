@@ -2,7 +2,7 @@ import json
 import logging
 import uuid
 from typing import Dict
-
+from datetime import datetime
 from langchain_core.agents import AgentFinish
 
 from dbgpt.extra.dag.buildin_awel.app.service import AppChatService
@@ -62,11 +62,42 @@ class LarkEventHandlerWrapper:
         }
         self.app_chat_service.add_app_chat_his_message(rec)
 
+
+
+    def validate_date_format(self, date_field: str, data: Dict):
+        date_value = data.get(date_field, "")
+        try:
+            datetime.strptime(date_value, '%Y-%m-%d')
+            return True
+        except ValueError:
+            return False
+
+
+
     def lark_reply_form_card_message(self, sender_open_id: str, resp_msg: str, action: Dict, data: Dict):
         if data is None:
             return
         card_name = action["card_name"]
         if card_name == "requirement_collect":
+            if not self.validate_date_format("expected_completion_date",data):
+                error_message = "请您优化您输入的时间格式，参考样例：\n 一:2024-01-01\n 二:2024.01.01\n 三:2024年1月1日"
+                resp = lark_card_util.send_message_with_bingo(
+                    receive_id=sender_open_id,
+                    template_variable={
+                        "unlike_callback_event": {
+                            "event_type": "unlike",
+                            "event_source": "general_card",
+                            "event_data": {
+                                "message": error_message
+                            }
+                        },
+                        "message_content": error_message
+                    }
+                )
+                lark_message_id = resp["message_id"]
+                self.store_his_message(sender_open_id, resp_msg, "text", lark_message_id)
+                return
+
             resp = lark_message_util.send_card_message(
                 receive_id=sender_open_id,
                 content=card_templates.create_requirement_card_content(
@@ -120,31 +151,26 @@ class LarkEventHandlerWrapper:
             self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
             return
         if card_name == "daily_report_collect":
+            if not self.validate_date_format("create_date",data):
+                error_message = "请您优化您输入的时间格式，参考样例：\n 一:2024-01-01\n 二:2024.01.01\n 三:2024年1月1日"
+                resp = lark_card_util.send_message_with_bingo(
+                    receive_id=sender_open_id,
+                    template_variable={
+                        "unlike_callback_event": {
+                            "event_type": "unlike",
+                            "event_source": "general_card",
+                            "event_data": {
+                                "message": error_message
+                            }
+                        },
+                        "message_content": error_message
+                    }
+                )
+                lark_message_id = resp["message_id"]
+                self.store_his_message(sender_open_id, resp_msg, "text", lark_message_id)
+                return
             resp = lark_message_util.send_card_message(
                 receive_id=sender_open_id,
-                # content=card_templates.create_daily_report_card_content(
-                #     template_variable={
-                #         "card_metadata": {
-                #             "card_name": card_name,
-                #             "card_description": "日报收集表单"
-                #         },
-                #         "submit_callback_event": {
-                #             "event_type": "submit",
-                #             "event_source": card_name
-                #         },
-                #         "unlike_callback_event": {
-                #             "event_type": "unlike",
-                #             "event_source": card_name,
-                #             "event_data": {
-                #                 "message": "需求收集表单"
-                #             }
-                #         },
-                #         "ai_message": resp_msg,
-                #         "daily_report_content": data["daily_report_content"],
-                #         "create_date": data["create_date"],
-                #         "daily_report_tomorrow_plans": data["daily_report_tomorrow_plans"]
-                #     }
-                # )
                 content=lark_card_handler.get_lard_card_json(
                     card_name='daily_report',
                     template_variable={
@@ -175,6 +201,24 @@ class LarkEventHandlerWrapper:
             self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
             return
         if card_name == "weekly_report_collect":
+            if not self.validate_date_format("create_date",data):
+                error_message = "请您优化您输入的时间格式，参考样例：\n 一:2024-01-01\n 二:2024.01.01\n 三:2024年1月1日"
+                resp = lark_card_util.send_message_with_bingo(
+                    receive_id=sender_open_id,
+                    template_variable={
+                        "unlike_callback_event": {
+                            "event_type": "unlike",
+                            "event_source": "general_card",
+                            "event_data": {
+                                "message": error_message
+                            }
+                        },
+                        "message_content": error_message
+                    }
+                )
+                lark_message_id = resp["message_id"]
+                self.store_his_message(sender_open_id, resp_msg, "text", lark_message_id)
+                return
             resp = lark_message_util.send_card_message(
                 receive_id=sender_open_id,
                 content=card_templates.create_weekly_report_card_content(
@@ -206,6 +250,24 @@ class LarkEventHandlerWrapper:
             self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
             return
         if card_name == "customer_visit_record_collect":
+            if not self.validate_date_format("visit_date",data):
+                error_message = "请您优化您输入的时间格式，参考样例：\n 一:2024-01-01\n 二:2024.01.01\n 三:2024年1月1日"
+                resp = lark_card_util.send_message_with_bingo(
+                    receive_id=sender_open_id,
+                    template_variable={
+                        "unlike_callback_event": {
+                            "event_type": "unlike",
+                            "event_source": "general_card",
+                            "event_data": {
+                                "message": error_message
+                            }
+                        },
+                        "message_content": error_message
+                    }
+                )
+                lark_message_id = resp["message_id"]
+                self.store_his_message(sender_open_id, resp_msg, "text", lark_message_id)
+                return
             resp = lark_message_util.send_card_message(
                 receive_id=sender_open_id,
                 content=card_templates.create_customer_visit_record_card_content(

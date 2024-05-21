@@ -9,7 +9,7 @@ def get_sales_details_daily_card(open_id=None, customer_id=None, conv_id=None):
     # 发送信息卡片给用户
     lark_message_util.send_card_message(
         receive_id=conv_id,
-        content=card_templates.crem_sales_details_content(
+        content=card_templates.no_crem_sales_details_content(
             template_variable={
                 "unlike_callback_event": {
                     "event_type": "unlike",
