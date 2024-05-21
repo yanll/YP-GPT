@@ -44,6 +44,7 @@ const useChat = ({ queryAgentURL = '/api/v1/chat/completions' }: Props) => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': localStorage.getItem('Authorization') + ''
           },
           body: JSON.stringify(parmas),
           signal: ctrl.signal,

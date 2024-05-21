@@ -2,8 +2,12 @@
 const CopyPlugin = require('copy-webpack-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const path = require('path');
+
+const {createProxyMiddleware} = require('http-proxy-middleware');
+
+
 const nextConfig = {
-  output: 'export',
+  // output: 'export',
   experimental: {
     esmExternals: 'loose',
   },
@@ -15,6 +19,28 @@ const nextConfig = {
   },
   trailingSlash: true,
   images: { unoptimized: true },
+
+  async rewrites () {
+    return [
+      {
+        source: '/db-gpt-server/:path*',
+        destination: 'http://127.0.0.1:5670/:path*',
+      },
+    ]
+  },
+  async serverMiddleware () {
+    const app = require('express')();
+    app.use(
+      '/db-gpt-server',
+      createProxyMiddleware({
+        target: 'http://127.0.0.1:5670',
+        changeOrigin: true,
+      })
+    );
+    return app;
+  },
+
+
   webpack: (config, { isServer }) => {
     config.resolve.fallback = { fs: false };
     if (!isServer) {

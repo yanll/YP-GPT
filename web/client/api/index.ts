@@ -41,6 +41,13 @@ ins.interceptors.request.use((request) => {
   if (!request.timeout) {
     request.timeout = isLongTimeApi ? 60000 : 10000;
   }
+
+  const token = localStorage.getItem("Authorization");
+  if (token) {
+      request.headers['Authorization'] = token
+  }
+
+
   return request;
 });
 

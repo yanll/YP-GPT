@@ -6,6 +6,17 @@ const api = axios.create({
 
 api.defaults.timeout = 10000;
 
+
+api.interceptors.request.use((request) => {
+    const token = localStorage.getItem("Authorization");
+    if (token) {
+        request.headers['Authorization'] = token
+    }
+    return request;
+});
+
+
+
 api.interceptors.response.use(
   response => response.data,
 	err => Promise.reject(err)
