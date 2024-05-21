@@ -36,10 +36,12 @@ def get_crem_30DaysTrxTre_card(open_id, customer_id, customerName):
         for item in json_data['data']['data']:
             formatted_item_maoli = {
                 "time": item["jiaoyiriqi"],  # 将交易日期作为 time
+                # "time": item["jiaoyiriqi"][5:],  # 将交易日期作为 time
                 "value": item["maoli"]  # 将毛利作为 value
             }
             formatted_item_jiaoyijine = {
                 "time": item["jiaoyiriqi"],  # 将交易日期作为 time
+                # "time": item["jiaoyiriqi"][5:],  # 将交易日期作为 time
                 "value": item["jiaoyijine"]  # 将交易金额作为 value
             }
             formatted_data.append(formatted_item_maoli)
@@ -156,17 +158,24 @@ def get_crem_30DaysTrxTre_card(open_id, customer_id, customerName):
                     "tag": "chart",
                     "chart_spec": {
                         "type": "area",
-                        "title": {"text": customerName + " 近30天交易金额"},
+                        "title": {"text": customerName + " 近30天交易金额 （单位：元）"},
                         "data": {"values": formatted_data_jiaoyijine},  # 更新数据部分
                         "xField": "time",
                         "yField": "value",
                         "axes": [
                             {
                                 "orient": 'left',
-                                "title": {
-                                    "visible": "true",
-                                    "text": "单位（元）"
-                                }
+                                # "title": {
+                                #     "visible": "true",
+                                #     "text": ""
+                                # },
+                            },
+                            {
+                                "orient": 'bottom',
+                                "label": {
+                                    "minGap": 15
+                                },
+                                "sampling": True
                             }
                         ],
 
