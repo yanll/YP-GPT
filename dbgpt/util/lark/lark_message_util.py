@@ -37,6 +37,9 @@ def send_message(receive_id: str, content: Dict, receive_id_type: str = "email",
 # 发送消息
 def send_card_message(receive_id: str, content: Dict):
     return send_message(receive_id, content, "open_id", "interactive", "card_message")
+# 发送消息
+def send_card_message_by_email(receive_id: str, content: Dict):
+    return send_message(receive_id, content, "email", "interactive", "card_message")
 
 
 def send_message_rag(receive_id: str, content: Dict, receive_id_type: str = "email", msg_type: str = "text",
