@@ -395,10 +395,15 @@ class LarkEventHandlerWrapper:
                         },
                         "query_str": data["query_str"],
                         "daily_push_message_list": data["list"],
-                        "sales_diapaly": data["sales_diapaly"]
+                        "sales_diapaly": data["sales_diapaly"],
+
+                        "value_colour_yesterday_change_rate": data["value_colour_yesterday_change_rate"],
+                        "value_colour_weekly_change_rate": data["value_colour_weekly_change_rate"]
                     }
                 )
             )
+
+
             lark_message_id = resp["message_id"]
             self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
             return
