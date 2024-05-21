@@ -62,8 +62,6 @@ class LarkEventHandlerWrapper:
         }
         self.app_chat_service.add_app_chat_his_message(rec)
 
-
-
     def validate_date_format(self, date_field: str, data: Dict):
         date_value = data.get(date_field, "")
         try:
@@ -72,15 +70,13 @@ class LarkEventHandlerWrapper:
         except ValueError:
             return False
 
-
-
     def lark_reply_form_card_message(self, sender_open_id: str, resp_msg: str, action: Dict, data: Dict):
         if data is None:
             return
         card_name = action["card_name"]
         if card_name == "requirement_collect":
-            if not self.validate_date_format("expected_completion_date",data):
-                error_message = "请您优化您输入的时间格式，参考样例：\n 一:2024-01-01\n 二:2024.01.01\n 三:2024年1月1日"
+            if not self.validate_date_format("expected_completion_date", data):
+                error_message = "请告诉我正确的日期，按照格式输入。\n例如：2024-01-01、2024年1月1日"
                 resp = lark_card_util.send_message_with_bingo(
                     receive_id=sender_open_id,
                     template_variable={
@@ -151,8 +147,8 @@ class LarkEventHandlerWrapper:
             self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
             return
         if card_name == "daily_report_collect":
-            if not self.validate_date_format("create_date",data):
-                error_message = "请您优化您输入的时间格式，参考样例：\n 一:2024-01-01\n 二:2024.01.01\n 三:2024年1月1日"
+            if not self.validate_date_format("create_date", data):
+                error_message = "请告诉我正确的日期，按照格式输入。\n例如：2024-01-01、2024年1月1日"
                 resp = lark_card_util.send_message_with_bingo(
                     receive_id=sender_open_id,
                     template_variable={
@@ -201,8 +197,8 @@ class LarkEventHandlerWrapper:
             self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
             return
         if card_name == "weekly_report_collect":
-            if not self.validate_date_format("create_date",data):
-                error_message = "请您优化您输入的时间格式，参考样例：\n 一:2024-01-01\n 二:2024.01.01\n 三:2024年1月1日"
+            if not self.validate_date_format("create_date", data):
+                error_message = "请告诉我正确的日期，按照格式输入。\n例如：2024-01-01、2024年1月1日"
                 resp = lark_card_util.send_message_with_bingo(
                     receive_id=sender_open_id,
                     template_variable={
@@ -250,8 +246,8 @@ class LarkEventHandlerWrapper:
             self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
             return
         if card_name == "customer_visit_record_collect":
-            if not self.validate_date_format("visit_date",data):
-                error_message = "请您优化您输入的时间格式，参考样例：\n 一:2024-01-01\n 二:2024.01.01\n 三:2024年1月1日"
+            if not self.validate_date_format("visit_date", data):
+                error_message = "请告诉我正确的日期，按照格式输入。\n例如：2024-01-01、2024年1月1日"
                 resp = lark_card_util.send_message_with_bingo(
                     receive_id=sender_open_id,
                     template_variable={

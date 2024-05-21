@@ -38,8 +38,7 @@ class RequirementCollectInput(BaseModel):
     )
     expected_completion_date: str = Field(
         name="期望完成日期",
-        #description="期望完成日期，格式：%Y-%m-%d",
-        description="期望完成日期",
+        description="期望完成日期，格式：%Y-%m-%d",
         default=""
     )
     emergency_level: str = Field(
