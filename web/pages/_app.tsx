@@ -14,6 +14,8 @@ import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
 import { CssVarsProvider, ThemeProvider, useColorScheme } from '@mui/joy';
 import { joyTheme } from '@/defaultTheme';
+import Login from "@/pages/login";
+import { useRouter } from 'next/router';
 
 const antdDarkTheme: MappingAlgorithm = (seedToken, mapToken) => {
   return {
@@ -82,6 +84,15 @@ function LayoutWrapper({ children }: { children: React.ReactNode }) {
 }
 
 function MyApp({ Component, pageProps }: AppProps) {
+
+  const router = useRouter();
+  if (router.pathname === '/login') {
+      return (
+          <Login></Login>
+      )
+  }
+
+
   return (
     <ChatContextProvider>
       <ThemeProvider theme={joyTheme}>
