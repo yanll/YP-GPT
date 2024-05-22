@@ -32,7 +32,7 @@ class BookMeetingRoomToolInput(BaseModel):
     )
     meeting_room_name: str = Field(
         name="会议室名称",
-        description="会议室名称，" +
+        description="会议室名称：" +
                     lark_card_util.card_options_to_input_field_description(
                         lark_card_util.card_options_for_meeting_room_name()
                     ),
@@ -41,7 +41,7 @@ class BookMeetingRoomToolInput(BaseModel):
 
     start_time: str = Field(
         name="会议开始时间",
-        description="会议开始时间" +
+        description="会议开始时间：" +
                     lark_card_util.card_options_to_input_field_description(
                         lark_card_util.card_options_for_meeting_room_data()
                     ),
@@ -49,7 +49,7 @@ class BookMeetingRoomToolInput(BaseModel):
     )
     end_time: str = Field(
         name="会议结束时间",
-        description="会议结束时间" +
+        description="会议结束时间：" +
                     lark_card_util.card_options_to_input_field_description(
                         lark_card_util.card_options_for_meeting_room_data()
                     ),
