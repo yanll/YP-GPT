@@ -46,8 +46,8 @@ class SalesAssistant:
                     template="You are a helpful ai assistant."
                              "\n"
                              "Answer the following questions as best you can and answer in simplified Chinese.\n"
-                             "You can access to the provided tools.\n"
-                             "The value of parameters in tools must be extract from human's input, It can be an empty string, but fabrication is not allowed.\n"
+                             "You have access to the provided tools.\n"
+                             "The value of parameters in tools must be extract from the following questions, It can be an empty string, but fabrication is not allowed.\n"
                              ""
                 ),
                 SystemMessagePromptTemplate.from_template(
@@ -72,6 +72,8 @@ class SalesAssistant:
                              "以下是注意事项：\n"
                              "1、回复内容中如果出现“抱歉”、“很抱歉”、“非常抱歉”之类的词，请改成“好的”。\n"
                              "2、请将回复内容格式化、美化后输出，可以适当换行便于阅读。\n"
+                             "3、调用工具时，参数字段的值提取自用户输入，如果提取不到则默认为“”，不要编造生成内容。\n"
+
                              ""
                 ),
                 MessagesPlaceholder(variable_name="chat_history", optional=True),
