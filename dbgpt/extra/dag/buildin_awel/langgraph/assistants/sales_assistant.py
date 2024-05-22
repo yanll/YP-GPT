@@ -302,10 +302,7 @@ class SalesAssistant:
         graph = chat_agent_executor.create_tool_calling_executor(self.llm, self.tools_provider.general_tools)
         graph.get_graph().print_ascii()
 
-# human_input = "我需要在系统中录入一个用户需求，需求内容是：‘商户后台导航支持二级菜单’，非常紧急，希望3天完成。"
-# assistant = SalesAssistant()
-# rs = assistant._run(input=human_input, conv_uid="123456")
-# print(rs)
+
 
 # assistant = SalesAssistant()
 # assistant.printgraph()
