@@ -272,6 +272,7 @@ def generate_rag_response_card(origin_res):
         }
         
         # print(file_name,cache_files)
+        print("参考文件名：",names)
         if len(names) == 1 :
             cache_files.append(file_dict)
             continue
@@ -279,7 +280,9 @@ def generate_rag_response_card(origin_res):
         # 打开json文件，获取文件对应的飞书URL
         try:
             proj_path = os.getcwd()
-            f = open(os.path.join(proj_path,'dbgpt/extra/dag/buildin_awel/lark/static/ragfiles',names[0] + '.json'))
+            file_path = os.path.join(proj_path,'dbgpt/extra/dag/buildin_awel/lark/static/ragfiles',names[0] + '.json')
+            f = open(file_path)
+            print("查找源文件路径",file_path)
             f_json = json.load(f)
             for key, value in f_json.items():
                 if key == name:

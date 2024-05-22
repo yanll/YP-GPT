@@ -1,15 +1,11 @@
-import json
 import logging
-from typing import Optional, Type
+from typing import Type
 
 from langchain.tools import BaseTool
-from langchain_core.callbacks import (
-    CallbackManagerForToolRun,
-)
 from pydantic import BaseModel, Field
 
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import larkutil, lark_card_util, lark_message_util
+from dbgpt.util.lark import larkutil
 
 
 class ConvIdInput(BaseModel):
@@ -18,12 +14,12 @@ class ConvIdInput(BaseModel):
         description="the value of conv_id",
     )
 
+
 class AbilityDisplayTool(BaseTool):
     name: str = "ability_display_tool"
     description: str = (
         "这是一个展示能力的工具。\n"
         "当用户询问有什么能力时，调用此工具。\n"
-        "触发条件可以是'你有什么能力'、'你会什么'等关键词。\n"
     )
     args_schema: Type[BaseModel] = ConvIdInput
 
@@ -61,6 +57,5 @@ class AbilityDisplayTool(BaseTool):
                 }
             }
         except Exception as e:
-            logging.error("能力卡片异常：" + conv_id , e)
+            logging.error("能力卡片异常：" + conv_id, e)
             return '能力卡片异常'
-
