@@ -209,6 +209,19 @@ def create_customer_visit_record_card_content(template_variable: Dict):
         }
     }
     return card
+def create_book_meeting_room_card_content(template_variable: Dict):
+    """查询会议室"""
+    template_id = "AAq30n6nMNitP"
+    template_version_name = "1.0.9"
+
+    card = {
+        "type": "template",
+        "data": {
+            "template_id": template_id, "template_version_name": template_version_name,
+            "template_variable": template_variable
+        }
+    }
+    return card
 
 
 def create_merchant_list_card_content(template_variable: Dict):

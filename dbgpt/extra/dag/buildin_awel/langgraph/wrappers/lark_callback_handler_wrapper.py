@@ -5,7 +5,7 @@ from typing import Dict
 
 from dbgpt.extra.dag.buildin_awel.langgraph.tools import sales_details_daily
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import Day_30_TrxTre_card_tool, crem_30DaysTrx_text, \
-    crem_30DaysTrx_text_two
+    crem_30DaysTrx_text_two, lark_book_meeting_room
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_customer_visit
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_wrapper, card_send_daily_report_search
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_api_wrapper
@@ -90,6 +90,10 @@ async def a_call(app_chat_service, event: Dict):
             )
         if event_source == "customer_visit_record_collect":
             return create_customer_visit_record_for_crem(
+                open_id=open_id, form_value=form_value
+            )
+        if event_source == "book_meeting_room_collect":
+            return create_book_meeting_room_for_lark(
                 open_id=open_id, form_value=form_value
             )
         if event_source == 'crm_bus_customer_collect':
@@ -240,6 +244,28 @@ def create_customer_visit_record_for_crem(open_id, form_value: Dict):
 
     print("拜访结果:", customer_visit_record)
     return {}
+def create_book_meeting_room_for_lark(open_id, form_value: Dict):
+
+    meeting_room_name = form_value['meeting_room_name']
+    expected_date = form_value['expected_date'].split()[0]  # 提取日期部分
+    start_time = form_value['start_time'][1:9]  # 提取时间部分，去掉开头的'T'
+    end_time = form_value['end_time'][1:9]  # 提取时间部分，去掉开头的'T'
+
+    # 调用函数来拼接日期和时间
+    time_min = expected_date + ' ' + start_time
+    time_max = expected_date + ' ' + end_time
+
+
+    book_meeting_room = lark_book_meeting_room.test_create_calendar(
+        room_id=meeting_room_name,
+        grant_user_open_id=open_id,
+        start_times=time_min,
+        end_times=time_max
+    )
+
+    print("空闲会议室结果:", book_meeting_room)
+    return {}
+
 
 
 def create_crm_bus_customer_for_crem(open_id, form_value: Dict):

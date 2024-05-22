@@ -426,3 +426,99 @@ def card_options_for_visit_types() -> list:
         {"action_index": 4, "action_value": "签约前拜访", "text": "签约前拜访"}
     ]
     return options
+
+def card_options_for_meeting_room_name() -> list:
+    """会议室的名称"""
+    options = [
+        {"action_index": 1, "action_value": "omm_fce8075d5a6a25c764a808c69a48b82a", "text": "Hacker"},
+        {"action_index": 2, "action_value": "omm_435bca3a3d40f120c63540028b965538", "text": "smart"},
+        {"action_index": 3, "action_value": "omm_d511e9e4e40f68107f556c943ca50c44", "text": "think different"},
+        {"action_index": 4, "action_value": "omm_2fa172ec56aba79c654ec5a4b58e9f27", "text": "分享"},
+        {"action_index": 5, "action_value": "omm_3864b3539c370d51e8d086791b008d44", "text": "北极星"},
+        {"action_index": 6, "action_value": "omm_247693a0dbb368b6af624c51ba5df218", "text": "坦诚"},
+        {"action_index": 7, "action_value": "omm_32be015ee6d9318e11561b984d665971", "text": "天权星"},
+        {"action_index": 8, "action_value": "omm_dcf65c2ffcbabe4bf01c72e0470c541b", "text": "天枢星"},
+        {"action_index": 9, "action_value": "omm_7e99a24f850323e3038526ce3f809ba5", "text": "天狼星"},
+        {"action_index": 10, "action_value": "omm_fecbfd6505548d491026365ad03cb215", "text": "天玑星"},
+        {"action_index": 11, "action_value": "omm_ddee0861011df191f0404b80f0c7d9eb", "text": "天璇星"},
+        {"action_index": 12, "action_value": "omm_e457d7a3eb7133f98fc27a267a1646c1", "text": "天衡星"},
+        {"action_index": 13, "action_value": "omm_d47dd4f223a3531f31b351513b036f61", "text": "太阳"},
+        {"action_index": 14, "action_value": "omm_41510695cc2c9e86c3ef7d4afc247c74", "text": "尽责"},
+        {"action_index": 15, "action_value": "omm_9da759bfae9935249eda2ce675e2682e", "text": "开放"},
+        {"action_index": 16, "action_value": "omm_56bb92f696093b60a3108ae3b7102a78", "text": "开阳星"},
+        {"action_index": 17, "action_value": "omm_2db12593ce9242345be73a59a0120ccc", "text": "摇光星"},
+        {"action_index": 18, "action_value": "omm_4a260a86bc05a2d7dbb901c53bf5bc92", "text": "敢干"},
+        {"action_index": 19, "action_value": "omm_001832945aef034f5853ca649db51b97", "text": "敢想"},
+        {"action_index": 20, "action_value": "omm_5a1d13dc13e79e6f739b3d6f2d26c452", "text": "敢说"},
+        {"action_index": 21, "action_value": "omm_1898ce77b933009c84cc999a93aeefc4", "text": "敢败"},
+        {"action_index": 22, "action_value": "omm_a77aef5161de2d637bc0c156647474d4", "text": "极致"},
+        {"action_index": 23, "action_value": "omm_bb38d0046d5159a31385030a1346a6c5", "text": "泰山"},
+        {"action_index": 24, "action_value": "omm_a5ec3a14a94322968cd6fea05b34f4df", "text": "浪漫"},
+        {"action_index": 25, "action_value": "omm_e8f296a80f0f448a9d6c659abb0a7ea8", "text": "禾口"},
+        {"action_index": 26, "action_value": "omm_c520c17858b4b6fb22bac99f6e1dda5b", "text": "蓝点"},
+        {"action_index": 27, "action_value": "omm_9ca36d25bfe178df5da26205b39da278", "text": "超越"}
+    ]
+
+
+    return options
+
+
+def card_options_for_meeting_room_data() -> list:
+    """会议室的预定时间情况"""
+    options = [
+    {"action_index": 1, "action_value": "T00:00:00+08:00", "text": "00:00"},
+    {"action_index": 2, "action_value": "T00:30:00+08:00", "text": "00:30"},
+    {"action_index": 3, "action_value": "T01:00:00+08:00", "text": "01:00"},
+    {"action_index": 4, "action_value": "T01:30:00+08:00", "text": "01:30"},
+    {"action_index": 5, "action_value": "T02:00:00+08:00", "text": "02:00"},
+    {"action_index": 6, "action_value": "T02:30:00+08:00", "text": "02:30"},
+    {"action_index": 7, "action_value": "T03:00:00+08:00", "text": "03:00"},
+    {"action_index": 8, "action_value": "T03:30:00+08:00", "text": "03:30"},
+    {"action_index": 9, "action_value": "T04:00:00+08:00", "text": "04:00"},
+    {"action_index": 10, "action_value": "T04:30:00+08:00", "text": "04:30"},
+    {"action_index": 11, "action_value": "T05:00:00+08:00", "text": "05:00"},
+    {"action_index": 12, "action_value": "T05:30:00+08:00", "text": "05:30"},
+    {"action_index": 13, "action_value": "T06:00:00+08:00", "text": "06:00"},
+    {"action_index": 14, "action_value": "T06:30:00+08:00", "text": "06:30"},
+    {"action_index": 15, "action_value": "T07:00:00+08:00", "text": "07:00"},
+    {"action_index": 16, "action_value": "T07:30:00+08:00", "text": "07:30"},
+    {"action_index": 17, "action_value": "T08:00:00+08:00", "text": "08:00"},
+    {"action_index": 18, "action_value": "T08:30:00+08:00", "text": "08:30"},
+    {"action_index": 19, "action_value": "T09:00:00+08:00", "text": "09:00"},
+    {"action_index": 20, "action_value": "T09:30:00+08:00", "text": "09:30"},
+    {"action_index": 21, "action_value": "T10:00:00+08:00", "text": "10:00"},
+    {"action_index": 22, "action_value": "T10:30:00+08:00", "text": "10:30"},
+    {"action_index": 23, "action_value": "T11:00:00+08:00", "text": "11:00"},
+    {"action_index": 24, "action_value": "T11:30:00+08:00", "text": "11:30"},
+    {"action_index": 25, "action_value": "T12:00:00+08:00", "text": "12:00"},
+    {"action_index": 26, "action_value": "T12:30:00+08:00", "text": "12:30"},
+    {"action_index": 27, "action_value": "T13:00:00+08:00", "text": "13:00"},
+    {"action_index": 28, "action_value": "T13:30:00+08:00", "text": "13:30"},
+    {"action_index": 29, "action_value": "T14:00:00+08:00", "text": "14:00"},
+    {"action_index": 30, "action_value": "T14:30:00+08:00", "text": "14:30"},
+    {"action_index": 31, "action_value": "T15:00:00+08:00", "text": "15:00"},
+    {"action_index": 32, "action_value": "T15:30:00+08:00", "text": "15:30"},
+    {"action_index": 33, "action_value": "T16:00:00+08:00", "text": "16:00"},
+    {"action_index": 34, "action_value": "T16:30:00+08:00", "text": "16:30"},
+    {"action_index": 35, "action_value": "T17:00:00+08:00", "text": "17:00"},
+    {"action_index": 36, "action_value": "T17:30:00+08:00", "text": "17:30"},
+    {"action_index": 37, "action_value": "T18:00:00+08:00", "text": "18:00"},
+    {"action_index": 38, "action_value": "T18:30:00+08:00", "text": "18:30"},
+    {"action_index": 39, "action_value": "T19:00:00+08:00", "text": "19:00"},
+    {"action_index": 40, "action_value": "T19:30:00+08:00", "text": "19:30"},
+    {"action_index": 41, "action_value": "T20:00:00+08:00", "text": "20:00"},
+    {"action_index": 42, "action_value": "T20:30:00+08:00", "text": "20:30"},
+    {"action_index": 43, "action_value": "T21:00:00+08:00", "text": "21:00"},
+    {"action_index": 44, "action_value": "T21:30:00+08:00", "text": "21:30"},
+    {"action_index": 45, "action_value": "T22:00:00+08:00", "text": "22:00"},
+    {"action_index": 46, "action_value": "T22:30:00+08:00", "text": "22:30"},
+    {"action_index": 47, "action_value": "T23:00:00+08:00", "text": "23:00"},
+    {"action_index": 48, "action_value": "T23:30:00+08:00", "text": "23:30"}
+]
+
+
+
+
+    return options
+
+

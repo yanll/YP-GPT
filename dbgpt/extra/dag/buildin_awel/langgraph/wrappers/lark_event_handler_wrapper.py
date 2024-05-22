@@ -298,6 +298,41 @@ class LarkEventHandlerWrapper:
             lark_message_id = resp["message_id"]
             self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
             return
+        if card_name == "book_meeting_room_collect":
+            resp = lark_message_util.send_card_message(
+                receive_id=sender_open_id,
+                content=card_templates.create_book_meeting_room_card_content(
+                    template_variable={
+                        "card_metadata": {
+                            "card_name": card_name,
+                            "card_description": "会议室预定表单"
+                        },
+                        "submit_callback_event": {
+                            "event_type": "submit",
+                            "event_source": card_name
+                        },
+                        "unlike_callback_event": {
+                            "event_type": "unlike",
+                            "event_source": card_name,
+                            "event_data": {
+                                "message": "会议室预定表单"
+                            }
+                        },
+                        "ai_message": resp_msg,
+                        "expected_date": data["expected_date"],
+                        "meeting_room_name": data["meeting_room_name"],
+                        "meeting_room_names": data["meeting_room_names"],
+                        "start_time": data["start_time"],
+                        "start_times": data["start_times"],
+                        "end_time": data["end_time"],
+                        "end_times": data["end_times"]
+
+                    }
+                )
+            )
+            lark_message_id = resp["message_id"]
+            self.store_his_message(sender_open_id, resp_msg, "form_card", lark_message_id)
+            return
         if card_name == "merchant_list_card":
             resp = lark_message_util.send_card_message(
                 receive_id=sender_open_id,
