@@ -104,8 +104,8 @@ def test_select_room_free_busy():
     lark_calendar_util.select_room_free_busy(
         token=token,
         room_ids=["omm_4a260a86bc05a2d7dbb901c53bf5bc92"],
-        time_min="2024-04-02T00:00:00+08:00",
-        time_max="2024-04-03T00:00:00+08:00"
+        time_min="2024-05-22T00:00:00+08:00",
+        time_max="2024-05-22T00:00:00+08:00"
     )
     assert True
 
@@ -127,11 +127,11 @@ def test_create_calendar():
     # omm_4a260a86bc05a2d7dbb901c53bf5bc92 敢干
     # omm_1898ce77b933009c84cc999a93aeefc4 敢败
     room_id = "omm_4a260a86bc05a2d7dbb901c53bf5bc92"
-    grant_user_open_id = "ou_1a32c82be0a5c6ee7bc8debd75c65e34"
+    grant_user_open_id = "ou_9d42bb88ec8940baf3ad183755131881"
     summary = "严亮亮日程标题"
     description = "严亮亮日程描述"
-    start_time = int(datetime.strptime("2024-04-02 12:00:00", "%Y-%m-%d %H:%M:%S").timestamp())
-    end_time = int(datetime.strptime("2024-04-02 20:00:00", "%Y-%m-%d %H:%M:%S").timestamp())
+    start_time = int(datetime.strptime("2024-08-20 12:00:00", "%Y-%m-%d %H:%M:%S").timestamp())
+    end_time = int(datetime.strptime("2024-08-20 20:00:00", "%Y-%m-%d %H:%M:%S").timestamp())
 
     token = larkutil.get_tenant_access_token()['tenant_access_token']
     calendar_id = lark_calendar_util.create_calendar_id(token=token)

@@ -456,7 +456,17 @@ def card_options_for_meeting_room_name() -> list:
         {"action_index": 24, "action_value": "omm_a5ec3a14a94322968cd6fea05b34f4df", "text": "浪漫"},
         {"action_index": 25, "action_value": "omm_e8f296a80f0f448a9d6c659abb0a7ea8", "text": "禾口"},
         {"action_index": 26, "action_value": "omm_c520c17858b4b6fb22bac99f6e1dda5b", "text": "蓝点"},
-        {"action_index": 27, "action_value": "omm_9ca36d25bfe178df5da26205b39da278", "text": "超越"}
+        {"action_index": 27, "action_value": "omm_9ca36d25bfe178df5da26205b39da278", "text": "超越"},
+        {"action_index": 27, "action_value": "omm_f15852ebf66fe58b2b23a01677d868d9", "text": "Beyond Innovative"},
+        {"action_index": 28, "action_value": "omm_70f5c43c18a15e00eb4d95fafc9c5585", "text": "担当"},
+        {"action_index": 29, "action_value": "omm_f016a5f4cc4ec85ed90960d3e07eaea4", "text": "时代"},
+        {"action_index": 30, "action_value": "omm_7e2ecab8f9186315e257acf6f469fb77", "text": "星辰"},
+        {"action_index": 31, "action_value": "omm_20655926a1f557cdbb2061658555ebeb", "text": "智能进化"},
+        {"action_index": 32, "action_value": "omm_047d366f068f49683729f5bdf8d660f0", "text": "诚信"},
+        {"action_index": 33, "action_value": "omm_88f18991716db9b7c543b80a1ce773b9", "text": "AI"},
+        {"action_index": 34, "action_value": "omm_21c0b9e9f62bd9da13831c90c8ea0983", "text": "超越自我"},
+        {"action_index": 35, "action_value": "omm_a751d42631e4801cd3061743fd9da429", "text": "高效协同"},
+
     ]
 
 
