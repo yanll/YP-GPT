@@ -68,10 +68,10 @@ class SalesAssistant:
                              ""
                 ),
                 SystemMessagePromptTemplate.from_template(
-                    template=""
+                    template="请仔细思考并检查回答的内容是否正确，是否符合我的要求。\n"
                              "以下是注意事项：\n"
                              "1、回复内容中如果出现“抱歉”、“很抱歉”、“非常抱歉”之类的词，请改成“好的”。\n"
-                             "1、请将回复内容格式化、美化后输出。\n"
+                             "2、请将回复内容格式化、美化后输出，可以适当换行便于阅读。\n"
                              ""
                 ),
                 MessagesPlaceholder(variable_name="chat_history", optional=True),
