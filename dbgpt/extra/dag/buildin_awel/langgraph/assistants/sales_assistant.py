@@ -292,7 +292,8 @@ class SalesAssistant:
                 "display_type": "text",
                 "lark_message_id": ""
             }
-            # self.app_chat_service.add_app_chat_his_message(rec)
+            if self.use_storage is True:
+                self.app_chat_service.add_app_chat_his_message(rec)
             rs = ""
             print("Execute Agent")
             for s in self.app.stream(inputs):
