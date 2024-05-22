@@ -56,14 +56,16 @@ class BookMeetingRoomToolInput(BaseModel):
         default=""
     )
 
+
 class BookMeetingRoomTool(BaseTool):
     name: str = "book_meeting_room_tool"
     description: str = (
-                "会议室查询预定工具。 "
-                "请注意：\n"
-                "1、调用本工具需要的参数值来自用户输入，可以默认为空，但是禁止随意编造。\n"
-                ""
-            )
+        "会议室预定工具，"
+        "请注意：\n"
+        "1、当需要预定会议室、创建日程、定会议室时非常有用。\n"
+        "2、调用本工具需要的参数值来自用户输入，可以默认为空，但是禁止随意编造。\n"
+        ""
+    )
     args_schema: Type[BaseModel] = BookMeetingRoomToolInput
 
     def _run(
@@ -144,11 +146,3 @@ def handle(
 #
 #
 #
-
-
-
-
-
-
-
-
