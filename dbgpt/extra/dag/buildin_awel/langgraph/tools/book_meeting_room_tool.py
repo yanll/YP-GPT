@@ -83,8 +83,6 @@ class BookMeetingRoomTool(BaseTool):
             reuqires = []
             if expected_date == "":
                 reuqires.append("expected_date")
-            if meeting_room_name == "":
-                reuqires.append("meeting_room_name")
             if start_time == "":
                 reuqires.append("start_time")
             if end_time == "":
