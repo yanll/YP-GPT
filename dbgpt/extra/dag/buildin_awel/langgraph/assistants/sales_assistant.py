@@ -24,6 +24,7 @@ os.environ["LANGCHAIN_API_KEY"] = "ls__19718564013e408d8d5ae23ad8dbdf29"
 
 class SalesAssistant:
     gpts_app_service = None
+    use_storage = True
     app_chat_service = None
     llm = None
     tools_provider = None
@@ -109,7 +110,8 @@ class SalesAssistant:
                 "display_type": "",
                 "lark_message_id": ""
             }
-            self.app_chat_service.add_app_chat_his_message(rec)
+            if self.use_storage is True:
+                self.app_chat_service.add_app_chat_his_message(rec)
             last_outcome = ""
             if 'intermediate_steps' not in data:
                 return {"agent_outcome": function_call_outcome, "last_outcome": last_outcome}
@@ -170,7 +172,8 @@ class SalesAssistant:
                 "display_type": "",
                 "lark_message_id": ""
             }
-            self.app_chat_service.add_app_chat_his_message(rec)
+            if self.use_storage is True:
+                self.app_chat_service.add_app_chat_his_message(rec)
 
             tool_execute_result = {"intermediate_steps": [(agent_action, str(output))]}
             print("tool_execute_result:", tool_name, tool_execute_result)
@@ -204,6 +207,7 @@ class SalesAssistant:
         thought_function_call_node = self.create_function_call_node()
         # 工具执行节点
         do_execute_tools_node = self.create_do_execute_tools_node()
+
         # do_execute_knowledge_node = self.create_do_knowledge_tool_node()
 
         # 定义将用于确定要继续的条件边的逻辑
@@ -268,7 +272,9 @@ class SalesAssistant:
         try:
             # converted_tools_info = self.tools_provider.converted_tools_info()
             # print("工具列表：", converted_tools_info)
-            his = self.app_chat_service.get_app_chat_his_messages_by_conv_uid(conv_uid=conv_uid)
+            his = []
+            if self.use_storage is True:
+                his = self.app_chat_service.get_app_chat_his_messages_by_conv_uid(conv_uid=conv_uid)
             inputs: Dict = {
                 "input": input,
                 "chat_history": his,
@@ -286,7 +292,7 @@ class SalesAssistant:
                 "display_type": "text",
                 "lark_message_id": ""
             }
-            self.app_chat_service.add_app_chat_his_message(rec)
+            # self.app_chat_service.add_app_chat_his_message(rec)
             rs = ""
             print("Execute Agent")
             for s in self.app.stream(inputs):
@@ -301,8 +307,6 @@ class SalesAssistant:
     def printgraph(self):
         graph = chat_agent_executor.create_tool_calling_executor(self.llm, self.tools_provider.general_tools)
         graph.get_graph().print_ascii()
-
-
 
 # assistant = SalesAssistant()
 # assistant.printgraph()
