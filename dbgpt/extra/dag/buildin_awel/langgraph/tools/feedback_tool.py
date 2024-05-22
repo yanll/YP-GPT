@@ -58,7 +58,14 @@ class FeedbackCollectTool(BaseTool):
             recommendation: str = "",
             reference_url: str = ""
     ):
-        print("开始运行问题反馈收集工具：", conv_id, feedback)
+        rec = FeedbackCollectInput(
+            conv_id=conv_id,
+            feedback=feedback,
+            effect=effect,
+            recommendation=recommendation,
+            reference_url=reference_url
+        )
+        print("开始运行问题反馈收集工具：", conv_id, str(rec))
         try:
             reuqires = []
             if feedback == "":
