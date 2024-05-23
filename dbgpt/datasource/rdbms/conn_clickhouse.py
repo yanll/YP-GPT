@@ -221,7 +221,7 @@ class ClickhouseConnector(RDBMSConnector):
 
             cursor = self.client.command(command)
 
-            if cursor.written_rows:
+            if type(cursor) != str and cursor.written_rows:
                 result = cursor.result_rows
                 field_names = result.column_names
 
@@ -296,11 +296,11 @@ class ClickhouseConnector(RDBMSConnector):
         """Get table simple info."""
         # group_concat() not supported in clickhouse, use arrayStringConcat+groupArray
         # instead; and quotes need to be escaped
-
+        logger.info("====================ClickHouse" + self.get_current_db_name())
         _sql = f"""
             SELECT concat(TABLE_NAME, '(', arrayStringConcat(
                 groupArray(column_name), '-'), ')') AS schema_info
-            FROM INFORMATION_SCHEMA.COLUMNS
+            FROM system.COLUMNS
             WHERE table_schema = '{self.get_current_db_name()}'
             GROUP BY TABLE_NAME
         """

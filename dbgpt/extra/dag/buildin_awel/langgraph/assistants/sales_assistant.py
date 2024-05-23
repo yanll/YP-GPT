@@ -24,6 +24,7 @@ os.environ["LANGCHAIN_API_KEY"] = "ls__19718564013e408d8d5ae23ad8dbdf29"
 
 class SalesAssistant:
     gpts_app_service = None
+    use_storage = True
     app_chat_service = None
     llm = None
     tools_provider = None
@@ -46,8 +47,8 @@ class SalesAssistant:
                     template="You are a helpful ai assistant."
                              "\n"
                              "Answer the following questions as best you can and answer in simplified Chinese.\n"
-                             "You can access to the provided tools.\n"
-                             "The value of parameters in tools must be extract from human's input, It can be an empty string, but fabrication is not allowed.\n"
+                             "You have access to the provided tools.\n"
+                             "The value of parameters in tools must be extract from the following questions, It can be an empty string, but fabrication is not allowed.\n"
                              ""
                 ),
                 SystemMessagePromptTemplate.from_template(
@@ -72,6 +73,8 @@ class SalesAssistant:
                              "以下是注意事项：\n"
                              "1、回复内容中如果出现“抱歉”、“很抱歉”、“非常抱歉”之类的词，请改成“好的”。\n"
                              "2、请将回复内容格式化、美化后输出，可以适当换行便于阅读。\n"
+                             "3、调用工具时，参数字段的值提取自用户输入，如果提取不到则默认为“”，不要编造生成内容。\n"
+
                              ""
                 ),
                 MessagesPlaceholder(variable_name="chat_history", optional=True),
@@ -107,7 +110,8 @@ class SalesAssistant:
                 "display_type": "",
                 "lark_message_id": ""
             }
-            self.app_chat_service.add_app_chat_his_message(rec)
+            if self.use_storage is True:
+                self.app_chat_service.add_app_chat_his_message(rec)
             last_outcome = ""
             if 'intermediate_steps' not in data:
                 return {"agent_outcome": function_call_outcome, "last_outcome": last_outcome}
@@ -168,7 +172,8 @@ class SalesAssistant:
                 "display_type": "",
                 "lark_message_id": ""
             }
-            self.app_chat_service.add_app_chat_his_message(rec)
+            if self.use_storage is True:
+                self.app_chat_service.add_app_chat_his_message(rec)
 
             tool_execute_result = {"intermediate_steps": [(agent_action, str(output))]}
             print("tool_execute_result:", tool_name, tool_execute_result)
@@ -202,6 +207,7 @@ class SalesAssistant:
         thought_function_call_node = self.create_function_call_node()
         # 工具执行节点
         do_execute_tools_node = self.create_do_execute_tools_node()
+
         # do_execute_knowledge_node = self.create_do_knowledge_tool_node()
 
         # 定义将用于确定要继续的条件边的逻辑
@@ -266,7 +272,9 @@ class SalesAssistant:
         try:
             # converted_tools_info = self.tools_provider.converted_tools_info()
             # print("工具列表：", converted_tools_info)
-            his = self.app_chat_service.get_app_chat_his_messages_by_conv_uid(conv_uid=conv_uid)
+            his = []
+            if self.use_storage is True:
+                his = self.app_chat_service.get_app_chat_his_messages_by_conv_uid(conv_uid=conv_uid)
             inputs: Dict = {
                 "input": input,
                 "chat_history": his,
@@ -284,7 +292,8 @@ class SalesAssistant:
                 "display_type": "text",
                 "lark_message_id": ""
             }
-            self.app_chat_service.add_app_chat_his_message(rec)
+            if self.use_storage is True:
+                self.app_chat_service.add_app_chat_his_message(rec)
             rs = ""
             print("Execute Agent")
             for s in self.app.stream(inputs):
@@ -299,11 +308,6 @@ class SalesAssistant:
     def printgraph(self):
         graph = chat_agent_executor.create_tool_calling_executor(self.llm, self.tools_provider.general_tools)
         graph.get_graph().print_ascii()
-
-# human_input = "我需要在系统中录入一个用户需求，需求内容是：‘商户后台导航支持二级菜单’，非常紧急，希望3天完成。"
-# assistant = SalesAssistant()
-# rs = assistant._run(input=human_input, conv_uid="123456")
-# print(rs)
 
 # assistant = SalesAssistant()
 # assistant.printgraph()

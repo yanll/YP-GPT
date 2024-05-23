@@ -5,6 +5,7 @@ from langchain_core.utils.function_calling import convert_to_openai_tool
 from pydantic import BaseModel
 
 from dbgpt.extra.dag.buildin_awel.langgraph.tools.ability_display_tool import AbilityDisplayTool
+from dbgpt.extra.dag.buildin_awel.langgraph.tools.book_meeting_room_tool import BookMeetingRoomTool
 # from dbgpt.extra.dag.buildin_awel.langgraph.tools.ability_display_tool import AbilityDisplayTool
 from dbgpt.extra.dag.buildin_awel.langgraph.tools.crm_bus_customer_add_tool import CrmBusCustomerCollectAddTool
 from dbgpt.extra.dag.buildin_awel.langgraph.tools.crm_bus_customer_query_tool import CrmBusCustomerCollectQueryTool
@@ -35,8 +36,10 @@ class ToolsProvider:
             CrmBusCustomerCollectAddTool(),
             CrmBusCustomerCollectQueryTool(),
             Dailypushmessagetool(),
+            BookMeetingRoomTool(),
             AbilityDisplayTool(),
             FeedbackCollectTool()
+            # ,KnowledgeTool()
         ]
         pass
 

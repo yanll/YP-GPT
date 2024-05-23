@@ -1,14 +1,8 @@
 import logging
-from typing import Optional, Type
+from typing import Type
 
 from langchain.tools import BaseTool
-from langchain_core.callbacks import (
-    CallbackManagerForToolRun,
-)
 from pydantic import BaseModel, Field
-
-from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.lark import larkutil, lark_card_util, lark_message_util
 
 
 class FeedbackCollectInput(BaseModel):
@@ -24,8 +18,8 @@ class FeedbackCollectInput(BaseModel):
         description="the value of conv_id",
     )
     feedback: str = Field(
-        name="反馈/吐槽的内容详情",
-        description="反馈/吐槽的内容详情",
+        name="反馈/吐槽内容",
+        description="反馈/吐槽内容",
         default=""
     )
     effect: str = Field(
@@ -34,7 +28,7 @@ class FeedbackCollectInput(BaseModel):
         default=""
     )
     recommendation: str = Field(
-        name="recommendation",
+        name="意见建议",
         description="意见建议",
         default=""
     )
@@ -51,8 +45,7 @@ class FeedbackCollectTool(BaseTool):
         "问题反馈工具\n"
         "请注意：\n"
         "1、当需要吐槽或提交问题、反馈、意见、建议时非常有用。\n"
-        "1、当需要反馈问题、反馈意见、反馈建议时非常有用。\n"
-        "2、调用本工具需要的参数值来自用户输入，可以默认为空，但是禁止随意编造。\n"
+        "2、当需要反馈问题、反馈意见、反馈建议时非常有用。\n"
         ""
     )
     args_schema: Type[BaseModel] = FeedbackCollectInput
@@ -65,7 +58,14 @@ class FeedbackCollectTool(BaseTool):
             recommendation: str = "",
             reference_url: str = ""
     ):
-        print("开始运行问题反馈收集工具：", conv_id, feedback)
+        rec = FeedbackCollectInput(
+            conv_id=conv_id,
+            feedback=feedback,
+            effect=effect,
+            recommendation=recommendation,
+            reference_url=reference_url
+        )
+        print("开始运行问题反馈收集工具：", conv_id, str(rec))
         try:
             reuqires = []
             if feedback == "":
