@@ -46,14 +46,14 @@ def get_last_week_data_in_monitor4():
     return data
 
 
-def search_by_CUSTOMER_NO(CUSTOMER_NO:str):
+def search_by_customer_no(customer_no: str):
     url = 'https://dmall.yeepay.com/dev-api/dataapi/output/postapi/search_by_CUSTOMER_NO'
     data = {
         "appname": "app",
         "appkey": "yTr5PUeVm6Sw",
         "version": "V1.0",
         "parameters": {
-            "CUSTOMER_NO": CUSTOMER_NO
+            "CUSTOMER_NO": customer_no
         }
     }
     headers = {
