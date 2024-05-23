@@ -300,7 +300,7 @@ class ClickhouseConnector(RDBMSConnector):
         _sql = f"""
             SELECT concat(TABLE_NAME, '(', arrayStringConcat(
                 groupArray(column_name), '-'), ')') AS schema_info
-            FROM system.COLUMNS
+            FROM system.columns
             WHERE table_schema = '{self.get_current_db_name()}'
             GROUP BY TABLE_NAME
         """
@@ -308,7 +308,7 @@ class ClickhouseConnector(RDBMSConnector):
         logger.info(f"""
             SELECT concat(TABLE_NAME, '(', arrayStringConcat(
                 groupArray(column_name), '-'), ')') AS schema_info
-            FROM system.COLUMNS
+            FROM system.columns
             WHERE table_schema = '{self.get_current_db_name()}'
             GROUP BY TABLE_NAME
         """)
