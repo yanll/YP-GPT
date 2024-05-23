@@ -130,24 +130,29 @@ class ServeDao(BaseDao[ServeEntity, ServeRequest, ServerResponse]):
             total_pages = (total_count + page_size - 1) // page_size
             result_items = []
             for item in items:
-                select_param, model_name = "", None
-                if item.messages:
-                    messages = self._parse_old_messages(item)
-                    last_round = max(messages, key=lambda x: x["chat_order"])
-                    if "param_value" in last_round:
-                        select_param = last_round["param_value"]
+                try:
+                    # comment: 
+                    select_param, model_name = "", None
+                    if item.messages:
+                        messages = self._parse_old_messages(item)
+                        last_round = max(messages, key=lambda x: x["chat_order"])
+                        if "param_value" in last_round:
+                            select_param = last_round["param_value"]
+                        else:
+                            select_param = ""
                     else:
-                        select_param = ""
-                else:
-                    latest_message = self.get_latest_message(item.conv_uid)
-                    if latest_message:
-                        message = latest_message.to_message()
-                        select_param = message.additional_kwargs.get("param_value")
-                        model_name = message.additional_kwargs.get("model_name")
-                res_item = self.to_response(item)
-                res_item.select_param = select_param
-                res_item.model_name = model_name
-                result_items.append(res_item)
+                        latest_message = self.get_latest_message(item.conv_uid)
+                        if latest_message:
+                            message = latest_message.to_message()
+                            select_param = message.additional_kwargs.get("param_value")
+                            model_name = message.additional_kwargs.get("model_name")
+                    res_item = self.to_response(item)
+                    res_item.select_param = select_param
+                    res_item.model_name = model_name
+                    result_items.append(res_item)
+                except Exception as e:
+                    # end try
+                    continue
 
             result = PaginationResult(
                 items=result_items,
