@@ -202,6 +202,17 @@ class ClickhouseConnector(RDBMSConnector):
     def run(self, command: str, fetch: str = "all") -> List:
         """Execute sql command."""
         # TODO need to be implemented
+        # command = command.replace("table_name","name").replace("information_schema","system").replace("table_schema", "database")
+        # command = command.replace("information_schema","system").replace("table_schema", "database")
+        # if "system.columns" in command:
+        #     command = command.replace("name","table").replace("column_name","name")
+            
+        # if "system.tables" in command:
+        #     command = command.replace("table_name","name")
+            
+        # if "UNICON" in command and "UNICON ALL" not in command and "UNICON DISTINCT" not in command:
+        #     command = command.replace("UNICON","UNICON ALL")
+        
         logger.info("SQL:" + command)
         if not command or len(command) < 0:
             return []
@@ -298,12 +309,20 @@ class ClickhouseConnector(RDBMSConnector):
         # instead; and quotes need to be escaped
         logger.info("====================ClickHouse" + self.get_current_db_name())
         _sql = f"""
-            SELECT concat(TABLE_NAME, '(', arrayStringConcat(
-                groupArray(column_name), '-'), ')') AS schema_info
-            FROM system.COLUMNS
-            WHERE table_schema = '{self.get_current_db_name()}'
-            GROUP BY TABLE_NAME
+            SELECT concat(table, '(', arrayStringConcat(
+                groupArray(name), '-'), ')') AS schema_info
+            FROM system.columns
+            WHERE database = '{self.get_current_db_name()}'
+            GROUP BY table
         """
+        
+        logger.info(f"""
+            SELECT concat(table, '(', arrayStringConcat(
+                groupArray(name), '-'), ')') AS schema_info
+            FROM system.columns
+            WHERE database = '{self.get_current_db_name()}'
+            GROUP BY table
+        """)
         with self.client.query_row_block_stream(_sql) as stream:
             return [row[0] for block in stream for row in block]
 
