@@ -52,7 +52,9 @@ _DEFAULT_TEMPLATE_ZH = """
     3. 只能使用表结构信息中提供的表来生成 sql，如果无法根据提供的表结构中生成 sql ，请说：“提供的表结构信息不足以生成 sql 查询。” 禁止随意捏造信息。
     4. 请注意生成SQL时不要弄错表和列的关系
     5. 请检查SQL的正确性，并保证正确的情况下优化查询性能
-    6.请从如下给出的展示方式种选择最优的一种用以进行数据渲染，将类型名称放入返回要求格式的name参数值种，如果找不到最合适的则使用'Table'作为展示方式，可用数据展示方式如下: {display_type}
+    6. 数据库类型为 {db_type}
+    7. 如果数据库类型是clickhouse，请使用system代替information_schema表做查询，system.columns表中有database,table,name,type,comment等字段，system.tables表中有database,name,engine,total_rows,total_bytes等字段
+    8. 请从如下给出的展示方式种选择最优的一种用以进行数据渲染，将类型名称放入返回要求格式的name参数值种，如果找不到最合适的则使用'Table'作为展示方式，可用数据展示方式如下: {display_type}
 用户问题:
     {user_input}
 请一步步思考并按照以下JSON格式回复：

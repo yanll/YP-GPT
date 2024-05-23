@@ -76,6 +76,7 @@ class ChatWithDbAutoExecute(BaseChat):
             "dialect": self.database.dialect,
             "table_info": table_infos,
             "display_type": self._generate_numbered_list(),
+            "db_type": self.database.db_type
         }
         return input_values
 
