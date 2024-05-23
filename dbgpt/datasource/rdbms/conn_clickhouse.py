@@ -221,7 +221,7 @@ class ClickhouseConnector(RDBMSConnector):
 
             cursor = self.client.command(command)
 
-            if cursor.written_rows:
+            if type(cursor) != str and cursor.written_rows:
                 result = cursor.result_rows
                 field_names = result.column_names
 
