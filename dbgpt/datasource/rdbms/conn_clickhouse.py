@@ -298,19 +298,19 @@ class ClickhouseConnector(RDBMSConnector):
         # instead; and quotes need to be escaped
         logger.info("====================ClickHouse" + self.get_current_db_name())
         _sql = f"""
-            SELECT concat(TABLE_NAME, '(', arrayStringConcat(
-                groupArray(column_name), '-'), ')') AS schema_info
+            SELECT concat(table, '(', arrayStringConcat(
+                groupArray(name), '-'), ')') AS schema_info
             FROM system.columns
-            WHERE table_schema = '{self.get_current_db_name()}'
-            GROUP BY TABLE_NAME
+            WHERE database = '{self.get_current_db_name()}'
+            GROUP BY table
         """
         
         logger.info(f"""
-            SELECT concat(TABLE_NAME, '(', arrayStringConcat(
-                groupArray(column_name), '-'), ')') AS schema_info
+            SELECT concat(table, '(', arrayStringConcat(
+                groupArray(name), '-'), ')') AS schema_info
             FROM system.columns
-            WHERE table_schema = '{self.get_current_db_name()}'
-            GROUP BY TABLE_NAME
+            WHERE database = '{self.get_current_db_name()}'
+            GROUP BY table
         """)
         with self.client.query_row_block_stream(_sql) as stream:
             return [row[0] for block in stream for row in block]
