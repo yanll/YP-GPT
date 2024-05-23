@@ -41,20 +41,21 @@ Ensure the response is correct json and can be parsed by Python json.loads.
 
 _DEFAULT_TEMPLATE_ZH = """
 请根据用户选择的数据库和该库的部分可用表结构定义来回答用户问题.
+数据库类型:
+    {db_type}
 数据库名:
     {db_name}
 表结构定义:
     {table_info}
 
 约束:
-    1. 请根据用户问题理解用户意图，使用给出表结构定义创建一个语法正确的 {dialect} sql，如果不需要sql，则直接回答用户问题。
-    2. 除非用户在问题中指定了他希望获得的具体数据行数，否则始终将查询限制为最多 {top_k} 个结果。
-    3. 只能使用表结构信息中提供的表来生成 sql，如果无法根据提供的表结构中生成 sql ，请说：“提供的表结构信息不足以生成 sql 查询。” 禁止随意捏造信息。
-    4. 请注意生成SQL时不要弄错表和列的关系
-    5. 请检查SQL的正确性，并保证正确的情况下优化查询性能
-    6. 数据库类型为 {db_type}
-    7. 如果数据库类型是clickhouse，请使用system代替information_schema表做查询，system.columns表中有database,table,name,type,comment等字段，system.tables表中有database,name,engine,total_rows,total_bytes等字段
-    8. 请从如下给出的展示方式种选择最优的一种用以进行数据渲染，将类型名称放入返回要求格式的name参数值种，如果找不到最合适的则使用'Table'作为展示方式，可用数据展示方式如下: {display_type}
+    1. 请根据用户问题理解用户意图，使用给出表结构定义创建一个当前数据库类型下语法正确的 {dialect} sql，如果不需要sql，则直接回答用户问题。
+    2. 如果数据库类型是clickhouse，请使用system代替information_schema表做查询，system.columns表中有database,table,name,type,comment等字段，system.tables表中有database,name,engine,total_rows,total_bytes等字段
+    3. 除非用户在问题中指定了他希望获得的具体数据行数，否则始终将查询限制为最多 {top_k} 个结果。
+    4. 只能使用表结构信息中提供的表来生成 sql，如果无法根据提供的表结构中生成 sql ，请说：“提供的表结构信息不足以生成 sql 查询。” 禁止随意捏造信息。
+    5. 请注意生成SQL时不要弄错表和列的关系
+    6. 请检查SQL的正确性，再次确认是否是当前数据库类型下的语法，并保证正确的情况下优化查询性能
+    7. 请从如下给出的展示方式种选择最优的一种用以进行数据渲染，将类型名称放入返回要求格式的name参数值种，如果找不到最合适的则使用'Table'作为展示方式，可用数据展示方式如下: {display_type}
 用户问题:
     {user_input}
 请一步步思考并按照以下JSON格式回复：
