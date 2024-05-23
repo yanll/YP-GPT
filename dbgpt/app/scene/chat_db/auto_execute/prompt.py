@@ -47,6 +47,8 @@ _DEFAULT_TEMPLATE_ZH = """
     {db_name}
 表结构定义:
     {table_info}
+常见错误要避免:
+     Illegal type String of argument for aggregate function SUM
 
 约束:
     1. 请根据用户问题理解用户意图，使用给出表结构定义创建一个当前数据库类型下语法正确的 {dialect} sql，使用SUM等函数时请注意对数据类型进行转换，如果不需要sql，则直接回答用户问题。
