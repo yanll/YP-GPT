@@ -304,6 +304,14 @@ class ClickhouseConnector(RDBMSConnector):
             WHERE table_schema = '{self.get_current_db_name()}'
             GROUP BY TABLE_NAME
         """
+        
+        logger.info(f"""
+            SELECT concat(TABLE_NAME, '(', arrayStringConcat(
+                groupArray(column_name), '-'), ')') AS schema_info
+            FROM system.COLUMNS
+            WHERE table_schema = '{self.get_current_db_name()}'
+            GROUP BY TABLE_NAME
+        """)
         with self.client.query_row_block_stream(_sql) as stream:
             return [row[0] for block in stream for row in block]
 
