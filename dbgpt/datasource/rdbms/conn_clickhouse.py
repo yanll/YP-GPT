@@ -202,6 +202,8 @@ class ClickhouseConnector(RDBMSConnector):
     def run(self, command: str, fetch: str = "all") -> List:
         """Execute sql command."""
         # TODO need to be implemented
+        command = command.replace("table_name","name").replace("information_schema","system").replace("table_schema", "database")
+        
         logger.info("SQL:" + command)
         if not command or len(command) < 0:
             return []
