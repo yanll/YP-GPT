@@ -296,7 +296,7 @@ class ClickhouseConnector(RDBMSConnector):
         """Get table simple info."""
         # group_concat() not supported in clickhouse, use arrayStringConcat+groupArray
         # instead; and quotes need to be escaped
-        print ("ClickHouse", self.get_current_db_name())
+        print("====================ClickHouse", self.get_current_db_name())
         _sql = f"""
             SELECT concat(TABLE_NAME, '(', arrayStringConcat(
                 groupArray(column_name), '-'), ')') AS schema_info
