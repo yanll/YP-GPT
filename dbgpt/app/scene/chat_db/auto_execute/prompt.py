@@ -49,7 +49,7 @@ _DEFAULT_TEMPLATE_ZH = """
     {table_info}
 
 约束:
-    1. 请根据用户问题理解用户意图，使用给出表结构定义创建一个当前数据库类型下语法正确的 {dialect} sql，使用函数时请注意对数据类型进行转换，如果不需要sql，则直接回答用户问题。
+    1. 请根据用户问题理解用户意图，使用给出表结构定义创建一个当前数据库类型下语法正确的 {dialect} sql，使用SUM等函数时请注意对数据类型进行转换，如果不需要sql，则直接回答用户问题。
     2. 如果数据库类型是clickhouse，请使用system代替information_schema表做查询，system.columns表中有database,table,name,type,comment等字段，system.tables表中有database,name,engine,total_rows,total_bytes等字段
     3. 除非用户在问题中指定了他希望获得的具体数据行数，否则始终将查询限制为最多 {top_k} 个结果。
     4. 只能使用表结构信息中提供的表来生成 sql，如果无法根据提供的表结构中生成 sql ，请说：“提供的表结构信息不足以生成 sql 查询。” 禁止随意捏造信息。
