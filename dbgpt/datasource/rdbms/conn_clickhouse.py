@@ -310,7 +310,7 @@ class ClickhouseConnector(RDBMSConnector):
         logger.info("====================ClickHouse" + self.get_current_db_name())
         _sql = f"""
             SELECT concat(table, '(', arrayStringConcat(
-                groupArray(name), '-'), ')') AS schema_info
+                groupArray(concat(name, ':', type)), ', '), ')') AS schema_info
             FROM system.columns
             WHERE database = '{self.get_current_db_name()}'
             GROUP BY table
@@ -318,7 +318,7 @@ class ClickhouseConnector(RDBMSConnector):
         
         logger.info(f"""
             SELECT concat(table, '(', arrayStringConcat(
-                groupArray(name), '-'), ')') AS schema_info
+                groupArray(concat(name, ':', type)), '-'), ')') AS schema_info
             FROM system.columns
             WHERE database = '{self.get_current_db_name()}'
             GROUP BY table

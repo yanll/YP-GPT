@@ -360,7 +360,7 @@ def _messages_to_str(
 
 
 def _message_from_dict(message: Dict) -> BaseMessage:
-    _type = message["type"]
+    _type = message.get("type")
     if _type == "human":
         return HumanMessage(**message["data"])
     elif _type == "ai":
