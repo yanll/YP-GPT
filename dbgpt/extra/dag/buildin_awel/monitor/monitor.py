@@ -6,4 +6,4 @@ def main():
     alert_list = []
     alert_list += monitor2()
     alert_list += monitor4()
-    return monitor4()
+    return alert_list
