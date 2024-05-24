@@ -21,7 +21,11 @@ def monitor2():
             alert_list.append({
                 'name': monitor2_data.search_by_stat_dispaysignedname(STAT_DISPAYSIGNEDNAME)[0]['SALES_NAME'],
                 'title': '退款笔数波动异常',
-                'content': f'商户签约名:{STAT_DISPAYSIGNEDNAME}，昨日退款波动超过30%，退款率{REFUND_RATE*100:.2f}%，请关注'
+                'type': '商户签约名',
+                'customer_name' : STAT_DISPAYSIGNEDNAME,
+                'content': f'昨日退款波动超过30%，退款率{REFUND_RATE*100:.2f}%，请关注'
+
+
             })
 
     for item in last_day_data_by_payer_customer_signedname:
@@ -31,7 +35,12 @@ def monitor2():
             alert_list.append({
                 'name': monitor2_data.search_by_payer_customer_signedname(PAYER_CUSTOMER_SIGNEDNAME)[0]['PAYER_SALES_NAME'],
                 'title': '退款笔数波动异常',
-                'content': f'付方签约名:{PAYER_CUSTOMER_SIGNEDNAME}，昨日退款波动超过30%，退款率{REFUND_RATE*100:.2f}%，请关注'
+                'type': '付方签约名',
+                'customer_name': PAYER_CUSTOMER_SIGNEDNAME,
+                'content': f'昨日退款波动超过30%，退款率{REFUND_RATE*100:.2f}%，请关注'
             })
 
     return alert_list
+
+# a = monitor2()
+# print(a)

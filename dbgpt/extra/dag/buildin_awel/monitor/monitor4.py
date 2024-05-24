@@ -161,3 +161,6 @@ def monitor4():
                                last_week_data, market_fluctuation)
 
     return alert_list
+
+# a = monitor4()
+# print(a)

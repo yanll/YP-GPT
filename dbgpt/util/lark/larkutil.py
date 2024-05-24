@@ -157,3 +157,5 @@ def select_userinfo(token: str = None, open_id: str = None, is_rag=False):
         redis_client.set(redis_key, json.dumps(userinfo), 10 * 60)
         print('\n用户详细信息返回结果：', open_id, userinfo)
         return userinfo
+
+
