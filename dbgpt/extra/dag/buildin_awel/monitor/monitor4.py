@@ -8,7 +8,9 @@ def find_by_payer_and_stat_dispaysignedname(one_week_data, customer_no, payer_cu
             data[item['PAYER_BUSINESS_SCENE']] = float(item['SUCCESS_AMOUNT'])
     return data
 
-def deal_customer(alert_list, CUSTOMER, sale_name, customer_no, stat_dispaysignedname, this_week_data, last_week_data):
+
+def deal_customer(alert_list, CUSTOMER, sale_name, customer_no, stat_dispaysignedname, this_week_data, last_week_data,
+                  market_fluctuation):
     for payer_customer_signedname in CUSTOMER['PAYER_CUSTOMER_SIGNEDNAME_list']:
         if payer_customer_signedname not in CUSTOMER['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week']:
             CUSTOMER['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week'][payer_customer_signedname] = 0
@@ -25,9 +27,10 @@ def deal_customer(alert_list, CUSTOMER, sale_name, customer_no, stat_dispaysigne
         content = None
 
         if PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week == 0:
-            if PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week >= 50 * (10 ** 4):
-                content = f'付方名称:{payer_customer_signedname}，航司:{stat_dispaysignedname}——商编:{customer_no}+场景字段，近7天充值金额为{PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week}，近7天充值金额为{PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week}'
-                alert_list.append({'name': sale_name, 'title': '深航/国航充值业务', 'content': content})
+            pass
+            # if PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week >= 50 * (10 ** 4):
+            #     content = f'付方名称:{payer_customer_signedname}，航司:{stat_dispaysignedname}——商编:{customer_no}+场景字段，近7天充值金额为{PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week}，近7天充值金额为{PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week}'
+            #     alert_list.append({'name': sale_name, 'title': '深航/国航充值业务', 'content': content})
         else:
             fluctuation = (PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week /
                            PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week) - (
@@ -46,8 +49,10 @@ def deal_customer(alert_list, CUSTOMER, sale_name, customer_no, stat_dispaysigne
                     flag = True
 
             if flag == True:
-                success_amount_this_week_by_payer_business_scene = find_by_payer_and_stat_dispaysignedname(this_week_data, customer_no, payer_customer_signedname)
-                success_amount_last_week_by_payer_business_scene = find_by_payer_and_stat_dispaysignedname(last_week_data, customer_no, payer_customer_signedname)
+                success_amount_this_week_by_payer_business_scene = find_by_payer_and_stat_dispaysignedname(
+                    this_week_data, customer_no, payer_customer_signedname)
+                success_amount_last_week_by_payer_business_scene = find_by_payer_and_stat_dispaysignedname(
+                    last_week_data, customer_no, payer_customer_signedname)
                 for key, value in success_amount_this_week_by_payer_business_scene.items():
                     if key not in success_amount_last_week_by_payer_business_scene:
                         success_amount_last_week_by_payer_business_scene[key] = 0
@@ -56,10 +61,11 @@ def deal_customer(alert_list, CUSTOMER, sale_name, customer_no, stat_dispaysigne
                         success_amount_this_week_by_payer_business_scene[key] = 0
 
                 for key, value in success_amount_this_week_by_payer_business_scene.items():
-                    fluctuation = (success_amount_this_week_by_payer_business_scene[key] / success_amount_last_week_by_payer_business_scene[key]) - (
-                                  CUSTOMER['SUCCESS_AMOUNT_this_week'] / CUSTOMER['SUCCESS_AMOUNT_last_week'])
-                    content = f'付方名称:{payer_customer_signedname}，航司:{stat_dispaysignedname}——商编:{customer_no}+场景字段:{key}，近7天充值金额，环比上周{"上升" if fluctuation>0 else "下降"}{abs(fluctuation * 100):.2f}%，高于/低于大盘**'
-                    subcontent = f'近7天充值金额，环比上周{"上升" if fluctuation>0 else "下降"}{abs(fluctuation * 100):.2f}%，高于/低于大盘**'
+                    fluctuation = (success_amount_this_week_by_payer_business_scene[key] /
+                                   success_amount_last_week_by_payer_business_scene[key]) - (
+                                          CUSTOMER['SUCCESS_AMOUNT_this_week'] / CUSTOMER['SUCCESS_AMOUNT_last_week'])
+                    content = f'付方名称:{payer_customer_signedname}，航司:{stat_dispaysignedname}——商编:{customer_no}+场景字段:{key}，近7天充值金额，环比上周{"上升" if fluctuation > 0 else "下降"}{abs(fluctuation * 100):.2f}%，{"高于" if market_fluctuation > 0 else "低于"}大盘{abs(market_fluctuation*10):.2f}%'
+                    subcontent = f'近7天充值金额，环比上周{"上升" if fluctuation > 0 else "下降"}{abs(fluctuation * 100):.2f}%，{"高于" if market_fluctuation > 0 else "低于"}大盘{abs(market_fluctuation*10):.2f}%'
                     alert_list.append({
                         'name': sale_name,
                         'title': '深航/国航充值业务',
@@ -70,8 +76,6 @@ def deal_customer(alert_list, CUSTOMER, sale_name, customer_no, stat_dispaysigne
                         'payer_business_scene': key,
                         'sub_content': subcontent,
                     })
-
-
 
     return alert_list
 
@@ -148,8 +152,12 @@ def monitor4():
                     item['PAYER_CUSTOMER_SIGNEDNAME']] = float(item['SUCCESS_AMOUNT'])
 
     print('监控四开始判断预警')
+    market_fluctuation = (CUSTOMER1['SUCCESS_AMOUNT_this_week'] + CUSTOMER2['SUCCESS_AMOUNT_this_week']) / (
+            CUSTOMER1['SUCCESS_AMOUNT_last_week'] + CUSTOMER2['SUCCESS_AMOUNT_last_week']) - 1
     alert_list = []
-    alert_list = deal_customer(alert_list, CUSTOMER1, sale_name1, customer_no1, stat_dispaysignedname1, this_week_data, last_week_data)
-    alert_list = deal_customer(alert_list, CUSTOMER2, sale_name2, customer_no2, stat_dispaysignedname2, this_week_data, last_week_data)
+    alert_list = deal_customer(alert_list, CUSTOMER1, sale_name1, customer_no1, stat_dispaysignedname1, this_week_data,
+                               last_week_data, market_fluctuation)
+    alert_list = deal_customer(alert_list, CUSTOMER2, sale_name2, customer_no2, stat_dispaysignedname2, this_week_data,
+                               last_week_data, market_fluctuation)
 
     return alert_list
