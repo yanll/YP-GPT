@@ -67,18 +67,18 @@ def monitor_four():
 
 
 
-# # 每隔一段时间调用一次 monitor_four 函数
-# #schedule.every(5).seconds.do(monitor_four)  # 每10秒执行一次
-# #schedule.every(30).minutes.do(monitor_four)  # 每隔30分钟调用一次
-# # schedule.every().hour.do(monitor_four)  # 每隔一小时调用一次
-# schedule.every().day.at("15:30").do(monitor_four)  # 每天的10:30调用一次
-# # 可以根据需求选择不同的调度方式
-#
-# while True:
-#     schedule.run_pending()
-#     time.sleep(1)
+# 每隔一段时间调用一次 monitor_four 函数
+#schedule.every(10).seconds.do(monitor_four)  # 每10秒执行一次
+#schedule.every(30).minutes.do(monitor_four)  # 每隔30分钟调用一次
+# schedule.every().hour.do(monitor_four)  # 每隔一小时调用一次
+#schedule.every().day.at("15:30").do(monitor_four)  # 每天的10:30调用一次
+# 可以根据需求选择不同的调度方式
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)
 # 调用函数
-monitor_four()
+# monitor_four()
 
 
 

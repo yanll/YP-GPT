@@ -99,39 +99,9 @@ import schedule
 import time
 
 def monitor_two():
-    # hv_data = monitor.main2()
-    # print("数值的返回结果", hv_data)
-    # data = hv_data
-    #原始数据
-    data = [{'name': '王琦-3',
-             'title': '退款笔数波动异常',
-             'type': '商户签约名',
-             'customer_name': '东方航空电子商务有限公司',
-             'content': '昨日退款波动超过30%，退款率49.01%，请关注'},
-            {'name': '王琦-3',
-             'title': '退款笔数波动异常',
-             'type': '付方签约名',
-             'customer_name': '璟逸鑫（上海）航空服务有限公司',
-             'content': '昨日退款波动超过30%，退款率50.00%，请关注'},
-            {'name': '王琦-3',
-             'title': '退款笔数波动异常',
-             'type': '付方签约名',
-             'customer_name': '安徽众飞文化旅游发展有限公司',
-             'content': '昨日退款波动超过30%，退款率133.33%，请关注'},
-            {'name': '林源涛',
-             'title': '退款笔数波动异常',
-             'type': '付方签约名',
-             'customer_name': '巴彦淖尔市小往大来信息科技有限公司',
-             'content': '昨日退款波动超过30%，退款率31.62%，请关注'},
-            {'name': '林源涛',
-             'title': '退款笔数波动异常',
-             'type': '付方签约名',
-             'customer_name': '北京保盛易行航空服务有限公司',
-             'content': '昨日退款波动超过30%，退款率46.79%，请关注'}, ]
-
-
-
-
+    hv_data = monitor.main2()
+    print("数值的返回结果", hv_data)
+    data = hv_data
 
     # 名字与 conv_id 的对应关系
     name_to_conv_id = {
@@ -184,10 +154,19 @@ def monitor_two():
             print("lark_message_id是：", lark_message_id)
 
 
+# 每隔一段时间调用一次 monitor_four 函数
+#schedule.every(10).seconds.do(monitor_four)  # 每10秒执行一次
+#schedule.every(30).minutes.do(monitor_four)  # 每隔30分钟调用一次
+# schedule.every().hour.do(monitor_four)  # 每隔一小时调用一次
+#schedule.every().day.at("15:30").do(monitor_four)  # 每天的10:30调用一次
+# 可以根据需求选择不同的调度方式
 
+while True:
+    schedule.run_pending()
+    time.sleep(1)
 
-# 调用函数
-monitor_two()
+# # 调用函数
+# monitor_two()
 
 
 
