@@ -1,53 +1,78 @@
 from dbgpt.extra.dag.buildin_awel.monitor import monitor4_data
 
 
-def deal_customer(alert_list, CUSTOMER, sale_name, customer_no, stat_dispaysignedname):
-    for PAYER_CUSTOMER_SIGNEDNAME in CUSTOMER['PAYER_CUSTOMER_SIGNEDNAME_list']:
-        if PAYER_CUSTOMER_SIGNEDNAME not in CUSTOMER['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week']:
-            CUSTOMER['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week'][PAYER_CUSTOMER_SIGNEDNAME] = 0
-        if PAYER_CUSTOMER_SIGNEDNAME not in CUSTOMER['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week']:
-            CUSTOMER['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week'][PAYER_CUSTOMER_SIGNEDNAME] = 0
-        # 警告判断
+def find_by_payer_and_stat_dispaysignedname(one_week_data, customer_no, payer_customer_signedname):
+    data = {}
+    for item in one_week_data:
+        if item['CUSTOMER_NO'] == customer_no and item['PAYER_CUSTOMER_SIGNEDNAME'] == payer_customer_signedname:
+            data[item['PAYER_BUSINESS_SCENE']] = float(item['SUCCESS_AMOUNT'])
+    return data
+
+def deal_customer(alert_list, CUSTOMER, sale_name, customer_no, stat_dispaysignedname, this_week_data, last_week_data):
+    for payer_customer_signedname in CUSTOMER['PAYER_CUSTOMER_SIGNEDNAME_list']:
+        if payer_customer_signedname not in CUSTOMER['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week']:
+            CUSTOMER['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week'][payer_customer_signedname] = 0
+        if payer_customer_signedname not in CUSTOMER['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week']:
+            CUSTOMER['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week'][payer_customer_signedname] = 0
+    # 警告判断
 
     # 遍历CUSTOMER
-    for PAYER_CUSTOMER_SIGNEDNAME in CUSTOMER['PAYER_CUSTOMER_SIGNEDNAME_list']:
+    for payer_customer_signedname in CUSTOMER['PAYER_CUSTOMER_SIGNEDNAME_list']:
         PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week = \
-        CUSTOMER['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week'][PAYER_CUSTOMER_SIGNEDNAME]
+            CUSTOMER['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week'][payer_customer_signedname]
         PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week = \
-        CUSTOMER['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week'][PAYER_CUSTOMER_SIGNEDNAME]
+            CUSTOMER['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week'][payer_customer_signedname]
         content = None
 
         if PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week == 0:
             if PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week >= 50 * (10 ** 4):
-                content = f'付方名称:{PAYER_CUSTOMER_SIGNEDNAME}，航司:{stat_dispaysignedname}——商编:{customer_no}+场景字段，近7天充值金额为{PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week}，近7天充值金额为{PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week}'
+                content = f'付方名称:{payer_customer_signedname}，航司:{stat_dispaysignedname}——商编:{customer_no}+场景字段，近7天充值金额为{PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week}，近7天充值金额为{PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week}'
+                alert_list.append({'name': sale_name, 'title': '深航/国航充值业务', 'content': content})
         else:
             fluctuation = (PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week /
                            PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week) - (
-                                      CUSTOMER['SUCCESS_AMOUNT_this_week'] / CUSTOMER['SUCCESS_AMOUNT_last_week'])
-
+                                  CUSTOMER['SUCCESS_AMOUNT_this_week'] / CUSTOMER['SUCCESS_AMOUNT_last_week'])
+            flag = False
             if PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week >= 1500 * (10 ** 4):
-                if fluctuation <= -0.15:
-                    content = f'付方名称:{PAYER_CUSTOMER_SIGNEDNAME}，航司:{stat_dispaysignedname}——商编:{customer_no}+场景字段，近7天充值金额，环比上周下降{fluctuation * 100:.2f}%，高于/低于大盘**'
-                if fluctuation >= 0.20:
-                    content = f'付方名称:{PAYER_CUSTOMER_SIGNEDNAME}，航司:{stat_dispaysignedname}——商编:{customer_no}+场景字段，近7天充值金额，环比上周上升{fluctuation * 100:.2f}%，高于/低于大盘**'
+                if fluctuation <= -0.15 or fluctuation >= 0.20:
+                    flag = True
             elif PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week < 1500 * (
                     10 ** 4) and PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week >= 100 * (10 ** 4):
-                if fluctuation <= -0.50:
-                    content = f'付方名称:{PAYER_CUSTOMER_SIGNEDNAME}，航司:{stat_dispaysignedname}——商编:{customer_no}+场景字段，近7天充值金额，环比上周下降{fluctuation * 100:.2f}%，高于/低于大盘**'
-                if fluctuation >= 0.50:
-                    content = f'付方名称:{PAYER_CUSTOMER_SIGNEDNAME}，航司:{stat_dispaysignedname}——商编:{customer_no}+场景字段，近7天充值金额，环比上周上升{fluctuation * 100:.2f}%，高于/低于大盘**'
+                if fluctuation <= -0.50 or fluctuation >= 0.50:
+                    flag = True
             elif PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week < 100 * (
                     10 ** 4) and PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week >= 50 * (10 ** 4):
-                if fluctuation <= -0.80:
-                    content = f'付方名称:{PAYER_CUSTOMER_SIGNEDNAME}，航司:{stat_dispaysignedname}——商编:{customer_no}+场景字段，近7天充值金额，环比上周下降{fluctuation * 100:.2f}%，高于/低于大盘**'
-                if fluctuation >= 0.80:
-                    content = f'付方名称:{PAYER_CUSTOMER_SIGNEDNAME}，航司:{stat_dispaysignedname}——商编:{customer_no}+场景字段，近7天充值金额，环比上周上升{fluctuation * 100:.2f}%，高于/低于大盘**'
+                if fluctuation <= -0.80 or fluctuation >= 0.80:
+                    flag = True
 
-        if content is not None:
-            alert_list.append({'name': sale_name, 'title': '深航/国航充值业务',
-                               'content': content})
+            if flag == True:
+                success_amount_this_week_by_payer_business_scene = find_by_payer_and_stat_dispaysignedname(this_week_data, customer_no, payer_customer_signedname)
+                success_amount_last_week_by_payer_business_scene = find_by_payer_and_stat_dispaysignedname(last_week_data, customer_no, payer_customer_signedname)
+                for key, value in success_amount_this_week_by_payer_business_scene.items():
+                    if key not in success_amount_last_week_by_payer_business_scene:
+                        success_amount_last_week_by_payer_business_scene[key] = 0
+                for key, value in success_amount_last_week_by_payer_business_scene.items():
+                    if key not in success_amount_this_week_by_payer_business_scene:
+                        success_amount_this_week_by_payer_business_scene[key] = 0
+
+                for key, value in success_amount_this_week_by_payer_business_scene.items():
+                    fluctuation = (success_amount_this_week_by_payer_business_scene[key] / success_amount_last_week_by_payer_business_scene[key]) - (
+                                  CUSTOMER['SUCCESS_AMOUNT_this_week'] / CUSTOMER['SUCCESS_AMOUNT_last_week'])
+                    content = f'付方名称:{payer_customer_signedname}，航司:{stat_dispaysignedname}——商编:{customer_no}+场景字段:{key}，近7天充值金额，环比上周{"上升" if fluctuation>0 else "下降"}{abs(fluctuation * 100):.2f}%，高于/低于大盘**'
+                    alert_list.append({
+                        'name': sale_name,
+                        'title': '深航/国航充值业务',
+                        'content': content,
+                        'payer_customer_signedname': payer_customer_signedname,
+                        'stat_dispaysignedname': stat_dispaysignedname,
+                        'customer_no': customer_no,
+                        'payer_business_scene': key,
+                    })
+
+
 
     return alert_list
+
 
 def monitor4():
     try:
@@ -79,35 +104,50 @@ def monitor4():
     CUSTOMER2['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week'] = {}
     CUSTOMER2['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week'] = {}
 
-
     # 整理数据
     for item in this_week_data:
         if item['CUSTOMER_NO'] == '10012407595':
             CUSTOMER1['PAYER_CUSTOMER_SIGNEDNAME_list'].add(item['PAYER_CUSTOMER_SIGNEDNAME'])
             CUSTOMER1['SUCCESS_AMOUNT_this_week'] += float(item['SUCCESS_AMOUNT'])
-            CUSTOMER1['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week'][
-                item['PAYER_CUSTOMER_SIGNEDNAME']] = float(item['SUCCESS_AMOUNT'])
+            if item['PAYER_CUSTOMER_SIGNEDNAME'] in CUSTOMER1['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week']:
+                CUSTOMER1['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week'][
+                    item['PAYER_CUSTOMER_SIGNEDNAME']] += float(item['SUCCESS_AMOUNT'])
+            else:
+                CUSTOMER1['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week'][
+                    item['PAYER_CUSTOMER_SIGNEDNAME']] = float(item['SUCCESS_AMOUNT'])
         elif item['CUSTOMER_NO'] == '10034228238':
             CUSTOMER2['PAYER_CUSTOMER_SIGNEDNAME_list'].add(item['PAYER_CUSTOMER_SIGNEDNAME'])
             CUSTOMER2['SUCCESS_AMOUNT_this_week'] += float(item['SUCCESS_AMOUNT'])
-            CUSTOMER2['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week'][
-                item['PAYER_CUSTOMER_SIGNEDNAME']] = float(item['SUCCESS_AMOUNT'])
+            if item['PAYER_CUSTOMER_SIGNEDNAME'] in CUSTOMER2['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week']:
+                CUSTOMER2['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week'][
+                    item['PAYER_CUSTOMER_SIGNEDNAME']] += float(item['SUCCESS_AMOUNT'])
+            else:
+                CUSTOMER2['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_this_week'][
+                    item['PAYER_CUSTOMER_SIGNEDNAME']] = float(item['SUCCESS_AMOUNT'])
 
     for item in last_week_data:
         if item['CUSTOMER_NO'] == '10012407595':
             CUSTOMER1['PAYER_CUSTOMER_SIGNEDNAME_list'].add(item['PAYER_CUSTOMER_SIGNEDNAME'])
             CUSTOMER1['SUCCESS_AMOUNT_last_week'] += float(item['SUCCESS_AMOUNT'])
-            CUSTOMER1['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week'][
-                item['PAYER_CUSTOMER_SIGNEDNAME']] = float(item['SUCCESS_AMOUNT'])
+            if item['PAYER_CUSTOMER_SIGNEDNAME'] in CUSTOMER1['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week']:
+                CUSTOMER1['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week'][
+                    item['PAYER_CUSTOMER_SIGNEDNAME']] += float(item['SUCCESS_AMOUNT'])
+            else:
+                CUSTOMER1['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week'][
+                    item['PAYER_CUSTOMER_SIGNEDNAME']] = float(item['SUCCESS_AMOUNT'])
         elif item['CUSTOMER_NO'] == '10034228238':
             CUSTOMER2['PAYER_CUSTOMER_SIGNEDNAME_list'].add(item['PAYER_CUSTOMER_SIGNEDNAME'])
             CUSTOMER2['SUCCESS_AMOUNT_last_week'] += float(item['SUCCESS_AMOUNT'])
-            CUSTOMER2['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week'][
-                item['PAYER_CUSTOMER_SIGNEDNAME']] = float(item['SUCCESS_AMOUNT'])
+            if item['PAYER_CUSTOMER_SIGNEDNAME'] in CUSTOMER2['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week']:
+                CUSTOMER2['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week'][
+                    item['PAYER_CUSTOMER_SIGNEDNAME']] += float(item['SUCCESS_AMOUNT'])
+            else:
+                CUSTOMER2['PAYER_CUSTOMER_SIGNEDNAME_to_SUCCESS_AMOUNT_last_week'][
+                    item['PAYER_CUSTOMER_SIGNEDNAME']] = float(item['SUCCESS_AMOUNT'])
 
     print('监控四开始判断预警')
     alert_list = []
-    alert_list = deal_customer(alert_list, CUSTOMER1, sale_name1, customer_no1, stat_dispaysignedname1)
-    alert_list = deal_customer(alert_list, CUSTOMER2, sale_name2, customer_no2, stat_dispaysignedname2)
+    alert_list = deal_customer(alert_list, CUSTOMER1, sale_name1, customer_no1, stat_dispaysignedname1, this_week_data, last_week_data)
+    alert_list = deal_customer(alert_list, CUSTOMER2, sale_name2, customer_no2, stat_dispaysignedname2, this_week_data, last_week_data)
 
     return alert_list
