@@ -17,8 +17,9 @@ daily_push_tool = Dailypushmessagetool()
 
 # Predefined conv_id list
 conv_ids = [
+
     "ou_9d42bb88ec8940baf3ad183755131881",
-    "ou_a22698cffd738d7851ef30f5dad1a06c",
+    # "ou_a22698cffd738d7851ef30f5dad1a06c",
 
 ]
 
@@ -58,8 +59,10 @@ class RequestHandleOperator(MapOperator[None, List[Dict]]):
                             },
                             "query_str": data["query_str"],
                             "daily_push_message_list": data["list"],
-                            "sales_diapaly": data["sales_diapaly"]
-                        }
+                            "sales_diapaly": data["sales_diapaly"],
+                            "value_colour_yesterday_change_rate": data["value_colour_yesterday_change_rate"],
+                            "value_colour_weekly_change_rate": data["value_colour_weekly_change_rate"]
+                    }
                     )
                 )
                 #results.append({"conv_id": conv_id, "send_card_response": resp})  # 将发送结果添加到结果列表中

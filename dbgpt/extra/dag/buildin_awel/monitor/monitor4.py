@@ -153,3 +153,6 @@ def monitor4():
     alert_list = deal_customer(alert_list, CUSTOMER2, sale_name2, customer_no2, stat_dispaysignedname2, this_week_data, last_week_data)
 
     return alert_list
+
+# a = monitor4()
+# print(a)
