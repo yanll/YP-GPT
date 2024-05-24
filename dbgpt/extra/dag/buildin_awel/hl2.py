@@ -1,91 +1,3 @@
-from dbgpt.extra.dag.buildin_awel.langgraph.wrappers.lark_event_handler_wrapper import LarkEventHandlerWrapper
-from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.extra.dag.buildin_awel.monitor import monitor
-from dbgpt.util.lark import lark_message_util
-import requests
-
-# data = [
-#     {'name': '张涛', 'title': '深航/国航充值业务', 'content': '付方名称:广州市宇翔航空服务有限公司，航司:ZH——商编:10012407595+场景字段，近7天充值金额，环比上周上升267.31%，高于/低于大盘**'},
-#     {'name': '张涛', 'title': '深航/国航充值业务', 'content': '付方名称:深圳市广通联旅行社有限公司，航司:ZH——商编:10012407595+场景字段，近7天充值金额，环比上周上升176.17%，高于/低于大盘**'},
-#     {'name': '张涛', 'title': '深航/国航充值业务', 'content': '付方名称:北京保盛易行航空服务有限公司，航司:ZH——商编:10012407595+场景字段，近7天充值金额，环比上周上升50.97%，高于/低于大盘**'}
-# ]
-
-# hv_data = monitor.main()
-# print("数值的返回结果",hv_data)
-# resp_data = []
-#
-# data = hv_data
-
-# data = [
-#     {'name': '张三', 'title': '深航/国航充值业务', 'content': '付方名称:广州市宇翔航空服务有限公司，航司:ZH——商编:10012407595+场景字段，近7天充值金额，环比上周上升267.31%，高于/低于大盘**'},
-#     {'name': '李四', 'title': '深航/国航充值业务', 'content': '付方名称:深圳市广通联旅行社有限公司，航司:ZH——商编:10012407595+场景字段，近7天充值金额，环比上周上升176.17%，高于/低于大盘**'},
-# ]
-#
-# conv_ids = [
-#
-#     "ou_9d42bb88ec8940baf3ad183755131881",
-#     "ou_a22698cffd738d7851ef30f5dad1a06c"
-#
-# ]
-# conv_id = "ou_9d42bb88ec8940baf3ad183755131881"
-#
-# lark_message_util.send_card_message(
-#     receive_id=conv_id,  # 使用 conv_id 作为接收者的 ID
-#     content= card_templates.travel_report_content(
-#         template_variable={
-#             "unlike_callback_event": {
-#                 "event_type": "unlike",
-#                 "event_source": "",
-#                 "event_data": {
-#                     "message": "航旅波动检测归因"
-#                 }
-#             },
-#             "travel_report_list": data,
-#         }
-#     )
-#   )
-# data = [{'name': '张涛', 'title': '深航/国航充值业务',
-#              'content': '付方名称:广州市宇翔航空服务有限公司，'
-#                         '航司:ZH——商编:10012407595+场景字段，'
-#                         '近7天充值金额，环比上周上升171.11%，'
-#                         '高于/低于大盘**'},
-#             {'name': '张涛', 'title': '深航/国航充值业务',
-#              'content': '付方名称:深圳市广通联旅行社有限公司，'
-#                         '航司:ZH——商编:10012407595+场景字段，'
-#                         '近7天充值金额，环比上周上升98.03%，高于/低于大盘**'},
-#             {'name': '张涛', 'title': '深航/国航充值业务',
-#              'content': '付方名称:苏州市华谊商务有限公司，'
-#                         '航司:ZH——商编:10012407595+场景字段，'
-#                         '近7天充值金额，环比上周上升677.29%，高于/低于大盘**'},
-#             {'name': '张涛', 'title': '深航/国航充值业务',
-#              'content': '付方名称:北京保盛易行航空服务有限公司，'
-#                         '航司:ZH——商编:10012407595+场景字段，'
-#                         '近7天充值金额，环比上周上升88.06%，高于/低于大盘**'},
-#             {'name': '张涛', 'title': '深航/国航充值业务',
-#              'content': '付方名称:北京东方祥云咨询有限公司，'
-#                         '航司:ZH——商编:10012407595+场景字段，'
-#                         '近7天充值金额，环比上周上升91.15%，高于/低于大盘**'},
-#             {'name': '张涛', 'title': '深航/国航充值业务',
-#              'content': '付方名称:重庆云上航空票务股份有限公司，'
-#                         '航司:ZH——商编:10012407595+场景字段，'
-#                         '近7天充值金额，环比上周上升103.50%，高于/低于大盘**'},
-#             {'name': '段超', 'title': '深航/国航充值业务',
-#              'content': '付方名称:四川云游九州航空票务服务有限公司，'
-#                         '航司:ZH——商编:10034228238+场景字段，'
-#                         '近7天充值金额，环比上周上升58.61%，高于/低于大盘**'},
-#             {'name': '段超', 'title': '深航/国航充值业务',
-#              'content': '付方名称:杭州泛美航空国际旅行社有限公司，'
-#                         '航司:ZH——商编:10034228238+场景字段，'
-#                         '近7天充值金额，环比上周上升45.72%，高于/低于大盘**'},
-#             {'name': '段超', 'title': '深航/国航充值业务',
-#              'content': '付方名称:四川铁航航空运输有限公司，'
-#                         '航司:ZH——商编:10034228238+场景字段，近7天充值金额，'
-#                         '环比上周下降-44.90%，高于/低于大盘**'},
-#             {'name': '段超', 'title': '深航/国航充值业务',
-#              'content': '付方名称:上海广发航空票务服务有限公司，'
-#                         '航司:ZH——商编:10034228238+场景字段，'
-#                         '近7天充值金额，环比上周上升47.54%，高于/低于大盘**'}]
-
 
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
 from dbgpt.util.lark import lark_message_util
@@ -155,15 +67,15 @@ def monitor_two():
 
 
 # 每隔一段时间调用一次 monitor_four 函数
-#schedule.every(10).seconds.do(monitor_four)  # 每10秒执行一次
-#schedule.every(30).minutes.do(monitor_four)  # 每隔30分钟调用一次
-# schedule.every().hour.do(monitor_four)  # 每隔一小时调用一次
-#schedule.every().day.at("15:30").do(monitor_four)  # 每天的10:30调用一次
+#schedule.every(60).seconds.do(monitor_two)  # 每10秒执行一次
+#schedule.every(30).minutes.do(monitor_two)  # 每隔30分钟调用一次
+# schedule.every().hour.do(monitor_two)  # 每隔一小时调用一次
+#schedule.every().day.at("15:30").do(monitor_two)  # 每天的10:30调用一次
 # 可以根据需求选择不同的调度方式
 
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+#while True:
+#    schedule.run_pending()
+ #   time.sleep(1)
 
 # # 调用函数
 # monitor_two()

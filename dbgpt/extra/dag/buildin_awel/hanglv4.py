@@ -74,9 +74,9 @@ def monitor_four():
 #schedule.every().day.at("15:30").do(monitor_four)  # 每天的10:30调用一次
 # 可以根据需求选择不同的调度方式
 
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+# while True:
+#     schedule.run_pending()
+#     time.sleep(1)
 # 调用函数
 # monitor_four()
 
