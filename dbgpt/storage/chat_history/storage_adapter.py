@@ -105,16 +105,29 @@ class DBMessageStorageItemAdapter(
         self, model: ChatHistoryMessageEntity
     ) -> MessageStorageItem:
         """Convert from storage format."""
-        message_detail = (
-            json.loads(model.message_detail)  # type: ignore
-            if model.message_detail
-            else {}
-        )
+        message_detail = {}
+        try:
+            # comment: 
+            if model.message_detail:
+                message_detail = json.loads(model.message_detail)
+        except Exception as e:
+            message_detail = {}
+        # end try
         return MessageStorageItem(
             conv_uid=model.conv_uid,  # type: ignore
             index=model.index,  # type: ignore
             message_detail=message_detail,
         )
+        # message_detail = (
+        #     json.loads(model.message_detail)  # type: ignore
+        #     if model.message_detail
+        #     else {}
+        # )
+        # return MessageStorageItem(
+        #     conv_uid=model.conv_uid,  # type: ignore
+        #     index=model.index,  # type: ignore
+        #     message_detail=message_detail,
+        # )
 
     def get_query_for_identifier(
         self,
