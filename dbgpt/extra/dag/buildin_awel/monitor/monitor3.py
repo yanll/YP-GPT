@@ -38,9 +38,15 @@ def deal_data(alert_list, d_1_data, d_2_data, customer_type):
             difference1 = find_success_amount_by_customer_and_product(d_1_data, customer, product, customer_type)/d_1_customer_success_amount[customer] - find_success_amount_by_customer_and_product(d_2_data, customer, product, customer_type)/d_2_customer_success_amount[customer]
             # 交易量差值_
             difference2 = find_success_amount_by_customer_and_product(d_1_data, customer, product, customer_type)-find_success_amount_by_customer_and_product(d_2_data, customer, product, customer_type)
-            if abs(difference1) > 0.6 and abs(difference2) >= 100000:
+            # if abs(difference1) > 0.6 and abs(difference2) >= 100000:
+            # 测试使用更低的阈值
+            if abs(difference1) > 0.1 and abs(difference2) >= 100000:
+                if customer_type=='STAT_DISPAYSIGNEDNAME':
+                    sale_name = monitor3_data.search_by_stat_dispaysignedname(customer)[0]['SALES_NAME']
+                else:
+                    sale_name = monitor3_data.search_by_payer_customer_signedname(customer)[0]['PAYER_SALES_NAME']
                 alert_list.append({
-                    'name': monitor3_data.search_by_stat_dispaysignedname(customer)[0]['SALES_NAME'],
+                    'name': sale_name,
                     'title': '商户（收方或付方）产品波动异常',
                     'content': f'{"商户签约名" if customer_type=="STAT_DISPAYSIGNEDNAME" else "付方签约名"}:{customer}，交易无明显波动，但{product}产品结构有变化，变化值为{difference1*100:.2f}%（产品交易金额占比的环比），请关注。'
                 })
