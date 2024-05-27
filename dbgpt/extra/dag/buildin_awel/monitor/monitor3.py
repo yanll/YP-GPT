@@ -1,6 +1,6 @@
 from dbgpt.extra.dag.buildin_awel.monitor import monitor3_data
 
-def find_success_by_customer_and_product(data, customer, product, customer_type) -> float:
+def find_success_amount_by_customer_and_product(data, customer, product, customer_type) -> float:
     for item in data:
         if item[customer_type] == customer and item['PRODUCT'] == product:
             return float(item['SUCCESS_AMOUNT'])
@@ -35,14 +35,14 @@ def deal_data(alert_list, d_1_data, d_2_data, customer_type):
             continue
         for product in product_list:
             # 环比差值
-            difference1 = find_success_by_customer_and_product(d_1_data, customer, product, customer_type)/d_1_customer_success_amount[customer] - find_success_by_customer_and_product(d_2_data, customer, product, customer_type)/d_2_customer_success_amount[customer]
-            # 交易量差值
-            difference2 = find_success_by_customer_and_product(d_1_data, customer, product, customer_type)-find_success_by_customer_and_product(d_2_data, customer, product, customer_type)
+            difference1 = find_success_amount_by_customer_and_product(d_1_data, customer, product, customer_type)/d_1_customer_success_amount[customer] - find_success_amount_by_customer_and_product(d_2_data, customer, product, customer_type)/d_2_customer_success_amount[customer]
+            # 交易量差值_
+            difference2 = find_success_amount_by_customer_and_product(d_1_data, customer, product, customer_type)-find_success_amount_by_customer_and_product(d_2_data, customer, product, customer_type)
             if abs(difference1) > 0.6 and abs(difference2) >= 100000:
                 alert_list.append({
                     'name': monitor3_data.search_by_stat_dispaysignedname(customer)[0]['SALES_NAME'],
                     'title': '商户（收方或付方）产品波动异常',
-                    'content': f'商户签约名:{customer}，交易无明显波动，但{product}产品结构有变化，变化值为{difference1*100:.2f}%（产品交易金额占比的环比），请关注。'
+                    'content': f'{"商户签约名" if customer_type=="STAT_DISPAYSIGNEDNAME" else "付方签约名"}:{customer}，交易无明显波动，但{product}产品结构有变化，变化值为{difference1*100:.2f}%（产品交易金额占比的环比），请关注。'
                 })
 
     return alert_list

@@ -2,7 +2,7 @@ import requests
 import json
 
 def get_this_week_data_in_monitor4():
-    url = 'https://dmall.yeepay.com/dev-api/dataapi/output/postapi/get_this_week_data_in_monitor4'
+    url = 'https://dmall.yeepay.com/dev-api/dataapi/output/postapi/get_this_week_data_in_monitor4_2'
     data = {
         "appname": "app",
         "appkey": "yTr5PUeVm6Sw",
