@@ -42,5 +42,3 @@ def monitor2():
 
     return alert_list
 
-# a = monitor2()
-# print(a)
