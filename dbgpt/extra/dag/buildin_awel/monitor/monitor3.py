@@ -48,7 +48,8 @@ def deal_data(alert_list, d_1_data, d_2_data, customer_type):
                 alert_list.append({
                     'name': sale_name,
                     'title': '商户（收方或付方）产品波动异常',
-                    'content': f'{"商户签约名" if customer_type=="STAT_DISPAYSIGNEDNAME" else "付方签约名"}:{customer}，交易无明显波动，但{product}产品结构有变化，变化值为{difference1*100:.2f}%（产品交易金额占比的环比），请关注。'
+                    'content': f'{"商户签约名" if customer_type=="STAT_DISPAYSIGNEDNAME" else "付方签约名"}:{customer}，交易无明显波动，但{product}产品结构有变化，变化值为{difference1*100:.2f}%（产品交易金额占比的环比），请关注。',
+                    "type": "商户签约名" if customer_type=="STAT_DISPAYSIGNEDNAME" else "付方签约名"
                 })
 
     return alert_list
