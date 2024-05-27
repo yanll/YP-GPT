@@ -87,6 +87,8 @@ def monitor4():
         last_week_data = monitor4_data.get_last_week_data_in_monitor4()
         sale_name1 = monitor4_data.search_by_customer_no('10012407595')[0]['SALES_NAME']
         sale_name2 = monitor4_data.search_by_customer_no('10034228238')[0]['SALES_NAME']
+        total_success_amount_this_week = float(monitor4_data.get_total_success_amount_this_week())
+        total_success_amount_last_week = float(monitor4_data.get_total_success_amount_last_week())
     except Exception as e:
         print('监控四获取数据异常')
         raise e
@@ -152,8 +154,7 @@ def monitor4():
                     item['PAYER_CUSTOMER_SIGNEDNAME']] = float(item['SUCCESS_AMOUNT'])
 
     print('监控四开始判断预警')
-    market_fluctuation = (CUSTOMER1['SUCCESS_AMOUNT_this_week'] + CUSTOMER2['SUCCESS_AMOUNT_this_week']) / (
-            CUSTOMER1['SUCCESS_AMOUNT_last_week'] + CUSTOMER2['SUCCESS_AMOUNT_last_week']) - 1
+    market_fluctuation = total_success_amount_this_week/total_success_amount_last_week - 1
     alert_list = []
     alert_list = deal_customer(alert_list, CUSTOMER1, sale_name1, customer_no1, stat_dispaysignedname1, this_week_data,
                                last_week_data, market_fluctuation)
