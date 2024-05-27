@@ -65,13 +65,16 @@ class ChatWithDbQA(BaseChat):
                     self.current_user_input,
                     self.top_k,
                 )
+                
+                if len(table_info) == 0: 
+                    raise Exception('not found')
             except Exception as e:
                 print("db summary find error!" + str(e))
                 # table_infos = self.database.table_simple_info()
                 table_infos = await blocking_func_to_async(
                     self._executor, self.database.table_simple_info
                 )
-
+            
             # table_infos = self.database.table_simple_info()
             dialect = self.database.dialect
 

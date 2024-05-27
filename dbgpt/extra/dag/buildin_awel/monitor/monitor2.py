@@ -3,7 +3,7 @@ from dbgpt.extra.dag.buildin_awel.monitor import monitor2_data
 
 def monitor2():
 
-    trx_date = '2024-05-21'
+    trx_date = '2024-05-24'
     try:
         print('开始获取监控二所需数据')
         last_day_data_by_stat_dispaysignedname = monitor2_data.get_refund_rate_in_monitor2(trx_date)
