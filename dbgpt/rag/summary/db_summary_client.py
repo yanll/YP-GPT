@@ -65,7 +65,7 @@ class DBSummaryClient:
         )
         table_docs = retriever.retrieve(query)
         ans = [d.content for d in table_docs]
-        logger.info(f"向量库查找DB SUMMARY RESULT：{str(ans)}")
+        logger.info(f"向量库查找DB SUMMARY RESULT：{len(ans)}")
         return ans
 
     def init_db_summary(self):
