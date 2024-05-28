@@ -308,21 +308,25 @@ class ClickhouseConnector(RDBMSConnector):
         # group_concat() not supported in clickhouse, use arrayStringConcat+groupArray
         # instead; and quotes need to be escaped
         logger.info("====================ClickHouse" + self.get_current_db_name())
+        # _sql = f"""
+        #     SELECT concat(table, '(', arrayStringConcat(
+        #         groupArray(concat(name, ':', type)), ', '), ')') AS schema_info
+        #     FROM system.columns
+        #     WHERE database = '{self.get_current_db_name()}'
+        #     GROUP BY table
+        # """
         _sql = f"""
             SELECT concat(table, '(', arrayStringConcat(
-                groupArray(concat(name, ':', type)), ', '), ')') AS schema_info
+                groupArray(name), '-'), ')') AS schema_info
             FROM system.columns
             WHERE database = '{self.get_current_db_name()}'
             GROUP BY table
         """
         
-        logger.info(f"""
-            SELECT concat(table, '(', arrayStringConcat(
-                groupArray(concat(name, ':', type)), '-'), ')') AS schema_info
-            FROM system.columns
-            WHERE database = '{self.get_current_db_name()}'
-            GROUP BY table
-        """)
+        
+        logger.info(_sql)
+        
+        logger.info(f"database: {self.client.database}, url: {self.client.url}")
         with self.client.query_row_block_stream(_sql) as stream:
             return [row[0] for block in stream for row in block]
 
