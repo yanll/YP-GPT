@@ -14,6 +14,7 @@ class ChatFactory(metaclass=Singleton):
         from dbgpt.app.scene.chat_data.chat_excel.excel_analyze.prompt import prompt
         from dbgpt.app.scene.chat_data.chat_excel.excel_learning.prompt import prompt
         from dbgpt.app.scene.chat_db.auto_execute.chat import ChatWithDbAutoExecute
+        from dbgpt.app.scene.chat_db.auto_execute.prompt_clickhouse import prompt
         from dbgpt.app.scene.chat_db.auto_execute.prompt import prompt
         from dbgpt.app.scene.chat_db.professional_qa.chat import ChatWithDbQA
         from dbgpt.app.scene.chat_db.professional_qa.prompt import prompt

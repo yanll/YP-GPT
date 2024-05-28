@@ -5,7 +5,7 @@ from dbgpt.agent.util.api_call import ApiCall
 from dbgpt.app.scene import BaseChat, ChatScene
 from dbgpt.util.executor_utils import blocking_func_to_async
 from dbgpt.util.tracer import root_tracer, trace
-
+from dbgpt.util import envutils
 CFG = Config()
 
 logger = logging.getLogger(__name__)
@@ -23,6 +23,7 @@ class ChatWithDbAutoExecute(BaseChat):
             - model_name:(str) llm model name
             - select_param:(str) dbname
         """
+        
         chat_mode = ChatScene.ChatWithDbExecute
         self.db_name = chat_param["select_param"]
         chat_param["chat_mode"] = chat_mode
@@ -81,7 +82,8 @@ class ChatWithDbAutoExecute(BaseChat):
             "dialect": self.database.dialect,
             "table_info": table_infos,
             "display_type": self._generate_numbered_list(),
-            "db_type": self.database.db_type
+            "db_type": self.database.db_type,
+            "table_name":envutils.getenv("CK_TABLE_NAME")
         }
         return input_values
 

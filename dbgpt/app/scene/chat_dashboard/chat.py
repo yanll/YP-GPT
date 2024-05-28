@@ -10,8 +10,10 @@ from dbgpt.app.scene.chat_dashboard.data_preparation.report_schma import (
     ChartData,
     ReportData,
 )
+from dbgpt.util import envutils
 from dbgpt.util.executor_utils import blocking_func_to_async
 from dbgpt.util.tracer import trace
+from dbgpt.util.tracer import root_tracer, trace
 
 CFG = Config()
 
@@ -60,23 +62,32 @@ class ChatDashboard(BaseChat):
             raise ValueError("Could not import DBSummaryClient. ")
 
         client = DBSummaryClient(system_app=CFG.SYSTEM_APP)
+        table_infos = None
         try:
-            table_infos = await blocking_func_to_async(
-                self._executor,
-                client.get_db_summary,
-                self.db_name,
-                self.current_user_input,
-                self.top_k,
-            )
-            print("dashboard vector find tables:{}", table_infos)
+            with root_tracer.start_span("ChatWithDbAutoExecute.get_db_summary"):
+                table_infos = await blocking_func_to_async(
+                    self._executor,
+                    client.get_db_summary,
+                    self.db_name,
+                    self.current_user_input,
+                    self.top_k,
+                )
+                if len(table_infos) == 0:
+                    raise Exception("not found table infos")
         except Exception as e:
             print("db summary find error!" + str(e))
+            
+        if not table_infos:
+            table_infos = await blocking_func_to_async(
+                self._executor, self.database.table_simple_info
+            )
 
         input_values = {
             "input": self.current_user_input,
             "dialect": self.database.dialect,
-            "table_info": self.database.table_simple_info(),
-            "supported_chat_type": self.dashboard_template["supported_chart_type"]
+            "table_info": table_infos,
+            "supported_chat_type": self.dashboard_template["supported_chart_type"],
+            "table_name":envutils.getenv("CK_TABLE_NAME")
             # "table_info": client.get_similar_tables(dbname=self.db_name, query=self.current_user_input, topk=self.top_k)
         }
 
