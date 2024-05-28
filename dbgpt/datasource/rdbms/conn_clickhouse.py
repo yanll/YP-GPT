@@ -323,7 +323,11 @@ class ClickhouseConnector(RDBMSConnector):
             WHERE database = '{self.get_current_db_name()}'
             GROUP BY table
         """)
+        
+        logger.info(f"database: {self.client.database}, url: {self.client.url}")
         with self.client.query_row_block_stream(_sql) as stream:
+            for b in stream:
+                logger.info(b)
             return [row[0] for block in stream for row in block]
 
     def _write(self, write_sql: str):
