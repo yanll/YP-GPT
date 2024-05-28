@@ -72,7 +72,7 @@ class ChatWithDbAutoExecute(BaseChat):
             )
             
             
-        logger.info(f"ChatWithDbAutoExecute -> table_infos {str(table_infos)}")
+        logger.info(f"ChatWithDbAutoExecute -> table_infos {len(table_infos)}")
 
         input_values = {
             "db_name": self.db_name,
