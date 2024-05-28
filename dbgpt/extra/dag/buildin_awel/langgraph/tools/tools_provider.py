@@ -19,6 +19,7 @@ from dbgpt.extra.dag.buildin_awel.langgraph.tools.merchant_search_tool import Me
 from dbgpt.extra.dag.buildin_awel.langgraph.tools.requirement_search_tool import RequirementSearchTool
 from dbgpt.extra.dag.buildin_awel.langgraph.tools.requirement_tool import RequirementCollectTool
 from dbgpt.extra.dag.buildin_awel.langgraph.tools.weekly_report_tool import WeeklyReportCollectTool
+from dbgpt.extra.dag.buildin_awel.langgraph.tools.operating_check_opr_order_tool import OpetationCheckOPROrderTool
 
 
 class ToolsProvider:
@@ -39,6 +40,7 @@ class ToolsProvider:
             BookMeetingRoomTool(),
             AbilityDisplayTool(),
             FeedbackCollectTool()
+            # OpetationCheckOPROrderTool()
             # ,KnowledgeTool()
         ]
         pass

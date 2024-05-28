@@ -1,5 +1,5 @@
 from typing import Dict
-
+import logging
 from dbgpt._private.config import Config
 from dbgpt.agent.util.api_call import ApiCall
 from dbgpt.app.scene import BaseChat, ChatScene
@@ -8,7 +8,7 @@ from dbgpt.util.tracer import root_tracer, trace
 
 CFG = Config()
 
-
+logger = logging.getLogger(__name__)
 class ChatWithDbAutoExecute(BaseChat):
     chat_scene: str = ChatScene.ChatWithDbExecute.value()
 
@@ -62,12 +62,17 @@ class ChatWithDbAutoExecute(BaseChat):
                     self.current_user_input,
                     CFG.KNOWLEDGE_SEARCH_TOP_SIZE,
                 )
+                if len(table_infos) == 0:
+                    raise Exception("not found table infos")
         except Exception as e:
             print("db summary find error!" + str(e))
         if not table_infos:
             table_infos = await blocking_func_to_async(
                 self._executor, self.database.table_simple_info
             )
+            
+            
+        logger.info(f"ChatWithDbAutoExecute -> table_infos {str(table_infos)}")
 
         input_values = {
             "db_name": self.db_name,
