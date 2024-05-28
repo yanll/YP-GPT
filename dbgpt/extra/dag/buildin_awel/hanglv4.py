@@ -74,6 +74,6 @@ def monitor_four():
  #   time.sleep(1)
 
 # 调用函数
-monitor_four()
+#monitor_four()
 
 
