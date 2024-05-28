@@ -65,7 +65,9 @@ def deal_customer(alert_list, CUSTOMER, sale_name, customer_no, stat_dispaysigne
                                    success_amount_last_week_by_payer_business_scene[key]) - (
                                           CUSTOMER['SUCCESS_AMOUNT_this_week'] / CUSTOMER['SUCCESS_AMOUNT_last_week'])
                     content = f'付方名称:{payer_customer_signedname}，航司:{stat_dispaysignedname}——商编:{customer_no}+场景字段:{key}，近7天充值金额，环比上周{"上升" if fluctuation > 0 else "下降"}{abs(fluctuation * 100):.2f}%，{"高于" if market_fluctuation > 0 else "低于"}大盘{abs(market_fluctuation*10):.2f}%'
-                    subcontent = f'近7天充值金额，环比上周{"上升" if fluctuation > 0 else "下降"}{abs(fluctuation * 100):.2f}%，{"高于" if market_fluctuation > 0 else "低于"}大盘{abs(market_fluctuation*10):.2f}%'
+                    #subcontent = f'近7天充值金额，环比上周{"上升" if fluctuation > 0 else "下降"}{abs(fluctuation * 100):.2f}%，{"高于" if market_fluctuation > 0 else "低于"}大盘{abs(market_fluctuation*10):.2f}%'
+                    subcontent = f"波动详情：  近7天充值金额，环比上周{'上升' if fluctuation > 0 else '下降'}<text_tag color={'green' if fluctuation > 0 else 'red'}>{abs(fluctuation * 100):.2f}%</text_tag>，{'高于' if market_fluctuation > 0 else '低于'}大盘<text_tag color={'green' if market_fluctuation > 0 else 'red'}>{abs(market_fluctuation * 10):.2f}%</text_tag>"
+
                     alert_list.append({
                         'name': sale_name,
                         'title': '深航/国航充值业务',
@@ -74,8 +76,10 @@ def deal_customer(alert_list, CUSTOMER, sale_name, customer_no, stat_dispaysigne
                         'stat_dispaysignedname': stat_dispaysignedname,
                         'customer_no': customer_no,
                         'payer_business_scene': key,
-                        'sub_content': subcontent,
+                        #'sub_content': subcontent,
+                        'sub_content_rich': subcontent,
                     })
+
 
     return alert_list
 

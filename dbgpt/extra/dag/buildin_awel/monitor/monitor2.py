@@ -23,7 +23,9 @@ def monitor2():
                 'title': '退款笔数波动异常',
                 'type': '商户签约名',
                 'customer_name' : STAT_DISPAYSIGNEDNAME,
-                'content': f'昨日退款波动超过30%，退款率{REFUND_RATE*100:.2f}%，请关注'
+                #'content': f'昨日退款波动超过30%，退款率{REFUND_RATE*100:.2f}%，请关注',
+                'content_rich': f"波动详情：    昨日退款波动超过30%，退款率<text_tag color={'orange'if REFUND_RATE<1 else 'carmine'}>{REFUND_RATE*100:.2f}%</text_tag>，请关注。"
+                #波动详情：    昨日退款波动超过30%，退款率<text_tag color=orange>{REFUND_RATE*100:.2f}%</text_tag>
 
 
             })
@@ -37,8 +39,11 @@ def monitor2():
                 'title': '退款笔数波动异常',
                 'type': '付方签约名',
                 'customer_name': PAYER_CUSTOMER_SIGNEDNAME,
-                'content': f'昨日退款波动超过30%，退款率{REFUND_RATE*100:.2f}%，请关注'
+                'content_rich': f"波动详情：    昨日退款波动超过30%，退款率<text_tag color={'orange'if REFUND_RATE<1 else 'carmine'}>{REFUND_RATE*100:.2f}%</text_tag>，请关注。"
+                #'content': f'昨日退款波动超过30%，退款率{REFUND_RATE*100:.2f}%，请关注'
             })
 
     return alert_list
 
+# a = monitor2()
+# print(a)
