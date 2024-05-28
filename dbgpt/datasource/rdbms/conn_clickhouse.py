@@ -2,7 +2,7 @@
 import logging
 import re
 from typing import Any, Dict, Iterable, List, Optional, Tuple
-
+from dbgpt.util import  envutils
 import sqlparse
 from sqlalchemy import MetaData, text
 
@@ -317,9 +317,9 @@ class ClickhouseConnector(RDBMSConnector):
         # """
         _sql = f"""
             SELECT concat(table, '(', arrayStringConcat(
-                groupArray(name), '-'), ')') AS schema_info
+                groupArray(concat(name, '(', comment,')')), '-'), ')') AS schema_info
             FROM system.columns
-            WHERE database = '{self.get_current_db_name()}'
+            WHERE database = '{self.get_current_db_name()}' AND table = '{envutils.getenv("CK_TABLE_NAME")}'
             GROUP BY table
         """
         
