@@ -91,7 +91,7 @@ class PromptTemplateRegistry:
         if proxyllm_backend:
             registry = scene_registry.get(proxyllm_backend)
         if not registry and db_type:
-            registry = scene_registry.get(f"{model_name}___db_{db_type}")
+            registry = scene_registry.get(f"{_DEFAULT_MODEL_KEY}___db_{db_type}")
         if not registry:
             registry = scene_registry.get(model_name)
         if not registry:
