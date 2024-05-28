@@ -319,7 +319,7 @@ class ClickhouseConnector(RDBMSConnector):
             SELECT concat(table, '(', arrayStringConcat(
                 groupArray(name), '-'), ')') AS schema_info
             FROM system.columns
-            WHERE database = '{self.get_current_db_name()}'
+            WHERE database = '{self.get_current_db_name()}' AND table = 'dp_dws_dw_event_trx_pay'
             GROUP BY table
         """
         
