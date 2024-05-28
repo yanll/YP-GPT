@@ -7,6 +7,9 @@ This module is deprecated. we will remove it in the future.
 
 from collections import defaultdict
 from typing import Dict, List, Optional
+import logging
+
+logger = logging.getLogger(__name__)
 
 _DEFAULT_MODEL_KEY = "___default_prompt_template_model_key__"
 _DEFUALT_LANGUAGE_KEY = "___default_prompt_template_language_key__"
@@ -52,6 +55,7 @@ class PromptTemplateRegistry:
             
         
         scene_registry = self.registry[scene_name]
+        logger.info(f"set registry, scene_name, {db_type}")
         _register_scene_prompt_template(
             scene_registry, prompt_template, language, model_names,db_type
         )
