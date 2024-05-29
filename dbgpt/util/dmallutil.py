@@ -24,7 +24,7 @@ class DmallClient:
             "parameters": parameters
         }
         resp = requests.request('POST', headers=headers, url=url, data=json.dumps(data),
-                                timeout=consts.request_time_out)
+                                timeout=(5, 15))
         print("商店调用返回结果：", resp.text)
         return resp
 
