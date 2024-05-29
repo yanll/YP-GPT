@@ -1,8 +1,8 @@
-from dbgpt.extra.dag.buildin_awel.monitor import monitor1_data
+from dbgpt.extra.dag.buildin_awel.monitor import monitor1bystat_data
 from dbgpt.extra.dag.buildin_awel.monitor.api import get_past_working_days
 
 
-class Monitor1():
+class Monitor1ByStat:
     def __init__(self):
         self.alert_list = []
         try:
@@ -21,15 +21,15 @@ class Monitor1():
 
         try:
             print('监控一中开始行业线数据')
-            self.d_1_industry_line_data = monitor1_data.get_industry_line_data_by_stat_in_monitor1(self.d_1_trx_date)[0]
+            self.d_1_industry_line_data = monitor1bystat_data.get_industry_line_data_by_stat_in_monitor1(self.d_1_trx_date)[0]
             self.d_1_d_7_industry_line_data = \
-                monitor1_data.get_industry_line_data_by_stat_in_monitor1(self.d_1_d_7_trx_date)[0]
+                monitor1bystat_data.get_industry_line_data_by_stat_in_monitor1(self.d_1_d_7_trx_date)[0]
             self.d_1_d_15_industry_line_data = \
-                monitor1_data.get_industry_line_data_by_stat_in_monitor1(self.d_1_d_15_trx_date)[0]
+                monitor1bystat_data.get_industry_line_data_by_stat_in_monitor1(self.d_1_d_15_trx_date)[0]
             self.d_1_d_30_industry_line_data = \
-                monitor1_data.get_industry_line_data_by_stat_in_monitor1(self.d_1_d_30_trx_date)[0]
+                monitor1bystat_data.get_industry_line_data_by_stat_in_monitor1(self.d_1_d_30_trx_date)[0]
             self.d_1_d_45_industry_line_data = \
-                monitor1_data.get_industry_line_data_by_stat_in_monitor1(self.d_1_d_45_trx_date)[0]
+                monitor1bystat_data.get_industry_line_data_by_stat_in_monitor1(self.d_1_d_45_trx_date)[0]
 
         except Exception as e:
             print('监控一中开始行业线数据失败')
@@ -39,7 +39,7 @@ class Monitor1():
         sales_name_list = set()
         try:
             print('监控一开始获取所有销售')
-            data = monitor1_data.get_data_by_stat_in_monitor1(self.d_1_d_45_trx_date)
+            data = monitor1bystat_data.get_data_by_stat_in_monitor1(self.d_1_d_45_trx_date)
             for item in data:
                 sales_name_list.add(item['SALES_NAME'])
         except Exception as e:
@@ -54,7 +54,7 @@ class Monitor1():
         customer_list = set()
         try:
             print(f'监控一开始获取{sales_name}的商户签约名')
-            data = monitor1_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_d_45_trx_date, sales_name=sales_name)
+            data = monitor1bystat_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_d_45_trx_date, sales_name=sales_name)
 
             for item in data:
                 customer_list.add(item['STAT_DISPAYSIGNEDNAME'])
@@ -68,18 +68,18 @@ class Monitor1():
     def deal_customer(self, sales_name, customer):
         try:
             print(f'监控一开始获取{sales_name}的商户签约名为{customer}的数据')
-            d_1_data = monitor1_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date, sales_name=sales_name,
+            d_1_data = monitor1bystat_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date, sales_name=sales_name,
                                                                   stat_dispaysignedname=customer)[0]
-            d_1_d_7_data = monitor1_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_d_7_trx_date,
+            d_1_d_7_data = monitor1bystat_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_d_7_trx_date,
                                                                       sales_name=sales_name,
                                                                       stat_dispaysignedname=customer)[0]
-            d_1_d_15_data = monitor1_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_d_15_trx_date,
+            d_1_d_15_data = monitor1bystat_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_d_15_trx_date,
                                                                        sales_name=sales_name,
                                                                        stat_dispaysignedname=customer)[0]
-            d_1_d_30_data = monitor1_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_d_30_trx_date,
+            d_1_d_30_data = monitor1bystat_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_d_30_trx_date,
                                                                        sales_name=sales_name,
                                                                        stat_dispaysignedname=customer)[0]
-            d_1_d_45_data = monitor1_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_d_45_trx_date,
+            d_1_d_45_data = monitor1bystat_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_d_45_trx_date,
                                                                        sales_name=sales_name,
                                                                        stat_dispaysignedname=customer)[0]
         except Exception as e:
@@ -156,13 +156,13 @@ class Monitor1():
         '''
         # 归因1
         try:
-            d_1_data = monitor1_data.get_reason_1_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date,
+            d_1_data = monitor1bystat_data.get_reason_1_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date,
                                                                            sales_name=sales_name,
                                                                            stat_dispaysignedname=customer)
-            d_2_data = monitor1_data.get_reason_1_data_by_stat_in_monitor1(trx_date=self.d_2_trx_date,
+            d_2_data = monitor1bystat_data.get_reason_1_data_by_stat_in_monitor1(trx_date=self.d_2_trx_date,
                                                                            sales_name=sales_name,
                                                                            stat_dispaysignedname=customer)
-            d_1_d_45_data = monitor1_data.get_reason_1_data_by_stat_in_monitor1(trx_date=self.d_1_d_45_trx_date,
+            d_1_d_45_data = monitor1bystat_data.get_reason_1_data_by_stat_in_monitor1(trx_date=self.d_1_d_45_trx_date,
                                                                            sales_name=sales_name,
                                                                            stat_dispaysignedname=customer)
 
@@ -200,10 +200,10 @@ class Monitor1():
 
         # 归因2
         try:
-            d_1_data = monitor1_data.get_reason_2_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date,
+            d_1_data = monitor1bystat_data.get_reason_2_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date,
                                                                            sales_name=sales_name,
                                                                            stat_dispaysignedname=customer)
-            d_2_data = monitor1_data.get_reason_2_data_by_stat_in_monitor1(trx_date=self.d_2_trx_date,
+            d_2_data = monitor1bystat_data.get_reason_2_data_by_stat_in_monitor1(trx_date=self.d_2_trx_date,
                                                                            sales_name=sales_name,
                                                                            stat_dispaysignedname=customer)
 
@@ -237,10 +237,10 @@ class Monitor1():
         '''
         # 归因3
         try:
-            d_1_data = monitor1_data.get_reason_3_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date,
+            d_1_data = monitor1bystat_data.get_reason_3_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date,
                                                                            sales_name=sales_name,
                                                                            stat_dispaysignedname=customer)
-            d_2_data = monitor1_data.get_reason_3_data_by_stat_in_monitor1(trx_date=self.d_2_trx_date,
+            d_2_data = monitor1bystat_data.get_reason_3_data_by_stat_in_monitor1(trx_date=self.d_2_trx_date,
                                                                            sales_name=sales_name,
                                                                            stat_dispaysignedname=customer)
             for d_2_item in d_2_data:
