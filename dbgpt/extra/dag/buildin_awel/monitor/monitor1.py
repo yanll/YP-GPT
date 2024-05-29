@@ -248,7 +248,7 @@ class Monitor1():
         except Exception as e:
             print('归因3处理错误')
 
-if __name__ == "__main__":
-    a = Monitor1()
-    b = a.run()
-    print(b)
+# if __name__ == "__main__":
+#     a = Monitor1()
+#     b = a.run()
+#     print(b)
