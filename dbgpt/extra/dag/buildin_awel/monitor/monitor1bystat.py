@@ -128,33 +128,25 @@ class Monitor1ByStat:
 
                 print(f'监控一{sales_name}的商户签约名为{customer}的数据异常条件满足')
 
-                reason = self.find_reason(sales_name, customer)
+                reason_1 = self.find_reason1(sales_name, customer)
+                reason_2 = self.find_reason2(sales_name, customer)
+                reason_3 = self.find_reason3(sales_name, customer)
+
+
 
                 self.alert_list.append({
                     'title': '交易笔数波动异常',
                     'name': sales_name,
                     'content': f'商户签约名:{customer}，昨日交易金额{float(d_1_data["SUCCESS_COUNT"]) / 10000:.2f}万元，环比{"上升" if customer_success_count > 0 else "下降"}{customer_success_count * 100:.2f}%（商户交易笔数环比）',
-                    'reason': reason
+                    'reason_1': reason_1,
+                    'reason_2': reason_2,
+                    'reason_3': reason_3
                 })
 
         except Exception as e:
             print(f'监控一开始处理{sales_name}的商户签约名为{customer}的数据失败')
 
-    def find_reason(self, sales_name, customer):
-        print(f'监控一处理{sales_name}的商户签约名为{customer}的数据异常归因')
-        reason = []
-        '''
-        1、产品&原始场景交易波动异常
-        归因①【商户签约名+商户编号+原始场景】：
-        - ([D-1]交易金额- [D-2]交易金额）的绝对值>=100000
-        - [D-1]交易笔数/前X天日均交易笔数-1，上升或下降，取TOP3
-        归因②【商户签约名+商户编号+原始场景+产品】：
-        - ([D-1]交易金额- [D-2]交易金额）的绝对值>=10000
-        - 交易环比（[D-1]交易金额/[D-2]交易金额-1
-          - >150%——上升
-          - <50%——下降
-        '''
-        # 归因1
+    def find_reason1(self, sales_name, customer):
         try:
             d_1_data = monitor1bystat_data.get_reason_1_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date,
                                                                            sales_name=sales_name,
@@ -166,7 +158,7 @@ class Monitor1ByStat:
                                                                            sales_name=sales_name,
                                                                            stat_dispaysignedname=customer)
 
-            reason_1 = []
+            reason_1 = ""
             for d_2_item in d_2_data:
                 d_2_success_amount = float(d_2_item['SUCCESS_AMOUNT'])
                 d_1_success_amount = 0
@@ -185,20 +177,20 @@ class Monitor1ByStat:
                     if d_1_d_45_success_count == 0:
                         continue
                     difference = d_1_success_count/d_1_d_45_success_count - 1
-                    reason_1.append((
-                        difference, f'归因一:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比{"上升"  if difference>0 else "下降"}{difference*100:.2f}%'))
+                    reason_1 += (
+                        difference, f'归因一:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比{"上升"  if difference>0 else "下降"}{difference*100:.2f}%')
             if len(reason_1) > 3:
-                reason_1.sort(key=lambda x: abs(x[0]), reverse=True)
-                reason_1 = reason_1[:3]
+                reason_1 = sorted(reason_1, key=lambda x: abs(x[0]), reverse=True)[:3]
 
             for item in reason_1:
-                reason.append(item[1])
+                reason_1.append(item)
+
+            return reason_1
 
         except Exception as e:
             print('归因1处理错误')
 
-
-        # 归因2
+    def find_reason2(self, sales_name, customer):
         try:
             d_1_data = monitor1bystat_data.get_reason_2_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date,
                                                                            sales_name=sales_name,
@@ -207,6 +199,7 @@ class Monitor1ByStat:
                                                                            sales_name=sales_name,
                                                                            stat_dispaysignedname=customer)
 
+            reason_2 = ""
             for d_2_item in d_2_data:
                 d_2_success_amount = float(d_2_item['SUCCESS_AMOUNT'])
                 if d_2_success_amount == 0:
@@ -218,24 +211,15 @@ class Monitor1ByStat:
                         d_1_success_amount = float(d_1_item['SUCCESS_AMOUNT'])
                         break
                 if abs(d_1_success_amount - d_2_success_amount) > 10000 and d_1_success_amount / d_2_success_amount - 1 > 1.5:
-                    reason.append(
-                        f'归因二:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{d_2_item["BUSINESS_SCENE"]},产品:{d_2_item["PRODUCT"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升{(d_1_success_amount / d_2_success_amount - 1)*100:.2f}%')
+                    reason_2 += f'商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{d_2_item["BUSINESS_SCENE"]},产品:{d_2_item["PRODUCT"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升{d_1_success_amount / d_2_success_amount - 1:.2f}%\n'
                 if abs(d_1_success_amount - d_2_success_amount) > 10000 and d_1_success_amount / d_2_success_amount - 1 < -0.5:
-                    reason.append(
-                        f'归因二:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{d_2_item["BUSINESS_SCENE"]},产品:{d_2_item["PRODUCT"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降{abs(d_1_success_amount / d_2_success_amount - 1)*100:.2f}%')
+                    reason_2 += f'商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{d_2_item["BUSINESS_SCENE"]},产品:{d_2_item["PRODUCT"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降{abs(d_1_success_amount / d_2_success_amount - 1):.2f}%\n'
+
+            return reason_2
 
         except Exception as e:
             print('归因2处理错误')
-
-        '''
-        2、交易对手方交易环比波动异常
-        归因③【商户签约名+付款方签约名】：
-        - ([D-1]交易金额- [D-2]交易金额）的绝对值>=100000
-        - 交易环比（[D-1]交易金额/[D-2]交易金额-1
-          - >150%——上升
-          - <-50%——下降
-        '''
-        # 归因3
+    def find_reason3(self, sales_name, customer):
         try:
             d_1_data = monitor1bystat_data.get_reason_3_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date,
                                                                            sales_name=sales_name,
@@ -243,6 +227,8 @@ class Monitor1ByStat:
             d_2_data = monitor1bystat_data.get_reason_3_data_by_stat_in_monitor1(trx_date=self.d_2_trx_date,
                                                                            sales_name=sales_name,
                                                                            stat_dispaysignedname=customer)
+
+            reason_3 = ""
             for d_2_item in d_2_data:
                 d_2_success_amount = float(d_2_item['SUCCESS_AMOUNT'])
                 if d_2_success_amount == 0:
@@ -253,16 +239,16 @@ class Monitor1ByStat:
                         d_1_success_amount = float(d_1_item['SUCCESS_AMOUNT'])
                         break
                 if abs(d_1_success_amount - d_2_success_amount) > 100000 and d_1_success_amount / d_2_success_amount - 1 > 1.5:
-                    reason.append(
-                        f'归因三:主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount/10000:.2f}万元，环比上升{d_1_success_amount / d_2_success_amount - 1:.2f}%')
+                    reason_3 += f'归因三:主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount/10000:.2f}万元，环比上升{d_1_success_amount / d_2_success_amount - 1:.2f}%\n'
                 if abs(d_1_success_amount - d_2_success_amount) > 100000 and d_1_success_amount / d_2_success_amount - 1 < -0.5:
-                    reason.append(
-                        f'归因三:主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount/10000:.2f}万元，环比下降{abs(d_1_success_amount / d_2_success_amount - 1):.2f}%')
+                    reason_3 += f'归因三:主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount/10000:.2f}万元，环比下降{abs(d_1_success_amount / d_2_success_amount - 1):.2f}%\n'
+
+            return reason_3
 
         except Exception as e:
             print('归因3处理错误')
 
-
-
-
-        return reason
+# if __name__ == "__main__":
+#     a = Monitor1()
+#     b = a.run()
+#     print(b)
