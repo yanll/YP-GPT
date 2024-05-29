@@ -155,21 +155,49 @@ class Monitor1():
           - <50%——下降
         '''
         # 归因1
-        # try:
-        #     d_1_data = monitor1_data.get_reason_1_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date,
-        #                                                                    sales_name=sales_name,
-        #                                                                    stat_dispaysignedname=customer)
-        #     d_2_data = monitor1_data.get_reason_1_data_by_stat_in_monitor1(trx_date=self.d_2_trx_date,
-        #                                                                    sales_name=sales_name,
-        #                                                                    stat_dispaysignedname=customer)
-        #     d_1_success_amount = float(d_1_data['SUCCESS_AMOUNT'])
-        #     d_2_success_amount = float(d_2_data['SUCCESS_AMOUNT'])
-        #     if abs(d_1_success_amount - d_2_success_amount) >= 100000:
-        #
-        #     print(11111)
-        #
-        # except Exception as e:
-        #     raise e
+        try:
+            d_1_data = monitor1_data.get_reason_1_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date,
+                                                                           sales_name=sales_name,
+                                                                           stat_dispaysignedname=customer)
+            d_2_data = monitor1_data.get_reason_1_data_by_stat_in_monitor1(trx_date=self.d_2_trx_date,
+                                                                           sales_name=sales_name,
+                                                                           stat_dispaysignedname=customer)
+            d_1_d_45_data = monitor1_data.get_reason_1_data_by_stat_in_monitor1(trx_date=self.d_1_d_45_trx_date,
+                                                                           sales_name=sales_name,
+                                                                           stat_dispaysignedname=customer)
+
+            reason_1 = []
+            for d_2_item in d_2_data:
+                d_2_success_amount = float(d_2_item['SUCCESS_AMOUNT'])
+                d_1_success_amount = 0
+                d_1_success_count = 0
+                for d_1_item in d_1_data:
+                    if d_1_item['BUSINESS_SCENE'] == d_2_item['BUSINESS_SCENE'] and d_1_item['STAT_CUSTOMER_NO'] == d_2_item['STAT_CUSTOMER_NO']:
+                        d_1_success_amount = float(d_1_item['SUCCESS_AMOUNT'])
+                        d_1_success_count = float(d_1_item['SUCCESS_COUNT'])
+                        break
+                if abs(d_1_success_amount - d_2_success_amount) >= 100000:
+                    d_1_d_45_success_count = 0
+                    for d_1_d_45_item in d_1_d_45_data:
+                        if d_1_d_45_item['BUSINESS_SCENE'] == d_2_item['BUSINESS_SCENE'] and d_1_d_45_item['STAT_CUSTOMER_NO'] ==d_2_item['STAT_CUSTOMER_NO']:
+                            d_1_d_45_success_count = float(d_1_d_45_item['SUCCESS_COUNT'])
+                            break
+                    if d_1_d_45_success_count == 0:
+                        continue
+                    difference = d_1_success_count/d_1_d_45_success_count - 1
+                    reason_1.append((
+                        difference, f'归因二:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比{"上升"  if difference>0 else "下降"}{difference*100:.2f}%'))
+            if len(reason_1) > 3:
+                reason_1.sort(key=lambda x: abs(x[0]), reverse=True)
+                reason_1 = reason_1[:3]
+
+            for item in reason_1:
+                reason.append(item[1])
+
+
+
+        except Exception as e:
+            raise e
 
         # 归因2
         try:
@@ -186,16 +214,56 @@ class Monitor1():
                     continue
                 d_1_success_amount = 0
                 for d_1_item in d_1_data:
-                    if d_1_item['PRODUCT'] == d_2_item['PRODUCT'] and d_1_item['BUSINESS_SCENE'] == d_2_item['BUSINESS_SCENE'] and d_1_item['STAT_CUSTOMER_NO'] == d_2_item['STAT_CUSTOMER_NO']:
+                    if d_1_item['PRODUCT'] == d_2_item['PRODUCT'] and d_1_item['BUSINESS_SCENE'] == d_2_item[
+                        'BUSINESS_SCENE'] and d_1_item['STAT_CUSTOMER_NO'] == d_2_item['STAT_CUSTOMER_NO']:
                         d_1_success_amount = float(d_1_item['SUCCESS_AMOUNT'])
                         break
-                if abs(d_1_success_amount-d_2_success_amount) > 10000 and d_1_success_amount/d_2_success_amount-1 >1.5:
-                    reason.append(f'归因二:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{d_2_item["BUSINESS_SCENE"]},产品:{d_2_item["PRODUCT"]}，昨日交易金额{d_1_success_amount/10000:.2f}万元，环比上升{d_1_success_amount/d_2_success_amount-1:.2f}%')
+                if abs(d_1_success_amount - d_2_success_amount) > 10000 and d_1_success_amount / d_2_success_amount - 1 > 1.5:
+                    reason.append(
+                        f'归因二:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{d_2_item["BUSINESS_SCENE"]},产品:{d_2_item["PRODUCT"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升{(d_1_success_amount / d_2_success_amount - 1)*100:.2f}%')
                 if abs(d_1_success_amount - d_2_success_amount) > 10000 and d_1_success_amount / d_2_success_amount - 1 < -0.5:
                     reason.append(
-                        f'归因二:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{d_2_item["BUSINESS_SCENE"]},产品:{d_2_item["PRODUCT"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降{abs(d_1_success_amount / d_2_success_amount - 1):.2f}%')
+                        f'归因二:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{d_2_item["BUSINESS_SCENE"]},产品:{d_2_item["PRODUCT"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降{abs(d_1_success_amount / d_2_success_amount - 1)*100:.2f}%')
 
         except Exception as e:
             print('归因2处理错误')
+
+        '''
+        2、交易对手方交易环比波动异常
+        归因③【商户签约名+付款方签约名】：
+        - ([D-1]交易金额- [D-2]交易金额）的绝对值>=100000
+        - 交易环比（[D-1]交易金额/[D-2]交易金额-1
+          - >150%——上升
+          - <-50%——下降
+        '''
+        # 归因3
+        try:
+            d_1_data = monitor1_data.get_reason_3_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date,
+                                                                           sales_name=sales_name,
+                                                                           stat_dispaysignedname=customer)
+            d_2_data = monitor1_data.get_reason_3_data_by_stat_in_monitor1(trx_date=self.d_2_trx_date,
+                                                                           sales_name=sales_name,
+                                                                           stat_dispaysignedname=customer)
+            for d_2_item in d_2_data:
+                d_2_success_amount = float(d_2_item['SUCCESS_AMOUNT'])
+                if d_2_success_amount == 0:
+                    continue
+                d_1_success_amount = 0
+                for d_1_item in d_1_data:
+                    if d_1_item['PAYER_CUSTOMER_SIGNEDNAME'] == d_2_item['PAYER_CUSTOMER_SIGNEDNAME']:
+                        d_1_success_amount = float(d_1_item['SUCCESS_AMOUNT'])
+                        break
+                if abs(d_1_success_amount - d_2_success_amount) > 100000 and d_1_success_amount / d_2_success_amount - 1 > 1.5:
+                    reason.append(
+                        f'归因三:主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount/10000:.2f}万元，环比上升{d_1_success_amount / d_2_success_amount - 1:.2f}%')
+                if abs(d_1_success_amount - d_2_success_amount) > 100000 and d_1_success_amount / d_2_success_amount - 1 < -0.5:
+                    reason.append(
+                        f'归因三:主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount/10000:.2f}万元，环比下降{abs(d_1_success_amount / d_2_success_amount - 1):.2f}%')
+
+        except Exception as e:
+            print('归因3处理错误')
+
+
+
 
         return reason
