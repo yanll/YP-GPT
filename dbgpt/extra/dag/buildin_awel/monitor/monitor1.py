@@ -186,7 +186,7 @@ class Monitor1():
                         continue
                     difference = d_1_success_count/d_1_d_45_success_count - 1
                     reason_1.append((
-                        difference, f'归因二:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比{"上升"  if difference>0 else "下降"}{difference*100:.2f}%'))
+                        difference, f'归因一:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比{"上升"  if difference>0 else "下降"}{difference*100:.2f}%'))
             if len(reason_1) > 3:
                 reason_1.sort(key=lambda x: abs(x[0]), reverse=True)
                 reason_1 = reason_1[:3]
@@ -194,10 +194,8 @@ class Monitor1():
             for item in reason_1:
                 reason.append(item[1])
 
-
-
         except Exception as e:
-            raise e
+            print('归因1处理错误')
 
         # 归因2
         try:
