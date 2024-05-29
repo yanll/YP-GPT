@@ -140,3 +140,8 @@ class Monitor1():
         print(f'监控一开始处理{sales_name}的商户签约名为{customer}的数据异常归因')
         return []
         pass
+
+# if __name__ == "__main__":
+#     a = Monitor1()
+#     b = a.run()
+#     print(b)

@@ -79,6 +79,7 @@ def deal_customer(alert_list, CUSTOMER, sale_name, customer_no, stat_dispaysigne
                         #'sub_content': subcontent,
                         'sub_content_rich': subcontent,
                     })
+                    print(alert_list)
 
 
     return alert_list

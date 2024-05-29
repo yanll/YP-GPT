@@ -10,7 +10,7 @@ def monitor_four():
     # print("数值的返回结果", hv_data)
     # data = hv_data
     data = [{'name': '张华雪', 'title': '深航/国航充值业务', 'content': '付方名称:苏州市华谊商务有限公司，航司:ZH——商编:10012407595+场景字段:渠道，近7天充值金额，环比上周上升2520.01%，低于大盘0.61%', 'payer_customer_signedname': '苏州市华谊商务有限公司', 'stat_dispaysignedname': 'ZH', 'customer_no': '10012407595', 'payer_business_scene': '渠道', 'sub_content_rich': '波动详情：  近7天充值金额，环比上周上升<text_tag color=green>2520.01%</text_tag>，低于大盘<text_tag color=red>0.61%</text_tag>'},
-        {'name': '刘博', 'title': '深航/国航充值业务', 'content': '付方名称:杭州泛美航空国际旅行社有限公司，航司:CA——商编:10034228238+场景字段:渠道，近7天充值金额，环比上周上升43.64%，低于大盘0.61%', 'payer_customer_signedname': '杭州泛美航空国际旅行社有限公司', 'stat_dispaysignedname': 'CA', 'customer_no': '10034228238', 'payer_business_scene': '渠道', 'sub_content_rich': '波动详情：  近7天充值金额，环比上周上升<text_tag color=green>43.64%</text_tag>，低于大盘<text_tag color=red>0.61%</text_tag>'},
+        {'name': '张华雪', 'title': '深航/国航充值业务', 'content': '付方名称:杭州泛美航空国际旅行社有限公司，航司:CA——商编:10034228238+场景字段:渠道，近7天充值金额，环比上周上升43.64%，低于大盘0.61%', 'payer_customer_signedname': '杭州泛美航空国际旅行社有限公司', 'stat_dispaysignedname': 'CA', 'customer_no': '10034228238', 'payer_business_scene': '渠道', 'sub_content_rich': '波动详情：  近7天充值金额，环比上周上升<text_tag color=green>43.64%</text_tag>，低于大盘<text_tag color=red>0.61%</text_tag>'},
                 {'name': '张华雪', 'title': '深航/国航充值业务', 'content': '付方名称:上海广发航空票务服务有限公司，航司:CA——商编:10034228238+场景字段:渠道，近7天充值金额，环比上周上升40.91%，低于大盘0.61%', 'payer_customer_signedname': '上海广发航空票务服务有限公司', 'stat_dispaysignedname': 'CA', 'customer_no': '10034228238', 'payer_business_scene': '渠道', 'sub_content_rich': '波动详情：  近7天充值金额，环比上周上升<text_tag color=green>40.91%</text_tag>，低于大盘<text_tag color=red>0.61%</text_tag>'},
                 {'name': '张华雪', 'title': '深航/国航充值业务', 'content': '付方名称:四川铁航航空运输有限公司，航司:CA——商编:10034228238+场景字段:渠道，近7天充值金额，环比上周下降70.82%，低于大盘0.61%', 'payer_customer_signedname': '四川铁航航空运输有限公司', 'stat_dispaysignedname': 'CA', 'customer_no': '10034228238', 'payer_business_scene': '渠道', 'sub_content_rich': '波动详情：  近7天充值金额，环比上周下降<text_tag color=red>70.82%</text_tag>，低于大盘<text_tag color=red>0.61%</text_tag>'},
     ]
@@ -34,7 +34,7 @@ def monitor_four():
                         "event_type": "unlike",
                         "event_source": "",
                         "event_data": {
-                            "message": "航旅波动检测归因"
+                            "message": "航旅波动检测归因4"
                         }
                     },
                     "travel_report_list": reports,
@@ -62,16 +62,7 @@ def monitor_four():
 # if __name__ == '__main__':
 #     app.run(debug=True, host='127.0.0.1', port=5670)
 
-# 每隔一段时间调用一次 monitor_four 函数
-#schedule.every(60).seconds.do(monitor_two)  # 每10秒执行一次
-#schedule.every(30).minutes.do(monitor_two)  # 每隔30分钟调用一次
-# schedule.every().hour.do(monitor_two)  # 每隔一小时调用一次
-#schedule.every().day.at("15:30").do(monitor_two)  # 每天的10:30调用一次
-# 可以根据需求选择不同的调度方式
 
-#while True:
-#    schedule.run_pending()
- #   time.sleep(1)
 
 # 调用函数
 #monitor_four()

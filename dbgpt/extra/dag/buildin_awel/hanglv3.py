@@ -60,7 +60,7 @@ def monitor_three():
                         "event_type": "unlike",
                         "event_source": "",
                         "event_data": {
-                            "message": "航旅波动检测归因"
+                            "message": "航旅波动检测归因3"
                         }
                     },
                     "travel_report_list": reports,  # 将所有报告传递给模板

@@ -2,13 +2,18 @@
 import requests
 from dbgpt.util.lark import larkutil
 def get_email(name):
-    url = "http://ycenc.yeepay.com:8606/uia/get_user_by_key?key=%E4%B8%A5%E4%BA%AE%E4%BA%AE&key_type=cn_name"  # 目标URL
+    url = "http://ycenc.yeepay.com:8606/ai-assistants/uia/get_user_by_key?key=%E4%B8%A5%E4%BA%AE%E4%BA%AE&key_type=cn_name"  # 目标URL
+    headers = {
+        'Content-Type': 'application/json; charset=utf-8',
+        'app_key': "ai-assistants",
+        'app_secret': "fcd2f6kd0c3acf1c"
+    }
     params = {
         'key': name,
         'key_type': 'cn_name'
     }  # 传递的参数
     try:
-        response = requests.get(url, params=params)  # 发送GET请求，带上参数
+        response = requests.get(url, params=params, headers = headers)  # 发送GET请求，带上参数
         response.raise_for_status()  # 如果请求失败，抛出异常
         data = response.json()  # 假设返回的是JSON数据
         # 处理你想要的信息
@@ -20,6 +25,9 @@ def get_email(name):
 
     except requests.exceptions.RequestException as e:
         print("请求失败:", e)
+
+
+
 
 
 # 获取访问令牌
