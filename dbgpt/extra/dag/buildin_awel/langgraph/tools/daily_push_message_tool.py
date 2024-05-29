@@ -1,4 +1,3 @@
-import json
 import logging
 from typing import Optional, Type
 
@@ -8,7 +7,7 @@ from langchain_core.callbacks import (
 )
 from pydantic import BaseModel, Field
 
-from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_customer_search, crem_sales_board_dispaly, \
+from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_sales_board_dispaly, \
     crem_daily_push_messages
 from dbgpt.util.lark import larkutil
 
@@ -59,7 +58,6 @@ class Dailypushmessagetool(BaseTool):
             colour_weekly_change_rate = "green" if numeric_change_rate_weekly > 0 else "red"
             value_colour_weekly_change_rate = f"<text_tag color={colour_weekly_change_rate}>{weekly_change_rate_formatted}</text_tag>"
 
-
             print("昨日的颜色", value_colour_yesterday_change_rate)
             print("上周的颜色", value_colour_weekly_change_rate)
 
@@ -77,7 +75,6 @@ class Dailypushmessagetool(BaseTool):
             print("移动端的链接", sales_dispaly)
             query_str = (nickname).strip()
 
-
             print("推送人结果：", query_str, resp_data)
             list = []
             if resp_data and len(resp_data) == 0:
@@ -90,8 +87,6 @@ class Dailypushmessagetool(BaseTool):
                 weekly_change_rate_formatted = m.get("上周同一时间的毛利变化率", "")
                 profit_day7_before_yesterday = m.get("前7天的毛利总额", "")
                 average_day7_before_yesterday = m.get("前7天的平均毛利", "")
-
-
 
                 list.append({
                     "profit_yesterday": profit_yesterday if profit_yesterday is not None else "",
@@ -114,8 +109,8 @@ class Dailypushmessagetool(BaseTool):
                     "list": list,
                     "query_str": query_str,
                     "sales_diapaly": sales_dispaly,
-                    "value_colour_yesterday_change_rate":value_colour_yesterday_change_rate,
-                    "value_colour_weekly_change_rate":value_colour_weekly_change_rate
+                    "value_colour_yesterday_change_rate": value_colour_yesterday_change_rate,
+                    "value_colour_weekly_change_rate": value_colour_weekly_change_rate
 
                 }
             }
