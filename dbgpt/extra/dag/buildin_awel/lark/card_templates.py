@@ -209,6 +209,8 @@ def create_customer_visit_record_card_content(template_variable: Dict):
         }
     }
     return card
+
+
 def create_book_meeting_room_card_content(template_variable: Dict):
     """查询会议室"""
     template_id = "AAq30n6nMNitP"
@@ -228,6 +230,21 @@ def create_merchant_list_card_content(template_variable: Dict):
     """商户查询"""
     template_id = "AAqkXYlYpaLEf"
     template_version_name = "1.0.47"
+
+    card = {
+        "type": "template",
+        "data": {
+            "template_id": template_id, "template_version_name": template_version_name,
+            "template_variable": template_variable
+        }
+    }
+    return card
+
+
+def create_merchant_list_card_content_2(template_variable: Dict):
+    """商户查询"""
+    template_id = "AAq3hcTqxp7Xl"
+    template_version_name = "1.0.0"
 
     card = {
         "type": "template",
@@ -376,6 +393,7 @@ def no_crem_sales_details_content(template_variable: Dict):
     }
     return card
 
+
 def crem_sales_details_content(template_variable: Dict):
     """人员分级销售详情展示"""
     template_id = "AAq3mFaWoY9Ud"
@@ -390,6 +408,7 @@ def crem_sales_details_content(template_variable: Dict):
     }
     return card
 
+
 def travel_report_content1(template_variable: Dict):
     """航旅波动检测归因-监控1"""
     template_id = "AAq3x4lBPjbC8"
@@ -403,6 +422,8 @@ def travel_report_content1(template_variable: Dict):
         }
     }
     return card
+
+
 def travel_report_content2(template_variable: Dict):
     """航旅波动检测归因-监控2"""
     template_id = "AAq3jbUK2SMyE"
@@ -416,6 +437,8 @@ def travel_report_content2(template_variable: Dict):
         }
     }
     return card
+
+
 def travel_report_content3(template_variable: Dict):
     """航旅波动检测归因-监控3"""
     template_id = "AAq3zIl77qVja"
@@ -429,6 +452,8 @@ def travel_report_content3(template_variable: Dict):
         }
     }
     return card
+
+
 def travel_report_content4(template_variable: Dict):
     """航旅波动检测归因-监控4"""
     template_id = "AAq37oHs6R1LR"
