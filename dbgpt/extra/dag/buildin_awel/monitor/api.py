@@ -6,7 +6,7 @@ import datetime
 def get_past_working_days(working_days):
     current_date = datetime.datetime.now().date()
     current_date = str(current_date - datetime.timedelta(days=1))
-    url = f"http://ycenc.yeepay.com:8606/holiday/get_last_weekdays_by_date?date={current_date}&days={working_days}"
+    url = f"http://ycenc.yeepay.com:8606/ai-assistants/holiday/get_last_weekdays_by_date?date={current_date}&days={working_days}"
     headers = {
         'Content-Type': 'application/json; charset=utf-8',
         'app_key': "ai-assistants",
