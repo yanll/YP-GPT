@@ -371,7 +371,33 @@ class ClickhouseConnector(RDBMSConnector):
         field_names = cursor.column_names
         result.insert(0, field_names)
         return result
-
+    
+    
+    def query_ex(self, query: str, fetch: str = "all"):
+        """Execute a SQL command and return the results.
+        Only for query command.
+        Args:
+            query (str): SQL query to run
+            fetch (str): fetch type
+        Returns:
+            List: result list
+        """
+        logger.info(f"Query[{query}]")
+        if not query:
+            return [], None
+        cursor = self.client.query(query)
+        if fetch == "all":
+            result = cursor.result_rows
+        elif fetch == "one":
+            result = cursor.first_row
+        else:
+            raise ValueError("Fetch parameter must be either 'one' or 'all'")
+        
+        field_names = cursor.column_names
+        return field_names, result
+        return [], None
+    
+    
     def __sql_parse(self, sql):
         sql = sql.strip()
         parsed = sqlparse.parse(sql)[0]

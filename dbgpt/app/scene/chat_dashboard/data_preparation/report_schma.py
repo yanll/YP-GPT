@@ -1,12 +1,13 @@
 from typing import Any, List, Optional
 
 from dbgpt._private.pydantic import BaseModel
+from typing import Union
 
 
 class ValueItem(BaseModel):
     name: str
     type: str = None
-    value: float
+    value: Union[str, int, float]
 
     def dict(self, *args, **kwargs):
         return {"name": self.name, "type": self.type, "value": self.value}

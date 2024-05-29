@@ -161,7 +161,6 @@ async def get_editor_chart_info(
 
 @router.post("/v1/editor/chart/run", response_model=Result[ChartRunData])
 async def editor_chart_run(run_param: dict = Body()):
-    logger.info(f"editor_chart_run:{run_param}")
     db_name = run_param["db_name"]
     sql = run_param["sql"]
     chart_type = run_param["chart_type"]
@@ -172,7 +171,7 @@ async def editor_chart_run(run_param: dict = Body()):
         db_conn = CFG.local_db_manager.get_connector(db_name)
         colunms, sql_result = db_conn.query_ex(sql)
         field_names, chart_values = dashboard_data_loader.get_chart_values_by_data(
-            colunms, sql_result, sql
+            colunms, sql_result, sql, chart_type
         )
         start_time = time.time() * 1000
         sql_result = [convert_datetime_in_row(row) for row in sql_result]
