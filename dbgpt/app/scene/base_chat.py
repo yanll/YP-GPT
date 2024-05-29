@@ -98,12 +98,14 @@ class BaseChat(ABC):
         # self.prompt_template: PromptTemplate = CFG.prompt_templates[
         #     self.chat_mode.value()
         # ]
+        database_info = CFG.local_db_manager.get_connector(chat_param["select_param"])
         self.prompt_template: AppScenePromptTemplateAdapter = (
             CFG.prompt_template_registry.get_prompt_template(
                 self.chat_mode.value(),
                 language=CFG.LANGUAGE,
                 model_name=self.llm_model,
                 proxyllm_backend=CFG.PROXYLLM_BACKEND,
+                db_type=database_info.db_type
             )
         )
         self._conv_serve = ConversationServe.get_instance(CFG.SYSTEM_APP)

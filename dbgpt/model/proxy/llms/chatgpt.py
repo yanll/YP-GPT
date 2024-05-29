@@ -198,9 +198,9 @@ class OpenAILLMClient(ProxyLLMClient):
         request = self.local_covert_message(request, message_converter)
         messages = request.to_common_messages()
         payload = self._build_request(request)
-        logger.info(
-            f"Send request to openai({self._openai_version}), payload: {payload}\n\n messages:\n{messages}"
-        )
+        # logger.info(
+        #     f"Send request to openai({self._openai_version}), payload: {payload}\n\n messages:\n{messages}"
+        # )
         try:
             if self._openai_less_then_v1:
                 return await self.generate_less_then_v1(messages, payload)

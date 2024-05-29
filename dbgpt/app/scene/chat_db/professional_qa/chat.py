@@ -2,6 +2,7 @@ from typing import Dict
 
 from dbgpt._private.config import Config
 from dbgpt.app.scene import BaseChat, ChatScene
+from dbgpt.util import envutils
 from dbgpt.util.executor_utils import blocking_func_to_async
 from dbgpt.util.tracer import trace
 
@@ -66,7 +67,7 @@ class ChatWithDbQA(BaseChat):
                     self.top_k,
                 )
                 
-                if len(table_info) == 0: 
+                if len(table_infos) == 0: 
                     raise Exception('not found')
             except Exception as e:
                 print("db summary find error!" + str(e))
@@ -83,5 +84,6 @@ class ChatWithDbQA(BaseChat):
             # "top_k": str(self.top_k),
             # "dialect": dialect,
             "table_info": table_infos,
+            "table_name":envutils.getenv("CK_TABLE_NAME")
         }
         return input_values

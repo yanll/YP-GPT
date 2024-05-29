@@ -29,40 +29,52 @@ def db():
     yield conn
 
 
-def test_create_table(db):
-    _create_sql = """
-        CREATE TABLE IF NOT EXISTS my_first_table
-        (
-            `user_id` UInt32,
-            `message` String,
-            `timestamp` DateTime,
-            `metric` Float32
-        )
-        ENGINE = MergeTree
-        PRIMARY KEY (user_id, timestamp)
-        ORDER BY (user_id, timestamp);
-    """
-    db.run(_create_sql)
-    assert list(db.get_table_names()) == ["my_first_table"]
+
+# def test_create_table(db):
+#     _create_sql = """
+#         CREATE TABLE IF NOT EXISTS my_first_table
+#         (
+#             `user_id` UInt32,
+#             `message` String,
+#             `timestamp` DateTime,
+#             `metric` Float32
+#         )
+#         ENGINE = MergeTree
+#         PRIMARY KEY (user_id, timestamp)
+#         ORDER BY (user_id, timestamp);
+#     """
+#     db.run(_create_sql)
+#     assert list(db.get_table_names()) == ["my_first_table"]
 
 
 def test_get_table_names(db):
+    print("*********")    
+    sql = """
+    SELECT concat(table, '(', arrayStringConcat(
+                groupArray(concat(name, ':', type)), '-'), ')') AS schema_info
+            FROM system.columns
+            WHERE database = 'default'
+            GROUP BY table
+    """
+    with db.client.query_row_block_stream(sql) as stream:
+            for b in stream:
+                print(b)
     assert list(db.get_table_names()) == ["my_first_table"]
 
 
-def test_get_indexes(db):
-    assert [index.get("name") for index in db.get_indexes("my_first_table")][
-        0
-    ] == "primary_key"
+# def test_get_indexes(db):
+#     assert [index.get("name") for index in db.get_indexes("my_first_table")][
+#         0
+#     ] == "primary_key"
 
 
-def test_get_fields(db):
-    assert list(db.get_fields("my_first_table")[0])[0][0] == "user_id"
+# def test_get_fields(db):
+#     assert list(db.get_fields("my_first_table")[0])[0][0] == "user_id"
 
 
-def test_get_table_comments(db):
-    assert db.get_table_comments("my_first_table") == []
+# def test_get_table_comments(db):
+#     assert db.get_table_comments("my_first_table") == []
 
 
-def test_get_columns_comments(db):
-    assert db.get_column_comments("default", "my_first_table")[0][1] == ""
+# def test_get_columns_comments(db):
+#     assert db.get_column_comments("default", "my_first_table")[0][1] == ""

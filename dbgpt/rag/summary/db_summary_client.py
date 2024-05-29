@@ -51,6 +51,7 @@ class DBSummaryClient:
         from dbgpt.storage.vector_store.base import VectorStoreConfig
         from dbgpt.storage.vector_store.connector import VectorStoreConnector
 
+        logger.info(f"向量库查找DB SUMMARY：{dbname}_profile")
         vector_store_config = VectorStoreConfig(name=dbname + "_profile")
         vector_connector = VectorStoreConnector.from_default(
             CFG.VECTOR_STORE_TYPE,
@@ -64,6 +65,7 @@ class DBSummaryClient:
         )
         table_docs = retriever.retrieve(query)
         ans = [d.content for d in table_docs]
+        logger.info(f"向量库查找DB SUMMARY RESULT：{len(ans)}")
         return ans
 
     def init_db_summary(self):

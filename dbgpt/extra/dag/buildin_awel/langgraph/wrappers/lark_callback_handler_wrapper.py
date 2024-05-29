@@ -153,6 +153,17 @@ async def a_call(app_chat_service, event: Dict):
             customer_name=customerName,
             conv_id=open_id)
 
+    if event_type == 'hanglv_detail':
+        #customerNo = action_value['customerNo']
+        customerNo = "KA2022-A09150004"
+        customerName = "航旅看板交易4情况"
+
+        return Day_30_TrxTre_card_tool.user_crem_30DaysTrxTre_card_maoli(
+            open_id=open_id,
+            customer_id=customerNo,
+            customerName=customerName,
+            conv_id=open_id)
+
 
     if event_type == 'daily_report_detail':
         id = action['value']['id']

@@ -1,14 +1,14 @@
 from typing import Dict
-
+import logging
 from dbgpt._private.config import Config
 from dbgpt.agent.util.api_call import ApiCall
 from dbgpt.app.scene import BaseChat, ChatScene
 from dbgpt.util.executor_utils import blocking_func_to_async
 from dbgpt.util.tracer import root_tracer, trace
-
+from dbgpt.util import envutils
 CFG = Config()
 
-
+logger = logging.getLogger(__name__)
 class ChatWithDbAutoExecute(BaseChat):
     chat_scene: str = ChatScene.ChatWithDbExecute.value()
 
@@ -23,6 +23,7 @@ class ChatWithDbAutoExecute(BaseChat):
             - model_name:(str) llm model name
             - select_param:(str) dbname
         """
+        
         chat_mode = ChatScene.ChatWithDbExecute
         self.db_name = chat_param["select_param"]
         chat_param["chat_mode"] = chat_mode
@@ -62,12 +63,17 @@ class ChatWithDbAutoExecute(BaseChat):
                     self.current_user_input,
                     CFG.KNOWLEDGE_SEARCH_TOP_SIZE,
                 )
+                if len(table_infos) == 0:
+                    raise Exception("not found table infos")
         except Exception as e:
             print("db summary find error!" + str(e))
         if not table_infos:
             table_infos = await blocking_func_to_async(
                 self._executor, self.database.table_simple_info
             )
+            
+            
+        logger.info(f"ChatWithDbAutoExecute -> table_infos {len(table_infos)}")
 
         input_values = {
             "db_name": self.db_name,
@@ -76,7 +82,8 @@ class ChatWithDbAutoExecute(BaseChat):
             "dialect": self.database.dialect,
             "table_info": table_infos,
             "display_type": self._generate_numbered_list(),
-            "db_type": self.database.db_type
+            "db_type": self.database.db_type,
+            "table_name":envutils.getenv("CK_TABLE_NAME")
         }
         return input_values
 

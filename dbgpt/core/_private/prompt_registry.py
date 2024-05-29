@@ -7,6 +7,9 @@ This module is deprecated. we will remove it in the future.
 
 from collections import defaultdict
 from typing import Dict, List, Optional
+import logging
+
+logger = logging.getLogger(__name__)
 
 _DEFAULT_MODEL_KEY = "___default_prompt_template_model_key__"
 _DEFUALT_LANGUAGE_KEY = "___default_prompt_template_language_key__"
@@ -27,6 +30,7 @@ class PromptTemplateRegistry:
         is_default: bool = False,
         model_names: Optional[List[str]] = None,
         scene_name: Optional[str] = None,
+        db_type: str = None
     ) -> None:
         """Register prompt template with scene name, language
         registry dict format:
@@ -48,9 +52,12 @@ class PromptTemplateRegistry:
             raise ValueError("Prompt template scene name cannot be empty")
         if not model_names:
             model_names = [_DEFAULT_MODEL_KEY]
+            
+        
         scene_registry = self.registry[scene_name]
+        logger.info(f"set registry, scene_name, {db_type}")
         _register_scene_prompt_template(
-            scene_registry, prompt_template, language, model_names
+            scene_registry, prompt_template, language, model_names,db_type
         )
         if is_default:
             _register_scene_prompt_template(
@@ -58,9 +65,10 @@ class PromptTemplateRegistry:
                 prompt_template,
                 _DEFUALT_LANGUAGE_KEY,
                 [_DEFAULT_MODEL_KEY],
+                db_type
             )
             _register_scene_prompt_template(
-                scene_registry, prompt_template, language, [_DEFAULT_MODEL_KEY]
+                scene_registry, prompt_template, language, [_DEFAULT_MODEL_KEY],db_type
             )
 
     def get_prompt_template(
@@ -69,6 +77,7 @@ class PromptTemplateRegistry:
         language: str,
         model_name: str,
         proxyllm_backend: Optional[str] = None,
+        db_type: str = None
     ):
         """Get prompt template with scene name, language and model name
         proxyllm_backend: see CFG.PROXYLLM_BACKEND
@@ -81,6 +90,8 @@ class PromptTemplateRegistry:
         registry = None
         if proxyllm_backend:
             registry = scene_registry.get(proxyllm_backend)
+        if not registry and db_type:
+            registry = scene_registry.get(f"{_DEFAULT_MODEL_KEY}___db_{db_type}")
         if not registry:
             registry = scene_registry.get(model_name)
         if not registry:
@@ -104,9 +115,17 @@ def _register_scene_prompt_template(
     prompt_template,
     language: str,
     model_names: List[str],
+    db_type: str = None
 ):
     for model_name in model_names:
         if model_name not in scene_registry:
             scene_registry[model_name] = dict()
         registry = scene_registry[model_name]
         registry[language] = prompt_template
+        
+        if db_type is not None:
+            model_name_db = f"{model_name}___db_{db_type}"
+            if model_name_db not in scene_registry:
+                scene_registry[model_name_db] = dict()
+            registry = scene_registry[model_name_db]
+            registry[language] = prompt_template
