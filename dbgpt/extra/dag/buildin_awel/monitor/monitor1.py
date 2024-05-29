@@ -197,6 +197,7 @@ class Monitor1():
         except Exception as e:
             print('归因1处理错误')
 
+
         # 归因2
         try:
             d_1_data = monitor1_data.get_reason_2_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date,
