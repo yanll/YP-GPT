@@ -379,7 +379,7 @@ def no_crem_sales_details_content(template_variable: Dict):
 def crem_sales_details_content(template_variable: Dict):
     """人员分级销售详情展示"""
     template_id = "AAq3mFaWoY9Ud"
-    template_version_name = "1.0.26"
+    template_version_name = "1.0.31"
 
     card = {
         "type": "template",

@@ -17,7 +17,7 @@ def monitor_three():
     "type": "商户签约名"
   },
   {
-    "name": "张华雪",
+    "name": "刘博",
     "title": "商户（收方或付方）产品波动异常",
     "customer_name": "A6",
     "content_rich": "波动详情：交易无明显波动，但旗舰店产品结构有变化，变化值为<text_tag color=orange>-11.25%</text_tag>，请关注。",
