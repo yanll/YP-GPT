@@ -26,10 +26,11 @@ Give the correct {dialect} analysis SQL
 1.Do not use unprovided values such as 'paid'
 2.All queried values must have aliases, such as select count(*) as count from table
 3.If the table structure definition uses the keywords of {dialect} as field names, you need to use escape characters, such as select `count` from table
-4.Carefully check the correctness of the SQL, the SQL must be correct, display method and summary of brief analysis thinking, and respond in the following json format:
+4.When writing SQL, sort the fields according to the type of chart, from left to right, starting from x to y.
+5.Carefully check the correctness of the SQL, the SQL must be correct, display method and summary of brief analysis thinking, and respond in the following json format:
 {response}
 The important thing is: Please make sure to only return the json string, do not add any other content (for direct processing by the program), and the json can be parsed by Python json.loads
-5. Please use the same language as the "user"
+6. Please use the same language as the "user"
 """
 
 RESPONSE_FORMAT = [
@@ -38,6 +39,7 @@ RESPONSE_FORMAT = [
         "showcase": "What type of charts to show",
         "sql": "data analysis SQL",
         "title": "Data Analysis Title",
+        # "columns_sort": "Sort the fields based on the type of chart to be displayed, from left to right, and from x to y."
     }
 ]
 

@@ -379,7 +379,7 @@ def no_crem_sales_details_content(template_variable: Dict):
 def crem_sales_details_content(template_variable: Dict):
     """人员分级销售详情展示"""
     template_id = "AAq3mFaWoY9Ud"
-    template_version_name = "1.0.31"
+    template_version_name = "1.0.32"
 
     card = {
         "type": "template",
@@ -390,10 +390,10 @@ def crem_sales_details_content(template_variable: Dict):
     }
     return card
 
-def travel_report_content4(template_variable: Dict):
-    """航旅波动检测归因-监控4"""
-    template_id = "AAq37oHs6R1LR"
-    template_version_name = "1.0.27"
+def travel_report_content1(template_variable: Dict):
+    """航旅波动检测归因-监控1"""
+    template_id = "AAq3x4lBPjbC8"
+    template_version_name = "1.0.2"
 
     card = {
         "type": "template",
@@ -420,6 +420,19 @@ def travel_report_content3(template_variable: Dict):
     """航旅波动检测归因-监控3"""
     template_id = "AAq3zIl77qVja"
     template_version_name = "1.0.3"
+
+    card = {
+        "type": "template",
+        "data": {
+            "template_id": template_id, "template_version_name": template_version_name,
+            "template_variable": template_variable
+        }
+    }
+    return card
+def travel_report_content4(template_variable: Dict):
+    """航旅波动检测归因-监控4"""
+    template_id = "AAq37oHs6R1LR"
+    template_version_name = "1.0.27"
 
     card = {
         "type": "template",

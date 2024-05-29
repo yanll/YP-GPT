@@ -54,9 +54,11 @@ class Dailypushmessagetool(BaseTool):
             numeric_change_rate_weekly = float(weekly_change_rate_formatted.strip('%'))
 
             colour_yesterday_change_rate = "green" if numeric_change_rate_yesterday > 0 else "red"
-            value_colour_yesterday_change_rate = f"<text_tag color={colour_yesterday_change_rate}>{yesterday_change_rate}</text_tag>"
+            up_and_down_yesterday = "↑" if colour_yesterday_change_rate == "green" else "↓"
+            value_colour_yesterday_change_rate = f"<text_tag color={colour_yesterday_change_rate}>{yesterday_change_rate}{up_and_down_yesterday}</text_tag>"
             colour_weekly_change_rate = "green" if numeric_change_rate_weekly > 0 else "red"
-            value_colour_weekly_change_rate = f"<text_tag color={colour_weekly_change_rate}>{weekly_change_rate_formatted}</text_tag>"
+            up_and_down_weekly = "↑" if colour_weekly_change_rate == "green" else "↓"
+            value_colour_weekly_change_rate = f"<text_tag color={colour_weekly_change_rate}>{weekly_change_rate_formatted}{up_and_down_weekly}</text_tag>"
 
             print("昨日的颜色", value_colour_yesterday_change_rate)
             print("上周的颜色", value_colour_weekly_change_rate)

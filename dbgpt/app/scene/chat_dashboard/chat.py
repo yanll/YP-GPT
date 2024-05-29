@@ -100,7 +100,7 @@ class ChatDashboard(BaseChat):
         for chart_item in prompt_response:
             try:
                 field_names, values = dashboard_data_loader.get_chart_values_by_conn(
-                    self.database, chart_item.sql
+                    self.database, chart_item.sql,chart_item.showcase
                 )
                 chart_datas.append(
                     ChartData(
