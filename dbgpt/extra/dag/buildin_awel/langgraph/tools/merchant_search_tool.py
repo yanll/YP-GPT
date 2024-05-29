@@ -89,7 +89,8 @@ class MerchantSearchTool(BaseTool):
             data = dmall_client.post(
                 api_name="query_merchant_info",
                 parameters={
-                    "CUSTOMERNUMBER": customer_number
+                    "CUSTOMERNUMBER": customer_number,
+                    "CUSTOMER_NAME": customer_name
                 }
             )
             m_list = []
