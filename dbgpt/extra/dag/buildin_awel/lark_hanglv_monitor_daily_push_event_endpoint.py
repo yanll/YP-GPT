@@ -30,15 +30,16 @@ class RequestHandleOperator(MapOperator[Dict, str]):
 
         results = []
 
-        #monitor_two
-        try:
-            result = monitor_two()
-            results.append(result)
 
-        except Exception as e:
-            logging.error(f"Error occurred while executing monitor_two: {e}")
-            results.append(f"Monitor four failed: {str(e)}")
-
+        # #monitor_two
+        # try:
+        #     result = monitor_two()
+        #     results.append(result)
+        #
+        # except Exception as e:
+        #     logging.error(f"Error occurred while executing monitor_two: {e}")
+        #     results.append(f"Monitor four failed: {str(e)}")
+        #
         # monitor_three
         try:
             result = monitor_three()
