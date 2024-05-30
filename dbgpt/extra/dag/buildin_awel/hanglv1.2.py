@@ -72,7 +72,6 @@ def monitor_one2():
 
 
 
-# 调用函数
-monitor_one2()
+
 
 
