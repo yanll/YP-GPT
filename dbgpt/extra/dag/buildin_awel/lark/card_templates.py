@@ -412,7 +412,7 @@ def crem_sales_details_content(template_variable: Dict):
 def travel_report_content1(template_variable: Dict):
     """航旅波动检测归因-监控1.1"""
     template_id = "AAq3x4lBPjbC8"
-    template_version_name = "1.0.15"
+    template_version_name = "1.0.16"
 
     card = {
         "type": "template",
@@ -422,10 +422,10 @@ def travel_report_content1(template_variable: Dict):
         }
     }
     return card
-def travel_report_content2(template_variable: Dict):
-    """航旅波动检测归因-监控1.1"""
+def travel_report_content1_2(template_variable: Dict):
+    """航旅波动检测归因-监控1.2"""
     template_id = "AAq3XmGTS35aK"
-    template_version_name = "1.0.1"
+    template_version_name = "1.0.2"
 
     card = {
         "type": "template",

@@ -240,7 +240,7 @@ class Monitor1ByPayer:
 
         return reason5
 
-# if __name__ == "__main__":
-#     a = Monitor1ByPayer()
-#     b = a.run()
-#     print(b)
+if __name__ == "__main__":
+    a = Monitor1ByPayer()
+    b = a.run()
+    print(b)
