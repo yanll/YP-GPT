@@ -138,7 +138,7 @@ class Monitor1ByPayer:
                 self.alert_list.append({
                     'title': '交易笔数波动异常',
                     'name': payer_sales_name,
-                    'content': f'付方签约名:{customer}，昨日交易金额{float(d_1_data["SUCCESS_COUNT"]) / 10000:.2f}万元，环比{"上升" if customer_success_count > 0 else "下降"}<text_tag color={"green" if customer_success_count > 0 else "red" } >{customer_success_count * 100:.2f}%</text_tag>（商户交易笔数环比）',
+                    'content': f'付方签约名:{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，环比{"上升" if customer_success_count > 0 else "下降"}<text_tag color={"green" if customer_success_count > 0 else "red" } >{customer_success_count * 100:.2f}%</text_tag>（商户交易笔数环比）',
                     'reason4': '\n'.join(reason4),
                     'reason5': '\n'.join(reason5)
                 })
