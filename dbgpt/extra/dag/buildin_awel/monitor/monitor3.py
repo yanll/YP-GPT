@@ -229,7 +229,6 @@ class Monitor3:
                     'content': f'交易无明显波动，但{payer_product}产品结构有变化，变化值为{difference*100:.2f}%，请关注。',
                     'content_rich': f"波动详情：      交易无明显波动，但{payer_product}产品结构有变化，变化值为<text_tag color={'orange' if difference < 1 else 'carmine'}>{difference * 100:.2f}%</text_tag>，请关注。",
                     "type": "付方签约名"
-
                 })
         except Exception as e:
             print(f'监控三开始处理{payer_sales_name}的付方签约名为{payer_customer}的产品为{payer_product}数据失败')
