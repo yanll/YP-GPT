@@ -55,7 +55,12 @@ def get_user_open_id(emails):
         return {'error': f'Request failed with status code {response.status_code}'}
 
 
-emails = ["liangliang.yan@yeepay.com", "huaxue.zhang@yeepay.com"]
+emails = ["liangliang.yan@yeepay.com",
+          "huaxue.zhang@yeepay.com",
+          "chao.huang@yeepay.com",
+          "bo.liu-2@yeepay.com",
+          "yangsheng.su@yeepay.com"]
+#chaoqun.rao@yeepay.com ，shouhong.cao@yeepay.com
 result = get_user_open_id(emails)
 
 conv_ids = result
