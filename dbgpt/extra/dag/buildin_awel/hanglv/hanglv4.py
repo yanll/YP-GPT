@@ -2,15 +2,22 @@ from flask import Flask, jsonify
 
 from dbgpt.extra.dag.buildin_awel.hanglv import hanglv_api_use
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.extra.dag.buildin_awel.monitor import monitor
+from dbgpt.extra.dag.buildin_awel.monitor import monitor, monitor4
 from dbgpt.util.lark import lark_message_util
 
 app = Flask(__name__)
 
 def monitor_four():
-    hv_data = monitor.main4()
+    first = monitor4.Monitor4()
+    hv_data = first.run()
     print("数值的返回结果", hv_data)
     data = hv_data
+    extracted_data = [{key: value for key, value in entry.items() if key in ['name', 'title', 'content']} for entry in
+                      data]
+
+    print(extracted_data)
+
+
 
 
     name_to_data = {}
