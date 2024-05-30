@@ -17,6 +17,9 @@ create table app_chat_history_message
     lark_message_id varchar(128) not null default '' comment '飞书消息主键',
     content         text null comment '消息内容',
     message_detail  text null comment '消息详情',
+    nickname        varchar(64)           default '' not null comment '姓名',
+    en_name         varchar(64)           default '' not null comment '账号',
+    union_id        varchar(64)           default '' not null comment '飞书唯一用户ID',
     comment_type    varchar(128) not null default '' comment 'like/unlike',
     status          varchar(32)  not null default 'ENABLED' comment 'ENABLED、DISABLED、DELETED',
     created_time    datetime null default current_timestamp comment '创建时间',
@@ -33,6 +36,9 @@ create table app_feedback
     feedback        text null comment '反馈内容',
     effect          text null comment '影响范围',
     reference_url   varchar(512) null comment '参考链接',
+    nickname        varchar(64)           default '' not null comment '姓名',
+    en_name         varchar(64)           default '' not null comment '账号',
+    union_id        varchar(64)           default '' not null comment '飞书唯一用户ID',
     recommendation  text null comment '意见建议',
     status          varchar(32)  not null default 'ENABLED' comment 'ENABLED、DISABLED、DELETED',
     created_time    datetime null default current_timestamp comment '创建时间',
@@ -41,23 +47,20 @@ create table app_feedback
 
 
 
-alter table app_chat_history_message
-    add nickname varchar(64) default '' not null comment '姓名';
-
-alter table app_chat_history_message
-    add en_name varchar(64) default '' not null comment '账号';
-
-alter table app_chat_history_message
-    add union_id varchar(64) default '' not null comment '飞书唯一用户ID';
-
-
-alter table app_feedback
-    add nickname varchar(64) default '' not null comment '姓名';
-
-alter table app_feedback
-    add en_name varchar(64) default '' not null comment '账号';
-
-alter table app_feedback
-    add union_id varchar(64) default '' not null comment '飞书唯一用户ID';
-
-
+drop table biz_airline_monitor_history_for_push;
+create table biz_airline_monitor_push_history
+(
+    id            varchar(64) primary key comment '主键',
+    biz_date      varchar(64)  not null comment '业务日期：yyyy-MM-dd',
+    sales         varchar(64)  not null comment '销售',
+    title         varchar(128) not null comment '标题',
+    scene         varchar(256) not null default '' comment '场景',
+    chanel        varchar(256) not null default '' comment '渠道',
+    product       varchar(256) not null default '' comment '产品',
+    merchant_no   varchar(256) not null default '' comment '商编',
+    content       text null comment '监控内容',
+    reason        text null comment '监控归因',
+    `type`        varchar(64)  not null comment '监控类型',
+    created_time  datetime null default current_timestamp comment '创建时间',
+    modified_time datetime null default current_timestamp on update current_timestamp comment '更新时间'
+) comment '航旅监控历史';
