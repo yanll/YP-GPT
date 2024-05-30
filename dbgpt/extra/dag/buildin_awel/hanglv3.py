@@ -1,11 +1,13 @@
 from dbgpt.extra.dag.buildin_awel import hanglv_api_use
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.extra.dag.buildin_awel.monitor import monitor
+from dbgpt.extra.dag.buildin_awel.monitor import monitor, monitor3
 from dbgpt.util.lark import lark_message_util
 
 
 def monitor_three():
-    hv_data = monitor.main3()
+
+    first = monitor3.Monitor3()
+    hv_data = first.run()
     print("数值的返回结果", hv_data)
     data = hv_data
 
