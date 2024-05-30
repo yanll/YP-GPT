@@ -1,5 +1,5 @@
 from dbgpt.extra.dag.buildin_awel.monitor.monitor2 import Monitor2
-from dbgpt.extra.dag.buildin_awel.monitor.monitor3 import monitor3
+from dbgpt.extra.dag.buildin_awel.monitor.monitor3 import Monitor3
 from dbgpt.extra.dag.buildin_awel.monitor.monitor4 import monitor4
 from dbgpt.extra.dag.buildin_awel.monitor.monitor1bystat import Monitor1ByStat
 from dbgpt.extra.dag.buildin_awel.monitor.monitor1bypayer import Monitor1ByPayer
@@ -22,7 +22,13 @@ def main():
         alert_list += monitor.run()
     except Exception as e:
         print('监控二运行失败')
-    alert_list += monitor3()
+
+    try:
+        monitor = Monitor3()
+        alert_list += monitor.run()
+    except Exception as e:
+        print('监控三运行失败')
+
     alert_list += monitor4()
     return alert_list
 
@@ -31,8 +37,8 @@ def main():
 #     return monitor1()
 # def main2():
 #     return monitor2()
-def main3():
-    return monitor3()
+# def main3():
+#     return monitor3()
 def main4():
     return monitor4()
 
