@@ -1,4 +1,6 @@
 from dbgpt.extra.dag.buildin_awel.monitor import monitor3_data
+from dbgpt.extra.dag.buildin_awel.monitor.api import get_past_working_days
+
 
 class Monitor3:
     def __init__(self):
@@ -64,8 +66,8 @@ def deal_data(alert_list, d_1_data, d_2_data, customer_type):
 
 def monitor3():
 
-    d_1_trx_date = '2024-05-24'
-    d_2_trx_date = '2024-05-23'
+    d_1_trx_date = ','.join(get_past_working_days(1))
+    d_2_trx_date = ','.join(get_past_working_days(2)).split(',')[1]
     try:
         print('开始获取监控三所需数据')
         d_1_data_by_stat = monitor3_data.get_success_amount_by_stat_in_monitor3(d_1_trx_date)
