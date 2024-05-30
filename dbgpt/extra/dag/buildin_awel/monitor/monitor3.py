@@ -1,5 +1,9 @@
 from dbgpt.extra.dag.buildin_awel.monitor import monitor3_data
 
+class Monitor3:
+    def __init__(self):
+        pass
+
 def find_success_amount_by_customer_and_product(data, customer, product, customer_type) -> float:
     for item in data:
         if item[customer_type] == customer and item['PRODUCT'] == product:
