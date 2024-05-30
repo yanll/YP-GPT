@@ -1,14 +1,15 @@
-from dbgpt.extra.dag.buildin_awel import hanglv_api_use
+from dbgpt.extra.dag.buildin_awel.hanglv import hanglv_api_use
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.extra.dag.buildin_awel.monitor import monitor
+from dbgpt.extra.dag.buildin_awel.monitor import monitor, monitor2
 from dbgpt.util.lark import lark_message_util
 
 
-def monitor_three():
-    hv_data = monitor.main3()
+def monitor_two():
+    first = monitor2.Monitor2()
+
+    hv_data = first.run()
     print("数值的返回结果", hv_data)
     data = hv_data
-
 
     # 按名字过滤数据
     name_to_data = {}
@@ -25,13 +26,13 @@ def monitor_three():
     for name, reports in name_to_data.items():
         conv_id_map = hanglv_api_use.get_user_open_id(name = "张华雪")
         for email, conv_id in conv_id_map.items():
-            content = card_templates.travel_report_content3(
+            content = card_templates.travel_report_content2(
                 template_variable={
                     "unlike_callback_event": {
                         "event_type": "unlike",
                         "event_source": "",
                         "event_data": {
-                            "message": "航旅波动检测归因3"
+                            "message": "航旅波动检测归因2"
                         }
                     },
                     "travel_report_list": reports,  # 将所有报告传递给模板
@@ -52,4 +53,5 @@ def monitor_three():
 
 
 
+monitor_two()
 

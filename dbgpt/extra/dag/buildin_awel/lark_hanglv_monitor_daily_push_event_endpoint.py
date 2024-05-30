@@ -3,9 +3,9 @@ from typing import Dict
 
 from dbgpt._private.pydantic import BaseModel, Field
 from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
-from dbgpt.extra.dag.buildin_awel.hanglv2 import monitor_two
-from dbgpt.extra.dag.buildin_awel.hanglv3 import monitor_three
-from dbgpt.extra.dag.buildin_awel.hanglv4 import monitor_four
+from dbgpt.extra.dag.buildin_awel.hanglv.hanglv2 import monitor_two
+from dbgpt.extra.dag.buildin_awel.hanglv.hanglv3 import monitor_three
+from dbgpt.extra.dag.buildin_awel.hanglv.hanglv4 import monitor_four
 
 
 class TriggerReqBody(BaseModel):
