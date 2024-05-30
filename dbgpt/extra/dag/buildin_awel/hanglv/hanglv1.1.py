@@ -13,6 +13,7 @@ def monitor_one():
     print("数值的返回结果", hv_data)
     data = hv_data
 
+
     name_to_data = {}
     for report in data:
         name = report['name']
@@ -51,5 +52,4 @@ def monitor_one():
             print("lark_message_id:", lark_message_id)
 
     return "Success"
-
 
