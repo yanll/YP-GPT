@@ -1,8 +1,6 @@
 from dbgpt.extra.dag.buildin_awel.monitor import monitor4_data
 
-
 from datetime import datetime, timedelta
-
 
 
 class Monitor4:
@@ -12,8 +10,8 @@ class Monitor4:
             print('监控四中开始获取日期')
             today = datetime.now()
             # 自然日
-            self.d_1_d_7_date = ','.join([(today - timedelta(days=x+1)).strftime("%Y-%m-%d") for x in range(7)])
-            self.d_8_d_14_date = ','.join([(today - timedelta(days=x+8)).strftime("%Y-%m-%d") for x in range(7)])
+            self.d_1_d_7_date = ','.join([(today - timedelta(days=x + 1)).strftime("%Y-%m-%d") for x in range(7)])
+            self.d_8_d_14_date = ','.join([(today - timedelta(days=x + 8)).strftime("%Y-%m-%d") for x in range(7)])
         except Exception as e:
             raise e
 
@@ -37,7 +35,7 @@ class Monitor4:
             if d_8_d_14_success_amount == 0:
                 return
 
-            self.market_fluctuation = d_1_d_7_success_amount/d_8_d_14_success_amount
+            self.market_fluctuation = d_1_d_7_success_amount / d_8_d_14_success_amount
 
 
         except Exception as e:
@@ -48,7 +46,6 @@ class Monitor4:
 
         return self.alert_list
 
-
     def deal_sales_name(self, sales_name):
         customer_list = set()
         d_1_d_7_customer_to_success_amount = {}
@@ -56,7 +53,8 @@ class Monitor4:
         try:
             print(f'监控四开始获取{sales_name}的商户签约名')
             d_1_d_7_data = monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_1_d_7_date, sales_name=sales_name)
-            d_8_d_14_data = monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_8_d_14_date, sales_name=sales_name)
+            d_8_d_14_data = monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_8_d_14_date,
+                                                                       sales_name=sales_name)
             for item in d_1_d_7_data:
                 customer_list.add(item['STAT_DISPAYSIGNEDNAME'])
                 d_1_d_7_customer_to_success_amount[item['STAT_DISPAYSIGNEDNAME']] = float(item['SUCCESS_AMOUNT'])
@@ -79,16 +77,16 @@ class Monitor4:
                 continue
             self.deal_customer(sales_name, customer, d_1_d_7_customer_success_amount, d_8_d_14_customer_success_amount)
 
-
-
-    def deal_customer(self, sales_name, customer, d_1_d_7_customer_success_amount:float, d_8_d_14_customer_success_amount:float):
+    def deal_customer(self, sales_name, customer, d_1_d_7_customer_success_amount: float,
+                      d_8_d_14_customer_success_amount: float):
         payer_list = set()
         try:
             print(f'监控四开始获取{sales_name}的商户签约名为{customer}的数据')
             d_1_d_7_data = monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_1_d_7_date, sales_name=sales_name,
-                                                                    stat_dispaysignedname=customer)
-            d_8_d_14_data = monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_8_d_14_date, sales_name=sales_name,
-                                                                    stat_dispaysignedname=customer)
+                                                                      stat_dispaysignedname=customer)
+            d_8_d_14_data = monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_8_d_14_date,
+                                                                       sales_name=sales_name,
+                                                                       stat_dispaysignedname=customer)
 
             for item in d_1_d_7_data:
                 payer_list.add(item['PAYER_CUSTOMER_SIGNEDNAME'])
@@ -100,16 +98,18 @@ class Monitor4:
             return
 
         for payer in payer_list:
-            self.deal_payer(sales_name, customer, d_1_d_7_customer_success_amount, d_8_d_14_customer_success_amount, payer)
+            self.deal_payer(sales_name, customer, d_1_d_7_customer_success_amount, d_8_d_14_customer_success_amount,
+                            payer)
 
-
-    def deal_payer(self, sales_name, customer, d_1_d_7_customer_success_amount, d_8_d_14_customer_success_amount, payer):
+    def deal_payer(self, sales_name, customer, d_1_d_7_customer_success_amount, d_8_d_14_customer_success_amount,
+                   payer):
         try:
             print(f'监控四开始获取{sales_name}的商户签约名为{customer}的付方签约名为{payer}的数据')
             d_1_d_7_data = monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_1_d_7_date, sales_name=sales_name,
-                                                                    stat_dispaysignedname=customer, payer=payer)
-            d_8_d_14_data = monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_8_d_14_date, sales_name=sales_name,
-                                                                    stat_dispaysignedname=customer, payer=payer)
+                                                                      stat_dispaysignedname=customer, payer=payer)
+            d_8_d_14_data = monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_8_d_14_date,
+                                                                       sales_name=sales_name,
+                                                                       stat_dispaysignedname=customer, payer=payer)
 
             print(f'监控四开始处理{sales_name}的商户签约名为{customer}的付方签约名为{payer}的数据')
 
@@ -119,8 +119,6 @@ class Monitor4:
                 d_1_d_7_payer_success_amount += float(item['SUCCESS_AMOUNT'])
             for item in d_8_d_14_data:
                 d_8_d_14_payer_success_amount += float(item['SUCCESS_AMOUNT'])
-
-
 
             '''
             交易金额周环比差值，付方交易金额本周比上周，与收方交易金额本周比上周差值
@@ -138,13 +136,13 @@ class Monitor4:
 
             flag = False
 
-            if d_1_d_7_payer_success_amount >= 1500 * 10**4:
+            if d_1_d_7_payer_success_amount >= 1500 * 10 ** 4:
                 if difference > 0.2 or difference < -0.15:
                     flag = True
-            elif d_8_d_14_payer_success_amount >= 100 * 10**4:
+            elif d_8_d_14_payer_success_amount >= 100 * 10 ** 4:
                 if difference > 0.5 or difference < -0.5:
-                    flag=True
-            elif d_1_d_7_payer_success_amount >= 50 * 10**4:
+                    flag = True
+            elif d_1_d_7_payer_success_amount >= 50 * 10 ** 4:
                 if difference > 0.8 or difference < -0.8:
                     flag = True
 
@@ -160,11 +158,14 @@ class Monitor4:
 
             for item2 in d_8_d_14_data:
                 for item1 in d_1_d_7_data:
-                    if item1['CUSTOMER_NO'] == item2['CUSTOMER_NO'] and item1['PAYER_BUSINESS_SCENE'] == item2['PAYER_BUSINESS_SCENE']:
+                    if item1['CUSTOMER_NO'] == item2['CUSTOMER_NO'] and item1['PAYER_BUSINESS_SCENE'] == item2[
+                        'PAYER_BUSINESS_SCENE']:
                         if float(item2["SUCCESS_AMOUNT"]) == 0 or d_8_d_14_customer_success_amount == 0:
                             continue
-                        difference = float(item1["SUCCESS_AMOUNT"]) / float(item2["SUCCESS_AMOUNT"]) - d_1_d_7_customer_success_amount / d_8_d_14_customer_success_amount
-                        fluctuation = float(item1["SUCCESS_AMOUNT"]) / float(item2["SUCCESS_AMOUNT"]) - self.market_fluctuation
+                        difference = float(item1["SUCCESS_AMOUNT"]) / float(item2[
+                                                                                "SUCCESS_AMOUNT"]) - d_1_d_7_customer_success_amount / d_8_d_14_customer_success_amount
+                        fluctuation = float(item1["SUCCESS_AMOUNT"]) / float(
+                            item2["SUCCESS_AMOUNT"]) - self.market_fluctuation
                         content = f'付方名称:{payer}，航司:{customer}——商编:{item1["CUSTOMER_NO"]}+场景字段:{item1["PAYER_BUSINESS_SCENE"]}，近7天充值金额，环比上周{"上升" if difference > 0 else "下降"}{abs(difference * 100):.2f}%，{"高于" if fluctuation > 0 else "低于"}大盘{abs(fluctuation * 100):.2f}%'
                         subcontent = f"波动详情：  近7天充值金额，环比上周{'上升' if difference > 0 else '下降'}<text_tag color={'green' if difference > 0 else 'red'}>{abs(difference * 100):.2f}%</text_tag>，{'高于' if fluctuation > 0 else '低于'}大盘<text_tag color={'green' if fluctuation > 0 else 'red'}>{abs(fluctuation * 100):.2f}%</text_tag>"
 
@@ -182,8 +183,3 @@ class Monitor4:
         except Exception as e:
             print(f'监控四开始获取{sales_name}的商户签约名为{customer}的付方签约名为{payer}的数据失败')
             return
-
-
-
-
-
