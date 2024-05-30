@@ -57,13 +57,13 @@ class Monitor1ByPayer:
     def deal_sales_name(self, payer_sales_name, ):
         customer_list = set()
         try:
-            print(f'监控一开始获取付方签约名({payer_sales_name})的付方签约名')
+            print(f'监控一开始获取付方销售({payer_sales_name})的付方签约名')
             data = monitor1bypayer_data.get_data_by_payer_in_monitor1(trx_date=self.d_1_d_45_trx_date, payer_sales_name=payer_sales_name)
 
             for item in data:
                 customer_list.add(item['PAYER_CUSTOMER_SIGNEDNAME'])
         except Exception as e:
-            print(f'监控一开始获取付方签约名({payer_sales_name})的付方签约名失败！')
+            print(f'监控一开始获取付方销售({payer_sales_name})的付方签约名失败！')
             return
 
         for customer in customer_list:
@@ -180,10 +180,10 @@ class Monitor1ByPayer:
                         d_1_success_count = float(d_1_item['SUCCESS_COUNT'])
                         break
                 if abs(d_1_success_amount - d_2_success_amount) >= 100000:
-                    if abs(d_1_success_amount - d_2_success_amount) > 10000 and d_1_success_amount / d_2_success_amount - 1 > 1:
+                    if d_1_success_amount / d_2_success_amount - 1 > 1:
                         reason4.append(
                             f'付方签约名:{customer},产品:{d_2_item["PRODUCT"]},昨日交易金额{d_1_success_amount/10000:.2f}万元，环比上升{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
-                    if abs(d_1_success_amount - d_2_success_amount) > 10000 and d_1_success_amount / d_2_success_amount - 1 < -0.5:
+                    if d_1_success_amount / d_2_success_amount - 1 < -0.5:
                         reason4.append(
                             f'付方签约名:{customer},产品:{d_2_item["PRODUCT"]},昨日交易金额{d_1_success_amount/10000:.2f}万元，环比下降{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
 
@@ -225,10 +225,10 @@ class Monitor1ByPayer:
                         d_1_success_count = float(d_1_item['SUCCESS_COUNT'])
                         break
                 if abs(d_1_success_amount - d_2_success_amount) >= 100000:
-                    if abs(d_1_success_amount - d_2_success_amount) > 10000 and d_1_success_amount / d_2_success_amount - 1 > 1:
+                    if d_1_success_amount / d_2_success_amount - 1 > 1:
                         reason5.append(
                             f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
-                    if abs(d_1_success_amount - d_2_success_amount) > 10000 and d_1_success_amount / d_2_success_amount - 1 < -0.5:
+                    if d_1_success_amount / d_2_success_amount - 1 < -0.5:
                         reason5.append(
                             f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
 
