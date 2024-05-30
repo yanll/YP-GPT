@@ -138,7 +138,7 @@ class Monitor1ByPayer:
                 self.alert_list.append({
                     'title': '交易笔数波动异常',
                     'name': payer_sales_name,
-                    'content': f'付方签约名:{customer}，昨日交易金额{float(d_1_data["SUCCESS_COUNT"]) / 10000:.2f}万元，环比{"上升" if customer_success_count > 0 else "下降"}{customer_success_count * 100:.2f}%（商户交易笔数环比）',
+                    'content': f'付方签约名:{customer}，昨日交易金额{float(d_1_data["SUCCESS_COUNT"]) / 10000:.2f}万元，环比{"上升" if customer_success_count > 0 else "下降"}<text_tag color={"green" if customer_success_count > 0 else "red" } >{customer_success_count * 100:.2f}%</text_tag>（商户交易笔数环比）',
                     'reason4': '\n'.join(reason4),
                     'reason5': '\n'.join(reason5)
                 })
@@ -182,10 +182,10 @@ class Monitor1ByPayer:
                 if abs(d_1_success_amount - d_2_success_amount) >= 100000:
                     if d_1_success_amount / d_2_success_amount - 1 > 1:
                         reason4.append(
-                            f'付方签约名:{customer},产品:{d_2_item["PRODUCT"]},昨日交易金额{d_1_success_amount/10000:.2f}万元，环比上升{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
+                            f'付方签约名:{customer},产品:{d_2_item["PRODUCT"]},昨日交易金额{d_1_success_amount/10000:.2f}万元，环比上升<text_tag color= green >{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
                     if d_1_success_amount / d_2_success_amount - 1 < -0.5:
                         reason4.append(
-                            f'付方签约名:{customer},产品:{d_2_item["PRODUCT"]},昨日交易金额{d_1_success_amount/10000:.2f}万元，环比下降{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
+                            f'付方签约名:{customer},产品:{d_2_item["PRODUCT"]},昨日交易金额{d_1_success_amount/10000:.2f}万元，环比下降<text_tag color= red >{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
 
         except Exception as e:
             print('归因4处理错误')
@@ -227,10 +227,10 @@ class Monitor1ByPayer:
                 if abs(d_1_success_amount - d_2_success_amount) >= 100000:
                     if d_1_success_amount / d_2_success_amount - 1 > 1:
                         reason5.append(
-                            f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
+                            f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升<text_tag color= green >{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
                     if d_1_success_amount / d_2_success_amount - 1 < -0.5:
                         reason5.append(
-                            f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
+                            f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降<text_tag color= red >{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
 
 
 

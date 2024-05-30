@@ -11,23 +11,6 @@ def monitor_one2():
     hv_data = first.run()
     print("数值的返回结果", hv_data)
     data = hv_data
-    # data = [
-    # {
-    #     "title": "交易笔数波动异常",
-    #     "name": "张华雪",
-    #     "content": "商户签约名:JD，昨日交易金额0.32万元，环比下降-41.52%（商户交易笔数环比）",
-    #     "reason4": "该归因暂无",
-    #     "reason5": "商户签约名:JD,商户编号:10001004838,原始场景:航司北区,产品:网银，昨日交易金额7.79万元，环比上升2.86%\n",
-    #     "reason_3": ""
-    # },
-    # {
-    #     "title": "交易笔数波动异常",
-    #     "name": "张华雪",
-    #     "content": "商户签约名:UQ，昨日交易金额0.02万元，环比上升440.09%（商户交易笔数环比）",
-    #     "reason4": "该归因暂无",
-    #     "reason5": "",
-    #     "reason_3": ""
-    # }]
 
 
 
@@ -69,9 +52,6 @@ def monitor_one2():
             print("lark_message_id:", lark_message_id)
 
     return "Success"
-
-
-
 
 
 
