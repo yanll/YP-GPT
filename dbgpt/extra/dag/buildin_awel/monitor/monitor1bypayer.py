@@ -36,6 +36,7 @@ class Monitor1ByPayer:
             raise e
 
     def run(self):
+        print('监控一(付方签约名维度)开始执行')
         payer_sales_name_list = set()
         try:
             print('监控一开始获取所有付方销售')
@@ -131,22 +132,24 @@ class Monitor1ByPayer:
 
                 print(f'监控一{payer_sales_name}的付方签约名为{customer}的数据异常条件满足')
 
-                reason = self.find_reason(payer_sales_name, customer)
+                reason4 = self.find_reason4(payer_sales_name, customer)
+                reason5 = self.find_reason5(payer_sales_name, customer)
 
                 self.alert_list.append({
                     'title': '交易笔数波动异常',
                     'name': payer_sales_name,
                     'content': f'付方签约名:{customer}，昨日交易金额{float(d_1_data["SUCCESS_COUNT"]) / 10000:.2f}万元，环比{"上升" if customer_success_count > 0 else "下降"}{customer_success_count * 100:.2f}%（商户交易笔数环比）',
-                    'reason': reason
+                    'reason4': '\n'.join(reason4),
+                    'reason5': '\n'.join(reason5)
                 })
 
         except Exception as e:
             print(f'监控一开始处理{payer_sales_name}的付方签约名为{customer}的数据失败!')
 
 
-    def find_reason(self, payer_sales_name, customer):
-        print(f'监控一处理{payer_sales_name}的付方签约名为{customer}的数据异常归因')
-        reason = []
+    def find_reason4(self, payer_sales_name, customer) -> list:
+        print(f'监控一处理{payer_sales_name}的付方签约名为{customer}的数据异常归因4')
+        reason4 = []
         '''
         1、产品交易波动异常
         归因④【付款方签约名+产品】
@@ -178,23 +181,28 @@ class Monitor1ByPayer:
                         break
                 if abs(d_1_success_amount - d_2_success_amount) >= 100000:
                     if abs(d_1_success_amount - d_2_success_amount) > 10000 and d_1_success_amount / d_2_success_amount - 1 > 1:
-                        reason.append(
+                        reason4.append(
                             f'付方签约名:{customer},产品:{d_2_item["PRODUCT"]},昨日交易金额{d_1_success_amount/10000:.2f}万元，环比上升{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
                     if abs(d_1_success_amount - d_2_success_amount) > 10000 and d_1_success_amount / d_2_success_amount - 1 < -0.5:
-                        reason.append(
+                        reason4.append(
                             f'付方签约名:{customer},产品:{d_2_item["PRODUCT"]},昨日交易金额{d_1_success_amount/10000:.2f}万元，环比下降{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
 
         except Exception as e:
             print('归因4处理错误')
 
+        return reason4
 
+
+    def find_reason5(self, payer_sales_name, customer) -> list:
         '''
-        归因⑤【付款方签约名+商户签约名】
-        ([D-1]交易金额- [D-2]交易金额）的绝对值>=100000
-        - 交易环比（[D-1]交易金额/[D-2]交易金额-1
-          - >100%——上升
-          - <-50%——下降
+            归因⑤【付款方签约名+商户签约名】
+            ([D-1]交易金额- [D-2]交易金额）的绝对值>=100000
+            - 交易环比（[D-1]交易金额/[D-2]交易金额-1
+              - >100%——上升
+              - <-50%——下降
         '''
+        print(f'监控一处理{payer_sales_name}的付方签约名为{customer}的数据异常归因5')
+        reason5 = []
         # 归因5
         try:
             d_1_data = monitor1bypayer_data.get_reason_5_data_by_payer_in_monitor1(trx_date=self.d_1_trx_date,
@@ -218,14 +226,16 @@ class Monitor1ByPayer:
                         break
                 if abs(d_1_success_amount - d_2_success_amount) >= 100000:
                     if abs(d_1_success_amount - d_2_success_amount) > 10000 and d_1_success_amount / d_2_success_amount - 1 > 1:
-                        reason.append(
+                        reason5.append(
                             f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
                     if abs(d_1_success_amount - d_2_success_amount) > 10000 and d_1_success_amount / d_2_success_amount - 1 < -0.5:
-                        reason.append(
+                        reason5.append(
                             f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
+
+
 
         except Exception as e:
             print('归因5处理错误')
 
 
-        return reason
+        return reason5

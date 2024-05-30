@@ -6,19 +6,19 @@ from dbgpt.extra.dag.buildin_awel.monitor.monitor1bypayer import Monitor1ByPayer
 
 def main():
     alert_list = []
-    # try:
-    #     monitor = Monitor1ByStat()
-    #     alert_list += monitor.run()
-    # except Exception as e:
-    #     print('监控一(商户签约名维度)运行失败')
+    try:
+        monitor = Monitor1ByStat()
+        alert_list += monitor.run()
+    except Exception as e:
+        print('监控一(商户签约名维度)运行失败')
     try:
         monitor = Monitor1ByPayer()
         alert_list += monitor.run()
     except Exception as e:
         print('监控一(付方签约名维度)运行失败')
-    # alert_list += monitor2()
-    # alert_list += monitor3()
-    # alert_list += monitor4()
+    alert_list += monitor2()
+    alert_list += monitor3()
+    alert_list += monitor4()
     return alert_list
 
 
