@@ -147,6 +147,7 @@ class Monitor1():
             print(f'监控一开始处理{sales_name}的商户签约名为{customer}的数据失败')
 
     def find_reason1(self, sales_name, customer):
+
         try:
             d_1_data = monitor1_data.get_reason_1_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date,
                                                                            sales_name=sales_name,
@@ -239,9 +240,9 @@ class Monitor1():
                         d_1_success_amount = float(d_1_item['SUCCESS_AMOUNT'])
                         break
                 if abs(d_1_success_amount - d_2_success_amount) > 100000 and d_1_success_amount / d_2_success_amount - 1 > 1.5:
-                    reason_3 += f'归因三:主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount/10000:.2f}万元，环比上升{d_1_success_amount / d_2_success_amount - 1:.2f}%\n'
+                    reason_3 += f'主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount/10000:.2f}万元，环比上升{d_1_success_amount / d_2_success_amount - 1:.2f}%\n'
                 if abs(d_1_success_amount - d_2_success_amount) > 100000 and d_1_success_amount / d_2_success_amount - 1 < -0.5:
-                    reason_3 += f'归因三:主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount/10000:.2f}万元，环比下降{abs(d_1_success_amount / d_2_success_amount - 1):.2f}%\n'
+                    reason_3 += f'主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount/10000:.2f}万元，环比下降{abs(d_1_success_amount / d_2_success_amount - 1):.2f}%\n'
 
             return reason_3
 
