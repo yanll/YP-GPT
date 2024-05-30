@@ -1,69 +1,66 @@
+import logging
 from typing import Dict
-from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
-import logging
 
-from dbgpt.extra.dag.buildin_awel.hanglv3 import monitor_three
-# 假设 monitor_four 和 monitor_two 函数定义在 dbgpt.extra.dag.buildin_awel.hanglv4 模块中
-from dbgpt.extra.dag.buildin_awel.hanglv4 import monitor_four
+from dbgpt._private.pydantic import BaseModel, Field
+from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
 from dbgpt.extra.dag.buildin_awel.hanglv2 import monitor_two
-import logging
-from typing import List, Dict
+from dbgpt.extra.dag.buildin_awel.hanglv3 import monitor_three
+from dbgpt.extra.dag.buildin_awel.hanglv4 import monitor_four
 
-import requests
-from fastapi import FastAPI
 
-from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
-from dbgpt.extra.dag.buildin_awel.langgraph.tools.daily_push_message_tool import Dailypushmessagetool
-from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.util.azure_util import create_azure_llm
-from dbgpt.util.lark import lark_message_util  # 导入发送卡片的工具类
-from dbgpt.util.lark import larkutil
+class TriggerReqBody(BaseModel):
+    switch_monitor1: str = Field(default="")
+    switch_monitor2: str = Field(default="")
+    switch_monitor3: str = Field(default="")
+    switch_monitor4: str = Field(default="")
+
 
 class RequestHandleOperator(MapOperator[Dict, str]):
-    llm = None
 
     def __init__(self, **kwargs):
-        self.llm = create_azure_llm()
         super().__init__(**kwargs)
 
-    async def map(self, input_value: Dict) -> str:
+    async def map(self, input_value: TriggerReqBody) -> dict:
 
         results = []
+        if input_value.switch_monitor1 == "true":
+            pass
 
-        #monitor_two
-        try:
-            result = monitor_two()
-            results.append(result)
+        if input_value.switch_monitor2 == "true":
+            try:
+                result = monitor_two()
+                results.append(result)
+            except Exception as e:
+                logging.error(f"Error occurred while executing monitor_two: {e}")
+                results.append(f"Monitor four failed: {str(e)}")
 
-        except Exception as e:
-            logging.error(f"Error occurred while executing monitor_two: {e}")
-            results.append(f"Monitor four failed: {str(e)}")
+        if input_value.switch_monitor3 == "true":
+            try:
+                result = monitor_three()
+                results.append(result)
 
-        # monitor_three
-        try:
-            result = monitor_three()
-            results.append(result)
+            except Exception as e:
+                logging.error(f"Error occurred while executing monitor_three: {e}")
+                results.append(f"Monitor four failed: {str(e)}")
 
-        except Exception as e:
-            logging.error(f"Error occurred while executing monitor_three: {e}")
-            results.append(f"Monitor four failed: {str(e)}")
+        if input_value.switch_monitor4 == "true":
+            try:
+                result = monitor_four()
+                results.append(result)
 
-        #monitor_four
-        try:
-            result = monitor_four()
-            results.append(result)
+            except Exception as e:
+                logging.error(f"Error occurred while executing monitor_four: {e}")
+                results.append(f"Monitor four failed: {str(e)}")
 
-        except Exception as e:
-            logging.error(f"Error occurred while executing monitor_four: {e}")
-            results.append(f"Monitor four failed: {str(e)}")
+        return {"status": "success"}
 
 
 with DAG("dbgpt_awel_lark_hanglv_monitor_daily_push_event") as dag:
+    print("开始监控推送")
     trigger = HttpTrigger(
         endpoint="/lark_hanglv_monitor_daily_push_event",
-        methods="POST",
-        request_body=Dict
+        methods="GET",
+        request_body=TriggerReqBody
     )
     map_node = RequestHandleOperator()
     trigger >> map_node
-

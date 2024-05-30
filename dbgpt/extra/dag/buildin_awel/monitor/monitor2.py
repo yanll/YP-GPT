@@ -70,6 +70,8 @@ class Monitor2:
                     'type': '付方签约名',
                     'customer_name': payer_customer,
                     'content': f'昨日退款波动超过30%，退款率{float(d_1_data["REFUND_COUNT"])/float(d_1_data["SUCCESS_COUNT"])*100:.2f}%,请关注',
+                    #波动详情：    昨日退款波动超过30%，退款率<text_tag color=orange>0.61%</text_tag>，请关注
+                    'content_rich': f"波动详情：    昨日退款波动超过30%，退款率<text_tag color= orange>{float(d_1_data['REFUND_COUNT'])/float(d_1_data['SUCCESS_COUNT'])*100:.2f}%</text_tag>，请关注。"
 
                 })
 
@@ -130,6 +132,7 @@ class Monitor2:
                     'type': '商户签约名',
                     'customer_name': customer,
                     'content': f'昨日退款波动超过30%，退款率{float(d_1_data["REFUND_COUNT"])/float(d_1_data["SUCCESS_COUNT"])*100:.2f}%,请关注',
+                    'content_rich': f"波动详情：    昨日退款波动超过30%，退款率<text_tag color= orange>{float(d_1_data['REFUND_COUNT'])/float(d_1_data['SUCCESS_COUNT'])*100:.2f}%</text_tag>，请关注。"
 
                 })
 
@@ -137,3 +140,9 @@ class Monitor2:
         except Exception as e:
             print(f'监控二开始处理{sales_name}的商户签约名为{customer}的数据失败')
 
+
+
+# if __name__ == "__main__":
+#     a = Monitor2()
+#     b = a.run()
+#     print(b)
