@@ -117,8 +117,7 @@ class Monitor3:
                     'title': '商户（收方或付方）产品波动异常',
                     'customer_name': customer,
                     'content': f'交易无明显波动，但{product}产品结构有变化，变化值为{difference*100:.2f}%，请关注。',
-                    # 'content_rich': f"波动详情：      交易无明显波动，但{product}产品结构有变化，变化值为<text_tag color={'orange' if difference1 < 1 else 'carmine'}>{difference1 * 100:.2f}%</text_tag>，请关注。",
-                    # 交易无明显波动，但{product}产品结构有变化，变化值为<text_tag color={'orange'if difference1<1 else 'carmine'}>{difference1*100:.2f}%</text_tag>，请关注。
+                    'content_rich': f"波动详情：      交易无明显波动，但{product}产品结构有变化，变化值为<text_tag color={'orange' if difference < 1 else 'carmine'}>{difference * 100:.2f}%</text_tag>，请关注。",
                     "type": "商户签约名"
 
                 })
@@ -228,8 +227,7 @@ class Monitor3:
                     'title': '商户（收方或付方）产品波动异常',
                     'customer_name': payer_customer,
                     'content': f'交易无明显波动，但{payer_product}产品结构有变化，变化值为{difference*100:.2f}%，请关注。',
-                    # 'content_rich': f"波动详情：      交易无明显波动，但{product}产品结构有变化，变化值为<text_tag color={'orange' if difference1 < 1 else 'carmine'}>{difference1 * 100:.2f}%</text_tag>，请关注。",
-                    # 交易无明显波动，但{product}产品结构有变化，变化值为<text_tag color={'orange'if difference1<1 else 'carmine'}>{difference1*100:.2f}%</text_tag>，请关注。
+                    'content_rich': f"波动详情：      交易无明显波动，但{payer_product}产品结构有变化，变化值为<text_tag color={'orange' if difference < 1 else 'carmine'}>{difference * 100:.2f}%</text_tag>，请关注。",
                     "type": "付方签约名"
 
                 })
