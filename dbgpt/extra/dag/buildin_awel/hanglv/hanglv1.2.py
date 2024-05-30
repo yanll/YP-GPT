@@ -1,16 +1,19 @@
-from dbgpt.extra.dag.buildin_awel import hanglv_api_use
 from flask import Flask, jsonify
+
+from dbgpt.extra.dag.buildin_awel.hanglv import hanglv_api_use
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.extra.dag.buildin_awel.monitor import monitor, monitor1bypayer, monitor1bystat
+from dbgpt.extra.dag.buildin_awel.monitor import monitor, monitor1bypayer
 from dbgpt.util.lark import lark_message_util
 
 app = Flask(__name__)
 
-def monitor_one():
-    first = monitor1bystat.Monitor1ByStat()
+def monitor_one2():
+    first = monitor1bypayer.Monitor1ByPayer()
     hv_data = first.run()
     print("数值的返回结果", hv_data)
     data = hv_data
+
+
 
     name_to_data = {}
     for report in data:
@@ -25,13 +28,13 @@ def monitor_one():
     for name, reports in name_to_data.items():
         conv_id_map = hanglv_api_use.get_user_open_id(name = "张华雪")
         for email, conv_id in conv_id_map.items():
-            content = card_templates.travel_report_content1(
+            content = card_templates.travel_report_content1_2(
                 template_variable={
                     "unlike_callback_event": {
                         "event_type": "unlike",
                         "event_source": "",
                         "event_data": {
-                            "message": "航旅波动检测归因1.1"
+                            "message": "航旅波动检测归因1.2"
                         }
                     },
                     "travel_report_list": reports,
