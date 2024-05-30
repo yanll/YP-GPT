@@ -94,53 +94,88 @@ class Monitor1ByStat:
                 【商户交易笔数环比】：[D-1]交易笔数/前X天日均交易笔数-1,groupzby 商户签约名
                 【行业交易笔数环比】[D-1]交易笔数/前X天日均交易笔数-1，不需要group by 商户签约名
                 X=7，15，30，45
+                
+                长期下滑：
+                X=15，30，45时，商户交易笔数环比都是负数，且3个时期值均满足条件时抛出
+                
+                短期波动：
+                X=7时，商户交易笔数环比都是负数
             '''
             print(f'监控一开始处理{sales_name}的商户签约名为{customer}的数据')
-            if abs(float(d_1_data['SUCCESS_AMOUNT']) - float(d_1_d_7_data['SUCCESS_AMOUNT']) / 7) >= 100000:
 
-                # X=7
-                customer_success_count = float(d_1_data['SUCCESS_COUNT']) / (
-                        float(d_1_d_7_data['SUCCESS_COUNT']) / 7) - 1
-                industry_line_success_count = float(self.d_1_industry_line_data['SUCCESS_COUNT']) / (
-                        float(self.d_1_d_7_industry_line_data['SUCCESS_COUNT']) / 7) - 1
-                if abs(customer_success_count - industry_line_success_count) < 0.2:
-                    return
-                # X=15
-                customer_success_count = float(d_1_data['SUCCESS_COUNT']) / (
-                        float(d_1_d_15_data['SUCCESS_COUNT']) / 15) - 1
-                industry_line_success_count = float(self.d_1_industry_line_data['SUCCESS_COUNT']) / (
-                        float(self.d_1_d_15_industry_line_data['SUCCESS_COUNT']) / 15) - 1
-                if abs(customer_success_count - industry_line_success_count) < 0.2:
-                    return
-                # X=30
-                customer_success_count = float(d_1_data['SUCCESS_COUNT']) / (float(
-                    d_1_d_30_data['SUCCESS_COUNT']) / 30) - 1
-                industry_line_success_count = float(self.d_1_industry_line_data['SUCCESS_COUNT']) / (float(
-                    self.d_1_d_30_industry_line_data['SUCCESS_COUNT']) / 30) - 1
-                if abs(customer_success_count - industry_line_success_count) < 0.2:
-                    return
-                # X=45
-                customer_success_count = float(d_1_data['SUCCESS_COUNT']) / (float(
-                    d_1_d_45_data['SUCCESS_COUNT']) / 45) - 1
-                industry_line_success_count = float(self.d_1_industry_line_data['SUCCESS_COUNT']) / (float(
-                    self.d_1_d_45_industry_line_data['SUCCESS_COUNT']) / 45) - 1
-                if abs(customer_success_count - industry_line_success_count) < 0.2:
-                    return
+            def judge_long_term():
+                # 长期下滑判断
+                if abs(float(d_1_data['SUCCESS_AMOUNT']) - float(d_1_d_7_data['SUCCESS_AMOUNT']) / 7) >= 100000:
 
-                print(f'监控一{sales_name}的商户签约名为{customer}的数据异常条件满足')
+                    # X=15
+                    customer_success_count = float(d_1_data['SUCCESS_COUNT']) / (
+                            float(d_1_d_15_data['SUCCESS_COUNT']) / 15) - 1
+                    industry_line_success_count = float(self.d_1_industry_line_data['SUCCESS_COUNT']) / (
+                            float(self.d_1_d_15_industry_line_data['SUCCESS_COUNT']) / 15) - 1
+                    if abs(customer_success_count - industry_line_success_count) < 0.2:
+                        return
+                    if customer_success_count >=0:
+                        return
+                    # X=30
+                    customer_success_count = float(d_1_data['SUCCESS_COUNT']) / (float(
+                        d_1_d_30_data['SUCCESS_COUNT']) / 30) - 1
+                    industry_line_success_count = float(self.d_1_industry_line_data['SUCCESS_COUNT']) / (float(
+                        self.d_1_d_30_industry_line_data['SUCCESS_COUNT']) / 30) - 1
+                    if abs(customer_success_count - industry_line_success_count) < 0.2:
+                        return
+                    if customer_success_count >=0:
+                        return
+                    # X=45
+                    customer_success_count = float(d_1_data['SUCCESS_COUNT']) / (float(
+                        d_1_d_45_data['SUCCESS_COUNT']) / 45) - 1
+                    industry_line_success_count = float(self.d_1_industry_line_data['SUCCESS_COUNT']) / (float(
+                        self.d_1_d_45_industry_line_data['SUCCESS_COUNT']) / 45) - 1
+                    if abs(customer_success_count - industry_line_success_count) < 0.2:
+                        return
+                    if customer_success_count >=0:
+                        return
 
-                reason1 = self.find_reason1(sales_name, customer)
-                reason2 = self.find_reason2(sales_name, customer)
-                reason3 = self.find_reason3(sales_name, customer)
+                    print(f'监控一{sales_name}的商户签约名为{customer}的数据异常条件满足')
 
-                self.alert_list.append({
-                    'title': '交易笔数波动异常',
-                    'name': sales_name,
-                    'content': f'商户签约名:{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，环比{"上升" if customer_success_count > 0 else "下降"}<text_tag color={"green" if customer_success_count > 0 else "red" } >{customer_success_count * 100:.2f}%</text_tag>（商户交易笔数环比）',
-                    'reason1': '\n'.join(reason1),
-                    'reason2': '\n'.join(reason2),
-                    'reason3': '\n'.join(reason3),
-                })
+                    reason1 = self.find_reason1(sales_name, customer)
+                    reason2 = self.find_reason2(sales_name, customer)
+                    reason3 = self.find_reason3(sales_name, customer)
+
+                    self.alert_list.append({
+                        'title': '交易笔数波动异常',
+                        'name': sales_name,
+                        'content': f'【长期下滑】商户签约名:{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，环比{"上升" if customer_success_count > 0 else "下降"}<text_tag color={"green" if customer_success_count > 0 else "red" } >{customer_success_count * 100:.2f}%</text_tag>（商户交易笔数环比）',
+                        'reason1': '\n'.join(reason1),
+                        'reason2': '\n'.join(reason2),
+                        'reason3': '\n'.join(reason3),
+                    })
+
+            def judge_short_term():
+                if abs(float(d_1_data['SUCCESS_AMOUNT']) - float(d_1_d_7_data['SUCCESS_AMOUNT']) / 7) >= 100000:
+                    # X=7
+                    customer_success_count = float(d_1_data['SUCCESS_COUNT']) / (
+                            float(d_1_d_7_data['SUCCESS_COUNT']) / 7) - 1
+                    industry_line_success_count = float(self.d_1_industry_line_data['SUCCESS_COUNT']) / (
+                            float(self.d_1_d_7_industry_line_data['SUCCESS_COUNT']) / 7) - 1
+                    if abs(customer_success_count - industry_line_success_count) < 0.2:
+                        return
+                    if customer_success_count >=0:
+                        return
+                    reason1 = self.find_reason1(sales_name, customer)
+                    reason2 = self.find_reason2(sales_name, customer)
+                    reason3 = self.find_reason3(sales_name, customer)
+
+                    self.alert_list.append({
+                        'title': '交易笔数波动异常',
+                        'name': sales_name,
+                        'content': f'【短期波动】商户签约名:{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，环比{"上升" if customer_success_count > 0 else "下降"}<text_tag color={"green" if customer_success_count > 0 else "red"} >{customer_success_count * 100:.2f}%</text_tag>（商户交易笔数环比）',
+                        'reason1': '\n'.join(reason1),
+                        'reason2': '\n'.join(reason2),
+                        'reason3': '\n'.join(reason3),
+                    })
+
+            judge_short_term()
+            judge_long_term()
 
         except Exception as e:
             print(f'监控一开始处理{sales_name}的商户签约名为{customer}的数据失败')
