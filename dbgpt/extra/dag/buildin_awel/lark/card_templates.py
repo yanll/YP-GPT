@@ -470,7 +470,7 @@ def travel_report_content3(template_variable: Dict):
 def travel_report_content4(template_variable: Dict):
     """航旅波动检测归因-监控4"""
     template_id = "AAq37oHs6R1LR"
-    template_version_name = "1.0.27"
+    template_version_name = "1.0.28"
 
     card = {
         "type": "template",
