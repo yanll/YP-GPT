@@ -16,6 +16,7 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
             self.d_1_d_15_trx_date = ','.join(self.get_past_working_days(15))
             self.d_1_d_30_trx_date = ','.join(self.get_past_working_days(30))
             self.d_1_d_45_trx_date = ','.join(self.get_past_working_days(45))
+            self.original_scene_dict = self.get_original_scene_dict()
 
 
         except Exception as e:
@@ -220,24 +221,27 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                 d_1_success_amount = 0
                 d_1_success_count = 0
                 for d_1_item in d_1_data:
-                    if d_1_item['BUSINESS_SCENE'] == d_2_item['BUSINESS_SCENE'] and d_1_item['STAT_CUSTOMER_NO'] == \
-                            d_2_item['STAT_CUSTOMER_NO']:
+                    if d_1_item['STAT_CUSTOMER_NO'] == d_2_item['STAT_CUSTOMER_NO']:
                         d_1_success_amount = float(d_1_item['SUCCESS_AMOUNT'])
                         d_1_success_count = float(d_1_item['SUCCESS_COUNT'])
                         break
                 if abs(d_1_success_amount - d_2_success_amount) >= 100000:
                     d_1_d_45_success_count = 0
                     for d_1_d_45_item in d_1_d_45_data:
-                        if d_1_d_45_item['BUSINESS_SCENE'] == d_2_item['BUSINESS_SCENE'] and d_1_d_45_item[
-                            'STAT_CUSTOMER_NO'] == d_2_item['STAT_CUSTOMER_NO']:
+
+                        if d_1_d_45_item['STAT_CUSTOMER_NO'] == d_2_item['STAT_CUSTOMER_NO']:
                             d_1_d_45_success_count = float(d_1_d_45_item['SUCCESS_COUNT'])
                             break
                     if d_1_d_45_success_count == 0:
                         continue
                     difference = d_1_success_count / d_1_d_45_success_count - 1
+                    orig_scene = self.get_original_scene_by_merchant_no(
+                        self.original_scene_dict,
+                        d_2_item["BUSINESS_SCENE"]
+                    )
                     reason_tmp.append((
                         difference,
-                        f'归因一:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{d_2_item["BUSINESS_SCENE"]}昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比{"上升" if difference > 0 else "下降"}<text_tag color={"green" if difference > 0 else "red"} >{difference * 100:.2f}%</text_tag>'))
+                        f'归因一:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene}昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比{"上升" if difference > 0 else "下降"}<text_tag color={"green" if difference > 0 else "red"} >{difference * 100:.2f}%</text_tag>'))
             if len(reason_tmp) > 3:
                 reason_tmp.sort(key=lambda x: abs(x[0]), reverse=True)
                 reason_tmp = reason_tmp[:3]
@@ -268,16 +272,22 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                     continue
                 d_1_success_amount = 0
                 for d_1_item in d_1_data:
-                    if d_1_item['PRODUCT'] == d_2_item['PRODUCT'] and d_1_item['BUSINESS_SCENE'] == d_2_item[
-                        'BUSINESS_SCENE'] and d_1_item['STAT_CUSTOMER_NO'] == d_2_item['STAT_CUSTOMER_NO']:
+                    if (
+                            d_1_item['PRODUCT'] == d_2_item['PRODUCT'] and
+                            d_1_item['STAT_CUSTOMER_NO'] == d_2_item['STAT_CUSTOMER_NO']
+                    ):
                         d_1_success_amount = float(d_1_item['SUCCESS_AMOUNT'])
                         break
+                orig_scene = self.get_original_scene_by_merchant_no(
+                    self.original_scene_dict,
+                    d_2_item["BUSINESS_SCENE"]
+                )
                 if abs(d_1_success_amount - d_2_success_amount) > 10000 and d_1_success_amount / d_2_success_amount - 1 > 1.5:
                     reason2.append(
-                        f'归因二:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{d_2_item["BUSINESS_SCENE"]},产品:{d_2_item["PRODUCT"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升<text_tag color= green >{(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
+                        f'归因二:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene},产品:{d_2_item["PRODUCT"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升<text_tag color= green >{(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
                 if abs(d_1_success_amount - d_2_success_amount) > 10000 and d_1_success_amount / d_2_success_amount - 1 < -0.5:
                     reason2.append(
-                        f'归因二:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{d_2_item["BUSINESS_SCENE"]},产品:{d_2_item["PRODUCT"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降<text_tag color=  red  >{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
+                        f'归因二:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene},产品:{d_2_item["PRODUCT"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降<text_tag color=  red  >{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
 
         except Exception as e:
             print('归因2处理错误')

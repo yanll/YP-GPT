@@ -25,3 +25,11 @@ class AirlineMonitorDataHandler:
             rs[rec['CUSTOMER']] = rec["SCENE"]
         return rs
 
+    def get_original_scene_by_merchant_no(self, scene_dict: dict, merchant_no: str) -> str:
+        if scene_dict is None:
+            return ""
+        if merchant_no is None or merchant_no == "":
+            return ""
+        if merchant_no in scene_dict:
+            return scene_dict[merchant_no]
+        return "-"
