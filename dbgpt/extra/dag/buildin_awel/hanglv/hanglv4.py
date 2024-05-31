@@ -31,7 +31,7 @@ class MonitorFour:
             "product": product,
             "merchant_no": merchant_no,
             "reason": "",
-            "type": "监控4",
+            "type": "深航/国航充值业务",
             "created_time": "",
             "modified_time": "",
         }
