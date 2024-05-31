@@ -1,4 +1,4 @@
-from dbgpt.extra.dag.buildin_awel.monitor.airline_monitor_data import AirlineMonitorDataProvider
+from dbgpt.extra.dag.buildin_awel.monitor.airline_monitor_data_provider import AirlineMonitorDataProvider
 
 
 class Monitor1ByStatDataProvider(AirlineMonitorDataProvider):

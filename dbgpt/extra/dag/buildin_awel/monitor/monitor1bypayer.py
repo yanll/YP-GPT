@@ -1,10 +1,10 @@
+from dbgpt.extra.dag.buildin_awel.monitor.airline_monitor_handler import AirlineMonitorDataHandler
 from dbgpt.extra.dag.buildin_awel.monitor.api import get_past_working_days
-from dbgpt.extra.dag.buildin_awel.monitor.monitor1bypayer_data import Monitor1ByPayerDataProvider
 
 
-class Monitor1ByPayer:
+class Monitor1ByPayer(AirlineMonitorDataHandler):
     def __init__(self):
-        self.monitor1bypayer_data = Monitor1ByPayerDataProvider()
+        super().__init__()
         self.alert_list = []
         try:
             print('监控一中开始获取工作日')
@@ -282,7 +282,6 @@ class Monitor1ByPayer:
             print('归因5处理错误')
 
         return reason5
-
 
 # if __name__ == "__main__":
 #     a = Monitor1ByPayer()

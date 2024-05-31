@@ -1,10 +1,11 @@
-from dbgpt.extra.dag.buildin_awel.monitor import monitor4_data
-
 from datetime import datetime, timedelta
 
+from dbgpt.extra.dag.buildin_awel.monitor.airline_monitor_handler import AirlineMonitorDataHandler
 
-class Monitor4:
+
+class Monitor4(AirlineMonitorDataHandler):
     def __init__(self):
+        super().__init__()
         self.alert_list = []
         try:
             print('监控四中开始获取日期')
@@ -22,8 +23,8 @@ class Monitor4:
             d_1_d_7_success_amount = 0
             d_8_d_14_success_amount = 0
             print('监控四开始获取所有销售')
-            d_1_d_7_data = monitor4_data.get_data_by_stat_in_monitor4(self.d_1_d_7_date)
-            d_8_d_14_data = monitor4_data.get_data_by_stat_in_monitor4(self.d_8_d_14_date)
+            d_1_d_7_data = self.monitor4_data.get_data_by_stat_in_monitor4(self.d_1_d_7_date)
+            d_8_d_14_data = self.monitor4_data.get_data_by_stat_in_monitor4(self.d_8_d_14_date)
             for item in d_1_d_7_data:
                 sales_name_list.add(item['SALES_NAME'])
                 d_1_d_7_success_amount += float(item['SUCCESS_AMOUNT'])
@@ -52,9 +53,10 @@ class Monitor4:
         d_8_d_14_customer_to_success_amount = {}
         try:
             print(f'监控四开始获取{sales_name}的商户签约名')
-            d_1_d_7_data = monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_1_d_7_date, sales_name=sales_name)
-            d_8_d_14_data = monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_8_d_14_date,
-                                                                       sales_name=sales_name)
+            d_1_d_7_data = self.monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_1_d_7_date,
+                                                                           sales_name=sales_name)
+            d_8_d_14_data = self.monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_8_d_14_date,
+                                                                            sales_name=sales_name)
             for item in d_1_d_7_data:
                 customer_list.add(item['STAT_DISPAYSIGNEDNAME'])
                 d_1_d_7_customer_to_success_amount[item['STAT_DISPAYSIGNEDNAME']] = float(item['SUCCESS_AMOUNT'])
@@ -82,11 +84,12 @@ class Monitor4:
         payer_list = set()
         try:
             print(f'监控四开始获取{sales_name}的商户签约名为{customer}的数据')
-            d_1_d_7_data = monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_1_d_7_date, sales_name=sales_name,
-                                                                      stat_dispaysignedname=customer)
-            d_8_d_14_data = monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_8_d_14_date,
-                                                                       sales_name=sales_name,
-                                                                       stat_dispaysignedname=customer)
+            d_1_d_7_data = self.monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_1_d_7_date,
+                                                                           sales_name=sales_name,
+                                                                           stat_dispaysignedname=customer)
+            d_8_d_14_data = self.monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_8_d_14_date,
+                                                                            sales_name=sales_name,
+                                                                            stat_dispaysignedname=customer)
 
             for item in d_1_d_7_data:
                 payer_list.add(item['PAYER_CUSTOMER_SIGNEDNAME'])
@@ -105,11 +108,12 @@ class Monitor4:
                    payer):
         try:
             print(f'监控四开始获取{sales_name}的商户签约名为{customer}的付方签约名为{payer}的数据')
-            d_1_d_7_data = monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_1_d_7_date, sales_name=sales_name,
-                                                                      stat_dispaysignedname=customer, payer=payer)
-            d_8_d_14_data = monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_8_d_14_date,
-                                                                       sales_name=sales_name,
-                                                                       stat_dispaysignedname=customer, payer=payer)
+            d_1_d_7_data = self.monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_1_d_7_date,
+                                                                           sales_name=sales_name,
+                                                                           stat_dispaysignedname=customer, payer=payer)
+            d_8_d_14_data = self.monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_8_d_14_date,
+                                                                            sales_name=sales_name,
+                                                                            stat_dispaysignedname=customer, payer=payer)
 
             print(f'监控四开始处理{sales_name}的商户签约名为{customer}的付方签约名为{payer}的数据')
 
