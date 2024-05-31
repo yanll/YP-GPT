@@ -12,6 +12,21 @@ class AirlineMonitorDataProvider:
     def __init__(self):
         self.dmall_client = DmallClient()
 
+    def get_original_scene_dict_list(self):
+        try:
+            resp = self.dmall_client.post(
+                api_name="air_original_scene",
+                parameters={
+
+                }
+            )
+            resp = resp.json()
+            data = resp['data']['data']
+            return data
+        except Exception as e:
+            print('原始场景字典获取数据异常')
+            raise e
+
     def get_past_working_days(self, working_days):
         current_date = datetime.datetime.now().date()
         current_date = str(current_date - datetime.timedelta(days=1))
