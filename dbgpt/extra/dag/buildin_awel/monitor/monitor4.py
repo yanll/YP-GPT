@@ -175,7 +175,7 @@ class Monitor4(AirlineMonitorDataHandler):
                                                                                 "SUCCESS_AMOUNT"]) - d_1_d_7_customer_success_amount / d_8_d_14_customer_success_amount
                         orig_scene = self.get_original_scene_by_merchant_no(
                             self.original_scene_dict,
-                            item1["PAYER_BUSINESS_SCENE"]
+                            item1["CUSTOMER_NO"]
                         )
                         fluctuation = float(item1["SUCCESS_AMOUNT"]) / float(
                             item2["SUCCESS_AMOUNT"]) - self.market_fluctuation

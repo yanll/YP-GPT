@@ -237,7 +237,7 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                     difference = d_1_success_count / d_1_d_45_success_count - 1
                     orig_scene = self.get_original_scene_by_merchant_no(
                         self.original_scene_dict,
-                        d_2_item["BUSINESS_SCENE"]
+                        d_2_item["STAT_CUSTOMER_NO"]
                     )
                     reason_tmp.append((
                         difference,
@@ -280,7 +280,7 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                         break
                 orig_scene = self.get_original_scene_by_merchant_no(
                     self.original_scene_dict,
-                    d_2_item["BUSINESS_SCENE"]
+                    d_2_item["STAT_CUSTOMER_NO"]
                 )
                 if abs(d_1_success_amount - d_2_success_amount) > 10000 and d_1_success_amount / d_2_success_amount - 1 > 1.5:
                     reason2.append(
