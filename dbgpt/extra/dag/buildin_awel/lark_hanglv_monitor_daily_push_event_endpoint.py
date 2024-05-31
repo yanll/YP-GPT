@@ -4,10 +4,10 @@ from typing import Dict
 from dbgpt._private.pydantic import BaseModel, Field
 from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
 from dbgpt.extra.dag.buildin_awel.hanglv.airline_monitor_push4 import AirlineMonitorPush4
-from dbgpt.extra.dag.buildin_awel.hanglv.hanglv1_1 import monitor_one
-from dbgpt.extra.dag.buildin_awel.hanglv.hanglv1_2 import monitor_one2
-from dbgpt.extra.dag.buildin_awel.hanglv.hanglv2 import monitor_two
-from dbgpt.extra.dag.buildin_awel.hanglv.hanglv3 import monitor_three
+from dbgpt.extra.dag.buildin_awel.hanglv.airline_monitor_push1_1 import AirlineMonitorPush1_1
+from dbgpt.extra.dag.buildin_awel.hanglv.airline_monitor_push1_2 import AirlineMonitorPush1_2
+from dbgpt.extra.dag.buildin_awel.hanglv.airline_monitor_push2 import AirlineMonitorPush2
+from dbgpt.extra.dag.buildin_awel.hanglv.airline_monitor_push3 import AirlineMonitorPush3
 
 
 class TriggerReqBody(BaseModel):
@@ -28,7 +28,8 @@ class RequestHandleOperator(MapOperator[Dict, str]):
         results = []
         if input_value.switch_monitor1_1 == "true":
             try:
-                result = monitor_one()
+                monitor_four_class = AirlineMonitorPush1_1()
+                result = monitor_four_class.run_push()
                 results.append(result)
             except Exception as e:
                 logging.error(f"Error occurred while executing monitor_two: {e}")
@@ -36,7 +37,8 @@ class RequestHandleOperator(MapOperator[Dict, str]):
 
         if input_value.switch_monitor1_2 == "true":
             try:
-                result = monitor_one2()
+                monitor_four_class = AirlineMonitorPush1_2()
+                result = monitor_four_class.run_push()
                 results.append(result)
             except Exception as e:
                 logging.error(f"Error occurred while executing monitor_two: {e}")
@@ -44,7 +46,8 @@ class RequestHandleOperator(MapOperator[Dict, str]):
 
         if input_value.switch_monitor2 == "true":
             try:
-                result = monitor_two()
+                monitor_four_class = AirlineMonitorPush2()
+                result = monitor_four_class.run_push()
                 results.append(result)
             except Exception as e:
                 logging.error(f"Error occurred while executing monitor_two: {e}")
@@ -52,7 +55,8 @@ class RequestHandleOperator(MapOperator[Dict, str]):
 
         if input_value.switch_monitor3 == "true":
             try:
-                result = monitor_three()
+                monitor_four_class = AirlineMonitorPush3()
+                result = monitor_four_class.run_push()
                 results.append(result)
 
             except Exception as e:
