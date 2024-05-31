@@ -50,3 +50,6 @@ class AppChatService:
 
     def add_app_feedback(self, rec: Dict, is_rag=False) -> int:
         return self.app_chat_dao.add_app_feedback(rec,is_rag=is_rag)
+
+    def add_app_hanglv_msg(self, rec: Dict, is_rag=False) -> int:
+        return self.app_chat_dao.add_app_hanglv(rec,is_rag=is_rag)
