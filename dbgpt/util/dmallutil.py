@@ -14,7 +14,7 @@ class DmallClient:
             api_version: str = "V1.0",
             endpoint: str = envutils.getenv("DMALL_ENDPOINT")
     ):
-        print("商店调用: ", api_name, " ", parameters)
+        # print("商店调用: ", api_name, " ", parameters)
         url = endpoint + "/dataapi/output/postapi/" + api_name
         headers = {'Content-Type': 'application/json; charset=utf-8'}
         data = {
