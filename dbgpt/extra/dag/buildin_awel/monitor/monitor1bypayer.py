@@ -1,19 +1,21 @@
 from dbgpt.extra.dag.buildin_awel.monitor.airline_monitor_handler import AirlineMonitorDataHandler
-from dbgpt.extra.dag.buildin_awel.monitor.api import get_past_working_days
 
 
 class Monitor1ByPayer(AirlineMonitorDataHandler):
     def __init__(self):
         super().__init__()
         self.alert_list = []
+
+    def prepare_data(self):
+        self.alert_list = []
         try:
             print('监控一中开始获取工作日')
-            self.d_1_trx_date = ','.join(get_past_working_days(1))
-            self.d_2_trx_date = ','.join(get_past_working_days(2)).split(',')[1]
-            self.d_1_d_7_trx_date = ','.join(get_past_working_days(7))
-            self.d_1_d_15_trx_date = ','.join(get_past_working_days(15))
-            self.d_1_d_30_trx_date = ','.join(get_past_working_days(30))
-            self.d_1_d_45_trx_date = ','.join(get_past_working_days(45))
+            self.d_1_trx_date = ','.join(self.get_past_working_days(1))
+            self.d_2_trx_date = ','.join(self.get_past_working_days(2)).split(',')[1]
+            self.d_1_d_7_trx_date = ','.join(self.get_past_working_days(7))
+            self.d_1_d_15_trx_date = ','.join(self.get_past_working_days(15))
+            self.d_1_d_30_trx_date = ','.join(self.get_past_working_days(30))
+            self.d_1_d_45_trx_date = ','.join(self.get_past_working_days(45))
 
 
         except Exception as e:
@@ -38,6 +40,7 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
             raise e
 
     def run(self):
+        self.prepare_data()
         print('监控一(付方签约名维度)开始执行')
         payer_sales_name_list = set()
         try:
@@ -54,7 +57,6 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
             self.deal_sales_name(payer_sales_name)
 
         return self.alert_list
-        pass
 
     def deal_sales_name(self, payer_sales_name, ):
         customer_list = set()

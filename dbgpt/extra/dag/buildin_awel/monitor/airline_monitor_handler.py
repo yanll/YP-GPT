@@ -12,3 +12,6 @@ class AirlineMonitorDataHandler:
         self.monitor2_data = Monitor2DataProvider()
         self.monitor3_data = Monitor3DataProvider()
         self.monitor4_data = Monitor4DataProvider()
+
+    def get_past_working_days(self, working_days):
+        return self.get_past_working_days(working_days)

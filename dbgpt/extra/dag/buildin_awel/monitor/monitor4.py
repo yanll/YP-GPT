@@ -7,6 +7,9 @@ class Monitor4(AirlineMonitorDataHandler):
     def __init__(self):
         super().__init__()
         self.alert_list = []
+
+    def prepare_data(self):
+        self.alert_list = []
         try:
             print('监控四中开始获取日期')
             today = datetime.now()
@@ -17,6 +20,7 @@ class Monitor4(AirlineMonitorDataHandler):
             raise e
 
     def run(self):
+        self.prepare_data()
         print('监控四(商户签约名维度)开始执行')
         sales_name_list = set()
         try:

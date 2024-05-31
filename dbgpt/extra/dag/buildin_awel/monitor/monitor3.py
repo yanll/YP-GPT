@@ -1,19 +1,22 @@
 from dbgpt.extra.dag.buildin_awel.monitor.airline_monitor_handler import AirlineMonitorDataHandler
-from dbgpt.extra.dag.buildin_awel.monitor.api import get_past_working_days
 
 
 class Monitor3(AirlineMonitorDataHandler):
     def __init__(self):
         super().__init__()
         self.alert_list = []
+
+    def prepare_data(self):
+        self.alert_list = []
         try:
             print('监控二中开始获取工作日')
-            self.d_1_trx_date = ','.join(get_past_working_days(1))
-            self.d_2_trx_date = ','.join(get_past_working_days(2)).split(',')[1]
+            self.d_1_trx_date = ','.join(self.get_past_working_days(1))
+            self.d_2_trx_date = ','.join(self.get_past_working_days(2)).split(',')[1]
         except Exception as e:
             raise e
 
     def run(self):
+        self.prepare_data()
         self.run_by_stat()
         self.run_by_payer()
         return self.alert_list
