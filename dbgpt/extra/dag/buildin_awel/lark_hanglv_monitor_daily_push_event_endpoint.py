@@ -5,7 +5,7 @@ from dbgpt._private.pydantic import BaseModel, Field
 from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
 from dbgpt.extra.dag.buildin_awel.hanglv.hanglv2 import monitor_two
 from dbgpt.extra.dag.buildin_awel.hanglv.hanglv3 import monitor_three
-from dbgpt.extra.dag.buildin_awel.hanglv.hanglv4 import monitor_four
+from dbgpt.extra.dag.buildin_awel.hanglv.hanglv4 import MonitorFour
 
 
 class TriggerReqBody(BaseModel):
@@ -44,8 +44,10 @@ class RequestHandleOperator(MapOperator[Dict, str]):
                 results.append(f"Monitor four failed: {str(e)}")
 
         if input_value.switch_monitor4 == "true":
+
             try:
-                result = monitor_four()
+                monitor_four_class = MonitorFour()
+                result = monitor_four_class.run_monitor_four()
                 results.append(result)
 
             except Exception as e:

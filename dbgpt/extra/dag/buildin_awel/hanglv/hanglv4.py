@@ -41,7 +41,7 @@ class MonitorFour:
         except Exception as e:
             logging.error(f"Error storing message: {e}")
 
-    def run_monitor(self):
+    def run_monitor_four(self):
         first = monitor4.Monitor4()
         hv_data = first.run()
         print("数值的返回结果", hv_data)
