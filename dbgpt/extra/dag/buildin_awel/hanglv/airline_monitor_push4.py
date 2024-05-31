@@ -1,18 +1,23 @@
-import uuid
 import logging
+import uuid
 from datetime import datetime
 
 from dbgpt.extra.dag.buildin_awel.app.service import AppChatService
 from dbgpt.extra.dag.buildin_awel.hanglv import hanglv_api_use
+from dbgpt.extra.dag.buildin_awel.hanglv.airline_monitor_push import AirlineMonitorPush
 from dbgpt.extra.dag.buildin_awel.lark import card_templates
-from dbgpt.extra.dag.buildin_awel.monitor import monitor4
+from dbgpt.extra.dag.buildin_awel.monitor.monitor4 import Monitor4
 from dbgpt.util.lark import lark_message_util
 
-import uuid
-import logging
 
-class MonitorFour:
-    def store_his_message(self, app_chat_service, sender_open_id, sales, title, content, product, scene, merchant_no, chanel, display_type):
+class AirlineMonitorPush4(AirlineMonitorPush):
+
+    def __init__(self):
+        self.monitor = Monitor4()
+        super().__init__()
+
+    def store_his_message(self, app_chat_service, sender_open_id, sales, title, content, product, scene, merchant_no,
+                          chanel, display_type):
         current_date = datetime.now().strftime('%Y-%m-%d')
         rec = {
             "id": str(uuid.uuid1()),
@@ -41,9 +46,8 @@ class MonitorFour:
         except Exception as e:
             logging.error(f"Error storing message: {e}")
 
-    def run_monitor_four(self):
-        first = monitor4.Monitor4()
-        hv_data = first.run()
+    def run_push(self):
+        hv_data = self.monitor.run()
         print("数值的返回结果", hv_data)
         data = hv_data
 
@@ -125,6 +129,3 @@ class MonitorFour:
                     logging.error(f"Error sending message to {name}: {e}")
 
         return "Success"
-
-
-

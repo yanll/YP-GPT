@@ -3,13 +3,16 @@ from typing import Dict
 
 from dbgpt._private.pydantic import BaseModel, Field
 from dbgpt.core.awel import DAG, HttpTrigger, MapOperator
+from dbgpt.extra.dag.buildin_awel.hanglv.airline_monitor_push4 import AirlineMonitorPush4
+from dbgpt.extra.dag.buildin_awel.hanglv.hanglv1_1 import monitor_one
+from dbgpt.extra.dag.buildin_awel.hanglv.hanglv1_2 import monitor_one2
 from dbgpt.extra.dag.buildin_awel.hanglv.hanglv2 import monitor_two
 from dbgpt.extra.dag.buildin_awel.hanglv.hanglv3 import monitor_three
-from dbgpt.extra.dag.buildin_awel.hanglv.hanglv4 import MonitorFour
 
 
 class TriggerReqBody(BaseModel):
-    switch_monitor1: str = Field(default="")
+    switch_monitor1_1: str = Field(default="")
+    switch_monitor1_2: str = Field(default="")
     switch_monitor2: str = Field(default="")
     switch_monitor3: str = Field(default="")
     switch_monitor4: str = Field(default="")
@@ -23,8 +26,21 @@ class RequestHandleOperator(MapOperator[Dict, str]):
     async def map(self, input_value: TriggerReqBody) -> dict:
 
         results = []
-        if input_value.switch_monitor1 == "true":
-            pass
+        if input_value.switch_monitor1_1 == "true":
+            try:
+                result = monitor_one()
+                results.append(result)
+            except Exception as e:
+                logging.error(f"Error occurred while executing monitor_two: {e}")
+                results.append(f"Monitor four failed: {str(e)}")
+
+        if input_value.switch_monitor1_2 == "true":
+            try:
+                result = monitor_one2()
+                results.append(result)
+            except Exception as e:
+                logging.error(f"Error occurred while executing monitor_two: {e}")
+                results.append(f"Monitor four failed: {str(e)}")
 
         if input_value.switch_monitor2 == "true":
             try:
@@ -46,8 +62,8 @@ class RequestHandleOperator(MapOperator[Dict, str]):
         if input_value.switch_monitor4 == "true":
 
             try:
-                monitor_four_class = MonitorFour()
-                result = monitor_four_class.run_monitor_four()
+                monitor_four_class = AirlineMonitorPush4()
+                result = monitor_four_class.run_push()
                 results.append(result)
 
             except Exception as e:
