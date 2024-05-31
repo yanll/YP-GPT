@@ -1,8 +1,12 @@
-
 import requests
+
+from dbgpt.util import envutils
 from dbgpt.util.lark import larkutil
+
+
 def get_email(name):
-    url = "http://ycenc.yeepay.com:8606/ai-assistants/uia/get_user_by_key?key=%E4%B8%A5%E4%BA%AE%E4%BA%AE&key_type=cn_name"  # 目标URL
+    url = (envutils.getenv("AI_ASSISTANTS_ENDPOINT") +
+           "/uia/get_user_by_key?key=%E4%B8%A5%E4%BA%AE%E4%BA%AE&key_type=cn_name")  # 目标URL
     headers = {
         'Content-Type': 'application/json; charset=utf-8',
         'app_key': "ai-assistants",
@@ -13,11 +17,11 @@ def get_email(name):
         'key_type': 'cn_name'
     }  # 传递的参数
     try:
-        response = requests.get(url, params=params, headers = headers)  # 发送GET请求，带上参数
+        response = requests.get(url, params=params, headers=headers)  # 发送GET请求，带上参数
         response.raise_for_status()  # 如果请求失败，抛出异常
         data = response.json()  # 假设返回的是JSON数据
         # 处理你想要的信息
-        email = data['data']['email'] # 假设想要的信息在JSON中的字段名为'desired_field'
+        email = data['data']['email']  # 假设想要的信息在JSON中的字段名为'desired_field'
         if isinstance(email, str):
             email = [email]  # 如果邮箱地址是字符串，将其包装在列表中
         print("获取到的信息是:", email)
@@ -27,12 +31,11 @@ def get_email(name):
         print("请求失败:", e)
 
 
-
-
-
 # 获取访问令牌
 tokens = larkutil.get_tenant_access_token()
 token = tokens['tenant_access_token']
+
+
 def get_user_open_id(name):
     emails = get_email(name)
     url = 'https://open.feishu.cn/open-apis/contact/v3/users/batch_get_id?user_id_type=open_id'
@@ -68,8 +71,6 @@ def get_user_open_id(name):
         # 请求失败，返回None或错误信息
         return {'error': f'Request failed with status code {response.status_code}'}
 
-
 # result = get_user_open_id(name = '段超')
 #
 # print(result)
-
