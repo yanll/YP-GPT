@@ -31,7 +31,7 @@ class RequestHandleOperator(MapOperator[Dict, str]):
                 result = monitor_one()
                 results.append(result)
             except Exception as e:
-                logging.error(f"Error occurred while executing monitor_two: {e}")
+                logging.error(f"Error occurred while executing monitor_one: {e}", e)
                 results.append(f"Monitor four failed: {str(e)}")
 
         if input_value.switch_monitor1_2 == "true":
@@ -39,7 +39,7 @@ class RequestHandleOperator(MapOperator[Dict, str]):
                 result = monitor_one2()
                 results.append(result)
             except Exception as e:
-                logging.error(f"Error occurred while executing monitor_two: {e}")
+                logging.error(f"Error occurred while executing monitor_one2: {e}", e)
                 results.append(f"Monitor four failed: {str(e)}")
 
         if input_value.switch_monitor2 == "true":
@@ -47,7 +47,7 @@ class RequestHandleOperator(MapOperator[Dict, str]):
                 result = monitor_two()
                 results.append(result)
             except Exception as e:
-                logging.error(f"Error occurred while executing monitor_two: {e}")
+                logging.error(f"Error occurred while executing monitor_two: {e}", e)
                 results.append(f"Monitor four failed: {str(e)}")
 
         if input_value.switch_monitor3 == "true":
@@ -56,7 +56,7 @@ class RequestHandleOperator(MapOperator[Dict, str]):
                 results.append(result)
 
             except Exception as e:
-                logging.error(f"Error occurred while executing monitor_three: {e}")
+                logging.error(f"Error occurred while executing monitor_three: {e}", e)
                 results.append(f"Monitor four failed: {str(e)}")
 
         if input_value.switch_monitor4 == "true":
@@ -67,7 +67,7 @@ class RequestHandleOperator(MapOperator[Dict, str]):
                 results.append(result)
 
             except Exception as e:
-                logging.error(f"Error occurred while executing monitor_four: {e}")
+                logging.error(f"Error occurred while executing monitor_four: {e}", e)
                 results.append(f"Monitor four failed: {str(e)}")
 
         return {"status": "success"}

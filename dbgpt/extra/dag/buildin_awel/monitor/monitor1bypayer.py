@@ -1,3 +1,6 @@
+import logging
+from typing import Dict
+
 from dbgpt.extra.dag.buildin_awel.monitor.airline_monitor_handler import AirlineMonitorDataHandler
 
 
@@ -51,14 +54,36 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
         except Exception as e:
             print('监控一开始获取所有付方销售失败')
 
+        d1_datas = self.build_d_n_datas_by_sales_and_signedname("d1")
+        d1_d7_datas = self.build_d_n_datas_by_sales_and_signedname("d1_d7")
+        d1_d15_datas = self.build_d_n_datas_by_sales_and_signedname("d1_d15")
+        d1_d30_datas = self.build_d_n_datas_by_sales_and_signedname("d1_d30")
+        d1_d45_datas = self.build_d_n_datas_by_sales_and_signedname("d1_d45")
+        print(f'监控一数据构建完成！')
+
         for payer_sales_name in payer_sales_name_list:
             if payer_sales_name is None:
                 continue
-            self.deal_sales_name(payer_sales_name)
+            self.deal_sales_name(
+                d1_datas,
+                d1_d7_datas,
+                d1_d15_datas,
+                d1_d30_datas,
+                d1_d45_datas,
+                payer_sales_name
+            )
 
         return self.alert_list
 
-    def deal_sales_name(self, payer_sales_name, ):
+    def deal_sales_name(
+            self,
+            d1_datas: Dict,
+            d1_d7_datas: Dict,
+            d1_d15_datas: Dict,
+            d1_d30_datas: Dict,
+            d1_d45_datas: Dict,
+            payer_sales_name
+    ):
         customer_list = set()
         try:
             print(f'监控一开始获取付方销售({payer_sales_name})的付方签约名')
@@ -72,32 +97,93 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
             return
 
         for customer in customer_list:
-            self.deal_customer(payer_sales_name, customer)
+            self.deal_customer(
+                d1_datas,
+                d1_d7_datas,
+                d1_d15_datas,
+                d1_d30_datas,
+                d1_d45_datas,
+                payer_sales_name,
+                customer
+            )
 
-    def deal_customer(self, payer_sales_name, customer):
+    def build_d_n_datas_by_sales_and_signedname(self, days_type) -> Dict:
+        """按销售和签约名分组，构造数据"""
+        result: Dict = {}
+        d_n_datas = []
+        if days_type == "d1":
+            d_n_datas = self.monitor1bypayer_data.get_data_by_payer_in_monitor1(
+                trx_date=self.d_1_trx_date
+            )
+        if days_type == "d1_d7":
+            d_n_datas = self.monitor1bypayer_data.get_data_by_payer_in_monitor1(
+                trx_date=self.d_1_d_7_trx_date
+            )
+        if days_type == "d1_d15":
+            d_n_datas = self.monitor1bypayer_data.get_data_by_payer_in_monitor1(
+                trx_date=self.d_1_d_15_trx_date
+            )
+        if days_type == "d1_d30":
+            d_n_datas = self.monitor1bypayer_data.get_data_by_payer_in_monitor1(
+                trx_date=self.d_1_d_30_trx_date
+            )
+        if days_type == "d1_d45":
+            d_n_datas = self.monitor1bypayer_data.get_data_by_payer_in_monitor1(
+                trx_date=self.d_1_d_45_trx_date
+            )
+        print(f'监控一({days_type})构造条数: {len(d_n_datas)}！')
+        for rec in d_n_datas:
+            if rec["PAYER_SALES_NAME"] is None or rec["PAYER_CUSTOMER_SIGNEDNAME"] is None:
+                continue
+            k = str(rec["PAYER_SALES_NAME"]) + '#_#' + str(rec["PAYER_CUSTOMER_SIGNEDNAME"])
+            result[k] = rec
+        return result
+
+    def deal_customer(
+            self,
+            d1_datas: Dict,
+            d1_d7_datas: Dict,
+            d1_d15_datas: Dict,
+            d1_d30_datas: Dict,
+            d1_d45_datas: Dict,
+            payer_sales_name,
+            customer
+    ):
         try:
             print(f'监控一开始获取{payer_sales_name}的付方签约名为{customer}的数据')
-            d_1_data = self.monitor1bypayer_data.get_data_by_payer_in_monitor1(trx_date=self.d_1_trx_date,
-                                                                               payer_sales_name=payer_sales_name,
-                                                                               payer_customer_signedname=customer)[0]
-            d_1_d_7_data = self.monitor1bypayer_data.get_data_by_payer_in_monitor1(trx_date=self.d_1_d_7_trx_date,
-                                                                                   payer_sales_name=payer_sales_name,
-                                                                                   payer_customer_signedname=customer)[
-                0]
-            d_1_d_15_data = self.monitor1bypayer_data.get_data_by_payer_in_monitor1(trx_date=self.d_1_d_15_trx_date,
-                                                                                    payer_sales_name=payer_sales_name,
-                                                                                    payer_customer_signedname=customer)[
-                0]
-            d_1_d_30_data = self.monitor1bypayer_data.get_data_by_payer_in_monitor1(trx_date=self.d_1_d_30_trx_date,
-                                                                                    payer_sales_name=payer_sales_name,
-                                                                                    payer_customer_signedname=customer)[
-                0]
-            d_1_d_45_data = self.monitor1bypayer_data.get_data_by_payer_in_monitor1(trx_date=self.d_1_d_45_trx_date,
-                                                                                    payer_sales_name=payer_sales_name,
-                                                                                    payer_customer_signedname=customer)[
-                0]
+            d_1_data = d1_datas[payer_sales_name + "#_#" + customer]
+            d_1_d_7_data = d1_d7_datas[payer_sales_name + "#_#" + customer]
+            d_1_d_15_data = d1_d15_datas[payer_sales_name + "#_#" + customer]
+            d_1_d_30_data = d1_d30_datas[payer_sales_name + "#_#" + customer]
+            d_1_d_45_data = d1_d45_datas[payer_sales_name + "#_#" + customer]
+            # d_1_data = self.monitor1bypayer_data.get_data_by_payer_in_monitor1(
+            #     trx_date=self.d_1_trx_date,
+            #     payer_sales_name=payer_sales_name,
+            #     payer_customer_signedname=customer
+            # )[0]
+            # d_1_d_7_data = self.monitor1bypayer_data.get_data_by_payer_in_monitor1(
+            #     trx_date=self.d_1_d_7_trx_date,
+            #     payer_sales_name=payer_sales_name,
+            #     payer_customer_signedname=customer
+            # )[0]
+            # d_1_d_15_data = self.monitor1bypayer_data.get_data_by_payer_in_monitor1(
+            #     trx_date=self.d_1_d_15_trx_date,
+            #     payer_sales_name=payer_sales_name,
+            #     payer_customer_signedname=customer
+            # )[0]
+            # d_1_d_30_data = self.monitor1bypayer_data.get_data_by_payer_in_monitor1(
+            #     trx_date=self.d_1_d_30_trx_date,
+            #     payer_sales_name=payer_sales_name,
+            #     payer_customer_signedname=customer
+            # )[0]
+            # d_1_d_45_data = self.monitor1bypayer_data.get_data_by_payer_in_monitor1(
+            #     trx_date=self.d_1_d_45_trx_date,
+            #     payer_sales_name=payer_sales_name,
+            #     payer_customer_signedname=customer
+            # )[0]
         except Exception as e:
             print(f'监控一开始获取{payer_sales_name}的付方签约名为{customer}的数据失败')
+            logging.error(e)
             return
 
         try:
@@ -190,7 +276,7 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
             judge_long_term()
 
         except Exception as e:
-            print(f'监控一开始处理{payer_sales_name}的付方签约名为{customer}的数据失败!')
+            print(f'监控一开始处理{payer_sales_name}的付方签约名为{customer}的数据失败!', e)
 
     def find_reason4(self, payer_sales_name, customer) -> list:
         print(f'监控一处理{payer_sales_name}的付方签约名为{customer}的数据异常归因4')
