@@ -1,18 +1,21 @@
-from dbgpt.extra.dag.buildin_awel.monitor import monitor1bystat_data
-from dbgpt.extra.dag.buildin_awel.monitor.api import get_past_working_days
+from dbgpt.extra.dag.buildin_awel.monitor.airline_monitor_handler import AirlineMonitorDataHandler
 
 
-class Monitor1ByStat:
+class Monitor1ByStat(AirlineMonitorDataHandler):
     def __init__(self):
+        super().__init__()
+        self.alert_list = []
+
+    def prepare_data(self):
         self.alert_list = []
         try:
             print('监控一中开始获取工作日')
-            self.d_1_trx_date = ','.join(get_past_working_days(1))
-            self.d_2_trx_date = ','.join(get_past_working_days(2)).split(',')[1]
-            self.d_1_d_7_trx_date = ','.join(get_past_working_days(7))
-            self.d_1_d_15_trx_date = ','.join(get_past_working_days(15))
-            self.d_1_d_30_trx_date = ','.join(get_past_working_days(30))
-            self.d_1_d_45_trx_date = ','.join(get_past_working_days(45))
+            self.d_1_trx_date = ','.join(self.get_past_working_days(1))
+            self.d_2_trx_date = ','.join(self.get_past_working_days(2)).split(',')[1]
+            self.d_1_d_7_trx_date = ','.join(self.get_past_working_days(7))
+            self.d_1_d_15_trx_date = ','.join(self.get_past_working_days(15))
+            self.d_1_d_30_trx_date = ','.join(self.get_past_working_days(30))
+            self.d_1_d_45_trx_date = ','.join(self.get_past_working_days(45))
 
 
         except Exception as e:
@@ -21,26 +24,28 @@ class Monitor1ByStat:
 
         try:
             print('监控一中开始行业线数据')
-            self.d_1_industry_line_data = monitor1bystat_data.get_industry_line_data_by_stat_in_monitor1(self.d_1_trx_date)[0]
+            self.d_1_industry_line_data = \
+                self.monitor1bystat_data.get_industry_line_data_by_stat_in_monitor1(self.d_1_trx_date)[0]
             self.d_1_d_7_industry_line_data = \
-                monitor1bystat_data.get_industry_line_data_by_stat_in_monitor1(self.d_1_d_7_trx_date)[0]
+                self.monitor1bystat_data.get_industry_line_data_by_stat_in_monitor1(self.d_1_d_7_trx_date)[0]
             self.d_1_d_15_industry_line_data = \
-                monitor1bystat_data.get_industry_line_data_by_stat_in_monitor1(self.d_1_d_15_trx_date)[0]
+                self.monitor1bystat_data.get_industry_line_data_by_stat_in_monitor1(self.d_1_d_15_trx_date)[0]
             self.d_1_d_30_industry_line_data = \
-                monitor1bystat_data.get_industry_line_data_by_stat_in_monitor1(self.d_1_d_30_trx_date)[0]
+                self.monitor1bystat_data.get_industry_line_data_by_stat_in_monitor1(self.d_1_d_30_trx_date)[0]
             self.d_1_d_45_industry_line_data = \
-                monitor1bystat_data.get_industry_line_data_by_stat_in_monitor1(self.d_1_d_45_trx_date)[0]
+                self.monitor1bystat_data.get_industry_line_data_by_stat_in_monitor1(self.d_1_d_45_trx_date)[0]
 
         except Exception as e:
             print('监控一中开始行业线数据失败')
             raise e
 
     def run(self):
+        self.prepare_data()
         print('监控一(商户签约名维度)开始执行')
         sales_name_list = set()
         try:
             print('监控一开始获取所有销售')
-            data = monitor1bystat_data.get_data_by_stat_in_monitor1(self.d_1_d_45_trx_date)
+            data = self.monitor1bystat_data.get_data_by_stat_in_monitor1(self.d_1_d_45_trx_date)
             for item in data:
                 sales_name_list.add(item['SALES_NAME'])
         except Exception as e:
@@ -55,7 +60,8 @@ class Monitor1ByStat:
         customer_list = set()
         try:
             print(f'监控一开始获取{sales_name}的商户签约名')
-            data = monitor1bystat_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_d_45_trx_date, sales_name=sales_name)
+            data = self.monitor1bystat_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_d_45_trx_date,
+                                                                         sales_name=sales_name)
 
             for item in data:
                 customer_list.add(item['STAT_DISPAYSIGNEDNAME'])
@@ -69,20 +75,21 @@ class Monitor1ByStat:
     def deal_customer(self, sales_name, customer):
         try:
             print(f'监控一开始获取{sales_name}的商户签约名为{customer}的数据')
-            d_1_data = monitor1bystat_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date, sales_name=sales_name,
-                                                                  stat_dispaysignedname=customer)[0]
-            d_1_d_7_data = monitor1bystat_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_d_7_trx_date,
-                                                                      sales_name=sales_name,
+            d_1_data = \
+                self.monitor1bystat_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date, sales_name=sales_name,
                                                                       stat_dispaysignedname=customer)[0]
-            d_1_d_15_data = monitor1bystat_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_d_15_trx_date,
-                                                                       sales_name=sales_name,
-                                                                       stat_dispaysignedname=customer)[0]
-            d_1_d_30_data = monitor1bystat_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_d_30_trx_date,
-                                                                       sales_name=sales_name,
-                                                                       stat_dispaysignedname=customer)[0]
-            d_1_d_45_data = monitor1bystat_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_d_45_trx_date,
-                                                                       sales_name=sales_name,
-                                                                       stat_dispaysignedname=customer)[0]
+            d_1_d_7_data = self.monitor1bystat_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_d_7_trx_date,
+                                                                                 sales_name=sales_name,
+                                                                                 stat_dispaysignedname=customer)[0]
+            d_1_d_15_data = self.monitor1bystat_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_d_15_trx_date,
+                                                                                  sales_name=sales_name,
+                                                                                  stat_dispaysignedname=customer)[0]
+            d_1_d_30_data = self.monitor1bystat_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_d_30_trx_date,
+                                                                                  sales_name=sales_name,
+                                                                                  stat_dispaysignedname=customer)[0]
+            d_1_d_45_data = self.monitor1bystat_data.get_data_by_stat_in_monitor1(trx_date=self.d_1_d_45_trx_date,
+                                                                                  sales_name=sales_name,
+                                                                                  stat_dispaysignedname=customer)[0]
         except Exception as e:
             print(f'监控一开始获取{sales_name}的商户签约名为{customer}的数据失败')
             return
@@ -114,7 +121,7 @@ class Monitor1ByStat:
                             float(self.d_1_d_15_industry_line_data['SUCCESS_COUNT']) / 15) - 1
                     if abs(customer_success_count - industry_line_success_count) < 0.2:
                         return
-                    if customer_success_count >=0:
+                    if customer_success_count >= 0:
                         return
                     # X=30
                     customer_success_count = float(d_1_data['SUCCESS_COUNT']) / (float(
@@ -123,7 +130,7 @@ class Monitor1ByStat:
                         self.d_1_d_30_industry_line_data['SUCCESS_COUNT']) / 30) - 1
                     if abs(customer_success_count - industry_line_success_count) < 0.2:
                         return
-                    if customer_success_count >=0:
+                    if customer_success_count >= 0:
                         return
                     # X=45
                     customer_success_count = float(d_1_data['SUCCESS_COUNT']) / (float(
@@ -132,7 +139,7 @@ class Monitor1ByStat:
                         self.d_1_d_45_industry_line_data['SUCCESS_COUNT']) / 45) - 1
                     if abs(customer_success_count - industry_line_success_count) < 0.2:
                         return
-                    if customer_success_count >=0:
+                    if customer_success_count >= 0:
                         return
 
                     print(f'监控一{sales_name}的商户签约名为{customer}的数据异常条件满足')
@@ -144,7 +151,7 @@ class Monitor1ByStat:
                     self.alert_list.append({
                         'title': '交易笔数波动异常',
                         'name': sales_name,
-                        'content': f'【长期下滑】商户签约名:{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，环比{"上升" if customer_success_count > 0 else "下降"}<text_tag color={"green" if customer_success_count > 0 else "red" } >{customer_success_count * 100:.2f}%</text_tag>（商户交易笔数环比）',
+                        'content': f'【长期下滑】商户签约名:{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，环比{"上升" if customer_success_count > 0 else "下降"}<text_tag color={"green" if customer_success_count > 0 else "red"} >{customer_success_count * 100:.2f}%</text_tag>（商户交易笔数环比）',
                         'reason1': '\n'.join(reason1),
                         'reason2': '\n'.join(reason2),
                         'reason3': '\n'.join(reason3),
@@ -159,7 +166,7 @@ class Monitor1ByStat:
                             float(self.d_1_d_7_industry_line_data['SUCCESS_COUNT']) / 7) - 1
                     if abs(customer_success_count - industry_line_success_count) < 0.2:
                         return
-                    if customer_success_count >=0:
+                    if customer_success_count >= 0:
                         return
                     reason1 = self.find_reason1(sales_name, customer)
                     reason2 = self.find_reason2(sales_name, customer)
@@ -196,15 +203,16 @@ class Monitor1ByStat:
         '''
         # 归因1
         try:
-            d_1_data = monitor1bystat_data.get_reason_1_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date,
-                                                                           sales_name=sales_name,
-                                                                           stat_dispaysignedname=customer)
-            d_2_data = monitor1bystat_data.get_reason_1_data_by_stat_in_monitor1(trx_date=self.d_2_trx_date,
-                                                                           sales_name=sales_name,
-                                                                           stat_dispaysignedname=customer)
-            d_1_d_45_data = monitor1bystat_data.get_reason_1_data_by_stat_in_monitor1(trx_date=self.d_1_d_45_trx_date,
-                                                                           sales_name=sales_name,
-                                                                           stat_dispaysignedname=customer)
+            d_1_data = self.monitor1bystat_data.get_reason_1_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date,
+                                                                                      sales_name=sales_name,
+                                                                                      stat_dispaysignedname=customer)
+            d_2_data = self.monitor1bystat_data.get_reason_1_data_by_stat_in_monitor1(trx_date=self.d_2_trx_date,
+                                                                                      sales_name=sales_name,
+                                                                                      stat_dispaysignedname=customer)
+            d_1_d_45_data = self.monitor1bystat_data.get_reason_1_data_by_stat_in_monitor1(
+                trx_date=self.d_1_d_45_trx_date,
+                sales_name=sales_name,
+                stat_dispaysignedname=customer)
 
             reason_tmp = []
             for d_2_item in d_2_data:
@@ -212,21 +220,24 @@ class Monitor1ByStat:
                 d_1_success_amount = 0
                 d_1_success_count = 0
                 for d_1_item in d_1_data:
-                    if d_1_item['BUSINESS_SCENE'] == d_2_item['BUSINESS_SCENE'] and d_1_item['STAT_CUSTOMER_NO'] == d_2_item['STAT_CUSTOMER_NO']:
+                    if d_1_item['BUSINESS_SCENE'] == d_2_item['BUSINESS_SCENE'] and d_1_item['STAT_CUSTOMER_NO'] == \
+                            d_2_item['STAT_CUSTOMER_NO']:
                         d_1_success_amount = float(d_1_item['SUCCESS_AMOUNT'])
                         d_1_success_count = float(d_1_item['SUCCESS_COUNT'])
                         break
                 if abs(d_1_success_amount - d_2_success_amount) >= 100000:
                     d_1_d_45_success_count = 0
                     for d_1_d_45_item in d_1_d_45_data:
-                        if d_1_d_45_item['BUSINESS_SCENE'] == d_2_item['BUSINESS_SCENE'] and d_1_d_45_item['STAT_CUSTOMER_NO'] ==d_2_item['STAT_CUSTOMER_NO']:
+                        if d_1_d_45_item['BUSINESS_SCENE'] == d_2_item['BUSINESS_SCENE'] and d_1_d_45_item[
+                            'STAT_CUSTOMER_NO'] == d_2_item['STAT_CUSTOMER_NO']:
                             d_1_d_45_success_count = float(d_1_d_45_item['SUCCESS_COUNT'])
                             break
                     if d_1_d_45_success_count == 0:
                         continue
-                    difference = d_1_success_count/d_1_d_45_success_count - 1
+                    difference = d_1_success_count / d_1_d_45_success_count - 1
                     reason_tmp.append((
-                        difference, f'归因一:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{d_2_item["BUSINESS_SCENE"]}昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比{"上升"  if difference>0 else "下降"}<text_tag color={"green" if difference > 0 else "red" } >{difference*100:.2f}%</text_tag>'))
+                        difference,
+                        f'归因一:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{d_2_item["BUSINESS_SCENE"]}昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比{"上升" if difference > 0 else "下降"}<text_tag color={"green" if difference > 0 else "red"} >{difference * 100:.2f}%</text_tag>'))
             if len(reason_tmp) > 3:
                 reason_tmp.sort(key=lambda x: abs(x[0]), reverse=True)
                 reason_tmp = reason_tmp[:3]
@@ -244,12 +255,12 @@ class Monitor1ByStat:
         reason2 = []
         # 归因2
         try:
-            d_1_data = monitor1bystat_data.get_reason_2_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date,
-                                                                           sales_name=sales_name,
-                                                                           stat_dispaysignedname=customer)
-            d_2_data = monitor1bystat_data.get_reason_2_data_by_stat_in_monitor1(trx_date=self.d_2_trx_date,
-                                                                           sales_name=sales_name,
-                                                                           stat_dispaysignedname=customer)
+            d_1_data = self.monitor1bystat_data.get_reason_2_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date,
+                                                                                      sales_name=sales_name,
+                                                                                      stat_dispaysignedname=customer)
+            d_2_data = self.monitor1bystat_data.get_reason_2_data_by_stat_in_monitor1(trx_date=self.d_2_trx_date,
+                                                                                      sales_name=sales_name,
+                                                                                      stat_dispaysignedname=customer)
 
             for d_2_item in d_2_data:
                 d_2_success_amount = float(d_2_item['SUCCESS_AMOUNT'])
@@ -263,10 +274,10 @@ class Monitor1ByStat:
                         break
                 if abs(d_1_success_amount - d_2_success_amount) > 10000 and d_1_success_amount / d_2_success_amount - 1 > 1.5:
                     reason2.append(
-                        f'归因二:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{d_2_item["BUSINESS_SCENE"]},产品:{d_2_item["PRODUCT"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升<text_tag color= green >{(d_1_success_amount / d_2_success_amount - 1)*100:.2f}%</text_tag>')
+                        f'归因二:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{d_2_item["BUSINESS_SCENE"]},产品:{d_2_item["PRODUCT"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升<text_tag color= green >{(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
                 if abs(d_1_success_amount - d_2_success_amount) > 10000 and d_1_success_amount / d_2_success_amount - 1 < -0.5:
                     reason2.append(
-                        f'归因二:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{d_2_item["BUSINESS_SCENE"]},产品:{d_2_item["PRODUCT"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降<text_tag color=  red  >{abs(d_1_success_amount / d_2_success_amount - 1)*100:.2f}%</text_tag>')
+                        f'归因二:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{d_2_item["BUSINESS_SCENE"]},产品:{d_2_item["PRODUCT"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降<text_tag color=  red  >{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
 
         except Exception as e:
             print('归因2处理错误')
@@ -287,12 +298,12 @@ class Monitor1ByStat:
         '''
         # 归因3
         try:
-            d_1_data = monitor1bystat_data.get_reason_3_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date,
-                                                                           sales_name=sales_name,
-                                                                           stat_dispaysignedname=customer)
-            d_2_data = monitor1bystat_data.get_reason_3_data_by_stat_in_monitor1(trx_date=self.d_2_trx_date,
-                                                                           sales_name=sales_name,
-                                                                           stat_dispaysignedname=customer)
+            d_1_data = self.monitor1bystat_data.get_reason_3_data_by_stat_in_monitor1(trx_date=self.d_1_trx_date,
+                                                                                      sales_name=sales_name,
+                                                                                      stat_dispaysignedname=customer)
+            d_2_data = self.monitor1bystat_data.get_reason_3_data_by_stat_in_monitor1(trx_date=self.d_2_trx_date,
+                                                                                      sales_name=sales_name,
+                                                                                      stat_dispaysignedname=customer)
             for d_2_item in d_2_data:
                 d_2_success_amount = float(d_2_item['SUCCESS_AMOUNT'])
                 if d_2_success_amount == 0:
@@ -304,19 +315,15 @@ class Monitor1ByStat:
                         break
                 if abs(d_1_success_amount - d_2_success_amount) > 100000 and d_1_success_amount / d_2_success_amount - 1 > 1.5:
                     reason3.append(
-                        f'归因三:主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount/10000:.2f}万元，环比上升<text_tag color=green>{d_1_success_amount / d_2_success_amount - 1:.2f}%</text_tag>')
+                        f'归因三:主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升<text_tag color=green>{d_1_success_amount / d_2_success_amount - 1:.2f}%</text_tag>')
                 if abs(d_1_success_amount - d_2_success_amount) > 100000 and d_1_success_amount / d_2_success_amount - 1 < -0.5:
                     reason3.append(
-                        f'归因三:主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount/10000:.2f}万元，环比下降<text_tag color=red>{abs(d_1_success_amount / d_2_success_amount - 1):.2f}%</text_tag>')
+                        f'归因三:主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降<text_tag color=red>{abs(d_1_success_amount / d_2_success_amount - 1):.2f}%</text_tag>')
 
         except Exception as e:
             print('归因3处理错误')
 
-
-
-
         return reason3
-
 
 # if __name__ == "__main__":
 #     a = Monitor1ByStat()

@@ -1,18 +1,22 @@
-from dbgpt.extra.dag.buildin_awel.monitor import monitor3_data
-from dbgpt.extra.dag.buildin_awel.monitor.api import get_past_working_days
+from dbgpt.extra.dag.buildin_awel.monitor.airline_monitor_handler import AirlineMonitorDataHandler
 
 
-class Monitor3:
+class Monitor3(AirlineMonitorDataHandler):
     def __init__(self):
+        super().__init__()
+        self.alert_list = []
+
+    def prepare_data(self):
         self.alert_list = []
         try:
             print('监控二中开始获取工作日')
-            self.d_1_trx_date = ','.join(get_past_working_days(1))
-            self.d_2_trx_date = ','.join(get_past_working_days(2)).split(',')[1]
+            self.d_1_trx_date = ','.join(self.get_past_working_days(1))
+            self.d_2_trx_date = ','.join(self.get_past_working_days(2)).split(',')[1]
         except Exception as e:
             raise e
 
     def run(self):
+        self.prepare_data()
         self.run_by_stat()
         self.run_by_payer()
         return self.alert_list
@@ -22,8 +26,8 @@ class Monitor3:
         sales_name_list = set()
         try:
             print('监控三开始获取所有销售')
-            d_1_data = monitor3_data.get_data_by_stat_in_monitor3(self.d_1_trx_date)
-            d_2_data = monitor3_data.get_data_by_stat_in_monitor3(self.d_2_trx_date)
+            d_1_data = self.monitor3_data.get_data_by_stat_in_monitor3(self.d_1_trx_date)
+            d_2_data = self.monitor3_data.get_data_by_stat_in_monitor3(self.d_2_trx_date)
             for item in d_1_data:
                 sales_name_list.add(item['SALES_NAME'])
             for item in d_2_data:
@@ -40,8 +44,10 @@ class Monitor3:
         d_2_customer_to_success_amount = {}
         try:
             print(f'监控三开始获取{sales_name}的商户签约名')
-            d_1_data = monitor3_data.get_data_by_stat_in_monitor3(trx_date=self.d_1_trx_date, sales_name=sales_name)
-            d_2_data = monitor3_data.get_data_by_stat_in_monitor3(trx_date=self.d_2_trx_date, sales_name=sales_name)
+            d_1_data = self.monitor3_data.get_data_by_stat_in_monitor3(trx_date=self.d_1_trx_date,
+                                                                       sales_name=sales_name)
+            d_2_data = self.monitor3_data.get_data_by_stat_in_monitor3(trx_date=self.d_2_trx_date,
+                                                                       sales_name=sales_name)
             for item in d_1_data:
                 customer_list.add(item['STAT_DISPAYSIGNEDNAME'])
                 d_1_customer_to_success_amount[item['STAT_DISPAYSIGNEDNAME']] = float(item['SUCCESS_AMOUNT'])
@@ -64,14 +70,17 @@ class Monitor3:
                 continue
             self.deal_customer(sales_name, customer, d_1_customer_success_amount, d_2_customer_success_amount)
 
-    def deal_customer(self, sales_name, customer, d_1_customer_success_amount:float, d_2_customer_success_amount:float):
+    def deal_customer(self, sales_name, customer, d_1_customer_success_amount: float,
+                      d_2_customer_success_amount: float):
         product_list = set()
         try:
             print(f'监控三开始获取{sales_name}的商户签约名为{customer}的数据')
-            d_1_data = monitor3_data.get_data_by_stat_in_monitor3(trx_date=self.d_1_trx_date, sales_name=sales_name,
-                                                                    stat_dispaysignedname=customer)
-            d_2_data = monitor3_data.get_data_by_stat_in_monitor3(trx_date=self.d_2_trx_date, sales_name=sales_name,
-                                                                    stat_dispaysignedname=customer)
+            d_1_data = self.monitor3_data.get_data_by_stat_in_monitor3(trx_date=self.d_1_trx_date,
+                                                                       sales_name=sales_name,
+                                                                       stat_dispaysignedname=customer)
+            d_2_data = self.monitor3_data.get_data_by_stat_in_monitor3(trx_date=self.d_2_trx_date,
+                                                                       sales_name=sales_name,
+                                                                       stat_dispaysignedname=customer)
 
             for item in d_1_data:
                 product_list.add(item['PRODUCT'])
@@ -88,10 +97,12 @@ class Monitor3:
     def deal_product(self, sales_name, customer, d_1_customer_success_amount, d_2_customer_success_amount, product):
         try:
             print(f'监控三开始获取{sales_name}的商户 签约名为{customer}的数据')
-            d_1_data = monitor3_data.get_data_by_stat_in_monitor3(trx_date=self.d_1_trx_date, sales_name=sales_name,
-                                                                    stat_dispaysignedname=customer, product=product)
-            d_2_data = monitor3_data.get_data_by_stat_in_monitor3(trx_date=self.d_2_trx_date, sales_name=sales_name,
-                                                                  stat_dispaysignedname=customer, product=product)
+            d_1_data = self.monitor3_data.get_data_by_stat_in_monitor3(trx_date=self.d_1_trx_date,
+                                                                       sales_name=sales_name,
+                                                                       stat_dispaysignedname=customer, product=product)
+            d_2_data = self.monitor3_data.get_data_by_stat_in_monitor3(trx_date=self.d_2_trx_date,
+                                                                       sales_name=sales_name,
+                                                                       stat_dispaysignedname=customer, product=product)
         except Exception as e:
             print(f'监控三开始获取{sales_name}的商户签约名为{customer}的数据失败')
             return
@@ -110,13 +121,14 @@ class Monitor3:
             if len(d_2_data) > 0:
                 d_2_product_success_amount = float(d_2_data[0]['SUCCESS_AMOUNT'])
 
-            difference = (d_1_product_success_amount/d_1_customer_success_amount) - (d_2_product_success_amount/d_2_customer_success_amount)
-            if difference > 0.6 and abs(d_1_product_success_amount-d_2_product_success_amount) > 100000:
+            difference = (d_1_product_success_amount / d_1_customer_success_amount) - (
+                    d_2_product_success_amount / d_2_customer_success_amount)
+            if difference > 0.6 and abs(d_1_product_success_amount - d_2_product_success_amount) > 100000:
                 self.alert_list.append({
                     'name': sales_name,
                     'title': '商户（收方或付方）产品波动异常',
                     'customer_name': customer,
-                    'content': f'交易无明显波动，但{product}产品结构有变化，变化值为{difference*100:.2f}%，请关注。',
+                    'content': f'交易无明显波动，但{product}产品结构有变化，变化值为{difference * 100:.2f}%，请关注。',
                     'content_rich': f"波动详情：      交易无明显波动，但{product}产品结构有变化，变化值为<text_tag color={'orange' if difference < 1 else 'carmine'}>{difference * 100:.2f}%</text_tag>，请关注。",
                     "type": "商户签约名"
 
@@ -124,15 +136,13 @@ class Monitor3:
         except Exception as e:
             print(f'监控三开始处理{sales_name}的商户签约名为{customer}的产品为{product}数据失败')
 
-
-
     def run_by_payer(self):
         print('监控三(付方签约名维度)开始执行')
         payer_sales_name_list = set()
         try:
             print('监控三开始获取所有付方销售')
-            d_1_data = monitor3_data.get_data_by_payer_in_monitor3(self.d_1_trx_date)
-            d_2_data = monitor3_data.get_data_by_payer_in_monitor3(self.d_2_trx_date)
+            d_1_data = self.monitor3_data.get_data_by_payer_in_monitor3(self.d_1_trx_date)
+            d_2_data = self.monitor3_data.get_data_by_payer_in_monitor3(self.d_2_trx_date)
             for item in d_1_data:
                 payer_sales_name_list.add(item['PAYER_SALES_NAME'])
             for item in d_2_data:
@@ -149,8 +159,10 @@ class Monitor3:
         d_2_payer_customer_to_success_amount = {}
         try:
             print(f'监控三开始获取{payer_sales_name}的付方签约名')
-            d_1_data = monitor3_data.get_data_by_payer_in_monitor3(trx_date=self.d_1_trx_date, payer_sales_name=payer_sales_name)
-            d_2_data = monitor3_data.get_data_by_payer_in_monitor3(trx_date=self.d_2_trx_date, payer_sales_name=payer_sales_name)
+            d_1_data = self.monitor3_data.get_data_by_payer_in_monitor3(trx_date=self.d_1_trx_date,
+                                                                        payer_sales_name=payer_sales_name)
+            d_2_data = self.monitor3_data.get_data_by_payer_in_monitor3(trx_date=self.d_2_trx_date,
+                                                                        payer_sales_name=payer_sales_name)
             for item in d_1_data:
                 payer_customer_list.add(item['PAYER_CUSTOMER_SIGNEDNAME'])
                 d_1_payer_customer_to_success_amount[item['PAYER_CUSTOMER_SIGNEDNAME']] = float(item['SUCCESS_AMOUNT'])
@@ -171,17 +183,20 @@ class Monitor3:
             # 除数为0，抛弃
             if d_1_payer_customer_success_amount == 0 or d_2_payer_customer_success_amount == 0:
                 continue
-            self.deal_payer_customer(payer_sales_name, payer_customer, d_1_payer_customer_success_amount, d_2_payer_customer_success_amount)
+            self.deal_payer_customer(payer_sales_name, payer_customer, d_1_payer_customer_success_amount,
+                                     d_2_payer_customer_success_amount)
 
     def deal_payer_customer(self, payer_sales_name, payer_customer, d_1_payer_customer_success_amount: float,
-                      d_2_payer_customer_success_amount: float):
+                            d_2_payer_customer_success_amount: float):
         payer_product_list = set()
         try:
             print(f'监控三开始获取{payer_sales_name}的付方签约名为{payer_customer}的数据')
-            d_1_data = monitor3_data.get_data_by_payer_in_monitor3(trx_date=self.d_1_trx_date, payer_sales_name=payer_sales_name,
-                                                                  payer_customer_signedname=payer_customer)
-            d_2_data = monitor3_data.get_data_by_payer_in_monitor3(trx_date=self.d_2_trx_date, payer_sales_name=payer_sales_name,
-                                                                  payer_customer_signedname=payer_customer)
+            d_1_data = self.monitor3_data.get_data_by_payer_in_monitor3(trx_date=self.d_1_trx_date,
+                                                                        payer_sales_name=payer_sales_name,
+                                                                        payer_customer_signedname=payer_customer)
+            d_2_data = self.monitor3_data.get_data_by_payer_in_monitor3(trx_date=self.d_2_trx_date,
+                                                                        payer_sales_name=payer_sales_name,
+                                                                        payer_customer_signedname=payer_customer)
 
             for item in d_1_data:
                 payer_product_list.add(item['PRODUCT'])
@@ -193,15 +208,21 @@ class Monitor3:
             return
 
         for payer_product in payer_product_list:
-            self.deal_payer_product(payer_sales_name, payer_customer, d_1_payer_customer_success_amount, d_2_payer_customer_success_amount, payer_product)
+            self.deal_payer_product(payer_sales_name, payer_customer, d_1_payer_customer_success_amount,
+                                    d_2_payer_customer_success_amount, payer_product)
 
-    def deal_payer_product(self, payer_sales_name, payer_customer, d_1_payer_customer_success_amount, d_2_payer_customer_success_amount, payer_product):
+    def deal_payer_product(self, payer_sales_name, payer_customer, d_1_payer_customer_success_amount,
+                           d_2_payer_customer_success_amount, payer_product):
         try:
             print(f'监控三开始获取{payer_sales_name}的付方签约名为{payer_customer}的数据')
-            d_1_data = monitor3_data.get_data_by_payer_in_monitor3(trx_date=self.d_1_trx_date, payer_sales_name=payer_sales_name,
-                                                                    payer_customer_signedname=payer_customer, product=payer_product)
-            d_2_data = monitor3_data.get_data_by_payer_in_monitor3(trx_date=self.d_2_trx_date, payer_sales_name=payer_sales_name,
-                                                                  payer_customer_signedname=payer_customer, product=payer_product)
+            d_1_data = self.monitor3_data.get_data_by_payer_in_monitor3(trx_date=self.d_1_trx_date,
+                                                                        payer_sales_name=payer_sales_name,
+                                                                        payer_customer_signedname=payer_customer,
+                                                                        product=payer_product)
+            d_2_data = self.monitor3_data.get_data_by_payer_in_monitor3(trx_date=self.d_2_trx_date,
+                                                                        payer_sales_name=payer_sales_name,
+                                                                        payer_customer_signedname=payer_customer,
+                                                                        product=payer_product)
         except Exception as e:
             print(f'监控三开始获取{payer_sales_name}的付方签约名为{payer_customer}的数据失败')
             return
@@ -220,16 +241,16 @@ class Monitor3:
             if len(d_2_data) > 0:
                 d_2_payer_product_success_amount = float(d_2_data[0]['SUCCESS_AMOUNT'])
 
-            difference = (d_1_payer_product_success_amount/d_1_payer_customer_success_amount) - (d_2_payer_product_success_amount/d_2_payer_customer_success_amount)
-            if difference > 0.6 and abs(d_1_payer_product_success_amount-d_2_payer_product_success_amount) > 100000:
+            difference = (d_1_payer_product_success_amount / d_1_payer_customer_success_amount) - (
+                    d_2_payer_product_success_amount / d_2_payer_customer_success_amount)
+            if difference > 0.6 and abs(d_1_payer_product_success_amount - d_2_payer_product_success_amount) > 100000:
                 self.alert_list.append({
                     'name': payer_sales_name,
                     'title': '商户（收方或付方）产品波动异常',
                     'customer_name': payer_customer,
-                    'content': f'交易无明显波动，但{payer_product}产品结构有变化，变化值为{difference*100:.2f}%，请关注。',
+                    'content': f'交易无明显波动，但{payer_product}产品结构有变化，变化值为{difference * 100:.2f}%，请关注。',
                     'content_rich': f"波动详情：      交易无明显波动，但{payer_product}产品结构有变化，变化值为<text_tag color={'orange' if difference < 1 else 'carmine'}>{difference * 100:.2f}%</text_tag>，请关注。",
                     "type": "付方签约名"
                 })
         except Exception as e:
             print(f'监控三开始处理{payer_sales_name}的付方签约名为{payer_customer}的产品为{payer_product}数据失败')
-
