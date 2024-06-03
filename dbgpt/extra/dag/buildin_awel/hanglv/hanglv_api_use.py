@@ -71,6 +71,6 @@ def get_user_open_id(name):
         # 请求失败，返回None或错误信息
         return {'error': f'Request failed with status code {response.status_code}'}
 
-# result = get_user_open_id(name = '张华雪')
+# result = get_user_open_id(name = '苏杨生')
 #
 # print(result)

@@ -98,6 +98,10 @@ class AirlineMonitorPush4(AirlineMonitorPush):
                 conv_id_cache[name] = hanglv_api_use.get_user_open_id(name)
             conv_id_map = conv_id_cache[name]
             print("cov_id的合集", conv_id_map)
+            conv_id_map = {'huaxue.zhang@yeepay.com': 'ou_9d42bb88ec8940baf3ad183755131881',
+                           'liangliang.yan@yeepay.com': 'ou_a22698cffd738d7851ef30f5dad1a06c',
+                           'bo.liu-2@yeepay.com': 'ou_850210efe332c6e50256b21b29832f1f',
+                           'yangsheng.su@yeepay.com': 'ou_079964d3b15f58fc330058a629b8ed41'}
             for email, conv_id in conv_id_map.items():
                 content = card_templates.travel_report_content4(
                     template_variable={
