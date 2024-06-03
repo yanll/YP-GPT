@@ -170,8 +170,11 @@ async def editor_chart_run(run_param: dict = Body()):
         dashboard_data_loader: DashboardDataLoader = DashboardDataLoader()
         db_conn = CFG.local_db_manager.get_connector(db_name)
         colunms, sql_result = db_conn.query_ex(sql)
+        # field_names, chart_values = dashboard_data_loader.get_chart_values_by_data(
+        #     colunms, sql_result, sql, chart_type
+        # )
         field_names, chart_values = dashboard_data_loader.get_chart_values_by_data(
-            colunms, sql_result, sql, chart_type
+            colunms, sql_result, sql
         )
         start_time = time.time() * 1000
         sql_result = [convert_datetime_in_row(row) for row in sql_result]
