@@ -236,8 +236,8 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
 
                     print(f'监控一{payer_sales_name}的付方签约名为{customer}的数据异常条件满足[长期波动]')
 
-                    reason4,reason4_text = self.find_reason4(payer_sales_name, customer)
-                    reason5,reason5_text = self.find_reason5(payer_sales_name, customer)
+                    reason4, reason4_text = self.find_reason4(payer_sales_name, customer)
+                    reason5, reason5_text = self.find_reason5(payer_sales_name, customer)
 
                     self.alert_list.append({
                         'title': '交易笔数波动异常',
@@ -335,7 +335,7 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
         except Exception as e:
             print('归因4处理错误')
 
-        return reason4,reason4_text
+        return reason4, reason4_text
 
     def find_reason5(self, payer_sales_name, customer) -> list:
         '''
@@ -389,7 +389,7 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
         except Exception as e:
             print('归因5处理错误')
 
-        return reason5,reason5_text
+        return reason5, reason5_text
 
 # if __name__ == "__main__":
 #     a = Monitor1ByPayer()
