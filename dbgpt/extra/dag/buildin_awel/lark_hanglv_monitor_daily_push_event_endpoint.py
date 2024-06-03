@@ -28,8 +28,8 @@ class RequestHandleOperator(MapOperator[Dict, str]):
         results = []
         if input_value.switch_monitor1_1 == "true":
             try:
-                monitor_four_class = AirlineMonitorPush1_1()
-                result = monitor_four_class.run_push()
+                monitor_one1_class = AirlineMonitorPush1_1()
+                result = monitor_one1_class.run_push()
                 results.append(result)
             except Exception as e:
                 logging.error(f"Error occurred while executing monitor_one: {e}", e)
@@ -37,8 +37,8 @@ class RequestHandleOperator(MapOperator[Dict, str]):
 
         if input_value.switch_monitor1_2 == "true":
             try:
-                monitor_four_class = AirlineMonitorPush1_2()
-                result = monitor_four_class.run_push()
+                monitor_one2_class = AirlineMonitorPush1_2()
+                result = monitor_one2_class.run_push()
                 results.append(result)
             except Exception as e:
                 logging.error(f"Error occurred while executing monitor_one2: {e}", e)
@@ -46,8 +46,8 @@ class RequestHandleOperator(MapOperator[Dict, str]):
 
         if input_value.switch_monitor2 == "true":
             try:
-                monitor_four_class = AirlineMonitorPush2()
-                result = monitor_four_class.run_push()
+                monitor_two_class = AirlineMonitorPush2()
+                result = monitor_two_class.run_push()
                 results.append(result)
             except Exception as e:
                 logging.error(f"Error occurred while executing monitor_two: {e}", e)
@@ -55,8 +55,8 @@ class RequestHandleOperator(MapOperator[Dict, str]):
 
         if input_value.switch_monitor3 == "true":
             try:
-                monitor_four_class = AirlineMonitorPush3()
-                result = monitor_four_class.run_push()
+                monitor_three_class = AirlineMonitorPush3()
+                result = monitor_three_class.run_push()
                 results.append(result)
 
             except Exception as e:
