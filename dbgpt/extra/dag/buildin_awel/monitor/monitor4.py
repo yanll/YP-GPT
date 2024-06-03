@@ -53,7 +53,7 @@ class Monitor4(AirlineMonitorDataHandler):
             "d1d7"
         )
         d8d14_result_sales, d8d14_result_sales_custom, d8d14_result_sales_custom_produc = self.build_d_n_stat_datas_by_some(
-            "d814"
+            "d8d14"
         )
 
         for sales_name in sales_name_list:

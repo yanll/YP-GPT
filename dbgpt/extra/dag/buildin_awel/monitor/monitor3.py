@@ -99,9 +99,9 @@ class Monitor3(AirlineMonitorDataHandler):
             )
         print(f'监控三({days_type})构造条数: {len(d_n_datas)}！')
         for rec in d_n_datas:
-            if rec["SALES_NAME"] is None:
+            if rec["PAYER_SALES_NAME"] is None:
                 continue
-            k = str(rec["SALES_NAME"])
+            k = str(rec["PAYER_SALES_NAME"])
             result_sales[k] = rec
         for rec in d_n_datas:
             if rec["PAYER_SALES_NAME"] is None or rec["PAYER_CUSTOMER_SIGNEDNAME"] is None:
@@ -284,7 +284,7 @@ class Monitor3(AirlineMonitorDataHandler):
             days_type="d1"
         )
         d2_result_sales, d2_result_sales_custom, d2_result_sales_custom_produc = self.build_d_n_payer_datas_by_some(
-            days_type="d1"
+            days_type="d2"
         )
 
         for payer_sales_name in payer_sales_name_list:
