@@ -26,8 +26,8 @@ def async_db_summary(system_app: SystemApp):
     from dbgpt.rag.summary.db_summary_client import DBSummaryClient
 
     client = DBSummaryClient(system_app=system_app)
-    thread = threading.Thread(target=client.init_db_summary)
-    thread.start()
+    # thread = threading.Thread(target=client.init_db_summary)
+    # thread.start()
 
 
 def server_init(param: "WebServerParameters", system_app: SystemApp):

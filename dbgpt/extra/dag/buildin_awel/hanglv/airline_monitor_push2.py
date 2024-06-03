@@ -35,7 +35,7 @@ class AirlineMonitorPush2(AirlineMonitorPush):
             "product": product,
             "merchant_no": merchant_no,
             "reason": "",
-            "type": "退款笔数波动异常",
+            "type": "航旅波动检测归因2_退款笔数波动异常",
             "created_time": "",
             "modified_time": "",
         }

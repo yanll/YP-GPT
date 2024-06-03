@@ -32,12 +32,16 @@ class EmbeddingLoader:
             "EmbeddingLoader.load", span_type=SpanType.RUN, metadata=metadata
         ):
             # add more models
+            
             if model_name in ["proxy_openai", "proxy_azure"]:
-                from langchain.embeddings import OpenAIEmbeddings
-
+                # from langchain.embeddings import OpenAIEmbeddings
+                # from langchain_community.embeddings import OpenAIEmbeddings
+                from langchain_openai import AzureOpenAIEmbeddings
                 from dbgpt.rag.embedding._wrapped import WrappedEmbeddings
-
-                return WrappedEmbeddings(OpenAIEmbeddings(**param.build_kwargs()))
+                ret = param.build_kwargs()
+                ret['azure_endpoint'] = ret['openai_api_base']
+                ret.pop('openai_api_base')
+                return WrappedEmbeddings(AzureOpenAIEmbeddings(**ret))
             elif model_name in ["proxy_http_openapi"]:
                 from dbgpt.rag.embedding import OpenAPIEmbeddings
 

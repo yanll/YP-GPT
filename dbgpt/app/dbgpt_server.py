@@ -149,7 +149,8 @@ def initialize_app(param: WebServerParameters = None, args: List[str] = None):
     if not param.port:
         param.port = 5670
 
-    print(param)
+    # param.remote_embedding = True
+    # print(param)
 
     embedding_model_name = CFG.EMBEDDING_MODEL
     embedding_model_path = EMBEDDING_MODEL_CONFIG[CFG.EMBEDDING_MODEL]

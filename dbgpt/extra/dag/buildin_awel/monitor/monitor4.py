@@ -197,3 +197,7 @@ class Monitor4(AirlineMonitorDataHandler):
         except Exception as e:
             print(f'监控四开始获取{sales_name}的商户签约名为{customer}的付方签约名为{payer}的数据失败')
             return
+# if __name__ == "__main__":
+#     a = Monitor4()
+#     b = a.run()
+#     print(b)
