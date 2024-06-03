@@ -61,12 +61,6 @@ class AirlineMonitorPush1_1(AirlineMonitorPush):
 
         # 逐条处理数据并传入 rec
         for item in data:
-            # 获取用户 ID
-            # name = item['name']
-            # print(name)
-            # get_sender_open_id = hanglv_api_use.get_user_open_id(name)
-            # sender_open_id = next(iter(get_sender_open_id.values()), 'noname')
-            # print(sender_open_id)
 
             # 合并 reason 字段
             reason = f"{item['reason1_text']}\n{item['reason2_text']}\n{item['reason3_text']}"
@@ -101,7 +95,7 @@ class AirlineMonitorPush1_1(AirlineMonitorPush):
             name_to_data[name].append(report_with_num)
 
         for name, reports in name_to_data.items():
-            conv_id_map = hanglv_api_use.get_user_open_id(name="张华雪")
+            conv_id_map = hanglv_api_use.get_user_open_id(name)
             for email, conv_id in conv_id_map.items():
                 content = card_templates.travel_report_content1(
                     template_variable={
