@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_sales_board_dispaly, \
     crem_daily_push_messages
 from dbgpt.util.lark import larkutil
-
+import datetime
 
 class DailypushmessagetoolInput(BaseModel):
     conv_id: str = Field(
@@ -78,6 +78,13 @@ class Dailypushmessagetool(BaseTool):
             query_str = (nickname).strip()
 
             print("推送人结果：", query_str, resp_data)
+
+            current_date = datetime.date.today()
+            # 将日期格式化为“您06月03日（周一）”的形式
+            formatted_date = current_date.strftime("%m月%d日（周") + ["一", "二", "三", "四", "五", "六", "日"][
+                current_date.weekday()] + "）"
+            print("当前日期:", formatted_date)
+
             list = []
             if resp_data and len(resp_data) == 0:
                 return {"success": "true", "data": []}
@@ -111,6 +118,7 @@ class Dailypushmessagetool(BaseTool):
                     "list": list,
                     "query_str": query_str,
                     "sales_diapaly": sales_dispaly,
+                    "formatted_date":formatted_date,
                     "value_colour_yesterday_change_rate": value_colour_yesterday_change_rate,
                     "value_colour_weekly_change_rate": value_colour_weekly_change_rate
 

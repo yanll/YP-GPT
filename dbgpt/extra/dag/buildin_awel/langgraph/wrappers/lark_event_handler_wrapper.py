@@ -452,7 +452,7 @@ class LarkEventHandlerWrapper:
                         "query_str": data["query_str"],
                         "daily_push_message_list": data["list"],
                         "sales_diapaly": data["sales_diapaly"],
-
+                        "formatted_date": data["formatted_date"],
                         "value_colour_yesterday_change_rate": data["value_colour_yesterday_change_rate"],
                         "value_colour_weekly_change_rate": data["value_colour_weekly_change_rate"]
                     }
