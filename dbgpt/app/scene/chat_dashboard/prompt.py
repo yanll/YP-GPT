@@ -7,38 +7,39 @@ from dbgpt.core import ChatPromptTemplate, HumanPromptTemplate, SystemPromptTemp
 
 CFG = Config()
 
-PROMPT_SCENE_DEFINE = "You are a data analysis expert, please provide a professional data analysis solution"
+PROMPT_SCENE_DEFINE = "您是一名数据分析专家，请提供专业的数据分析解决方案。"
 
 _DEFAULT_TEMPLATE = """
-According to the following table structure definition:
+根据以下表结构定义：
 {table_info}
-Provide professional data analysis to support users' goals:
+提供专业的数据分析以支持用户目标：
 {input}
 
-Provide at least 4 and at most 8 dimensions of analysis according to user goals.
-The output data of the analysis cannot exceed 4 columns, and do not use columns such as pay_status in the SQL where condition for data filtering.
-According to the characteristics of the analyzed data, choose the most suitable one from the charts provided below for data display, chart type:
+根据用户目标提供至少4个且不超过8个分析维度。
+分析输出的数据不能超过4列，并且在SQL的where条件中不要使用pay_status等列进行数据筛选。
+根据分析数据的特点，一定要从下列提供的图表类型中选择最合适的一种进行数据展示，图表类型：
 {supported_chat_type}
 
-Pay attention to the length of the output content of the analysis result, do not exceed 4000 tokens
+注意分析结果的输出内容长度，不超过4000个tokens。
 
-Give the correct {dialect} analysis SQL
-1.Do not use unprovided values such as 'paid'
-2.All queried values must have aliases, such as select count(*) as count from table
-3.If the table structure definition uses the keywords of {dialect} as field names, you need to use escape characters, such as select `count` from table
-4.When writing SQL, sort the fields according to the type of chart, from left to right, starting from x to y.
-5.Carefully check the correctness of the SQL, the SQL must be correct, display method and summary of brief analysis thinking, and respond in the following json format:
+给出正确的{dialect}分析SQL
+
+不要使用未提供的值，例如'paid'
+所有查询的值必须有别名，例如select count(*) as count from table
+如果表结构定义使用了{dialect}的关键字作为字段名，需要使用转义字符，例如select count from table
+写SQL时，根据图表类型从左到右排序字段，从x开始到y。
+仔细检查SQL的正确性，SQL必须正确，显示方法和简要分析思路总结，并以以下json格式响应：
 {response}
-The important thing is: Please make sure to only return the json string, do not add any other content (for direct processing by the program), and the json can be parsed by Python json.loads
-6. Please use the same language as the "user"
+重要的是：请确保只返回json字符串，不要添加任何其他内容（以便程序直接处理），并且json可以通过Python的json.loads解析。
+请使用与“用户”相同的语言。
 """
 
 RESPONSE_FORMAT = [
     {
-        "thoughts": "Current thinking and value of data analysis",
-        "showcase": "What type of charts to show",
-        "sql": "data analysis SQL",
-        "title": "Data Analysis Title",
+        "thoughts": "当前数据分析的思维和价值",
+        "showcase": "图表类型",
+        "sql": "数据分析 SQL",
+        "title": "数据分析标题",
         # "columns_sort": "Sort the fields based on the type of chart to be displayed, from left to right, and from x to y."
     }
 ]

@@ -6,6 +6,7 @@ import traceback
 from dbgpt._private.config import Config
 from dbgpt.component import SystemApp
 from dbgpt.configs.model_config import EMBEDDING_MODEL_CONFIG
+from dbgpt.rag.chunk_manager import ChunkParameters
 from dbgpt.rag.summary.gdbms_db_summary import GdbmsSummary
 from dbgpt.rag.summary.rdbms_db_summary import RdbmsSummary
 
@@ -101,9 +102,10 @@ class DBSummaryClient:
         )
         if not vector_connector.vector_name_exists():
             from dbgpt.rag.assembler.db_schema import DBSchemaAssembler
+            chunk_parameters = ChunkParameters(chunk_strategy="CHUNK_BY_SIZE",chunk_size=4096)
 
             db_assembler = DBSchemaAssembler.load_from_connection(
-                connector=db_summary_client.db, vector_store_connector=vector_connector
+                connector=db_summary_client.db, vector_store_connector=vector_connector,chunk_parameters=chunk_parameters
             )
             if len(db_assembler.get_chunks()) > 0:
                 db_assembler.persist()

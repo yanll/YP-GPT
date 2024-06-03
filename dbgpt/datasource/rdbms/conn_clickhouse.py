@@ -145,9 +145,26 @@ class ClickhouseConnector(RDBMSConnector):
                 'is_in_primary_key': True, 'comment': 'id'}, ...]
         """
         fields = self.get_fields(table_name)
+        max_limit_token_size = 200
+        cur_token_size = 0
+        for idx, field in enumerate(fields[0]):  # looping through row
+            if not envutils.getenv('ENABLE_DB_SAMPLE_SUMMARY'):
+                break
+            # comment: 
+            values = ""
+            if field[1] == "String":
+                values = self.get_field_values(field=field[0])
+            tmp = list(field)
+            tmp.append(values)
+            cur_token_size += len(values)
+            fields[0][idx] = tuple(tmp)
+            if cur_token_size >= max_limit_token_size:
+                break
+        # end for
+        
         return [
-            {"name": name, "comment": comment, "type": column_type}
-            for name, column_type, _, _, comment in fields[0]
+            {"name": name, "comment": comment, "type": column_type, "sample": rest[0] if len(rest) > 0 else None}
+            for name, column_type, _, _, comment,*rest in fields[0]
         ]
 
     @property
@@ -168,7 +185,36 @@ class ClickhouseConnector(RDBMSConnector):
         with session.query_row_block_stream(_query_sql) as stream:
             fields = [block for block in stream]  # noqa
             return fields
-
+        
+    def get_field_values(self, field:str):
+        session = self.client
+        # _query_sql = f"""
+        #     SELECT {field}, COUNT(*) AS frequency
+        #     FROM {self.get_current_db_name()}.{envutils.getenv("CK_TABLE_NAME")}
+        #     GROUP BY {field}
+        #     ORDER BY frequency DESC
+        #     LIMIT 10;
+        # """
+        _query_sql = f"""
+            WITH Temp AS (
+                SELECT {field}, COUNT(*) AS frequency
+                FROM {self.get_current_db_name()}.{envutils.getenv("CK_TABLE_NAME")}
+                GROUP BY {field}
+                ORDER BY frequency DESC
+                LIMIT 10
+            )
+            SELECT {field}
+            FROM Temp;
+        """
+        
+        # logger.info(_query_sql)
+        
+        result = session.command(_query_sql).replace('\n',',')
+        
+        return result
+        # with  as stream:
+        #     values = [block for block in stream]  # noqa
+        #     return values
     def get_users(self):
         """Get user info."""
         return []
@@ -314,12 +360,13 @@ class ClickhouseConnector(RDBMSConnector):
         #     FROM system.columns
         #     WHERE database = '{self.get_current_db_name()}'
         #     GROUP BY table
+            # WHERE database = '{self.get_current_db_name()}' AND table = '{envutils.getenv("CK_TABLE_NAME")}'
         # """
         _sql = f"""
             SELECT concat(table, '(', arrayStringConcat(
                 groupArray(concat(name, '(', comment,')')), '-'), ')') AS schema_info
             FROM system.columns
-            WHERE database = '{self.get_current_db_name()}' AND table = '{envutils.getenv("CK_TABLE_NAME")}'
+            WHERE database = '{self.get_current_db_name()}'
             GROUP BY table
         """
         
