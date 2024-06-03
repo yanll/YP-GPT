@@ -17,7 +17,7 @@ class AirlineMonitorPush2(AirlineMonitorPush):
         self.monitor = Monitor2()
         super().__init__()
 
-    def store_his_message(self, app_chat_service, sales, title, content, merchant_no, product,
+    def store_his_message(self, app_chat_service, sales, title, content,reason, merchant_no, product,
                           display_type):
         current_date = datetime.now().strftime('%Y-%m-%d')
         rec = {
@@ -35,7 +35,7 @@ class AirlineMonitorPush2(AirlineMonitorPush):
             "chanel": "",
             "product": product,
             "merchant_no": merchant_no,
-            "reason": "",
+            "reason": reason,
             "type": "航旅波动检测归因2_退款笔数波动异常",
             "created_time": "",
             "modified_time": "",
@@ -58,7 +58,7 @@ class AirlineMonitorPush2(AirlineMonitorPush):
         for item in data:
 
             # 构建内容字符串
-            content = (
+            reason = (
                 f"Name: {item['name']}\n"
                 f"Title: {item['title']}\n"
                 f"Content: {item['content']}\n"
@@ -67,14 +67,16 @@ class AirlineMonitorPush2(AirlineMonitorPush):
 
             )
 
+
             # 调用存储消息的函数
             self.store_his_message(
                 app_chat_service,
                 # sender_open_id=sender_open_id,
                 sales=item['name'],
                 title=item['title'],
-                content=content,
+                content=item['content'],
                 merchant_no=item['customer_name'],
+                reason = reason,
                 product=item['type'],
                 display_type="hanglv_card",
 

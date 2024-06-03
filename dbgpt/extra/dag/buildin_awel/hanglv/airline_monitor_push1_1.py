@@ -61,12 +61,12 @@ class AirlineMonitorPush1_1(AirlineMonitorPush):
             reason = f"{item['reason1_text']}\n{item['reason2_text']}\n{item['reason3_text']}"
 
             # 构建内容字符串
-            content = (
-                f"Name: {item['name']}\n"
-                f"Title: {item['title']}\n"
-                f"Content: {item['content_text']}\n"
-                f"Customer_name: {reason}\n"
-            )
+            # content = (
+            #     f"Name: {item['name']}\n"
+            #     f"Title: {item['title']}\n"
+            #     f"Content: {item['content_text']}\n"
+            #     f"Customer_name: {reason}\n"
+            # )
 
             # 调用存储消息的函数
             self.store_his_message(
@@ -74,7 +74,7 @@ class AirlineMonitorPush1_1(AirlineMonitorPush):
                 # sender_open_id=sender_open_id,
                 sales=item['name'],
                 title=item['title'],
-                content=content,
+                content=item['content_text'],
                 reason=reason,
                 display_type="hanglv_card",
             )
