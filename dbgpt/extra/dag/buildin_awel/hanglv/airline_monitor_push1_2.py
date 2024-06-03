@@ -20,13 +20,13 @@ class AirlineMonitorPush1_2(AirlineMonitorPush):
         self.monitor = Monitor1ByPayer()
         super().__init__()
 
-    def store_his_message(self,app_chat_service, sender_open_id, sales, title, content, reason, display_type):
+    def store_his_message(self,app_chat_service, sales, title, content, reason, display_type):
         current_date = datetime.now().strftime('%Y-%m-%d')
         rec = {
             "id": str(uuid.uuid1()),
             "agent_name": "SalesAssistant",
             "node_name": "final",
-            "conv_uid": sender_open_id,
+           # "conv_uid": sender_open_id,
             "message_type": "view",
             "content": content,
             "message_detail": "",
@@ -39,7 +39,7 @@ class AirlineMonitorPush1_2(AirlineMonitorPush):
             "product": "",
             "merchant_no": "",
             "reason": reason,
-            "type": "退款笔数波动异常",
+            "type": "航旅波动检测归因1.2_交易笔数波动异常",
             "created_time": "",
             "modified_time": "",
         }
@@ -58,28 +58,28 @@ class AirlineMonitorPush1_2(AirlineMonitorPush):
 
         # 逐条处理数据并传入 rec
         for item in data:
-            # 获取用户 ID
-            name = item['name']
-            print(name)
-            get_sender_open_id = hanglv_api_use.get_user_open_id(name)
-            sender_open_id = next(iter(get_sender_open_id.values()), 'noname')
-            print(sender_open_id)
+            # # 获取用户 ID
+            # name = item['name']
+            # print(name)
+            # get_sender_open_id = hanglv_api_use.get_user_open_id(name)
+            # sender_open_id = next(iter(get_sender_open_id.values()), 'noname')
+            # print(sender_open_id)
 
             # 合并 reason 字段
-            reason = f"{item['reason4']}\n{item['reason5']}"
+            reason = f"{item['reason4_text']}\n{item['reason5_text']}"
 
             # 构建内容字符串
             content = (
                 f"Name: {item['name']}\n"
                 f"Title: {item['title']}\n"
-                f"Content: {item['content']}\n"
+                f"Content: {item['content_text']}\n"
                 f"Customer_name: {reason}\n"
             )
 
             # 调用存储消息的函数
             self.store_his_message(
                 app_chat_service,
-                sender_open_id=sender_open_id,
+                #sender_open_id=sender_open_id,
                 sales=item['name'],
                 title=item['title'],
                 content=content,

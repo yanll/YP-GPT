@@ -107,7 +107,7 @@ class AirlineMonitorPush4(AirlineMonitorPush):
                             "event_type": "unlike",
                             "event_source": "",
                             "event_data": {
-                                "message": "航旅波动检测归因4"
+                                "message": "航旅波动检测归因4_深航/国航充值业务"
                             }
                         },
                         "travel_report_list": reports,

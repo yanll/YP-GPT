@@ -236,15 +236,19 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
 
                     print(f'监控一{payer_sales_name}的付方签约名为{customer}的数据异常条件满足[长期波动]')
 
-                    reason4 = self.find_reason4(payer_sales_name, customer)
-                    reason5 = self.find_reason5(payer_sales_name, customer)
+                    reason4,reason4_text = self.find_reason4(payer_sales_name, customer)
+                    reason5,reason5_text = self.find_reason5(payer_sales_name, customer)
 
                     self.alert_list.append({
                         'title': '交易笔数波动异常',
                         'name': payer_sales_name,
                         'content': f'【长期下滑】付方签约名:{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，环比{"上升" if customer_success_count > 0 else "下降"}<text_tag color={"green" if customer_success_count > 0 else "red"} >{customer_success_count * 100:.2f}%</text_tag>（商户交易笔数环比）',
+                        'content_text': f'【长期下滑】付方签约名:{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，环比{"上升" if customer_success_count > 0 else "下降"}{customer_success_count * 100:.2f}%（商户交易笔数环比）',
+
                         'reason4': '\n'.join(reason4),
-                        'reason5': '\n'.join(reason5)
+                        'reason4_text': '\n'.join(reason4_text),
+                        'reason5': '\n'.join(reason5),
+                        'reason5_text': '\n'.join(reason5_text),
                     })
 
             def judge_short_term():
@@ -261,15 +265,19 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
                     if customer_success_count >= 0:
                         return
 
-                    reason4 = self.find_reason4(payer_sales_name, customer)
-                    reason5 = self.find_reason5(payer_sales_name, customer)
+                    reason4, reason4_text = self.find_reason4(payer_sales_name, customer)
+                    reason5, reason5_text = self.find_reason5(payer_sales_name, customer)
 
                     self.alert_list.append({
                         'title': '交易笔数波动异常',
                         'name': payer_sales_name,
                         'content': f'【短期波动】付方签约名:{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，环比{"上升" if customer_success_count > 0 else "下降"}<text_tag color={"green" if customer_success_count > 0 else "red"} >{customer_success_count * 100:.2f}%</text_tag>（商户交易笔数环比）',
+                        'content_text': f'【短期波动】付方签约名:{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，环比{"上升" if customer_success_count > 0 else "下降"}{customer_success_count * 100:.2f}%（商户交易笔数环比）',
+
                         'reason4': '\n'.join(reason4),
-                        'reason5': '\n'.join(reason5)
+                        'reason4_text': '\n'.join(reason4_text),
+                        'reason5': '\n'.join(reason5),
+                        'reason5_text': '\n'.join(reason5_text),
                     })
 
             judge_short_term()
@@ -281,6 +289,7 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
     def find_reason4(self, payer_sales_name, customer) -> list:
         print(f'监控一处理{payer_sales_name}的付方签约名为{customer}的数据异常归因4')
         reason4 = []
+        reason4_text = []
         '''
         1、产品交易波动异常
         归因④【付款方签约名+产品】
@@ -315,14 +324,18 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
                     if d_1_success_amount / d_2_success_amount - 1 > 1:
                         reason4.append(
                             f'付方签约名:{customer},产品:{d_2_item["PRODUCT"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升<text_tag color= green >{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
+                        reason4_text.append(
+                            f'付方签约名:{customer},产品:{d_2_item["PRODUCT"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
                     if d_1_success_amount / d_2_success_amount - 1 < -0.5:
                         reason4.append(
                             f'付方签约名:{customer},产品:{d_2_item["PRODUCT"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降<text_tag color= red >{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
+                        reason4_text.append(
+                            f'付方签约名:{customer},产品:{d_2_item["PRODUCT"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
 
         except Exception as e:
             print('归因4处理错误')
 
-        return reason4
+        return reason4,reason4_text
 
     def find_reason5(self, payer_sales_name, customer) -> list:
         '''
@@ -334,6 +347,8 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
         '''
         print(f'监控一处理{payer_sales_name}的付方签约名为{customer}的数据异常归因5')
         reason5 = []
+        reason5_text = []
+
         # 归因5
         try:
             d_1_data = self.monitor1bypayer_data.get_reason_5_data_by_payer_in_monitor1(trx_date=self.d_1_trx_date,
@@ -360,16 +375,21 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
                     if d_1_success_amount / d_2_success_amount - 1 > 1:
                         reason5.append(
                             f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升<text_tag color= green >{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
+                        reason5_text.append(
+                            f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
                     if d_1_success_amount / d_2_success_amount - 1 < -0.5:
                         reason5.append(
                             f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降<text_tag color= red >{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
+                        reason5_text.append(
+                            f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
+
 
 
 
         except Exception as e:
             print('归因5处理错误')
 
-        return reason5
+        return reason5,reason5_text
 
 # if __name__ == "__main__":
 #     a = Monitor1ByPayer()
