@@ -93,7 +93,7 @@ class ClickhouseConnector(RDBMSConnector):
         session = self.client
 
         _query_sql = f"""
-                    SELECT name AS table, primary_key, from system.tables where
+                    SELECT name AS table, primary_key FROM system.tables where
                      database ='{self.client.database}' and table = '{table_name}'
                 """
         with session.query_row_block_stream(_query_sql) as stream:
