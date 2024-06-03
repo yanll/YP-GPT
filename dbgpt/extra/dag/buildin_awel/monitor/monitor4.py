@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from typing import Dict
 
 from dbgpt.extra.dag.buildin_awel.monitor.airline_monitor_handler import AirlineMonitorDataHandler
 
@@ -48,21 +49,83 @@ class Monitor4(AirlineMonitorDataHandler):
         except Exception as e:
             print('监控四开始获取所有销售失败')
 
+        d1d7_result_sales, d1d7_result_sales_custom, d1d7_result_sales_custom_produc = self.build_d_n_stat_datas_by_some(
+            "d1d7"
+        )
+        d8d14_result_sales, d8d14_result_sales_custom, d8d14_result_sales_custom_produc = self.build_d_n_stat_datas_by_some(
+            "d814"
+        )
+
         for sales_name in sales_name_list:
-            self.deal_sales_name(sales_name)
+            self.deal_sales_name(
+                d1d7_result_sales,
+                d1d7_result_sales_custom,
+                d1d7_result_sales_custom_produc,
+                d8d14_result_sales,
+                d8d14_result_sales_custom,
+                d8d14_result_sales_custom_produc,
+                sales_name
+            )
 
         return self.alert_list
 
-    def deal_sales_name(self, sales_name):
+    def build_d_n_stat_datas_by_some(self, days_type):
+        """按1、销售，2、销售、签约名，3、销售、签约名、产品分组，构造数据"""
+        result_sales: Dict = {}
+        result_sales_custom: Dict = {}
+        result_sales_custom_produc: Dict = {}
+        d_n_datas = []
+        if days_type == "d1d7":
+            d_n_datas = self.monitor4_data.get_data_by_stat_in_monitor4(
+                trx_date=self.d_1_d_7_date
+            )
+        if days_type == "d8d14":
+            d_n_datas = self.monitor4_data.get_data_by_stat_in_monitor4(
+                trx_date=self.d_8_d_14_date
+            )
+        print(f'监控四({days_type})构造条数: {len(d_n_datas)}！')
+        for rec in d_n_datas:
+            if rec["SALES_NAME"] is None:
+                continue
+            k = str(rec["SALES_NAME"])
+            result_sales[k] = rec
+        for rec in d_n_datas:
+            if rec["SALES_NAME"] is None or rec["STAT_DISPAYSIGNEDNAME"] is None:
+                continue
+            k = str(rec["SALES_NAME"]) + '#_#' + str(rec["STAT_DISPAYSIGNEDNAME"])
+            result_sales_custom[k] = rec
+        for rec in d_n_datas:
+            if rec["SALES_NAME"] is None or rec["STAT_DISPAYSIGNEDNAME"] is None or rec["PAYER_CUSTOMER_SIGNEDNAME"] is None:
+                continue
+            k = str(rec["SALES_NAME"]) + '#_#' + str(rec["STAT_DISPAYSIGNEDNAME"]) + '#_#' + str(rec["PAYER_CUSTOMER_SIGNEDNAME"])
+            result_sales_custom_produc[k] = rec
+        return result_sales, result_sales_custom, result_sales_custom_produc
+
+    def deal_sales_name(
+            self,
+            d1d7_result_sales,
+            d1d7_result_sales_custom,
+            d1d7_result_sales_custom_produc,
+            d8d14_result_sales,
+            d8d14_result_sales_custom,
+            d8d14_result_sales_custom_produc,
+            sales_name
+    ):
         customer_list = set()
         d_1_d_7_customer_to_success_amount = {}
         d_8_d_14_customer_to_success_amount = {}
         try:
             print(f'监控四开始获取{sales_name}的商户签约名')
-            d_1_d_7_data = self.monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_1_d_7_date,
-                                                                           sales_name=sales_name)
-            d_8_d_14_data = self.monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_8_d_14_date,
-                                                                            sales_name=sales_name)
+            d_1_d_7_data = d1d7_result_sales[sales_name]
+            d_8_d_14_data = d8d14_result_sales[sales_name]
+            # d_1_d_7_data = self.monitor4_data.get_data_by_stat_in_monitor4(
+            #     trx_date=self.d_1_d_7_date,
+            #     sales_name=sales_name
+            # )
+            # d_8_d_14_data = self.monitor4_data.get_data_by_stat_in_monitor4(
+            #     trx_date=self.d_8_d_14_date,
+            #     sales_name=sales_name
+            # )
             for item in d_1_d_7_data:
                 customer_list.add(item['STAT_DISPAYSIGNEDNAME'])
                 d_1_d_7_customer_to_success_amount[item['STAT_DISPAYSIGNEDNAME']] = float(item['SUCCESS_AMOUNT'])
@@ -83,19 +146,42 @@ class Monitor4(AirlineMonitorDataHandler):
             # 除数为0，抛弃
             if d_8_d_14_customer_to_success_amount == 0:
                 continue
-            self.deal_customer(sales_name, customer, d_1_d_7_customer_success_amount, d_8_d_14_customer_success_amount)
+            self.deal_customer(
+                d1d7_result_sales_custom,
+                d1d7_result_sales_custom_produc,
+                d8d14_result_sales_custom,
+                d8d14_result_sales_custom_produc,
+                sales_name,
+                customer,
+                d_1_d_7_customer_success_amount,
+                d_8_d_14_customer_success_amount)
 
-    def deal_customer(self, sales_name, customer, d_1_d_7_customer_success_amount: float,
-                      d_8_d_14_customer_success_amount: float):
+    def deal_customer(
+            self,
+            d1d7_result_sales_custom,
+            d1d7_result_sales_custom_produc,
+            d8d14_result_sales_custom,
+            d8d14_result_sales_custom_produc,
+            sales_name,
+            customer,
+            d_1_d_7_customer_success_amount: float,
+            d_8_d_14_customer_success_amount: float
+    ):
         payer_list = set()
         try:
             print(f'监控四开始获取{sales_name}的商户签约名为{customer}的数据')
-            d_1_d_7_data = self.monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_1_d_7_date,
-                                                                           sales_name=sales_name,
-                                                                           stat_dispaysignedname=customer)
-            d_8_d_14_data = self.monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_8_d_14_date,
-                                                                            sales_name=sales_name,
-                                                                            stat_dispaysignedname=customer)
+            d_1_d_7_data = d1d7_result_sales_custom[sales_name + "#_#" + customer]
+            d_8_d_14_data = d8d14_result_sales_custom[sales_name + "#_#" + customer]
+            # d_1_d_7_data = self.monitor4_data.get_data_by_stat_in_monitor4(
+            #     trx_date=self.d_1_d_7_date,
+            #     sales_name=sales_name,
+            #     stat_dispaysignedname=customer
+            # )
+            # d_8_d_14_data = self.monitor4_data.get_data_by_stat_in_monitor4(
+            #     trx_date=self.d_8_d_14_date,
+            #     sales_name=sales_name,
+            #     stat_dispaysignedname=customer
+            # )
 
             for item in d_1_d_7_data:
                 payer_list.add(item['PAYER_CUSTOMER_SIGNEDNAME'])
@@ -107,19 +193,42 @@ class Monitor4(AirlineMonitorDataHandler):
             return
 
         for payer in payer_list:
-            self.deal_payer(sales_name, customer, d_1_d_7_customer_success_amount, d_8_d_14_customer_success_amount,
-                            payer)
+            self.deal_payer(
+                d1d7_result_sales_custom_produc,
+                d8d14_result_sales_custom_produc,
+                sales_name,
+                customer,
+                d_1_d_7_customer_success_amount,
+                d_8_d_14_customer_success_amount,
+                payer
+            )
 
-    def deal_payer(self, sales_name, customer, d_1_d_7_customer_success_amount, d_8_d_14_customer_success_amount,
-                   payer):
+    def deal_payer(
+            self,
+            d1d7_result_sales_custom_produc,
+            d8d14_result_sales_custom_produc,
+            sales_name,
+            customer,
+            d_1_d_7_customer_success_amount,
+            d_8_d_14_customer_success_amount,
+            payer
+    ):
         try:
             print(f'监控四开始获取{sales_name}的商户签约名为{customer}的付方签约名为{payer}的数据')
-            d_1_d_7_data = self.monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_1_d_7_date,
-                                                                           sales_name=sales_name,
-                                                                           stat_dispaysignedname=customer, payer=payer)
-            d_8_d_14_data = self.monitor4_data.get_data_by_stat_in_monitor4(trx_date=self.d_8_d_14_date,
-                                                                            sales_name=sales_name,
-                                                                            stat_dispaysignedname=customer, payer=payer)
+            d_1_d_7_data = d1d7_result_sales_custom_produc[sales_name + "#_#" + customer + "#_#" + payer]
+            d_8_d_14_data = d8d14_result_sales_custom_produc[sales_name + "#_#" + customer + "#_#" + payer]
+            # d_1_d_7_data = self.monitor4_data.get_data_by_stat_in_monitor4(
+            #     trx_date=self.d_1_d_7_date,
+            #     sales_name=sales_name,
+            #     stat_dispaysignedname=customer,
+            #     payer=payer
+            # )
+            # d_8_d_14_data = self.monitor4_data.get_data_by_stat_in_monitor4(
+            #     trx_date=self.d_8_d_14_date,
+            #     sales_name=sales_name,
+            #     stat_dispaysignedname=customer,
+            #     payer=payer
+            # )
 
             print(f'监控四开始处理{sales_name}的商户签约名为{customer}的付方签约名为{payer}的数据')
 
@@ -181,7 +290,6 @@ class Monitor4(AirlineMonitorDataHandler):
                             item2["SUCCESS_AMOUNT"]) - self.market_fluctuation
                         content = f'付方名称:{payer}，航司:{customer}——商编:{item1["CUSTOMER_NO"]}+场景字段:{orig_scene}，近7天充值金额，环比上周{"上升" if difference > 0 else "下降"}{abs(difference * 100):.2f}%，{"高于" if fluctuation > 0 else "低于"}大盘{abs(fluctuation * 100):.2f}%'
                         subcontent = f"波动详情：  近7天充值金额，环比上周{'上升' if difference > 0 else '下降'}<text_tag color={'green' if difference > 0 else 'red'}>{abs(difference * 100):.2f}%</text_tag>，{'高于' if fluctuation > 0 else '低于'}大盘<text_tag color={'green' if fluctuation > 0 else 'red'}>{abs(fluctuation * 100):.2f}%</text_tag>"
-
 
                         self.alert_list.append({
                             'name': sales_name,

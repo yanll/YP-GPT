@@ -267,12 +267,7 @@ class Monitor3(AirlineMonitorDataHandler):
     def run_by_payer(self):
         print('监控三(付方签约名维度)开始执行')
         payer_sales_name_list = set()
-        d1_result_sales, d1_result_sales_custom, d1_result_sales_custom_produc = self.build_d_n_payer_datas_by_some(
-            days_type="d1"
-        )
-        d2_result_sales, d2_result_sales_custom, d2_result_sales_custom_produc = self.build_d_n_payer_datas_by_some(
-            days_type="d1"
-        )
+
         try:
             print('监控三开始获取所有付方销售')
             d_1_data = self.monitor3_data.get_data_by_payer_in_monitor3(self.d_1_trx_date)
@@ -284,6 +279,13 @@ class Monitor3(AirlineMonitorDataHandler):
                 payer_sales_name_list.add(item['PAYER_SALES_NAME'])
         except Exception as e:
             print('监控三开始获取所有付方销售失败')
+
+        d1_result_sales, d1_result_sales_custom, d1_result_sales_custom_produc = self.build_d_n_payer_datas_by_some(
+            days_type="d1"
+        )
+        d2_result_sales, d2_result_sales_custom, d2_result_sales_custom_produc = self.build_d_n_payer_datas_by_some(
+            days_type="d1"
+        )
 
         for payer_sales_name in payer_sales_name_list:
             self.deal_payer_sales_name(
