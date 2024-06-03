@@ -288,6 +288,8 @@ def generate_rag_response_card(origin_res):
                 if key == name:
                     f_metadata = json.loads(value)
                     file_dict["url"] = f_metadata['url']
+                    if f_metadata.get('file_type') is not None and f_metadata['file_type'] == 'feishu_doc':
+                        file_dict['name'] = remove_file_extension(file_dict['name'])
                     break
             cache_files.append(file_dict)
         except Exception as e:
@@ -561,3 +563,7 @@ def card_footer_template():
             "margin": "16px 0px 0px 0px"
           }
 # end def
+
+
+def remove_file_extension(filename):
+    return os.path.splitext(filename)[0]
