@@ -43,8 +43,6 @@ _DEFAULT_TEMPLATE_ZH = """
 请根据用户选择的数据库名和数据表，以及该表的结构定义来回答用户问题.
 数据库名:
     {db_name}
-数据表名：
-    {table_name}
 表结构定义:
     {table_info}
 

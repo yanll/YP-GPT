@@ -19,7 +19,14 @@ class WrappedEmbeddings(Embeddings):
 
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
         """Embed search docs."""
-        return self._embeddings.embed_documents(texts)
+        try:
+            # comment: 
+            ret = self._embeddings.embed_documents(texts)
+        except Exception as e:
+            raise e
+        # end try
+        print(ret)
+        return ret
 
     def embed_query(self, text: str) -> List[float]:
         """Embed query text."""

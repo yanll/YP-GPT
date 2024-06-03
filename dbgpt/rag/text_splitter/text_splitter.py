@@ -835,7 +835,12 @@ class SeparatorTextSplitter(CharacterTextSplitter):
         """Create a new TextSplitter."""
         if filters is None:
             filters = []
-        self._merge = kwargs.pop("enable_merge") or False
+            
+        if kwargs.get("enable_merge") is not None:
+            self._merge = kwargs.get("enable_merge")
+        else:
+            self._merge = False
+            
         super().__init__(**kwargs)
         self._separator = separator
         self._filter = filters

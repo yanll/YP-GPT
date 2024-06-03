@@ -118,9 +118,9 @@ class Monitor2(AirlineMonitorDataHandler):
             )
         print(f'监控二({days_type})构造条数: {len(d_n_datas)}！')
         for rec in d_n_datas:
-            if rec["PAYER_SALES_NAME"] is None or rec["PAYER_CUSTOMER_SIGNEDNAME"] is None:
+            if rec["SALES_NAME"] is None or rec["STAT_DISPAYSIGNEDNAME"] is None:
                 continue
-            k = str(rec["PAYER_SALES_NAME"]) + '#_#' + str(rec["PAYER_CUSTOMER_SIGNEDNAME"])
+            k = str(rec["SALES_NAME"]) + '#_#' + str(rec["STAT_DISPAYSIGNEDNAME"])
             result[k] = rec
         return result
 

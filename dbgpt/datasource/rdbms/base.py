@@ -10,7 +10,7 @@ from urllib.parse import quote_plus as urlquote
 
 import sqlalchemy
 import sqlparse
-from sqlalchemy import MetaData, Table, create_engine, inspect, select, text
+from sqlalchemy import MetaData, Table, create_engine, inspect, select, text, String
 from sqlalchemy.engine import CursorResult
 from sqlalchemy.exc import ProgrammingError, SQLAlchemyError
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -243,7 +243,28 @@ class RDBMSConnector(BaseConnector):
                 eg:[{'name': 'id', 'type': 'int', 'default_expression': '',
                 'is_in_primary_key': True, 'comment': 'id'}, ...]
         """
-        return self._inspector.get_columns(table_name)
+        columns = self._inspector.get_columns(table_name)
+        
+        for i, column in enumerate(columns):  # looping through row
+            # comment: 
+            if isinstance(column['type'],String) and ("NAME" in column['name'] or "BUSSINESS" in column['name']):
+            # if isinstance(column['type'],String) and "SALES_NAME" == column['name']:
+                result = self._query(f"""
+                    SELECT {column['name']}
+                    FROM (
+                        SELECT {column['name']}, COUNT(*) AS count
+                        FROM {table_name}
+                        GROUP BY {column['name']}
+                        ORDER BY count DESC
+                        LIMIT 10
+                    ) AS subquery;
+                """)
+                column['sample'] = ",".join(str(t[0]) for t in result[1:])
+                print(column)
+                
+            
+        # end for
+        return columns
 
     def _get_sample_rows(self, table: Table) -> str:
         # build the select command

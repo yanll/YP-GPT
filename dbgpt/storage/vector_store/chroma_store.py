@@ -75,6 +75,7 @@ class ChromaStore(VectorStoreBase):
             # chroma_db_impl="duckdb+parquet", => deprecated configuration of Chroma
             persist_directory=self.persist_dir,
             anonymized_telemetry=False,
+            allow_reset=True
         )
         self._chroma_client = PersistentClient(
             path=self.persist_dir, settings=chroma_settings
@@ -170,7 +171,15 @@ class ChromaStore(VectorStoreBase):
         """Delete vector name."""
         logger.info(f"chroma vector_name:{vector_name} begin delete...")
         # self.vector_store_client.delete_collection()
-        self._chroma_client.delete_collection(self._collection.name)
+        if self._collection:
+            self._chroma_client.delete_collection(self._collection.name)
+            self._collection = None
+            logger.info("delete_collection success")
+        if self._chroma_client:
+            result = self._chroma_client.reset()
+            self._chroma_client.clear_system_cache()
+            self._chroma_client = None
+            logger.info(f"remove and reset db_client success: {result}")
         self._clean_persist_folder()
         return True
 
@@ -238,13 +247,16 @@ class ChromaStore(VectorStoreBase):
             embeddings = self.embeddings.embed_documents(texts)
         if metadatas:
             try:
-                self._collection.upsert(
+                result = self._collection.upsert(
                     metadatas=metadatas,
                     embeddings=embeddings,  # type: ignore
                     documents=texts,
                     ids=ids,
                 )
-            except ValueError as e:
+                print(result)
+            except Exception as e:
+                print(e)
+                
                 logger.error(f"Error upsert chromadb with metadata: {e}")
         else:
             self._collection.upsert(
