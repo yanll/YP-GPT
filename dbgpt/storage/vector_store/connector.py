@@ -113,11 +113,32 @@ class VectorStoreConnector:
                 config_dict[key] = value
         config = self.config_class(**config_dict)
         try:
-            if vector_store_type in pools and config.name in pools[vector_store_type]:
-                self.client = pools[vector_store_type][config.name]
-            else:
-                client = self.connector_class(config)
-                pools[vector_store_type][config.name] = self.client = client
+            if vector_store_config is not None:
+                config: IndexStoreConfig = self.config_class()
+                config.name = getattr(vector_store_config, "name", "default_name")
+                config.embedding_fn = getattr(vector_store_config, "embedding_fn", None)
+                config.max_chunks_once_load = getattr(
+                    vector_store_config, "max_chunks_once_load", 5
+                )
+                config.max_threads = getattr(vector_store_config, "max_threads", 4)
+                config.user = getattr(vector_store_config, "user", None)
+                config.password = getattr(vector_store_config, "password", None)
+
+                # extra
+                config_dict = vector_store_config.dict()
+                config.llm_client = config_dict.get("llm_client", None)
+                config.model_name = config_dict.get("model_name", None)
+                if (
+                    vector_store_type in pools
+                    and config.name in pools[vector_store_type]
+                    and pools[vector_store_type][config.name] is not None
+                    # False
+                ):
+                    self.client = pools[vector_store_type][config.name]
+                else:
+                    client = self.connector_class(config)
+                    pools[vector_store_type][config.name] = self.client = client
+                    self.client = client
         except Exception as e:
             logger.error("connect vector store failed: %s", e)
             raise e
@@ -240,6 +261,8 @@ class VectorStoreConnector:
 
     def vector_name_exists(self):
         """Whether vector name exists."""
+        if not self.client:
+            return False
         return self.client.vector_name_exists()
 
     def delete_vector_name(self, vector_name: str):
@@ -251,6 +274,8 @@ class VectorStoreConnector:
         try:
             if self.vector_name_exists():
                 self.client.delete_vector_name(vector_name)
+                # self.client.
+                pools[self._vector_store_type][vector_name] = None
         except Exception as e:
             logger.error(f"delete vector name {vector_name} failed: {e}")
             raise Exception(f"delete name {vector_name} failed")
