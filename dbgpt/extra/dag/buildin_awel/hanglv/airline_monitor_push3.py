@@ -10,13 +10,14 @@ from dbgpt.extra.dag.buildin_awel.monitor import monitor, monitor3
 from dbgpt.extra.dag.buildin_awel.monitor.monitor3 import Monitor3
 from dbgpt.util.lark import lark_message_util
 
+
 class AirlineMonitorPush3(AirlineMonitorPush):
 
     def __init__(self):
         self.monitor = Monitor3()
         super().__init__()
 
-    def store_his_message(self,app_chat_service, sales, title, content, merchant_no, product, display_type):
+    def store_his_message(self, app_chat_service, sales, title, content, merchant_no, product, display_type):
         current_date = datetime.now().strftime('%Y-%m-%d')
         rec = {
             "id": str(uuid.uuid1()),
@@ -53,7 +54,6 @@ class AirlineMonitorPush3(AirlineMonitorPush):
 
         # 逐条处理数据并传入 rec
         for item in data:
-
             # 构建内容字符串
             # content = (
             #     f"Name: {item['name']}\n"
@@ -122,15 +122,3 @@ class AirlineMonitorPush3(AirlineMonitorPush):
                 content=content
             )
             print("发送的卡片信息是：", resp)
-
-
-
-
-
-
-
-
-
-
-
-

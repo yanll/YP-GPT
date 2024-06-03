@@ -54,7 +54,6 @@ class AirlineMonitorPush4(AirlineMonitorPush):
 
         # 逐条处理数据并传入 rec
         for item in data:
-
             # 构建内容字符串
             # content = (
             #     f"Name: {item['name']}\n"
@@ -95,7 +94,7 @@ class AirlineMonitorPush4(AirlineMonitorPush):
         for name, reports in name_to_data.items():
             if name not in conv_id_cache:
                 # 只在第一次遇到该 name 时调用 API
-                conv_id_cache[name] = hanglv_api_use.get_user_open_id(name= "张华雪")
+                conv_id_cache[name] = hanglv_api_use.get_user_open_id(name="张华雪")
             conv_id_map = conv_id_cache[name]
             print("cov_id的合集", conv_id_map)
 

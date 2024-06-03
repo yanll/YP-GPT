@@ -13,14 +13,13 @@ from dbgpt.extra.dag.buildin_awel.monitor.monitor1bypayer import Monitor1ByPayer
 from dbgpt.util.lark import lark_message_util
 
 
-
 class AirlineMonitorPush1_2(AirlineMonitorPush):
 
     def __init__(self):
         self.monitor = Monitor1ByPayer()
         super().__init__()
 
-    def store_his_message(self,app_chat_service, sales, title, content, reason, display_type):
+    def store_his_message(self, app_chat_service, sales, title, content, reason, display_type):
         current_date = datetime.now().strftime('%Y-%m-%d')
         rec = {
             "id": str(uuid.uuid1()),
@@ -57,7 +56,6 @@ class AirlineMonitorPush1_2(AirlineMonitorPush):
 
         # 逐条处理数据并传入 rec
         for item in data:
-
             # 合并 reason 字段
             reason = f"{item['reason4_text']}\n{item['reason5_text']}"
 
@@ -97,7 +95,6 @@ class AirlineMonitorPush1_2(AirlineMonitorPush):
             conv_id_map = conv_id_cache[name]
             print("cov_id的合集", conv_id_map)
 
-
             email, conv_id = next(iter(conv_id_map.items()))
             content = card_templates.travel_report_content1_2(
                 template_variable={
@@ -124,5 +121,3 @@ class AirlineMonitorPush1_2(AirlineMonitorPush):
             print("lark_message_id:", lark_message_id)
 
         return "Success"
-
-
