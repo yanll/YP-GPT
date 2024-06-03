@@ -173,9 +173,9 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                         return
                     if customer_success_count >= 0:
                         return
-                    reason1,reason1_text = self.find_reason1(sales_name, customer)
-                    reason2,reason2_text = self.find_reason2(sales_name, customer)
-                    reason3,reason3_text = self.find_reason3(sales_name, customer)
+                    reason1, reason1_text = self.find_reason1(sales_name, customer)
+                    reason2, reason2_text = self.find_reason2(sales_name, customer)
+                    reason3, reason3_text = self.find_reason3(sales_name, customer)
 
                     self.alert_list.append({
                         'title': '交易笔数波动异常',
@@ -270,7 +270,7 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
         except Exception as e:
             print('归因1处理错误')
 
-        return reason1,reason1_text
+        return reason1, reason1_text
 
     def find_reason2(self, sales_name, customer) -> list:
         print(f'监控一处理{sales_name}的商户签约名为{customer}的数据异常归因2')
@@ -316,7 +316,7 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
         except Exception as e:
             print('归因2处理错误')
 
-        return reason2,reason2_text
+        return reason2, reason2_text
 
     def find_reason3(self, sales_name, customer) -> list:
         print(f'监控一处理{sales_name}的商户签约名为{customer}的数据异常归因3')
