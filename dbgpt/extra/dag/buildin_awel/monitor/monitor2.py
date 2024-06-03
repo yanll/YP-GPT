@@ -127,6 +127,7 @@ class Monitor2(AirlineMonitorDataHandler):
     def run_by_stat(self):
         print('监控二(商户签约名维度)开始执行')
         sales_name_list = set()
+        d1_datas = {}
         try:
             print('监控二开始获取所有销售')
 
@@ -141,7 +142,7 @@ class Monitor2(AirlineMonitorDataHandler):
         for sales_name in sales_name_list:
             self.deal_sales_name(d1_datas, sales_name)
 
-    def deal_sales_name(self, d1_datas, sales_name):
+    def deal_sales_name(self, d1_datas: Dict, sales_name):
         customer_list = set()
         try:
             print(f'监控二开始获取{sales_name}的商户签约名')
@@ -155,7 +156,7 @@ class Monitor2(AirlineMonitorDataHandler):
         for customer in customer_list:
             self.deal_customer(d1_datas, sales_name, customer)
 
-    def deal_customer(self, d1_datas, sales_name, customer):
+    def deal_customer(self, d1_datas: Dict, sales_name, customer):
         try:
             print(f'监控二开始获取{sales_name}的商户 签约名为{customer}的数据')
             d_1_data = d1_datas[sales_name + "#_#" + customer]

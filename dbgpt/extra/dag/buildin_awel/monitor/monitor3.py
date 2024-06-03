@@ -1,3 +1,5 @@
+from typing import Dict
+
 from dbgpt.extra.dag.buildin_awel.monitor.airline_monitor_handler import AirlineMonitorDataHandler
 
 
@@ -35,19 +37,79 @@ class Monitor3(AirlineMonitorDataHandler):
         except Exception as e:
             print('监控三开始获取所有销售失败')
 
-        for sales_name in sales_name_list:
-            self.deal_sales_name(sales_name)
+        d1_result_sales, d1_result_sales_custom, d1_result_sales_custom_produc = self.build_d_n_stat_datas_by_some("d1")
+        d2_result_sales, d2_result_sales_custom, d2_result_sales_custom_produc = self.build_d_n_stat_datas_by_some("d2")
 
-    def deal_sales_name(self, sales_name):
+        for sales_name in sales_name_list:
+            self.deal_sales_name(
+                d1_result_sales,
+                d1_result_sales_custom,
+                d1_result_sales_custom_produc,
+                d2_result_sales,
+                d2_result_sales_custom,
+                d2_result_sales_custom_produc,
+                sales_name
+            )
+
+    def build_d_n_stat_datas_by_some(self, days_type):
+        """按1、销售，2、销售、签约名，3、销售、签约名、产品分组，构造数据"""
+        result_sales: Dict = {}
+        result_sales_custom: Dict = {}
+        result_sales_custom_produc: Dict = {}
+        d_n_datas = []
+        if days_type == "d1":
+            d_n_datas = self.monitor3_data.get_data_by_stat_in_monitor3(
+                trx_date=self.d_1_trx_date
+            )
+        if days_type == "d2":
+            d_n_datas = self.monitor3_data.get_data_by_stat_in_monitor3(
+                trx_date=self.d_2_trx_date
+            )
+        print(f'监控三({days_type})构造条数: {len(d_n_datas)}！')
+        for rec in d_n_datas:
+            if rec["SALES_NAME"] is None:
+                continue
+            k = str(rec["SALES_NAME"])
+            result_sales[k] = rec
+        for rec in d_n_datas:
+            if rec["SALES_NAME"] is None or rec["STAT_DISPAYSIGNEDNAME"] is None:
+                continue
+            k = str(rec["SALES_NAME"]) + '#_#' + str(rec["STAT_DISPAYSIGNEDNAME"])
+            result_sales_custom[k] = rec
+        for rec in d_n_datas:
+            if rec["SALES_NAME"] is None or rec["STAT_DISPAYSIGNEDNAME"] is None or rec["PRODUCT"] is None:
+                continue
+            k = str(rec["SALES_NAME"]) + '#_#' + str(rec["STAT_DISPAYSIGNEDNAME"]) + '#_#' + str(rec["PRODUCT"])
+            result_sales_custom_produc[k] = rec
+        return result_sales, result_sales_custom, result_sales_custom_produc
+
+    def deal_sales_name(
+            self,
+            d1_result_sales,
+            d1_result_sales_custom,
+            d1_result_sales_custom_produc,
+            d2_result_sales,
+            d2_result_sales_custom,
+            d2_result_sales_custom_produc,
+            sales_name
+    ):
         customer_list = set()
         d_1_customer_to_success_amount = {}
         d_2_customer_to_success_amount = {}
         try:
             print(f'监控三开始获取{sales_name}的商户签约名')
-            d_1_data = self.monitor3_data.get_data_by_stat_in_monitor3(trx_date=self.d_1_trx_date,
-                                                                       sales_name=sales_name)
-            d_2_data = self.monitor3_data.get_data_by_stat_in_monitor3(trx_date=self.d_2_trx_date,
-                                                                       sales_name=sales_name)
+
+            d_1_data = d1_result_sales_custom[sales_name]
+            d_2_data = d2_result_sales_custom[sales_name]
+
+            # d_1_data = self.monitor3_data.get_data_by_stat_in_monitor3(
+            #     trx_date=self.d_1_trx_date,
+            #     sales_name=sales_name
+            # )
+            # d_2_data = self.monitor3_data.get_data_by_stat_in_monitor3(
+            #     trx_date=self.d_2_trx_date,
+            #     sales_name=sales_name
+            # )
             for item in d_1_data:
                 customer_list.add(item['STAT_DISPAYSIGNEDNAME'])
                 d_1_customer_to_success_amount[item['STAT_DISPAYSIGNEDNAME']] = float(item['SUCCESS_AMOUNT'])
@@ -68,19 +130,41 @@ class Monitor3(AirlineMonitorDataHandler):
             # 除数为0，抛弃
             if d_1_customer_success_amount == 0 or d_2_customer_success_amount == 0:
                 continue
-            self.deal_customer(sales_name, customer, d_1_customer_success_amount, d_2_customer_success_amount)
+            self.deal_customer(
+                d1_result_sales_custom,
+                d1_result_sales_custom_produc,
+                d2_result_sales_custom,
+                d2_result_sales_custom_produc,
+                sales_name,
+                customer,
+                d_1_customer_success_amount,
+                d_2_customer_success_amount
+            )
 
-    def deal_customer(self, sales_name, customer, d_1_customer_success_amount: float,
-                      d_2_customer_success_amount: float):
+    def deal_customer(
+            self,
+            d1_result_sales_custom,
+            d1_result_sales_custom_produc,
+            d2_result_sales_custom,
+            d2_result_sales_custom_produc,
+            sales_name, customer, d_1_customer_success_amount: float,
+            d_2_customer_success_amount: float
+    ):
         product_list = set()
         try:
             print(f'监控三开始获取{sales_name}的商户签约名为{customer}的数据')
-            d_1_data = self.monitor3_data.get_data_by_stat_in_monitor3(trx_date=self.d_1_trx_date,
-                                                                       sales_name=sales_name,
-                                                                       stat_dispaysignedname=customer)
-            d_2_data = self.monitor3_data.get_data_by_stat_in_monitor3(trx_date=self.d_2_trx_date,
-                                                                       sales_name=sales_name,
-                                                                       stat_dispaysignedname=customer)
+            d_1_data = d1_result_sales_custom[sales_name + "#_#" + customer]
+            d_2_data = d2_result_sales_custom[sales_name + "#_#" + customer]
+            # d_1_data = self.monitor3_data.get_data_by_stat_in_monitor3(
+            #     trx_date=self.d_1_trx_date,
+            #     sales_name=sales_name,
+            #     stat_dispaysignedname=customer
+            # )
+            # d_2_data = self.monitor3_data.get_data_by_stat_in_monitor3(
+            #     trx_date=self.d_2_trx_date,
+            #     sales_name=sales_name,
+            #     stat_dispaysignedname=customer
+            # )
 
             for item in d_1_data:
                 product_list.add(item['PRODUCT'])
@@ -92,17 +176,28 @@ class Monitor3(AirlineMonitorDataHandler):
             return
 
         for product in product_list:
-            self.deal_product(sales_name, customer, d_1_customer_success_amount, d_2_customer_success_amount, product)
+            self.deal_product(d1_result_sales_custom_produc, d2_result_sales_custom_produc, sales_name, customer,
+                              d_1_customer_success_amount, d_2_customer_success_amount, product)
 
-    def deal_product(self, sales_name, customer, d_1_customer_success_amount, d_2_customer_success_amount, product):
+    def deal_product(self, d1_result_sales_custom_produc, d2_result_sales_custom_produc, sales_name, customer,
+                     d_1_customer_success_amount, d_2_customer_success_amount, product):
         try:
             print(f'监控三开始获取{sales_name}的商户 签约名为{customer}的数据')
-            d_1_data = self.monitor3_data.get_data_by_stat_in_monitor3(trx_date=self.d_1_trx_date,
-                                                                       sales_name=sales_name,
-                                                                       stat_dispaysignedname=customer, product=product)
-            d_2_data = self.monitor3_data.get_data_by_stat_in_monitor3(trx_date=self.d_2_trx_date,
-                                                                       sales_name=sales_name,
-                                                                       stat_dispaysignedname=customer, product=product)
+            d_1_data = d1_result_sales_custom_produc[sales_name + "#_#" + customer + "#_#" + product]
+            d_2_data = d2_result_sales_custom_produc[sales_name + "#_#" + customer + "#_#" + product]
+
+            # d_1_data = self.monitor3_data.get_data_by_stat_in_monitor3(
+            #     trx_date=self.d_1_trx_date,
+            #     sales_name=sales_name,
+            #     stat_dispaysignedname=customer,
+            #     product=product
+            # )
+            # d_2_data = self.monitor3_data.get_data_by_stat_in_monitor3(
+            #     trx_date=self.d_2_trx_date,
+            #     sales_name=sales_name,
+            #     stat_dispaysignedname=customer,
+            #     product=product
+            # )
         except Exception as e:
             print(f'监控三开始获取{sales_name}的商户签约名为{customer}的数据失败')
             return
@@ -254,8 +349,6 @@ class Monitor3(AirlineMonitorDataHandler):
                 })
         except Exception as e:
             print(f'监控三开始处理{payer_sales_name}的付方签约名为{payer_customer}的产品为{payer_product}数据失败')
-
-
 
 # if __name__ == "__main__":
 #     a = Monitor3()
