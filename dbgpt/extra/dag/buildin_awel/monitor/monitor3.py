@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import Dict
 
 from dbgpt.extra.dag.buildin_awel.monitor.airline_monitor_handler import AirlineMonitorDataHandler
@@ -53,9 +54,6 @@ class Monitor3(AirlineMonitorDataHandler):
 
     def build_d_n_stat_datas_by_some(self, days_type):
         """按1、销售，2、销售、签约名，3、销售、签约名、产品分组，构造数据"""
-        result_sales: Dict = {}
-        result_sales_custom: Dict = {}
-        result_sales_custom_produc: Dict = {}
         d_n_datas = []
         if days_type == "d1":
             d_n_datas = self.monitor3_data.get_data_by_stat_in_monitor3(
@@ -65,29 +63,30 @@ class Monitor3(AirlineMonitorDataHandler):
             d_n_datas = self.monitor3_data.get_data_by_stat_in_monitor3(
                 trx_date=self.d_2_trx_date
             )
-        print(f'监控三({days_type})构造条数: {len(d_n_datas)}！')
         for rec in d_n_datas:
             if rec["SALES_NAME"] is None:
-                continue
-            k = str(rec["SALES_NAME"])
-            result_sales[k] = rec
+                rec["SALES_NAME"] = "None"
+            if rec["STAT_DISPAYSIGNEDNAME"] is None:
+                rec["STAT_DISPAYSIGNEDNAME"] = "None"
+            if rec["PRODUCT"] is None:
+                rec["PRODUCT"] = "None"
+        print(f'监控三({days_type})构造条数: {len(d_n_datas)}！')
+
+        result_sales = defaultdict(list)
+        result_sales_custom = defaultdict(list)
+        result_sales_custom_produc = defaultdict(list)
         for rec in d_n_datas:
-            if rec["SALES_NAME"] is None or rec["STAT_DISPAYSIGNEDNAME"] is None:
-                continue
+            result_sales[rec["SALES_NAME"]].append(rec)
+        for rec in d_n_datas:
             k = str(rec["SALES_NAME"]) + '#_#' + str(rec["STAT_DISPAYSIGNEDNAME"])
-            result_sales_custom[k] = rec
+            result_sales_custom[k].append(rec)
         for rec in d_n_datas:
-            if rec["SALES_NAME"] is None or rec["STAT_DISPAYSIGNEDNAME"] is None or rec["PRODUCT"] is None:
-                continue
             k = str(rec["SALES_NAME"]) + '#_#' + str(rec["STAT_DISPAYSIGNEDNAME"]) + '#_#' + str(rec["PRODUCT"])
-            result_sales_custom_produc[k] = rec
+            result_sales_custom_produc[k].append(rec)
         return result_sales, result_sales_custom, result_sales_custom_produc
 
     def build_d_n_payer_datas_by_some(self, days_type):
         """按1、销售，2、销售、签约名，3、销售、签约名、产品分组，构造数据"""
-        result_sales: Dict = {}
-        result_sales_custom: Dict = {}
-        result_sales_custom_produc: Dict = {}
         d_n_datas = []
         if days_type == "d1":
             d_n_datas = self.monitor3_data.get_data_by_payer_in_monitor3(
@@ -98,22 +97,26 @@ class Monitor3(AirlineMonitorDataHandler):
                 trx_date=self.d_2_trx_date
             )
         print(f'监控三({days_type})构造条数: {len(d_n_datas)}！')
+
         for rec in d_n_datas:
             if rec["PAYER_SALES_NAME"] is None:
-                continue
-            k = str(rec["PAYER_SALES_NAME"])
-            result_sales[k] = rec
+                rec["PAYER_SALES_NAME"] = "None"
+            if rec["PAYER_CUSTOMER_SIGNEDNAME"] is None:
+                rec["PAYER_CUSTOMER_SIGNEDNAME"] = "None"
+            if rec["PRODUCT"] is None:
+                rec["PRODUCT"] = "None"
+        result_sales = defaultdict(list)
+        result_sales_custom = defaultdict(list)
+        result_sales_custom_produc = defaultdict(list)
         for rec in d_n_datas:
-            if rec["PAYER_SALES_NAME"] is None or rec["PAYER_CUSTOMER_SIGNEDNAME"] is None:
-                continue
+            result_sales[rec["PAYER_SALES_NAME"]].append(rec)
+        for rec in d_n_datas:
             k = str(rec["PAYER_SALES_NAME"]) + '#_#' + str(rec["PAYER_CUSTOMER_SIGNEDNAME"])
-            result_sales_custom[k] = rec
+            result_sales_custom[k].append(rec)
         for rec in d_n_datas:
-            if rec["PAYER_SALES_NAME"] is None or rec["PAYER_CUSTOMER_SIGNEDNAME"] is None or rec["PRODUCT"] is None:
-                continue
             k = str(rec["PAYER_SALES_NAME"]) + '#_#' + str(rec["PAYER_CUSTOMER_SIGNEDNAME"]) + '#_#' + str(
                 rec["PRODUCT"])
-            result_sales_custom_produc[k] = rec
+            result_sales_custom_produc[k].append(rec)
         return result_sales, result_sales_custom, result_sales_custom_produc
 
     def deal_sales_name(
@@ -149,6 +152,8 @@ class Monitor3(AirlineMonitorDataHandler):
             for item in d_2_data:
                 customer_list.add(item['STAT_DISPAYSIGNEDNAME'])
                 d_2_customer_to_success_amount[item['STAT_DISPAYSIGNEDNAME']] = float(item['SUCCESS_AMOUNT'])
+            print(f'监控三开始获取{sales_name}的商户签约名成功！')
+
         except Exception as e:
             print(f'监控三开始获取{sales_name}的商户签约名失败！')
             return
@@ -203,7 +208,7 @@ class Monitor3(AirlineMonitorDataHandler):
                 product_list.add(item['PRODUCT'])
             for item in d_2_data:
                 product_list.add(item['PRODUCT'])
-
+            print(f'监控三开始获取{sales_name}的商户签约名为{customer}的数据成功')
         except Exception as e:
             print(f'监控三开始获取{sales_name}的商户签约名为{customer}的数据失败')
             return
@@ -277,6 +282,8 @@ class Monitor3(AirlineMonitorDataHandler):
                 payer_sales_name_list.add(item['PAYER_SALES_NAME'])
             for item in d_2_data:
                 payer_sales_name_list.add(item['PAYER_SALES_NAME'])
+
+            print('监控三开始获取所有付方销售成功')
         except Exception as e:
             print('监控三开始获取所有付方销售失败')
 
@@ -329,6 +336,8 @@ class Monitor3(AirlineMonitorDataHandler):
             for item in d_2_data:
                 payer_customer_list.add(item['PAYER_CUSTOMER_SIGNEDNAME'])
                 d_2_payer_customer_to_success_amount[item['PAYER_CUSTOMER_SIGNEDNAME']] = float(item['SUCCESS_AMOUNT'])
+
+            print(f'监控三开始获取{payer_sales_name}的付方签约名成功！')
         except Exception as e:
             print(f'监控三开始获取{payer_sales_name}的付方签约名失败！')
             return
@@ -384,7 +393,7 @@ class Monitor3(AirlineMonitorDataHandler):
                 payer_product_list.add(item['PRODUCT'])
             for item in d_2_data:
                 payer_product_list.add(item['PRODUCT'])
-
+            print(f'监控三开始获取{payer_sales_name}的付方签约名为{payer_customer}的数据成功')
         except Exception as e:
             print(f'监控三开始获取{payer_sales_name}的付方签约名为{payer_customer}的数据失败')
             return
@@ -425,6 +434,7 @@ class Monitor3(AirlineMonitorDataHandler):
             #     payer_customer_signedname=payer_customer,
             #     product=payer_product
             # )
+            print(f'监控三开始获取{payer_sales_name}的付方签约名为{payer_customer}的数据成功')
         except Exception as e:
             print(f'监控三开始获取{payer_sales_name}的付方签约名为{payer_customer}的数据失败')
             return
@@ -454,6 +464,8 @@ class Monitor3(AirlineMonitorDataHandler):
                     'content_rich': f"波动详情：      交易无明显波动，但{payer_product}产品结构有变化，变化值为<text_tag color={'orange' if difference < 1 else 'carmine'}>{difference * 100:.2f}%</text_tag>，请关注。",
                     "type": "付方签约名"
                 })
+
+            print(f'监控三开始处理{payer_sales_name}的付方签约名为{payer_customer}的产品为{payer_product}数据成功')
         except Exception as e:
             print(f'监控三开始处理{payer_sales_name}的付方签约名为{payer_customer}的产品为{payer_product}数据失败')
 

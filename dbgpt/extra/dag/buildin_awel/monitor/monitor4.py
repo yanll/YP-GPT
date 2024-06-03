@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import Dict
 
@@ -71,9 +72,7 @@ class Monitor4(AirlineMonitorDataHandler):
 
     def build_d_n_stat_datas_by_some(self, days_type):
         """按1、销售，2、销售、签约名，3、销售、签约名、产品分组，构造数据"""
-        result_sales: Dict = {}
-        result_sales_custom: Dict = {}
-        result_sales_custom_produc: Dict = {}
+
         d_n_datas = []
         if days_type == "d1d7":
             d_n_datas = self.monitor4_data.get_data_by_stat_in_monitor4(
@@ -86,19 +85,24 @@ class Monitor4(AirlineMonitorDataHandler):
         print(f'监控四({days_type})构造条数: {len(d_n_datas)}！')
         for rec in d_n_datas:
             if rec["SALES_NAME"] is None:
-                continue
+                rec["SALES_NAME"] = "None"
+            if rec["STAT_DISPAYSIGNEDNAME"] is None:
+                rec["STAT_DISPAYSIGNEDNAME"] = "None"
+            if rec["PAYER_CUSTOMER_SIGNEDNAME"] is None:
+                rec["PAYER_CUSTOMER_SIGNEDNAME"] = "None"
+        result_sales = defaultdict(list)
+        result_sales_custom = defaultdict(list)
+        result_sales_custom_produc = defaultdict(list)
+        for rec in d_n_datas:
             k = str(rec["SALES_NAME"])
-            result_sales[k] = rec
+            result_sales[k].append(rec)
         for rec in d_n_datas:
-            if rec["SALES_NAME"] is None or rec["STAT_DISPAYSIGNEDNAME"] is None:
-                continue
             k = str(rec["SALES_NAME"]) + '#_#' + str(rec["STAT_DISPAYSIGNEDNAME"])
-            result_sales_custom[k] = rec
+            result_sales_custom[k].append(rec)
         for rec in d_n_datas:
-            if rec["SALES_NAME"] is None or rec["STAT_DISPAYSIGNEDNAME"] is None or rec["PAYER_CUSTOMER_SIGNEDNAME"] is None:
-                continue
-            k = str(rec["SALES_NAME"]) + '#_#' + str(rec["STAT_DISPAYSIGNEDNAME"]) + '#_#' + str(rec["PAYER_CUSTOMER_SIGNEDNAME"])
-            result_sales_custom_produc[k] = rec
+            k = str(rec["SALES_NAME"]) + '#_#' + str(rec["STAT_DISPAYSIGNEDNAME"]) + '#_#' + str(
+                rec["PAYER_CUSTOMER_SIGNEDNAME"])
+            result_sales_custom_produc[k].append(rec)
         return result_sales, result_sales_custom, result_sales_custom_produc
 
     def deal_sales_name(
