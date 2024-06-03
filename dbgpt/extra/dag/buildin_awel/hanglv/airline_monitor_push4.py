@@ -23,7 +23,6 @@ class AirlineMonitorPush4(AirlineMonitorPush):
             "id": str(uuid.uuid1()),
             "agent_name": "SalesAssistant",
             "node_name": "final",
-            #"conv_uid": sender_open_id,
             "message_type": "view",
             "content": content,
             "message_detail": "",
@@ -36,7 +35,7 @@ class AirlineMonitorPush4(AirlineMonitorPush):
             "product": product,
             "merchant_no": merchant_no,
             "reason": "",
-            "type": "深航/国航充值业务",
+            "type": "航旅波动检测归因4_深航/国航充值业务",
             "created_time": "",
             "modified_time": "",
         }
@@ -55,12 +54,6 @@ class AirlineMonitorPush4(AirlineMonitorPush):
 
         # 逐条处理数据并传入 rec
         for item in data:
-            # # 获取用户 ID
-            # name = item['name']
-            # print(name)
-            # get_sender_open_id = hanglv_api_use.get_user_open_id(name)
-            # sender_open_id = next(iter(get_sender_open_id.values()), 'noname')
-            # print(sender_open_id)
 
             # 构建内容字符串
             content = (
@@ -77,7 +70,6 @@ class AirlineMonitorPush4(AirlineMonitorPush):
             # 调用存储消息的函数
             self.store_his_message(
                 app_chat_service,
-               # sender_open_id=sender_open_id,
                 sales=item['name'],
                 title=item['title'],
                 content=content,
@@ -89,6 +81,8 @@ class AirlineMonitorPush4(AirlineMonitorPush):
             )
 
         name_to_data = {}
+        conv_id_cache = {}
+
         for report in data:
             name = report['name']
             title = report['title']
@@ -99,7 +93,11 @@ class AirlineMonitorPush4(AirlineMonitorPush):
             name_to_data[name].append(report_with_num)
 
         for name, reports in name_to_data.items():
-            conv_id_map = hanglv_api_use.get_user_open_id(name="张华雪")
+            if name not in conv_id_cache:
+                # 只在第一次遇到该 name 时调用 API
+                conv_id_cache[name] = hanglv_api_use.get_user_open_id(name)
+            conv_id_map = conv_id_cache[name]
+            print("cov_id的合集", conv_id_map)
             for email, conv_id in conv_id_map.items():
                 content = card_templates.travel_report_content4(
                     template_variable={
