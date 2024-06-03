@@ -56,23 +56,23 @@ class AirlineMonitorPush4(AirlineMonitorPush):
         for item in data:
 
             # 构建内容字符串
-            content = (
-                f"Name: {item['name']}\n"
-                f"Title: {item['title']}\n"
-                f"Content: {item['content']}\n"
-                f"Payer Customer Signed Name: {item['payer_customer_signedname']}\n"
-                f"Stat Display Signed Name: {item['stat_dispaysignedname']}\n"
-                f"Customer No: {item['customer_no']}\n"
-                f"Payer Business Scene: {item['payer_business_scene']}\n"
-                f"Sub Content Rich: {item['sub_content_rich']}\n"
-            )
+            # content = (
+            #     f"Name: {item['name']}\n"
+            #     f"Title: {item['title']}\n"
+            #     f"Content: {item['content']}\n"
+            #     f"Payer Customer Signed Name: {item['payer_customer_signedname']}\n"
+            #     f"Stat Display Signed Name: {item['stat_dispaysignedname']}\n"
+            #     f"Customer No: {item['customer_no']}\n"
+            #     f"Payer Business Scene: {item['payer_business_scene']}\n"
+            #     f"Sub Content Rich: {item['sub_content_rich']}\n"
+            # )
 
             # 调用存储消息的函数
             self.store_his_message(
                 app_chat_service,
                 sales=item['name'],
                 title=item['title'],
-                content=content,
+                content=item['content'],
                 product=item['payer_customer_signedname'],
                 scene=item['stat_dispaysignedname'],
                 merchant_no=item['customer_no'],
@@ -95,39 +95,36 @@ class AirlineMonitorPush4(AirlineMonitorPush):
         for name, reports in name_to_data.items():
             if name not in conv_id_cache:
                 # 只在第一次遇到该 name 时调用 API
-                conv_id_cache[name] = hanglv_api_use.get_user_open_id(name)
+                conv_id_cache[name] = hanglv_api_use.get_user_open_id(name= "张华雪")
             conv_id_map = conv_id_cache[name]
             print("cov_id的合集", conv_id_map)
-            conv_id_map = {'huaxue.zhang@yeepay.com': 'ou_9d42bb88ec8940baf3ad183755131881',
-                           'liangliang.yan@yeepay.com': 'ou_a22698cffd738d7851ef30f5dad1a06c',
-                           'bo.liu-2@yeepay.com': 'ou_850210efe332c6e50256b21b29832f1f',
-                           'yangsheng.su@yeepay.com': 'ou_079964d3b15f58fc330058a629b8ed41'}
-            for email, conv_id in conv_id_map.items():
-                content = card_templates.travel_report_content4(
-                    template_variable={
-                        "unlike_callback_event": {
-                            "event_type": "unlike",
-                            "event_source": "",
-                            "event_data": {
-                                "message": "航旅波动检测归因4_深航/国航充值业务"
-                            }
-                        },
-                        "travel_report_list": reports,
-                        "title": title,
-                        "name": name
-                    }
+
+            email, conv_id = next(iter(conv_id_map.items()))
+            content = card_templates.travel_report_content4(
+                template_variable={
+                    "unlike_callback_event": {
+                        "event_type": "unlike",
+                        "event_source": "",
+                        "event_data": {
+                            "message": "航旅波动检测归因4_深航/国航充值业务"
+                        }
+                    },
+                    "travel_report_list": reports,
+                    "title": title,
+                    "name": name
+                }
+            )
+            print("发送给:", name, "Conv ID:", conv_id)
+            print("生成的内容:", content)
+            try:
+                resp = lark_message_util.send_card_message(
+                    receive_id=conv_id,
+                    content=content
                 )
-                print("发送给:", name, "Conv ID:", conv_id)
-                print("生成的内容:", content)
-                try:
-                    resp = lark_message_util.send_card_message(
-                        receive_id=conv_id,
-                        content=content
-                    )
-                    print("发送的卡片信息:", resp)
-                    lark_message_id = resp.get("message_id", "")
-                    print("lark_message_id:", lark_message_id)
-                except Exception as e:
-                    logging.error(f"Error sending message to {name}: {e}")
+                print("发送的卡片信息:", resp)
+                lark_message_id = resp.get("message_id", "")
+                print("lark_message_id:", lark_message_id)
+            except Exception as e:
+                logging.error(f"Error sending message to {name}: {e}")
 
         return "Success"

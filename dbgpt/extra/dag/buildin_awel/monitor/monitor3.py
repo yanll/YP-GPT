@@ -12,7 +12,7 @@ class Monitor3(AirlineMonitorDataHandler):
     def prepare_data(self):
         self.alert_list = []
         try:
-            print('监控二中开始获取工作日')
+            print('监控三中开始获取工作日')
             self.d_1_trx_date = ','.join(self.get_past_working_days(1))
             self.d_2_trx_date = ','.join(self.get_past_working_days(2)).split(',')[1]
         except Exception as e:
@@ -469,7 +469,7 @@ class Monitor3(AirlineMonitorDataHandler):
         except Exception as e:
             print(f'监控三开始处理{payer_sales_name}的付方签约名为{payer_customer}的产品为{payer_product}数据失败')
 
-# if __name__ == "__main__":
-#     a = Monitor3()
-#     b = a.run()
-#     print(b)
+if __name__ == "__main__":
+    a = Monitor3()
+    b = a.run()
+    print(b)
