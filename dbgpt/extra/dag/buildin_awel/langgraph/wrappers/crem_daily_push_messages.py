@@ -562,7 +562,7 @@ def shujuqingk(open_id):
 
         # 计算上周同一时间的毛利变化率
         if result_yesterday != 0:
-            weekly_change_rate = ((result_yesterday - result_weekly_before_today) / result_yesterday) * 100
+            weekly_change_rate = ((result_yesterday - result_weekly_before_today) / result_weekly_before_today) * 100
             print("昨天的毛利++++++++++++",result_yesterday)
             print("上周同比昨天的毛利++++++++++++",result_weekly_before_today)
             weekly_change_rate_formatted = "{:.2f}%".format(weekly_change_rate)
