@@ -17,7 +17,7 @@ class AirlineMonitorPush2(AirlineMonitorPush):
         self.monitor = Monitor2()
         super().__init__()
 
-    def store_his_message(self, app_chat_service, sales, title, content,reason, merchant_no, product,
+    def store_his_message(self, app_chat_service, sales, title, content, reason, merchant_no, product,
                           display_type):
         current_date = datetime.now().strftime('%Y-%m-%d')
         rec = {
@@ -51,12 +51,10 @@ class AirlineMonitorPush2(AirlineMonitorPush):
         print("数值的返回结果", hv_data)
         data = hv_data
 
-
         app_chat_service = AppChatService()  # Create the instance once
 
         # 逐条处理数据并传入 rec
         for item in data:
-
             # 构建内容字符串
             reason = (
                 f"Name: {item['name']}\n"
@@ -67,7 +65,6 @@ class AirlineMonitorPush2(AirlineMonitorPush):
 
             )
 
-
             # 调用存储消息的函数
             self.store_his_message(
                 app_chat_service,
@@ -76,7 +73,7 @@ class AirlineMonitorPush2(AirlineMonitorPush):
                 title=item['title'],
                 content=item['content'],
                 merchant_no=item['customer_name'],
-                reason = reason,
+                reason=reason,
                 product=item['type'],
                 display_type="hanglv_card",
 
