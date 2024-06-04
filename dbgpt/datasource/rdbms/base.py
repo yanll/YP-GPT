@@ -256,7 +256,7 @@ class RDBMSConnector(BaseConnector):
                         FROM {table_name}
                         GROUP BY {column['name']}
                         ORDER BY count DESC
-                        LIMIT 10
+                        LIMIT 20
                     ) AS subquery;
                 """)
                 column['sample'] = ",".join(str(t[0]) for t in result[1:])
