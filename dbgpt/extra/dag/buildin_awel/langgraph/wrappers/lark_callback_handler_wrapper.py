@@ -380,7 +380,7 @@ def do_new_chat(app_chat_service, open_id):
     try:
         userinfo = larkutil.select_userinfo(open_id=open_id)
         if userinfo and "name" in userinfo:
-            nickname = userinfo["name"] + " "
+            nickname = str(userinfo["name"])
             # print("用户的姓名是",nickname)
     except Exception as e:
         logging.warning("用户姓名解析异常：", open_id)

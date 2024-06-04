@@ -32,7 +32,7 @@ class AbilityDisplayTool(BaseTool):
             nickname = ""
             userinfo = larkutil.select_userinfo(open_id=conv_id)
             if userinfo and "name" in userinfo:
-                nickname = userinfo["name"] + " "
+                nickname = str(userinfo["name"])
             content = card_templates.welcome_and_ability_display(
                 template_variable={
                     "card_metadata": {
