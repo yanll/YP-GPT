@@ -15,6 +15,7 @@ interface IChatContext {
   chatId: string;
   model: string;
   dbParam?: string;
+  tableParam?: string;
   modelList: Array<string>;
   agent: string;
   dialogueList?: DialogueListResponse;
@@ -24,6 +25,7 @@ interface IChatContext {
   setIsContract: (val: boolean) => void;
   setIsMenuExpand: (val: boolean) => void;
   setDbParam: (val: string) => void;
+  setTableParam: (val: string) => void;
   queryDialogueList: () => void;
   refreshDialogList: () => void;
   currentDialogue?: DialogueListResponse[0];
@@ -46,6 +48,7 @@ const ChatContext = createContext<IChatContext>({
   modelList: [],
   model: '',
   dbParam: undefined,
+  tableParam: undefined,
   dialogueList: [],
   agent: '',
   setAgent: () => {},
@@ -53,6 +56,7 @@ const ChatContext = createContext<IChatContext>({
   setIsContract: () => {},
   setIsMenuExpand: () => {},
   setDbParam: () => void 0,
+  setTableParam: () => void 0,
   queryDialogueList: () => {},
   refreshDialogList: () => {},
   setMode: () => void 0,
@@ -72,6 +76,7 @@ const ChatContextProvider = ({ children }: { children: React.ReactElement }) => 
   const [model, setModel] = useState<string>('');
   const [isMenuExpand, setIsMenuExpand] = useState<boolean>(scene !== 'chat_dashboard');
   const [dbParam, setDbParam] = useState<string>(db_param);
+  const [tableParam, setTableParam] = useState<string>(db_param);
   const [agent, setAgent] = useState<string>('');
   const [history, setHistory] = useState<ChatHistoryResponse>([]);
   const [docId, setDocId] = useState<number>();
@@ -120,6 +125,7 @@ const ChatContextProvider = ({ children }: { children: React.ReactElement }) => 
     modelList,
     model,
     dbParam: dbParam || db_param,
+    tableParam: tableParam || "",
     dialogueList,
     agent,
     setAgent,
@@ -129,6 +135,7 @@ const ChatContextProvider = ({ children }: { children: React.ReactElement }) => 
     setIsContract,
     setIsMenuExpand,
     setDbParam,
+    setTableParam,
     queryDialogueList,
     refreshDialogList,
     currentDialogue,

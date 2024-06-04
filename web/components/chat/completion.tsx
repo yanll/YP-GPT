@@ -28,7 +28,7 @@ type Props = {
 };
 
 const Completion = ({ messages, onSubmit }: Props) => {
-  const { dbParam, currentDialogue, scene, model, refreshDialogList, chatId, agent, docId } = useContext(ChatContext);
+  const { dbParam, currentDialogue, scene, model, refreshDialogList, chatId, agent, docId,tableParam } = useContext(ChatContext);
   const { t } = useTranslation();
   const searchParams = useSearchParams();
 
@@ -71,6 +71,7 @@ const Completion = ({ messages, onSubmit }: Props) => {
       setIsLoading(true);
       await onSubmit(content, {
         select_param: selectParam ?? '',
+        table_name: tableParam
         // incremental,
       });
     } finally {

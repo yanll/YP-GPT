@@ -8,7 +8,7 @@ import { useContext, useEffect, useMemo, useState } from 'react';
 import DBIcon from '@/components/common/db-icon';
 
 function DBSelector() {
-  const { scene, dbParam, setDbParam } = useContext(ChatContext);
+  const { scene, dbParam, setDbParam, tableParam, setTableParam } = useContext(ChatContext);
 
   const [dbs, setDbs] = useState<IDB[]>([]);
 
@@ -34,20 +34,43 @@ function DBSelector() {
   if (!dbOpts?.length) return null;
 
   return (
-    <Select
-      value={dbParam}
-      className="w-36"
-      onChange={(val) => {
-        setDbParam(val);
-      }}
-    >
-      {dbOpts.map((item) => (
-        <Select.Option key={item.name}>
-          <DBIcon width={24} height={24} src={item.icon} label={item.label} className="w-[1.5em] h-[1.5em] mr-1 inline-block mt-[-4px]" />
-          {item.name}
-        </Select.Option>
-      ))}
-    </Select>
+    <>
+      <Select
+        value={dbParam}
+        className="w-56"
+        onChange={(val) => {
+          setDbParam(val);
+        }}
+      >
+        {dbOpts.map((item) => (
+          <Select.Option key={item.name}>
+            <DBIcon width={24} height={24} src={item.icon} label={item.label} className="w-[1.5em] h-[1.5em] mr-1 inline-block mt-[-4px]" />
+            {item.name}
+          </Select.Option>
+        ))}
+      </Select>
+      {/* {process.env.NODE_ENV} */}
+      <Select
+        value={tableParam}
+        className="w-56"
+        onChange={(val) => {
+          setTableParam(val);
+        }}
+      >
+        {process.env.NODE_ENV === "development" && <Select.Option key={'my_first_table'}>
+          my_first_table
+        </Select.Option>}
+        {process.env.NODE_ENV === "development" && <Select.Option key={'my_second_table'}>
+          my_second_table
+        </Select.Option>}
+
+
+        {process.env.NODE_ENV !== "development" && <Select.Option key={'dp_dws_dw_event_trx_pay'}>
+          dp_dws_dw_event_trx_pay
+        </Select.Option>}
+      </Select>
+
+    </>
   );
 }
 

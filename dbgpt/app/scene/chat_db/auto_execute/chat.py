@@ -26,6 +26,7 @@ class ChatWithDbAutoExecute(BaseChat):
         
         chat_mode = ChatScene.ChatWithDbExecute
         self.db_name = chat_param["select_param"]
+        self.table_name = chat_param["table_name"] if chat_param.get("table_name") is not None else None
         chat_param["chat_mode"] = chat_mode
         """ """
         super().__init__(
@@ -60,17 +61,20 @@ class ChatWithDbAutoExecute(BaseChat):
                     self._executor,
                     client.get_db_summary,
                     self.db_name,
-                    self.current_user_input,
+                    self.current_user_input if self.table_name is  None else self.table_name,
                     CFG.KNOWLEDGE_SEARCH_TOP_SIZE,
                 )
+                if self.table_name is not None :
+                    table_infos = [d for d in table_infos if self.table_name in d]
                 if len(table_infos) == 0:
                     raise Exception("not found table infos")
         except Exception as e:
             print("db summary find error!" + str(e))
         if not table_infos:
-            table_infos = await blocking_func_to_async(
-                self._executor, self.database.table_simple_info
-            )
+            print("db summary find error!" + str(e))
+            # table_infos = await blocking_func_to_async(
+            #     self._executor, self.database.table_simple_info
+            # )
             
             
         logger.info(f"ChatWithDbAutoExecute -> table_infos {len(table_infos)}")

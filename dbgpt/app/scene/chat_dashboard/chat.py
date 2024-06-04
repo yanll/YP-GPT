@@ -34,6 +34,7 @@ class ChatDashboard(BaseChat):
         """
         self.db_name = chat_param["select_param"]
         chat_param["chat_mode"] = ChatScene.ChatDashboard
+        self.table_name = chat_param["table_name"] if chat_param.get("table_name") is not None else None
         super().__init__(chat_param=chat_param)
         if not self.db_name:
             raise ValueError(f"{ChatScene.ChatDashboard.value} mode should choose db!")
@@ -72,6 +73,9 @@ class ChatDashboard(BaseChat):
                     self.current_user_input,
                     self.top_k,
                 )
+                if self.table_name is not None :
+                    table_infos = [d for d in table_infos if self.table_name in d]
+                    
                 if len(table_infos) == 0:
                     raise Exception("not found table infos")
         except Exception as e:
