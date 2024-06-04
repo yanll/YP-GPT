@@ -57,13 +57,14 @@ def get_user_open_id(emails):
 
 emails = ["liangliang.yan@yeepay.com",
           "huaxue.zhang@yeepay.com",
-          "chao.huang@yeepay.com",
+          #"chao.huang@yeepay.com",
           "bo.liu-2@yeepay.com",
-          "yangsheng.su@yeepay.com",
-          "chaoqun.rao@yeepay.com",
-          "shouhong.cao@yeepay.com",
-          "feng.gao@yeepay.com",
-          "wei.huang-1@yeepay.com"]
+          #"yangsheng.su@yeepay.com",
+          #"chaoqun.rao@yeepay.com",
+          #"shouhong.cao@yeepay.com",
+          #"feng.gao@yeepay.com",
+          #"wei.huang-1@yeepay.com"
+          ]
 
 
 
@@ -104,6 +105,7 @@ class RequestHandleOperator(MapOperator[None, List[Dict]]):
                             "query_str": data["query_str"],
                             "daily_push_message_list": data["list"],
                             "sales_diapaly": data["sales_diapaly"],
+                            "formatted_date": data["formatted_date"],
                             "value_colour_yesterday_change_rate": data["value_colour_yesterday_change_rate"],
                             "value_colour_weekly_change_rate": data["value_colour_weekly_change_rate"]
                         }
