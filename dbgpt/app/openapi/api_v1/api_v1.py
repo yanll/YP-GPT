@@ -310,6 +310,7 @@ async def get_chat_instance(dialogue: ConversationVo = Body()) -> BaseChat:
         "current_user_input": dialogue.user_input,
         "select_param": dialogue.select_param,
         "model_name": dialogue.model_name,
+        "table_name": dialogue.table_name,
     }
     chat: BaseChat = await blocking_func_to_async(
         get_executor(),

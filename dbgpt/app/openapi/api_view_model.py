@@ -56,6 +56,7 @@ class ConversationVo(BaseModel):
     chat scene select param 
     """
     select_param: Optional[str] = Field(None, description="chat scene select param")
+    table_name: Optional[str] = Field(None, description="chat scene select table name")
     """
     llm model name
     """

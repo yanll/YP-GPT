@@ -26,6 +26,7 @@ class ChatWithDbQA(BaseChat):
             - select_param:(str) dbname
         """
         self.db_name = chat_param["select_param"]
+        self.table_name = chat_param["table_name"] if chat_param.get("table_name") is not None else None
         chat_param["chat_mode"] = ChatScene.ChatWithDbQA
         super().__init__(chat_param=chat_param)
 
@@ -66,15 +67,17 @@ class ChatWithDbQA(BaseChat):
                     self.current_user_input,
                     self.top_k,
                 )
+                if self.table_name is not None :
+                    table_infos = [d for d in table_infos if self.table_name in d]
                 
                 if len(table_infos) == 0: 
                     raise Exception('not found')
             except Exception as e:
                 print("db summary find error!" + str(e))
                 # table_infos = self.database.table_simple_info()
-                table_infos = await blocking_func_to_async(
-                    self._executor, self.database.table_simple_info
-                )
+                # table_infos = await blocking_func_to_async(
+                #     self._executor, self.database.table_simple_info
+                # )
             
             # table_infos = self.database.table_simple_info()
             dialect = self.database.dialect
