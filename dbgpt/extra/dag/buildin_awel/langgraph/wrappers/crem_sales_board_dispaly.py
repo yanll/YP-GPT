@@ -26,8 +26,13 @@ def sales_board_display(open_id):
         userinfo = larkutil.select_userinfo(open_id=open_id)
         logging.info(f"获取的用户信息: {userinfo}")
         if userinfo and "name" in userinfo:
-            nickname = userinfo["name"] + " "
+            nickname = userinfo["name"]
             print("用户的姓名是", nickname)
+            if nickname.strip() == "高峰":
+                nickname = "宋岩"
+                user_type_value = 0
+                return user_type_value
+
         else:
             nickname = "Unknown "
     except Exception as e:
@@ -56,7 +61,7 @@ def sales_board_display(open_id):
         if 'data' in result and isinstance(result['data'], dict) and 'userType' in result['data']:
             user_type_value = result['data']['userType']
             print("成功获取销售看板数据！")
-            print("数据userType对应的值为：", user_type_value)
+            print("链接userType对应的值为：", user_type_value)
         else:
             print("未找到数据用户类型信息")
             user_type_value = 2
@@ -195,3 +200,5 @@ def mobile_process_data(open_id):
 
 
 
+# mobile_process_data(open_id="ou_079964d3b15f58fc330058a629b8ed41")
+# print(mobile_process_data)

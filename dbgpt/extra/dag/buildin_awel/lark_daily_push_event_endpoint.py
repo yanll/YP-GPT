@@ -55,15 +55,16 @@ def get_user_open_id(emails):
         return {'error': f'Request failed with status code {response.status_code}'}
 
 
-emails = ["liangliang.yan@yeepay.com",
+emails = [
+          "liangliang.yan@yeepay.com",
           "huaxue.zhang@yeepay.com",
           #"chao.huang@yeepay.com",
-          "bo.liu-2@yeepay.com",
-          #"yangsheng.su@yeepay.com",
+          #"bo.liu-2@yeepay.com",
+          "yangsheng.su@yeepay.com",
           #"chaoqun.rao@yeepay.com",
           #"shouhong.cao@yeepay.com",
-          #"feng.gao@yeepay.com",
-          #"wei.huang-1@yeepay.com"
+          "feng.gao@yeepay.com",
+          "wei.huang-1@yeepay.com"
           ]
 
 

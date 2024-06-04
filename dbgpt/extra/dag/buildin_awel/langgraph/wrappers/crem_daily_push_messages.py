@@ -30,8 +30,17 @@ def sales_board_display(open_id):
         userinfo = larkutil.select_userinfo(open_id=open_id)
         logging.info(f"获取的用户信息: {userinfo}")
         if userinfo and "name" in userinfo:
-            nickname = userinfo["name"] + " "
+            nickname = userinfo["name"]
             print("用户的姓名是", nickname)
+
+            if nickname.strip() == "高峰":
+                nickname = "宋岩"
+                user_type_value = 0
+                return user_type_value
+            if nickname.strip() == "苏杨生":
+                nickname = "段超"
+
+            print("使用的用户姓名是", nickname)
         else:
             nickname = "Unknown "
     except Exception as e:
@@ -110,11 +119,13 @@ def industry_line(open_id=None):
         print("请求时出现异常：", e)
 
 def get_previous_dates():
-    today = datetime.now()
-    yesterday = today - timedelta(days=1)
-    day7_before_yesterday = today - timedelta(days=7)
-    day_before_yesterday = today - timedelta(days=2)
-    weekly_before_today = yesterday - timedelta(days=7)
+    today = datetime.now()  #今天
+    yesterday = today - timedelta(days=1) #昨天
+    day_before_yesterday = today - timedelta(days=2)  # 前天
+    day7_before_yesterday = today - timedelta(days=7) #今天是周一，那就是上周的周一     今天减去7天  8号是周一（今天）减去7天等于1号，也就是上周周一
+    print("上周的今天",day7_before_yesterday)
+    weekly_before_today = yesterday - timedelta(days=7) #上上周周日
+    print("上周的前天+++++++",weekly_before_today)
 
     return yesterday.strftime('%Y-%m-%d'), day_before_yesterday.strftime('%Y-%m-%d'), day7_before_yesterday.strftime('%Y-%m-%d'), weekly_before_today.strftime('%Y-%m-%d')
 
@@ -125,10 +136,16 @@ def maolicase(trx_date, open_id):
     try:
         userinfo = larkutil.select_userinfo(open_id=open_id)
         if userinfo and "name" in userinfo:
-            nickname = userinfo["name"] + " "
+            nickname = userinfo["name"]
             print("用户的姓名是", nickname)
+
+            if (nickname.strip() == "高峰") or (nickname.strip() == "苏杨生"):
+                nickname = "宋岩"
+
+            print("使用的用户姓名是", nickname)
     except Exception as e:
         logging.warning("用户姓名解析异常：", open_id)
+
 
     #user_type_value = 2
     #typename = "金融行业线"
@@ -189,7 +206,7 @@ def maolicase(trx_date, open_id):
                     "TYPE": "航司",
                     "SCALE_TYPE": "DAY",
                     "TRX_DATE": trx_date,
-                    "SUPERIOR_NAME": "宋岩",
+                    "SUPERIOR_NAME": nickname,
                     "STAT_SALES_NAME": None
                 },
                 "strategyKey": "saleOrdinaryApplicationMarketExecutor"
@@ -199,7 +216,7 @@ def maolicase(trx_date, open_id):
                     "TYPE": "航司,渠道,酒旅出行",
                     "SCALE_TYPE": "DAY",
                     "TRX_DATE": trx_date,
-                    "STAT_SALES_NAME": "段超"
+                    "STAT_SALES_NAME": nickname
                 },
                 "strategyKey": "saleOrdinaryApplicationMarketExecutor"
             },
@@ -501,13 +518,18 @@ def shujuqingk(open_id):
     global yesterday_change_rate_formatted
     yesterday, day_before_yesterday, day7_before_yesterday, weekly_before_today = get_previous_dates()
     trx_date_yesterday = f"{yesterday},{yesterday}"
+    print("昨天的日期++++++++++++", trx_date_yesterday)
     trx_date_day_before_yesterday = f"{day_before_yesterday},{day_before_yesterday}"
+    print("前天的日期++++++++++++", trx_date_day_before_yesterday)
     trx_date_day7_before_yesterday = f"{day7_before_yesterday},{yesterday}"
+    print("前七天毛利++++++++++++",trx_date_day7_before_yesterday)
     trx_date_weekly_before_today = f"{weekly_before_today},{weekly_before_today}"
+    print("上周同比前天的日期++++++++++++",trx_date_weekly_before_today)
+
 
     # 调用函数并获取结果
-    result_yesterday = maolicase(trx_date_yesterday, open_id)
-    result_day_before_yesterday = maolicase(trx_date_day_before_yesterday, open_id)
+    result_yesterday = maolicase(trx_date_yesterday, open_id)  #昨天
+    result_day_before_yesterday = maolicase(trx_date_day_before_yesterday, open_id)#前天
     result_day7_before_yesterday = maolicase(trx_date_day7_before_yesterday, open_id)
     result_weekly_before_today = maolicase(trx_date_weekly_before_today, open_id)
 
@@ -516,10 +538,10 @@ def shujuqingk(open_id):
        isinstance(result_day_before_yesterday, dict) and 'error' in result_day_before_yesterday or \
        isinstance(result_day7_before_yesterday, dict) and 'error' in result_day7_before_yesterday or \
        isinstance(result_weekly_before_today, dict) and 'error' in result_weekly_before_today:
-        profit_yesterday = "数据为空，你不是销售"
-        profit_day_before_yesterday = "数据为空，你不是销售"
-        profit_day7_before_yesterday = "数据为空，你不是销售"
-        average_day7_before_yesterday = "数据为空，你不是销售"
+        profit_yesterday = "数据为空，你不是销售"  #昨天
+        profit_day_before_yesterday = "数据为空，你不是销售"  #前天
+        profit_day7_before_yesterday = "数据为空，你不是销售"  #昨日同比
+        average_day7_before_yesterday = "数据为空，你不是销售" # 前七天平均
         yesterday_change_rate_formatted = "数据为空，你不是销售"
         weekly_change_rate_formatted = "数据为空，你不是销售"
     else:
@@ -539,8 +561,10 @@ def shujuqingk(open_id):
             yesterday_change_rate_formatted = "数据为空"
 
         # 计算上周同一时间的毛利变化率
-        if result_weekly_before_today != 0:
-            weekly_change_rate = ((result_yesterday - result_weekly_before_today) / result_weekly_before_today) * 100
+        if result_yesterday != 0:
+            weekly_change_rate = ((result_yesterday - result_weekly_before_today) / result_yesterday) * 100
+            print("昨天的毛利++++++++++++",result_yesterday)
+            print("上周同比昨天的毛利++++++++++++",result_weekly_before_today)
             weekly_change_rate_formatted = "{:.2f}%".format(weekly_change_rate)
         else:
             weekly_change_rate_formatted = "数据为空"
@@ -555,7 +579,7 @@ def shujuqingk(open_id):
         '前7天的平均毛利': average_day7_before_yesterday
     }
 
-# 调用示例
-# result = shujuqingk(open_id='your_open_id')
+# #调用示例
+# result = shujuqingk(open_id='ou_7acf1ad58a4faa8c60c75d195a9ac220')
 # print(result)
 
