@@ -197,9 +197,7 @@ class MerchantSearchTool(BaseTool):
                 },
                 "data": {
                     "list": m_list,
-                    "query_str": query_str,
-                    "sales_diapaly": "https://applink.feishu.cn/client/web_url/open?mode=sidebar-semi&reload=false&url=https%3A%2F%2Fatmgw.yeepay.com%2Fmcem%2Findex.html%23%2Fsale%2FchartView%3Fyuiassotoken%3DeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJsb2dpbl90eXBlIjoiU01TIiwibW9iaWxlIjoiMTg3NTQzMTYyNDAiLCJtaWdyYXRlX3VzZXJfaWQiOiJlYzhnYTFhZiIsIngtaXAiOiIyMjMuMjIzLjE5My4xOTQiLCJwcmluY2lwYWxfaWQiOiIxNzc5NSIsInRva2VuIjoiYmM4ZjJmMDEtZTVmMy00OWQ5LWI0YzktOWU3N2E3YTBjMTRlIiwibG9naW5fbmFtZSI6Imh1YXh1ZS56aGFuZyIsInR3b19mYWN0b3JfdmFsaWQiOnRydWUsImxvZ2luX3RpbWUiOiIyMDI0LTA1LTE2IDExOjExOjA1Iiwic2NvcGUiOiIiLCJjYWxsYmFjayI6Imh0dHBzOi8vYXRtZ3cueWVlcGF5LmNvbS9tY2VtL2luZGV4Lmh0bWwjL3NhbGUvY2hhcnRWaWV3Iiwic3NvdGlja2V0IjoiZTc4YjE4MzQtNmY2OS00MGI5LWI2N2EtMTg2NzkxNDQ2YTA4IiwiZXhwIjoxNzE1OTE1NDY1LCJpYXQiOjE3MTU4MjcyNjUsImVtYWlsIjoiaHVheHVlLnpoYW5nQHllZXBheS5jb20iLCJ1c2VybmFtZSI6IuW8oOWNjumbqiJ9.rJCQTVIL0_qClnvT6SdeZ-8RUxqRa86zUmxcv0FvMv0JEVMLWgkcbCK3NGPFX30zqanq134Gtb0qCaqIQxZG0A",
-
+                    "query_str": query_str
                 }
             }
         except Exception as e:
