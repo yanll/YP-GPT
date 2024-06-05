@@ -508,11 +508,13 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
 
         '''
         2、交易对手方交易环比波动异常
-        归因③【商户签约名+付款方签约名】：
+        归因③【商户签约名+原始场景+付款方签约名】：
         - ([D-1]交易金额- [D-2]交易金额）的绝对值>=100000
         - 交易环比（[D-1]交易金额/[D-2]交易金额-1
           - >150%——上升
           - <-50%——下降
+          
+        【输出③】商户签约名，商户编号+原始场景，主要影响的付款方签约名，昨日交易金额**万元，环比上升或下降**%
         '''
         # 归因3
         try:
@@ -528,23 +530,40 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                     continue
                 d_1_success_amount = 0
                 for d_1_item in d_1_data:
-                    if d_1_item['PAYER_CUSTOMER_SIGNEDNAME'] == d_2_item['PAYER_CUSTOMER_SIGNEDNAME']:
+                    if d_1_item['PAYER_CUSTOMER_SIGNEDNAME'] == d_2_item['PAYER_CUSTOMER_SIGNEDNAME'] and d_1_item['STAT_CUSTOMER_NO'] == d_2_item['STAT_CUSTOMER_NO']:
                         d_1_success_amount = float(d_1_item['SUCCESS_AMOUNT'])
                         break
-                if abs(d_1_success_amount - d_2_success_amount) > 100000 and d_1_success_amount / d_2_success_amount - 1 > 1.5:
-                    reason3.append(
-                        f'归因三:主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升<text_tag color=green>{d_1_success_amount / d_2_success_amount - 1:.2f}%</text_tag>')
-                    reason3_text.append(
-                        f'归因三:主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升{d_1_success_amount / d_2_success_amount - 1:.2f}%')
-                if abs(d_1_success_amount - d_2_success_amount) > 100000 and d_1_success_amount / d_2_success_amount - 1 < -0.5:
-                    reason3.append(
-                        f'归因三:主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降<text_tag color=red>{abs(d_1_success_amount / d_2_success_amount - 1):.2f}%</text_tag>')
-                    reason3_text.append(
-                        f'归因三:主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降{abs(d_1_success_amount / d_2_success_amount - 1):.2f}%')
+                differece = d_1_success_amount / d_2_success_amount - 1
+                orig_scene = self.get_original_scene_by_merchant_no(
+                    self.original_scene_dict,
+                    d_2_item["STAT_CUSTOMER_NO"]
+                )
+                if abs(d_1_success_amount - d_2_success_amount) > 100000 and differece > 1.5:
+                    reason3.append((
+                        differece,
+                        f'归因三:商户签约名:{customer}，商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene}，主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升<text_tag color=green>{differece:.2f}%</text_tag>'))
+                    reason3_text.append((
+                        differece,
+                        f'归因三:商户签约名:{customer}，商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene}，主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升{differece:.2f}%'))
+                if abs(d_1_success_amount - d_2_success_amount) > 100000 and differece < -0.5:
+                    reason3.append((
+                        differece,
+                        f'归因三:商户签约名:{customer}，商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene}，主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降<text_tag color=red>{abs(differece):.2f}%</text_tag>'))
+                    reason3_text.append((
+                        differece,
+                        f'归因三:商户签约名:{customer}，商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene}，主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降{abs(differece):.2f}%'))
 
+            reason3.sort(key=lambda x: abs(x[0]), reverse=True)
+            reason3_text.sort(key=lambda x: abs(x[0]), reverse=True)
+            if len(reason3) > 3:
+                reason3 = reason3[:3]
+                reason3_text = reason3_text[:3]
 
         except Exception as e:
             print('归因3处理错误')
+
+        reason3 = [reason[1] for reason in reason3]
+        reason3_text = [reason_text[1] for reason_text in reason3_text]
 
         return reason3, reason3_text
 
