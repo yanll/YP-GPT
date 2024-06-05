@@ -5,7 +5,7 @@ from typing import Dict
 
 from dbgpt.extra.dag.buildin_awel.langgraph.tools import sales_details_daily
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import Day_30_TrxTre_card_tool, crem_30DaysTrx_text, \
-    crem_30DaysTrx_text_two, lark_book_meeting_room
+    crem_30DaysTrx_text_two, lark_book_meeting_room, crem_hanglv_sales_8DaysTrx, crem_hanglv_boos_8DaysTrx
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_customer_visit
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_wrapper, card_send_daily_report_search
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_api_wrapper
@@ -163,7 +163,35 @@ async def a_call(app_chat_service, event: Dict):
             customer_id=customerNo,
             customerName=customerName,
             conv_id=open_id)
+    if event_type == 'hanglv_trx_detail':
+        user_type_value = action_value['user_type_value']
+        query_str = action_value['query_str']
+        print('查询用户的权限', user_type_value)
 
+        # 检查 query_str 的值
+        if query_str in ['高峰', '黄伟-1']:
+            query_str = '宋岩'
+
+
+
+        if user_type_value == '0':
+            return crem_hanglv_sales_8DaysTrx.get_crem_hanglv_boos_8DaysTrx_card(
+                open_id=open_id,
+                nickname=query_str,
+            )
+        elif user_type_value == '1':
+            return crem_hanglv_sales_8DaysTrx.get_crem_hanglv_sales_8DaysTrx_card(
+                open_id=open_id,
+                nickname=query_str,
+            )
+        elif user_type_value == '2':
+            return crem_hanglv_sales_8DaysTrx.get_crem_hanglv_boos_8DaysTrx_card(
+                open_id=open_id,
+                nickname=query_str,
+            )
+        else:
+            print(f"无效的user_type_value: {user_type_value}")
+            return None
 
     if event_type == 'daily_report_detail':
         id = action['value']['id']

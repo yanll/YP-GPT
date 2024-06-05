@@ -8,7 +8,7 @@ from langchain_core.callbacks import (
 from pydantic import BaseModel, Field
 
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_sales_board_dispaly, \
-    crem_daily_push_messages
+    crem_daily_push_messages, authority_Industryline_user
 from dbgpt.util.lark import larkutil
 import datetime
 
@@ -46,6 +46,8 @@ class Dailypushmessagetool(BaseTool):
                 open_id=conv_id
             )
             print("毛利详情", data)
+
+
             yesterday_change_rate = data.get("昨天相对于前天的同比变化率", "")
             weekly_change_rate_formatted = data.get("上周同一时间的毛利变化率", "")
 
@@ -76,8 +78,42 @@ class Dailypushmessagetool(BaseTool):
             sales_dispaly = link
             print("移动端的链接", sales_dispaly)
             query_str = (nickname).strip()
-
             print("推送人结果：", query_str, resp_data)
+
+
+            user_type_value = authority_Industryline_user.sales_board_display(open_id=conv_id)
+            print("人员权限为", user_type_value)
+
+            # 如果 query_str 是 "高峰" 或 "黄伟-1"，则将 user_type_value 设置为 0
+            if query_str in ["高峰", "黄伟-1"]:
+                user_type_value = 0
+
+            if user_type_value == 0:
+                user_type = "0"
+            elif user_type_value == 1:
+                user_type = "1"
+            elif user_type_value == 2:
+                user_type = "2"
+            else:
+                user_type = "0"
+            print(user_type)
+
+            # 根据user_type_value的值进行判断，并转换成对应的文字描述
+            if user_type_value == 0:
+                user_type_description = "您与名下销售毛利总和"
+            elif user_type_value == 1:
+                user_type_description = "您的毛利"
+            elif user_type_value == 2:
+                user_type_description = "您与名下销售毛利总和"
+            else:
+                user_type_description = "未知的权限类型"
+
+            # 输出对应的文字描述
+            print(user_type_description)
+            # industry_line = authority_Industryline_user.industry_line(
+            #     open_id=conv_id
+            # )
+            # print("人员行业线为",industry_line)
 
             current_date = datetime.date.today()
             # 将日期格式化为“您06月03日（周一）”的形式
@@ -117,8 +153,11 @@ class Dailypushmessagetool(BaseTool):
                 "data": {
                     "list": list,
                     "query_str": query_str,
+                    "user_type_value": user_type,
+                    "user_type_description": user_type_description,
                     "sales_diapaly": sales_dispaly,
-                    "formatted_date":formatted_date,
+                    "formatted_date": formatted_date,
+
                     "value_colour_yesterday_change_rate": value_colour_yesterday_change_rate,
                     "value_colour_weekly_change_rate": value_colour_weekly_change_rate
 

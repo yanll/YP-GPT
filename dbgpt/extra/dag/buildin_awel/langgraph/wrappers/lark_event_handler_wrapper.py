@@ -450,8 +450,11 @@ class LarkEventHandlerWrapper:
                             }
                         },
                         "query_str": data["query_str"],
+                        "user_type_value": data["user_type_value"],
                         "daily_push_message_list": data["list"],
                         "sales_diapaly": data["sales_diapaly"],
+                        "user_type_description": data["user_type_description"],
+
                         "formatted_date": data["formatted_date"],
                         "value_colour_yesterday_change_rate": data["value_colour_yesterday_change_rate"],
                         "value_colour_weekly_change_rate": data["value_colour_weekly_change_rate"]
