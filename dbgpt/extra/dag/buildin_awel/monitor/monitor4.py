@@ -293,13 +293,14 @@ class Monitor4(AirlineMonitorDataHandler):
                         fluctuation = float(item1["SUCCESS_AMOUNT"]) / float(
                             item2["SUCCESS_AMOUNT"]) - self.market_fluctuation
                         content = f'付方名称:{payer}，航司:{customer}——商编:{item1["CUSTOMER_NO"]}+场景字段:{orig_scene}，近7天充值金额，环比上周{"上升" if difference > 0 else "下降"}{abs(difference * 100):.2f}%，{"高于" if fluctuation > 0 else "低于"}大盘{abs(fluctuation * 100):.2f}%'
-                        subcontent = f"波动详情：  近7天充值金额，环比上周{'上升' if difference > 0 else '下降'}<text_tag color={'green' if difference > 0 else 'red'}>{abs(difference * 100):.2f}%</text_tag>，{'高于' if fluctuation > 0 else '低于'}大盘<text_tag color={'green' if fluctuation > 0 else 'red'}>{abs(fluctuation * 100):.2f}%</text_tag>"
+                        subcontent = f"近7天充值金额，环比上周{'上升' if difference > 0 else '下降'}<text_tag color={'green' if difference > 0 else 'red'}>{abs(difference * 100):.2f}%</text_tag>，{'高于' if fluctuation > 0 else '低于'}大盘<text_tag color={'green' if fluctuation > 0 else 'red'}>{abs(fluctuation * 100):.2f}%</text_tag>"
 
                         self.alert_list.append({
                             'name': sales_name,
                             'title': '深航/国航充值业务',
                             'content': content,
-                            'payer_customer_signedname': payer,
+                            'payer_customer_signedname': f'<font color=green>{payer}</font>',
+                            'payer_customer_signedname_text': payer,
                             'stat_dispaysignedname': customer,
                             'customer_no': item1["CUSTOMER_NO"],
                             'payer_business_scene': orig_scene,

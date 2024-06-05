@@ -127,3 +127,8 @@ class AirlineMonitorPush4(AirlineMonitorPush):
                 logging.error(f"Error sending message to {name}: {e}")
 
         return "Success"
+
+# if __name__ == "__main__":
+#     a = AirlineMonitorPush4()
+#     b = a.run_push()
+#     print(b)

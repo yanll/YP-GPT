@@ -95,12 +95,13 @@ class Monitor2(AirlineMonitorDataHandler):
                     d_1_data['SUCCESS_COUNT']) > 0.3:
                 self.alert_list.append({
                     'name': payer_sales_name,
-                    'title': '退款笔数波动异常',
-                    'type': '付方签约名',
-                    'customer_name': payer_customer,
-                    'content': f'昨日退款波动超过30%，退款率{float(d_1_data["REFUND_COUNT"]) / float(d_1_data["SUCCESS_COUNT"]) * 100:.2f}%,请关注',
-                    # 波动详情：    昨日退款波动超过30%，退款率<text_tag color=orange>0.61%</text_tag>，请关注
-                    'content_rich': f"波动详情：    昨日退款波动超过30%，退款率<text_tag color= orange>{float(d_1_data['REFUND_COUNT']) / float(d_1_data['SUCCESS_COUNT']) * 100:.2f}%</text_tag>，请关注。"
+                    'title': '收付方退款笔数波动异常',
+                    'type': f'<font color=green>付方</font>',
+                    'type_text': '付方',
+                    'customer_name': f'<font color=green>{payer_customer}</font>',
+                    'customer_name_text': payer_customer,
+                    'content': f'昨日退款率{float(d_1_data["REFUND_COUNT"]) / float(d_1_data["SUCCESS_COUNT"]) * 100:.2f}%,请关注',
+                    'content_rich': f"昨日退款率<text_tag color= orange>{float(d_1_data['REFUND_COUNT']) / float(d_1_data['SUCCESS_COUNT']) * 100:.2f}%</text_tag>，请关注。"
 
                 })
 
@@ -181,11 +182,13 @@ class Monitor2(AirlineMonitorDataHandler):
                     d_1_data['SUCCESS_COUNT']) > 0.3:
                 self.alert_list.append({
                     'name': sales_name,
-                    'title': '退款笔数波动异常',
-                    'type': '商户签约名',
-                    'customer_name': customer,
-                    'content': f'昨日退款波动超过30%，退款率{float(d_1_data["REFUND_COUNT"]) / float(d_1_data["SUCCESS_COUNT"]) * 100:.2f}%,请关注',
-                    'content_rich': f"波动详情：    昨日退款波动超过30%，退款率<text_tag color= orange>{float(d_1_data['REFUND_COUNT']) / float(d_1_data['SUCCESS_COUNT']) * 100:.2f}%</text_tag>，请关注。"
+                    'title': '收付方退款笔数波动异常',
+                    'type': f'<font color=green>收方</font>',
+                    'type_text': '收方',
+                    'customer_name': f'<font color=green>{customer}</font>',
+                    'customer_name_text': customer,
+                    'content': f'昨日退款率{float(d_1_data["REFUND_COUNT"]) / float(d_1_data["SUCCESS_COUNT"]) * 100:.2f}%,请关注',
+                    'content_rich': f"昨日退款率<text_tag color= orange>{float(d_1_data['REFUND_COUNT']) / float(d_1_data['SUCCESS_COUNT']) * 100:.2f}%</text_tag>，请关注。"
 
                 })
 
