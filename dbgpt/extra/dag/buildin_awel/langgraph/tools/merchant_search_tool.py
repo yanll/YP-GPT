@@ -139,10 +139,15 @@ class MerchantSearchTool(BaseTool):
                         if item["sub_type"] == "OPERATOR" and (
                                 item["biz_key"] == en_name or item["biz_name"] == cn_name):
                             lines.add(item["industry"])
+
             if len(lines) > 0 or len(sales) > 0:
                 hasPerm = True
                 success = "true"
                 message = ""
+                if "大零售行业线" in lines:
+                    lines.add("大零售行业线—SaaS")
+                    lines.add("大零售行业线—XLS")
+                    lines.add("大零售行业线—线下")
 
             parameters = {
 
