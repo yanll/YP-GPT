@@ -70,7 +70,7 @@ class AirlineMonitorPush3(AirlineMonitorPush):
                 sales=item['name'],
                 title=item['title'],
                 content=item['content'],
-                merchant_no=item['customer_name'],
+                merchant_no=item['customer_name_text'],
                 product=item['type'],
                 display_type="hanglv_card",
 
@@ -122,3 +122,8 @@ class AirlineMonitorPush3(AirlineMonitorPush):
                 content=content
             )
             print("发送的卡片信息是：", resp)
+
+# if __name__ == "__main__":
+#     a = AirlineMonitorPush3()
+#     b = a.run_push()
+#     print(b)
