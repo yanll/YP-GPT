@@ -128,6 +128,7 @@ class MerchantSearchTool(BaseTool):
                 resp = requests.request('GET', headers=headers, url=url, params=params, timeout=(5, 10))
                 if resp.status_code == 200:
                     data = resp.json()
+                    logging.info("业务组织：%s", str(data))
                     for item in data["data"]:
                         if item["biz_key"] == en_name or item["biz_name"] == cn_name:
                             sales.add(item["biz_name"])
