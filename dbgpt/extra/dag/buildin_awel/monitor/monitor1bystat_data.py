@@ -25,6 +25,24 @@ class Monitor1ByStatDataProvider(AirlineMonitorDataProvider):
             raise e
 
         return data
+    
+    
+    def new_get_data_by_stat_in_monitor1(self, trx_date: str):
+        parameters = {
+            "TRX_DATE": trx_date
+        }
+        try:
+            resp = self.dmall_client.post(
+                api_name="new_get_data_by_stat_in_montor1",
+                parameters=parameters
+            )
+            resp = resp.json()
+            data = resp['data']['data']
+        except Exception as e:
+            print('监控一获取数据异常')
+            raise e
+
+        return data
 
     def get_industry_line_data_by_stat_in_monitor1(self, trx_date: str):
         try:
