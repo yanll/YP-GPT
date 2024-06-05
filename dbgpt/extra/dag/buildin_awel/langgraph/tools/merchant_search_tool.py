@@ -128,7 +128,7 @@ class MerchantSearchTool(BaseTool):
                 resp = requests.request('GET', headers=headers, url=url, params=params, timeout=(5, 10))
                 if resp.status_code == 200:
                     data = resp.json()
-                    logging.info("业务组织：%s", str(data))
+                    # logging.info("业务组织：%s", str(data))
                     for item in data["data"]:
                         if item["biz_key"] == en_name or item["biz_name"] == cn_name:
                             sales.add(item["biz_name"])
@@ -142,9 +142,14 @@ class MerchantSearchTool(BaseTool):
                 message = ""
 
             parameters = {
-                "CUSTOMERNUMBER": customer_number,
-                "QUERY_NAME": customer_name
+
             }
+
+            if customer_number != "":
+                parameters["CUSTOMERNUMBER"] = customer_number
+            if customer_name != "":
+                parameters["QUERY_NAME"] = customer_name
+
             query_str = (customer_name + "" + customer_number).strip()
 
             m_list = []
