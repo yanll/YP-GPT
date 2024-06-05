@@ -19,6 +19,7 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
             self.d_1_d_15_trx_date = ','.join(self.get_past_working_days(15))
             self.d_1_d_30_trx_date = ','.join(self.get_past_working_days(30))
             self.d_1_d_45_trx_date = ','.join(self.get_past_working_days(45))
+            self.original_scene_dict = self.get_original_scene_dict()
 
 
         except Exception as e:
@@ -339,11 +340,12 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
 
     def find_reason5(self, payer_sales_name, customer) -> list:
         '''
-            归因⑤【付款方签约名+商户签约名】
+            归因⑤【付款方签约名+商户签约名+原始场景】
             ([D-1]交易金额- [D-2]交易金额）的绝对值>=100000
             - 交易环比（[D-1]交易金额/[D-2]交易金额-1
               - >100%——上升
               - <-50%——下降
+            【输出⑤】主要影响的收方商户签约名，商户编号+原始场景，昨日交易金额**万元，环比上升或下降**%——TOP3
         '''
         print(f'监控一处理{payer_sales_name}的付方签约名为{customer}的数据异常归因5')
         reason5 = []
@@ -365,29 +367,42 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
             for d_2_item in d_2_data:
                 d_2_success_amount = float(d_2_item['SUCCESS_AMOUNT'])
                 d_1_success_amount = 0
-                d_1_success_count = 0
                 for d_1_item in d_1_data:
-                    if d_1_item['STAT_DISPAYSIGNEDNAME'] == d_2_item['STAT_DISPAYSIGNEDNAME']:
+                    if d_1_item['STAT_DISPAYSIGNEDNAME'] == d_2_item['STAT_DISPAYSIGNEDNAME'] and d_1_item['STAT_CUSTOMER_NO'] == d_2_item['STAT_CUSTOMER_NO']:
                         d_1_success_amount = float(d_1_item['SUCCESS_AMOUNT'])
-                        d_1_success_count = float(d_1_item['SUCCESS_COUNT'])
                         break
                 if abs(d_1_success_amount - d_2_success_amount) >= 100000:
-                    if d_1_success_amount / d_2_success_amount - 1 > 1:
-                        reason5.append(
-                            f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升<text_tag color= green >{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
-                        reason5_text.append(
-                            f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
-                    if d_1_success_amount / d_2_success_amount - 1 < -0.5:
-                        reason5.append(
-                            f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降<text_tag color= red >{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
-                        reason5_text.append(
-                            f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
+                    orig_scene = self.get_original_scene_by_merchant_no(
+                        self.original_scene_dict,
+                        d_2_item["STAT_CUSTOMER_NO"]
+                    )
+                    difference = d_1_success_amount / d_2_success_amount - 1
+                    if difference > 1:
+                        reason5.append((
+                            difference,
+                            f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},商户编号{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升<text_tag color= green >{abs(difference) * 100:.2f}%</text_tag>'))
+                        reason5_text.append((
+                            difference,
+                            f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},商户编号{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升{abs(difference) * 100:.2f}%'))
+                    if difference < -0.5:
+                        reason5.append((
+                            difference,
+                            f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},商户编号{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降<text_tag color= red >{abs(difference) * 100:.2f}%</text_tag>'))
+                        reason5_text.append((
+                            difference,
+                            f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},商户编号{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降{abs(difference) * 100:.2f}%'))
 
-
-
+            reason5.sort(key=lambda x: abs(x[0]), reverse=True)
+            reason5_text.sort(key=lambda x: abs(x[0]), reverse=True)
+            if len(reason5) > 3:
+                reason5 = reason5[:3]
+                reason5_text = reason5_text[:3]
 
         except Exception as e:
             print('归因5处理错误')
+
+        reason5 = [reason[1] for reason in reason5]
+        reason5_text = [reason_text[1] for reason_text in reason5_text]
 
         return reason5, reason5_text
 
