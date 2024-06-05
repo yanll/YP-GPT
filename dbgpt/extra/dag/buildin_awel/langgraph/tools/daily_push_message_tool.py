@@ -69,7 +69,7 @@ class Dailypushmessagetool(BaseTool):
             userinfo = larkutil.select_userinfo(
                 open_id=conv_id)
             if userinfo and "name" in userinfo:
-                nickname = userinfo["name"] + " "
+                nickname = str(userinfo["name"])
                 print("用户的姓名是", nickname)
 
             resp_data.append(data)

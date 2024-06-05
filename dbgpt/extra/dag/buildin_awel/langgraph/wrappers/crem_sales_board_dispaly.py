@@ -26,7 +26,7 @@ def sales_board_display(open_id):
         userinfo = larkutil.select_userinfo(open_id=open_id)
         logging.info(f"获取的用户信息: {userinfo}")
         if userinfo and "name" in userinfo:
-            nickname = userinfo["name"]
+            nickname = str(userinfo["name"])
             print("用户的姓名是", nickname)
             if nickname.strip() == "高峰":
                 nickname = "宋岩"

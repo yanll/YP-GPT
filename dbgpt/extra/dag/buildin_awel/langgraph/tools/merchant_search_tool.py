@@ -86,12 +86,14 @@ class MerchantSearchTool(BaseTool):
 
             query_str = (customer_name + "" + customer_number).strip()
             dmall_client = DmallClient()
+            parameters = {
+                "CUSTOMERNUMBER": customer_number,
+                "QUERY_NAME": customer_name
+            }
+
             data = dmall_client.post(
                 api_name="query_merchant_info",
-                parameters={
-                    "CUSTOMERNUMBER": customer_number,
-                    "CUSTOMER_NAME": customer_name
-                }
+                parameters=parameters
             )
             m_list = []
             if data.status_code == 200:
