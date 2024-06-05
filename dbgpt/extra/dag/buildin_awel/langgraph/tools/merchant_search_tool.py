@@ -1,6 +1,7 @@
 import logging
 from typing import Optional, Type
 
+import requests
 from langchain.tools import BaseTool
 from langchain_core.callbacks import (
     CallbackManagerForToolRun
@@ -8,7 +9,9 @@ from langchain_core.callbacks import (
 from pydantic import BaseModel, Field
 
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_customer_search
+from dbgpt.util import envutils
 from dbgpt.util.dmallutil import DmallClient
+from dbgpt.util.lark import larkutil
 
 
 class MerchantSearchToolInput(BaseModel):
@@ -84,37 +87,117 @@ class MerchantSearchTool(BaseTool):
             #     }
             # }
 
-            query_str = (customer_name + "" + customer_number).strip()
-            dmall_client = DmallClient()
+            userinfo = larkutil.select_userinfo(open_id=conv_id)
+            en_name = ""
+            cn_name = ""
+            if userinfo and "name" in userinfo:
+                en_name = str(userinfo["en_name"])
+                cn_name = str(userinfo["name"])
+            lines = set([])
+            sales = set([])
+            hasPerm: bool = False
+            if en_name != "":
+                url = envutils.getenv("BIZ_APP_ENDPOINT") + "/biz_org/get_permissions_for_temp"
+                headers = {
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'app_key': "ai-assistants",
+                    'app_secret': "fcd2f6kd0c3acf1c"
+                }
+                params = {
+                    "username": en_name
+                }
+                logging.info("开始调用权限：%s", url)
+                resp = requests.request('GET', headers=headers, url=url, params=params, timeout=(5, 10))
+                if resp.status_code == 200:
+                    data = resp.json()
+                    for item in data["data"]:
+                        lines.add(item["permission"])
+            success = "false"
+            message = "没有对应商户的查询权限！"
+            if en_name != "" and len(lines) <= 0:
+                url = envutils.getenv("BIZ_APP_ENDPOINT") + "/biz_org/get_biz_orgs"
+                headers = {
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'app_key': "ai-assistants",
+                    'app_secret': "fcd2f6kd0c3acf1c"
+                }
+                params = {
+
+                }
+                logging.info("开始调用组织：%s", url)
+                resp = requests.request('GET', headers=headers, url=url, params=params, timeout=(5, 10))
+                if resp.status_code == 200:
+                    data = resp.json()
+                    # logging.info("业务组织：%s", str(data))
+                    for item in data["data"]:
+                        if item["biz_key"] == en_name or item["biz_name"] == cn_name:
+                            sales.add(item["biz_name"])
+                        if item["commissioner"] == en_name:
+                            sales.add(item["biz_name"])
+                        if item["director"] == en_name:
+                            sales.add(item["biz_name"])
+                        if item["sub_type"] == "OPERATOR" and (
+                                item["biz_key"] == en_name or item["biz_name"] == cn_name):
+                            lines.add(item["industry"])
+
+            if len(lines) > 0 or len(sales) > 0:
+                hasPerm = True
+                success = "true"
+                message = ""
+                if "大零售行业线" in lines:
+                    lines.add("大零售行业线—SaaS")
+                    lines.add("大零售行业线—XLS")
+                    lines.add("大零售行业线—线下")
+
             parameters = {
-                "CUSTOMERNUMBER": customer_number,
-                "QUERY_NAME": customer_name
+
             }
 
-            data = dmall_client.post(
-                api_name="query_merchant_info",
-                parameters=parameters
-            )
+            if customer_number != "":
+                parameters["CUSTOMERNUMBER"] = customer_number
+            if customer_name != "":
+                parameters["QUERY_NAME"] = customer_name
+
+            query_str = (customer_name + "" + customer_number).strip()
+
             m_list = []
-            if data.status_code == 200:
-                j = data.json()
-                if "data" in j:
-                    d = j["data"]["data"]
-                    for e in d:
-                        m_list.append(e)
-            print("商户结果：" + str(m_list))
+            if hasPerm is True:
+
+                if len(lines) > 0:
+                    parameters["PRODUCTLINE"] = ','.join(str(x) for x in lines)
+                else:
+                    parameters["SALESNAME"] = ','.join(str(x) for x in sales)
+
+                dmall_client = DmallClient()
+
+                data = dmall_client.post(
+                    api_name="query_merchant_info",
+                    parameters=parameters
+                )
+
+                if data.status_code == 200:
+                    j = data.json()
+                    if "data" in j:
+                        d = j["data"]["data"]
+                        for e in d:
+                            cus_name = e['CUSTOMER_NAME']
+                            si_name = e['SIGNEDNAME']
+                            if si_name != cus_name:
+                                e['NEW_NAME'] = si_name + "(" + cus_name + ")"
+                            else:
+                                e['NEW_NAME'] = si_name
+                            m_list.append(e)
+                print("商户结果：" + str(m_list))
             return {
-                "success": "true",
-                "error_message": "",
+                "success": success,
+                "error_message": message,
                 "action": {
                     "action_name": "send_lark_form_card",
                     "card_name": "merchant_list_card_2"
                 },
                 "data": {
                     "list": m_list,
-                    "query_str": query_str,
-                    "sales_diapaly": "https://applink.feishu.cn/client/web_url/open?mode=sidebar-semi&reload=false&url=https%3A%2F%2Fatmgw.yeepay.com%2Fmcem%2Findex.html%23%2Fsale%2FchartView%3Fyuiassotoken%3DeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJsb2dpbl90eXBlIjoiU01TIiwibW9iaWxlIjoiMTg3NTQzMTYyNDAiLCJtaWdyYXRlX3VzZXJfaWQiOiJlYzhnYTFhZiIsIngtaXAiOiIyMjMuMjIzLjE5My4xOTQiLCJwcmluY2lwYWxfaWQiOiIxNzc5NSIsInRva2VuIjoiYmM4ZjJmMDEtZTVmMy00OWQ5LWI0YzktOWU3N2E3YTBjMTRlIiwibG9naW5fbmFtZSI6Imh1YXh1ZS56aGFuZyIsInR3b19mYWN0b3JfdmFsaWQiOnRydWUsImxvZ2luX3RpbWUiOiIyMDI0LTA1LTE2IDExOjExOjA1Iiwic2NvcGUiOiIiLCJjYWxsYmFjayI6Imh0dHBzOi8vYXRtZ3cueWVlcGF5LmNvbS9tY2VtL2luZGV4Lmh0bWwjL3NhbGUvY2hhcnRWaWV3Iiwic3NvdGlja2V0IjoiZTc4YjE4MzQtNmY2OS00MGI5LWI2N2EtMTg2NzkxNDQ2YTA4IiwiZXhwIjoxNzE1OTE1NDY1LCJpYXQiOjE3MTU4MjcyNjUsImVtYWlsIjoiaHVheHVlLnpoYW5nQHllZXBheS5jb20iLCJ1c2VybmFtZSI6IuW8oOWNjumbqiJ9.rJCQTVIL0_qClnvT6SdeZ-8RUxqRa86zUmxcv0FvMv0JEVMLWgkcbCK3NGPFX30zqanq134Gtb0qCaqIQxZG0A",
-
+                    "query_str": query_str
                 }
             }
         except Exception as e:
