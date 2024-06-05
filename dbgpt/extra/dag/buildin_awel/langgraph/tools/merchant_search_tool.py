@@ -112,6 +112,8 @@ class MerchantSearchTool(BaseTool):
                     data = resp.json()
                     for item in data["data"]:
                         lines.add(item["permission"])
+            success = "false"
+            message = "没有对应商户的查询权限！"
             if en_name != "" and len(lines) <= 0:
                 url = envutils.getenv("BIZ_APP_ENDPOINT") + "/biz_org/get_biz_orgs"
                 headers = {
@@ -135,6 +137,8 @@ class MerchantSearchTool(BaseTool):
                             sales.add(item["biz_name"])
             if len(lines) > 0 or len(sales) > 0:
                 hasPerm = True
+                success = "true"
+                message = ""
 
             parameters = {
                 "CUSTOMERNUMBER": customer_number,
@@ -171,8 +175,8 @@ class MerchantSearchTool(BaseTool):
                             m_list.append(e)
                 print("商户结果：" + str(m_list))
             return {
-                "success": "true",
-                "error_message": "",
+                "success": success,
+                "error_message": message,
                 "action": {
                     "action_name": "send_lark_form_card",
                     "card_name": "merchant_list_card_2"
