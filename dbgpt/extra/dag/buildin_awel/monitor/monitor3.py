@@ -260,10 +260,12 @@ class Monitor3(AirlineMonitorDataHandler):
                 self.alert_list.append({
                     'name': sales_name,
                     'title': '商户（收方或付方）产品波动异常',
-                    'customer_name': customer,
+                    'customer_name': f'<font color=green>{customer}</font>',
+                    'customer_name_text': customer,
                     'content': f'交易无明显波动，但{product}产品结构有变化，变化值为{difference * 100:.2f}%，请关注。',
-                    'content_rich': f"波动详情：      交易无明显波动，但{product}产品结构有变化，变化值为<text_tag color={'orange' if difference < 1 else 'carmine'}>{difference * 100:.2f}%</text_tag>，请关注。",
-                    "type": "商户签约名"
+                    'content_rich': f"交易无明显波动，但{product}产品结构有变化，变化值为<text_tag color={'orange' if difference < 1 else 'carmine'}>{difference * 100:.2f}%</text_tag>，请关注。",
+                    'type': f'<font color=green>收方</font>',
+                    'type_text': '收方',
 
                 })
         except Exception as e:
@@ -459,17 +461,21 @@ class Monitor3(AirlineMonitorDataHandler):
                 self.alert_list.append({
                     'name': payer_sales_name,
                     'title': '商户（收方或付方）产品波动异常',
-                    'customer_name': payer_customer,
+                    'customer_name': f'<font color=green>{payer_customer}</font>',
+                    'customer_name_text': payer_customer,
                     'content': f'交易无明显波动，但{payer_product}产品结构有变化，变化值为{difference * 100:.2f}%，请关注。',
-                    'content_rich': f"波动详情：      交易无明显波动，但{payer_product}产品结构有变化，变化值为<text_tag color={'orange' if difference < 1 else 'carmine'}>{difference * 100:.2f}%</text_tag>，请关注。",
-                    "type": "付方签约名"
+                    'content_rich': f"交易无明显波动，但{payer_product}产品结构有变化，变化值为<text_tag color={'orange' if difference < 1 else 'carmine'}>{difference * 100:.2f}%</text_tag>，请关注。",
+
+                    'type': f'<font color=green>付方</font>',
+                    'type_text': '付方',
+
                 })
 
             print(f'监控三开始处理{payer_sales_name}的付方签约名为{payer_customer}的产品为{payer_product}数据成功')
         except Exception as e:
             print(f'监控三开始处理{payer_sales_name}的付方签约名为{payer_customer}的产品为{payer_product}数据失败')
 
-if __name__ == "__main__":
-    a = Monitor3()
-    b = a.run()
-    print(b)
+# if __name__ == "__main__":
+#     a = Monitor3()
+#     b = a.run()
+#     print(b)

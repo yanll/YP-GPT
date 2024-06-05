@@ -61,7 +61,7 @@ class AirlineMonitorPush2(AirlineMonitorPush):
                 f"Title: {item['title']}\n"
                 f"Content: {item['content']}\n"
                 f"Customer_name: {item['customer_name']}\n"
-                f"Type: {item['type']}\n"
+                f"Type: {item['type_text']}\n"
 
             )
 
@@ -72,9 +72,9 @@ class AirlineMonitorPush2(AirlineMonitorPush):
                 sales=item['name'],
                 title=item['title'],
                 content=item['content'],
-                merchant_no=item['customer_name'],
+                merchant_no=item['customer_name_text'],
                 reason=reason,
-                product=item['type'],
+                product=item['type_text'],
                 display_type="hanglv_card",
 
             )
