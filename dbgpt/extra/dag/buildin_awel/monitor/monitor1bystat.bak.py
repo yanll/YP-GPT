@@ -223,6 +223,8 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                 trx_date=self.d_1_d_45_trx_date,
                 sales_name=sales_name,
                 stat_dispaysignedname=customer)
+            
+            
 
             reason_tmp = []
             reason_tmp_text = []

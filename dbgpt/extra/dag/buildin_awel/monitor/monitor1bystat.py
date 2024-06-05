@@ -105,8 +105,8 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                        'd_1_d_45_data': {'SUCCESS_COUNT': 0, 'SUCCESS_AMOUNT':0},
                     }
                     
-                if sales_stat_dict[sale_stat_key]['scn_dimension'].get(sale_stat_scn__prod_key) is None:
-                    sales_stat_dict[sale_stat_key]['scn_dimension'][sale_stat_scn__prod_key] = {
+                if sales_stat_dict[sale_stat_key]['scn_product_dimension'].get(sale_stat_scn__prod_key) is None:
+                    sales_stat_dict[sale_stat_key]['scn_product_dimension'][sale_stat_scn__prod_key] = {
                        'd_1_data': {'SUCCESS_COUNT': 0, 'SUCCESS_AMOUNT':0},
                        'd_2_data': {'SUCCESS_COUNT': 0, 'SUCCESS_AMOUNT':0},
                        'd_1_d_45_data': {'SUCCESS_COUNT': 0, 'SUCCESS_AMOUNT':0},
@@ -123,8 +123,8 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                     sales_stat_dict[sale_stat_key]['scn_dimension'][sale_stat_scn_key]['d_1_data']['SUCCESS_AMOUNT'] += success_amount
                     
                     # 增加用户___商户___商编___产品的总额（昨天）
-                    sales_stat_dict[sale_stat_key]['scn_dimension'][sale_stat_scn__prod_key]['d_1_data']['SUCCESS_COUNT'] += success_count
-                    sales_stat_dict[sale_stat_key]['scn_dimension'][sale_stat_scn__prod_key]['d_1_data']['SUCCESS_AMOUNT'] += success_amount
+                    sales_stat_dict[sale_stat_key]['scn_product_dimension'][sale_stat_scn__prod_key]['d_1_data']['SUCCESS_COUNT'] += success_count
+                    sales_stat_dict[sale_stat_key]['scn_product_dimension'][sale_stat_scn__prod_key]['d_1_data']['SUCCESS_AMOUNT'] += success_amount
                 
                 if trx_data in self.d_2_trx_date:
                     # 增加用户___商户___商编的总额（前天）
@@ -132,8 +132,8 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                     sales_stat_dict[sale_stat_key]['scn_dimension'][sale_stat_scn_key]['d_2_data']['SUCCESS_AMOUNT'] += success_amount
                     
                     # 增加用户___商户___商编___产品的总额（前天）
-                    sales_stat_dict[sale_stat_key]['scn_dimension'][sale_stat_scn__prod_key]['d_1_data']['SUCCESS_COUNT'] += success_count
-                    sales_stat_dict[sale_stat_key]['scn_dimension'][sale_stat_scn__prod_key]['d_1_data']['SUCCESS_AMOUNT'] += success_amount
+                    sales_stat_dict[sale_stat_key]['scn_product_dimension'][sale_stat_scn__prod_key]['d_2_data']['SUCCESS_COUNT'] += success_count
+                    sales_stat_dict[sale_stat_key]['scn_product_dimension'][sale_stat_scn__prod_key]['d_2_data']['SUCCESS_AMOUNT'] += success_amount
                     
                 # 最近7天
                 if trx_data in self.d_1_d_7_trx_date:
