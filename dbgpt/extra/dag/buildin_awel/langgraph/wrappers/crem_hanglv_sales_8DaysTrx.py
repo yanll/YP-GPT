@@ -101,7 +101,7 @@ def get_crem_hanglv_sales_8DaysTrx_card(open_id,nickname):
                                 "orient": "left",
                                 "title": {
                                     "visible": "true",
-                                    "text": "单位（万元）"
+                                    "text": "单位（万）"
                                 }
                             }
                         ],
@@ -187,7 +187,7 @@ def get_crem_hanglv_sales_8DaysTrx_card(open_id,nickname):
     }
 
     lark_message_util.send_card_message(
-        receive_id=open_id,
+        receive_id="ou_9d42bb88ec8940baf3ad183755131881",
         content=var
     )
 
@@ -195,7 +195,7 @@ def get_crem_hanglv_sales_8DaysTrx_card(open_id,nickname):
 
 
 
-# get_crem_hanglv_sales_8DaysTrx_card("ou_079964d3b15f58fc330058a629b8ed41","段超")
+#get_crem_hanglv_sales_8DaysTrx_card("ou_079964d3b15f58fc330058a629b8ed41","段超")
 
 
 

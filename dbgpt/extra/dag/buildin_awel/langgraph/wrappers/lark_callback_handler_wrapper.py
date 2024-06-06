@@ -5,7 +5,7 @@ from typing import Dict
 
 from dbgpt.extra.dag.buildin_awel.langgraph.tools import sales_details_daily
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import Day_30_TrxTre_card_tool, crem_30DaysTrx_text, \
-    crem_30DaysTrx_text_two, lark_book_meeting_room, crem_hanglv_sales_8DaysTrx
+    crem_30DaysTrx_text_two, lark_book_meeting_room, crem_hanglv_sales_8DaysTrx, crem_hanglv_merchant_search
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_customer_visit
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_wrapper, card_send_daily_report_search
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_api_wrapper
@@ -152,6 +152,18 @@ async def a_call(app_chat_service, event: Dict):
             customer_id=customerNo,
             customer_name=customerName,
             conv_id=open_id)
+
+
+    if event_type == 'new_merchant_detail':
+        salesname = action_value['salesname']
+        customer_no = action_value['customer_no']
+        print('查询商户的名称', customer_no)
+        return crem_hanglv_merchant_search.get_crem_hanglv_merchant_8days_transaction_search_card(
+
+            open_id=open_id,
+            nickname = salesname,
+            customer_no=customer_no,
+           )
 
     if event_type == 'hanglv_detail':
         #customerNo = action_value['customerNo']

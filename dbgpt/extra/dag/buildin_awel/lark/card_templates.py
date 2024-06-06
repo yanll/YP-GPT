@@ -244,7 +244,7 @@ def create_merchant_list_card_content(template_variable: Dict):
 def create_merchant_list_card_content_2(template_variable: Dict):
     """商户查询"""
     template_id = "AAq3hcTqxp7Xl"
-    template_version_name = "1.0.6"
+    template_version_name = "1.0.7"
 
     card = {
         "type": "template",
