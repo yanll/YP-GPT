@@ -156,6 +156,7 @@ class ClickhouseConnector(RDBMSConnector):
                 values = self.get_field_values(field=field[0])
             tmp = list(field)
             tmp.append(values)
+            logger.info(values)
             cur_token_size += len(values)
             fields[0][idx] = tuple(tmp)
             
@@ -163,6 +164,7 @@ class ClickhouseConnector(RDBMSConnector):
             #     break
         # end for
         
+        logger.info(fields[0])
         return [
             {"name": name, "comment": comment, "type": column_type, "sample": rest[0] if len(rest) > 0 else None}
             for name, column_type, _, _, comment,*rest in fields[0]
