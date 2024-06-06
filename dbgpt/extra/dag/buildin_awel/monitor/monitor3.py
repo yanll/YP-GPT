@@ -256,7 +256,7 @@ class Monitor3(AirlineMonitorDataHandler):
 
             difference = (d_1_product_success_amount / d_1_customer_success_amount) - (
                     d_2_product_success_amount / d_2_customer_success_amount)
-            if difference > 0.6 and abs(d_1_product_success_amount - d_2_product_success_amount) > 100000:
+            if abs(difference) > 0.6 and abs(d_1_product_success_amount - d_2_product_success_amount) > 100000:
                 self.alert_list.append({
                     'name': sales_name,
                     'title': '商户（收方或付方）产品波动异常',
@@ -457,7 +457,7 @@ class Monitor3(AirlineMonitorDataHandler):
 
             difference = (d_1_payer_product_success_amount / d_1_payer_customer_success_amount) - (
                     d_2_payer_product_success_amount / d_2_payer_customer_success_amount)
-            if difference > 0.6 and abs(d_1_payer_product_success_amount - d_2_payer_product_success_amount) > 100000:
+            if abs(difference) > 0.6 and abs(d_1_payer_product_success_amount - d_2_payer_product_success_amount) > 100000:
                 self.alert_list.append({
                     'name': payer_sales_name,
                     'title': '商户（收方或付方）产品波动异常',
