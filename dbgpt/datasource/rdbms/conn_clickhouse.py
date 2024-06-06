@@ -204,6 +204,7 @@ class ClickhouseConnector(RDBMSConnector):
         #     ORDER BY frequency DESC
         #     LIMIT 10;
         # """
+        logger.info(field)
         _query_sql = f"""
             WITH Temp AS (
                 SELECT {field}, COUNT(*) AS frequency
@@ -216,7 +217,7 @@ class ClickhouseConnector(RDBMSConnector):
             FROM Temp;
         """
         
-        # logger.info(_query_sql)
+        logger.info(_query_sql)
         
         result = session.command(_query_sql).replace('\n',',')
         
