@@ -136,6 +136,9 @@ class MerchantSearchTool(BaseTool):
                             sales.add(item["biz_name"])
                         if item["director"] == en_name:
                             sales.add(item["biz_name"])
+
+                        if item["sub_type"] == "OPERATOR":
+                            print("用户：", str(item))
                         if item["sub_type"] == "OPERATOR" and (
                                 item["biz_key"] == en_name or item["biz_name"] == cn_name):
                             lines.add(item["industry"])
