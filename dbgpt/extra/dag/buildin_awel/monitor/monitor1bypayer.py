@@ -8,17 +8,29 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
     def __init__(self):
         super().__init__()
         self.alert_list = []
+        self.reason4_data = {}
+        self.reason5_data = {}
 
     def prepare_data(self):
         self.alert_list = []
         try:
             print('监控一中开始获取工作日')
-            self.d_1_trx_date = ','.join(self.get_past_working_days(1))
-            self.d_2_trx_date = ','.join(self.get_past_working_days(2)).split(',')[1]
-            self.d_1_d_7_trx_date = ','.join(self.get_past_working_days(7))
-            self.d_1_d_15_trx_date = ','.join(self.get_past_working_days(15))
-            self.d_1_d_30_trx_date = ','.join(self.get_past_working_days(30))
-            self.d_1_d_45_trx_date = ','.join(self.get_past_working_days(45))
+            # self.d_1_trx_date = ','.join(self.get_past_working_days(1))
+            # self.d_2_trx_date = ','.join(self.get_past_working_days(2)).split(',')[1]
+            # self.d_1_d_7_trx_date = ','.join(self.get_past_working_days(7))
+            # self.d_1_d_15_trx_date = ','.join(self.get_past_working_days(15))
+            # self.d_1_d_30_trx_date = ','.join(self.get_past_working_days(30))
+            # self.d_1_d_45_trx_date = ','.join(self.get_past_working_days(45))
+            
+            
+            all_past_working_days = self.get_past_working_days(45)
+            
+            self.d_1_trx_date = ','.join(all_past_working_days[:1])
+            self.d_2_trx_date = all_past_working_days[1]
+            self.d_1_d_7_trx_date = ','.join(all_past_working_days[:7])
+            self.d_1_d_15_trx_date = ','.join(all_past_working_days[:15])
+            self.d_1_d_30_trx_date = ','.join(all_past_working_days[:30])
+            self.d_1_d_45_trx_date = ','.join(all_past_working_days[:45])
             self.original_scene_dict = self.get_original_scene_dict()
 
 
@@ -46,14 +58,17 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
     def run(self):
         self.prepare_data()
         print('监控一(付方签约名维度)开始执行')
-        payer_sales_name_list = set()
-        try:
-            print('监控一开始获取所有付方销售')
-            data = self.monitor1bypayer_data.get_data_by_payer_in_monitor1(self.d_1_d_45_trx_date)
-            for item in data:
-                payer_sales_name_list.add(item['PAYER_SALES_NAME'])
-        except Exception as e:
-            print('监控一开始获取所有付方销售失败')
+        # payer_sales_name_list = set()
+            
+        datas = self.monitor1bypayer_data.new_get_sales_and_payers_by_stat_in_montor1(self.d_1_d_45_trx_date)
+
+            # data = self.monitor1bypayer_data.get_data_by_payer_in_monitor1(self.d_1_d_45_trx_date)
+            # for item in data:
+            #     payer_sales_name_list.add(item['PAYER_SALES_NAME'])
+            
+        # last_45_datas = self.monitor1bypayer_data.get_data_by_payer_in_monitor1(
+        #         trx_date=self.d_1_d_45_trx_date
+        #     )
 
         d1_datas = self.build_d_n_datas_by_sales_and_signedname("d1")
         d1_d7_datas = self.build_d_n_datas_by_sales_and_signedname("d1_d7")
@@ -61,52 +76,142 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
         d1_d30_datas = self.build_d_n_datas_by_sales_and_signedname("d1_d30")
         d1_d45_datas = self.build_d_n_datas_by_sales_and_signedname("d1_d45")
         print(f'监控一数据构建完成！')
-
-        for payer_sales_name in payer_sales_name_list:
-            if payer_sales_name is None:
-                continue
-            self.deal_sales_name(
-                d1_datas,
-                d1_d7_datas,
-                d1_d15_datas,
-                d1_d30_datas,
-                d1_d45_datas,
-                payer_sales_name
-            )
-
-        return self.alert_list
-
-    def deal_sales_name(
-            self,
-            d1_datas: Dict,
-            d1_d7_datas: Dict,
-            d1_d15_datas: Dict,
-            d1_d30_datas: Dict,
-            d1_d45_datas: Dict,
-            payer_sales_name
-    ):
-        customer_list = set()
-        try:
-            print(f'监控一开始获取付方销售({payer_sales_name})的付方签约名')
-            data = self.monitor1bypayer_data.get_data_by_payer_in_monitor1(trx_date=self.d_1_d_45_trx_date,
-                                                                           payer_sales_name=payer_sales_name)
-
-            for item in data:
-                customer_list.add(item['PAYER_CUSTOMER_SIGNEDNAME'])
-        except Exception as e:
-            print(f'监控一开始获取付方销售({payer_sales_name})的付方签约名失败！')
-            return
-
-        for customer in customer_list:
+        
+        self.reason4_data = {}
+        self.reason5_data = {}
+        reason4_datas = self.monitor1bypayer_data.new_get_reason_4_data_by_payer_in_monitor1(f"{self.d_1_trx_date},{self.d_2_trx_date}")
+        # d_1_data = self.monitor1bypayer_data.get_reason_4_data_by_payer_in_monitor1(trx_date=self.d_1_trx_date)
+            # d_2_data = self.monitor1bypayer_data.get_reason_4_data_by_payer_in_monitor1(trx_date=self.d_2_trx_date,
+            #                                                                             payer_sales_name=payer_sales_name,
+            #                                                                             payer_customer_signedname=customer)
+        reason5_datas = self.monitor1bypayer_data.new_get_reason_5_data_by_payer_in_monitor1(f"{self.d_1_trx_date},{self.d_2_trx_date}")
+        
+        
+        for d in reason4_datas:  # looping through row
+            payer_sales_name = d['PAYER_SALES_NAME'],
+            payer_customer_signedname = d['PAYER_CUSTOMER_SIGNEDNAME']
+            product = d['PRODUCT']
+            trx_date = d['TRX_DATE'].split(" ")[0]
+            sc = int(d['SUCCESS_COUNT'])
+            sm = float(d['SUCCESS_AMOUNT'])
+            k = payer_sales_name[0] + '#_#' + payer_customer_signedname + '#_#' + product
+            if self.reason4_data.get(k) is None:
+                self.reason4_data[k] = {
+                    'd_1_data':{
+                        'SUCCESS_COUNT':0,
+                        'SUCCESS_AMOUNT':0,
+                        'PRODUCT':product
+                    },
+                    'd_2_data':{
+                        'SUCCESS_COUNT':0,
+                        'SUCCESS_AMOUNT':0,
+                        'PRODUCT':product
+                    }
+                }
+            if trx_date == self.d_1_trx_date:
+                self.reason4_data[k]['d_1_data']['SUCCESS_COUNT'] += sc
+                self.reason4_data[k]['d_1_data']['SUCCESS_AMOUNT'] += sm
+            if trx_date == self.d_2_trx_date:
+                self.reason4_data[k]['d_2_data']['SUCCESS_COUNT'] += sc
+                self.reason4_data[k]['d_2_data']['SUCCESS_AMOUNT'] += sm
+            # comment: 
+            
+        
+        for d in reason5_datas:  # looping through row
+            payer_sales_name = d['PAYER_SALES_NAME'],
+            payer_customer_signedname = d['PAYER_CUSTOMER_SIGNEDNAME']
+            product = d['PRODUCT']
+            trx_date = d['TRX_DATE'].split(" ")[0]
+            sc = int(d['SUCCESS_COUNT'])
+            sm = float(d['SUCCESS_AMOUNT'])
+            sd = d['STAT_DISPAYSIGNEDNAME']
+            scn = d['STAT_CUSTOMER_NO']
+            k = payer_sales_name[0] + '#_#' + payer_customer_signedname + '#_#' + sd + '#_#' + scn
+            if self.reason5_data.get(k) is None:
+                self.reason5_data[k] = {
+                    'd_1_data':{
+                        'SUCCESS_COUNT':0,
+                        'SUCCESS_AMOUNT':0,
+                        'PRODUCT':product,
+                        'STAT_DISPAYSIGNEDNAME':sd,
+                        'STAT_CUSTOMER_NO':scn
+                    },
+                    'd_2_data':{
+                        'SUCCESS_COUNT':0,
+                        'SUCCESS_AMOUNT':0,
+                        'PRODUCT':product,
+                        'STAT_DISPAYSIGNEDNAME':sd,
+                        'STAT_CUSTOMER_NO':scn
+                    }
+                }
+            if trx_date == self.d_1_trx_date:
+                self.reason5_data[k]['d_1_data']['SUCCESS_COUNT'] += sc
+                self.reason5_data[k]['d_1_data']['SUCCESS_AMOUNT'] += sm
+            if trx_date == self.d_2_trx_date:
+                self.reason5_data[k]['d_2_data']['SUCCESS_COUNT'] += sc
+                self.reason5_data[k]['d_2_data']['SUCCESS_AMOUNT'] += sm
+            # comment: 
+            
+        for d in datas:  # looping through row
+            # comment: 
             self.deal_customer(
                 d1_datas,
                 d1_d7_datas,
                 d1_d15_datas,
                 d1_d30_datas,
                 d1_d45_datas,
-                payer_sales_name,
-                customer
+                d['PAYER_SALES_NAME'],
+                d['PAYER_CUSTOMER_SIGNEDNAME']
             )
+        # end for
+        
+        
+
+        # for payer_sales_name in payer_sales_name_list:
+        #     if payer_sales_name is None:
+        #         continue
+        #     self.deal_sales_name(
+        #         d1_datas,
+        #         d1_d7_datas,
+        #         d1_d15_datas,
+        #         d1_d30_datas,
+        #         d1_d45_datas,
+        #         payer_sales_name
+        #     )
+
+        return self.alert_list
+
+    # def deal_sales_name(
+    #         self,
+    #         d1_datas: Dict,
+    #         d1_d7_datas: Dict,
+    #         d1_d15_datas: Dict,
+    #         d1_d30_datas: Dict,
+    #         d1_d45_datas: Dict,
+    #         payer_sales_name
+    # ):
+    #     customer_list = set()
+    #     try:
+    #         print(f'监控一开始获取付方销售({payer_sales_name})的付方签约名')
+    #         data = self.monitor1bypayer_data.get_data_by_payer_in_monitor1(trx_date=self.d_1_d_45_trx_date,
+    #                                                                        payer_sales_name=payer_sales_name)
+
+    #         for item in data:
+    #             customer_list.add(item['PAYER_CUSTOMER_SIGNEDNAME'])
+    #     except Exception as e:
+    #         print(f'监控一开始获取付方销售({payer_sales_name})的付方签约名失败！')
+    #         return
+
+    #     for customer in customer_list:
+    #         self.deal_customer(
+    #             d1_datas,
+    #             d1_d7_datas,
+    #             d1_d15_datas,
+    #             d1_d30_datas,
+    #             d1_d45_datas,
+    #             payer_sales_name,
+    #             customer
+    #         )
 
     def build_d_n_datas_by_sales_and_signedname(self, days_type) -> Dict:
         """按销售和签约名分组，构造数据"""
@@ -301,16 +406,23 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
         '''
         # 归因4
         try:
-            d_1_data = self.monitor1bypayer_data.get_reason_4_data_by_payer_in_monitor1(trx_date=self.d_1_trx_date,
-                                                                                        payer_sales_name=payer_sales_name,
-                                                                                        payer_customer_signedname=customer)
-            d_2_data = self.monitor1bypayer_data.get_reason_4_data_by_payer_in_monitor1(trx_date=self.d_2_trx_date,
-                                                                                        payer_sales_name=payer_sales_name,
-                                                                                        payer_customer_signedname=customer)
-            d_1_d_45_data = self.monitor1bypayer_data.get_reason_4_data_by_payer_in_monitor1(
-                trx_date=self.d_1_d_45_trx_date,
-                payer_sales_name=payer_sales_name,
-                payer_customer_signedname=customer)
+            tk = f"{payer_sales_name}#_#{customer}"
+            values = [self.reason4_data[k] for k in self.reason4_data.keys() if tk in k]
+            
+            d_1_data = [v['d_1_data'] for v in values]
+            d_2_data = [v['d_2_data'] for v in values]
+            # if len(values) > 1:
+                
+            #     d_1_data1 = self.monitor1bypayer_data.get_reason_4_data_by_payer_in_monitor1(trx_date=self.d_1_trx_date,
+            #                                                                                 payer_sales_name=payer_sales_name,
+            #                                                                                 payer_customer_signedname=customer)
+            #     d_2_data2 = self.monitor1bypayer_data.get_reason_4_data_by_payer_in_monitor1(trx_date=self.d_2_trx_date,
+            #                                                                                 payer_sales_name=payer_sales_name,
+            #                                                                                 payer_customer_signedname=customer)
+            # d_1_d_45_data = self.monitor1bypayer_data.get_reason_4_data_by_payer_in_monitor1(
+            #     trx_date=self.d_1_d_45_trx_date,
+            #     payer_sales_name=payer_sales_name,
+            #     payer_customer_signedname=customer)
 
             for d_2_item in d_2_data:
                 d_2_success_amount = float(d_2_item['SUCCESS_AMOUNT'])
@@ -353,16 +465,22 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
 
         # 归因5
         try:
-            d_1_data = self.monitor1bypayer_data.get_reason_5_data_by_payer_in_monitor1(trx_date=self.d_1_trx_date,
-                                                                                        payer_sales_name=payer_sales_name,
-                                                                                        payer_customer_signedname=customer)
-            d_2_data = self.monitor1bypayer_data.get_reason_5_data_by_payer_in_monitor1(trx_date=self.d_2_trx_date,
-                                                                                        payer_sales_name=payer_sales_name,
-                                                                                        payer_customer_signedname=customer)
-            d_1_d_45_data = self.monitor1bypayer_data.get_reason_5_data_by_payer_in_monitor1(
-                trx_date=self.d_1_d_45_trx_date,
-                payer_sales_name=payer_sales_name,
-                payer_customer_signedname=customer)
+            tk = f"{payer_sales_name}#_#{customer}"
+            values = [self.reason5_data[k] for k in self.reason5_data.keys() if tk in k]
+            
+            d_1_data = [v['d_1_data'] for v in values]
+            d_2_data = [v['d_2_data'] for v in values]
+            # if True:
+            #     d_1_data1 = self.monitor1bypayer_data.get_reason_5_data_by_payer_in_monitor1(trx_date=self.d_1_trx_date,
+            #                                                                                 payer_sales_name=payer_sales_name,
+            #                                                                                 payer_customer_signedname=customer)
+            #     d_2_data2 = self.monitor1bypayer_data.get_reason_5_data_by_payer_in_monitor1(trx_date=self.d_2_trx_date,
+            #                                                                                 payer_sales_name=payer_sales_name,
+            #                                                                                 payer_customer_signedname=customer)
+            # d_1_d_45_data = self.monitor1bypayer_data.get_reason_5_data_by_payer_in_monitor1(
+            #     trx_date=self.d_1_d_45_trx_date,
+            #     payer_sales_name=payer_sales_name,
+            #     payer_customer_signedname=customer)
 
             for d_2_item in d_2_data:
                 d_2_success_amount = float(d_2_item['SUCCESS_AMOUNT'])
