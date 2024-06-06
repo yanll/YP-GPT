@@ -148,10 +148,14 @@ class Monitor3(AirlineMonitorDataHandler):
             # )
             for item in d_1_data:
                 customer_list.add(item['STAT_DISPAYSIGNEDNAME'])
-                d_1_customer_to_success_amount[item['STAT_DISPAYSIGNEDNAME']] = float(item['SUCCESS_AMOUNT'])
+                if item['STAT_DISPAYSIGNEDNAME'] not in d_1_customer_to_success_amount:
+                    d_1_customer_to_success_amount[item['STAT_DISPAYSIGNEDNAME']] = 0
+                d_1_customer_to_success_amount[item['STAT_DISPAYSIGNEDNAME']] += float(item['SUCCESS_AMOUNT'])
             for item in d_2_data:
                 customer_list.add(item['STAT_DISPAYSIGNEDNAME'])
-                d_2_customer_to_success_amount[item['STAT_DISPAYSIGNEDNAME']] = float(item['SUCCESS_AMOUNT'])
+                if item['STAT_DISPAYSIGNEDNAME'] not in d_2_customer_to_success_amount:
+                    d_2_customer_to_success_amount[item['STAT_DISPAYSIGNEDNAME']] = 0
+                d_2_customer_to_success_amount[item['STAT_DISPAYSIGNEDNAME']] += float(item['SUCCESS_AMOUNT'])
             print(f'监控三开始获取{sales_name}的商户签约名成功！')
 
         except Exception as e:
@@ -334,10 +338,14 @@ class Monitor3(AirlineMonitorDataHandler):
             # )
             for item in d_1_data:
                 payer_customer_list.add(item['PAYER_CUSTOMER_SIGNEDNAME'])
-                d_1_payer_customer_to_success_amount[item['PAYER_CUSTOMER_SIGNEDNAME']] = float(item['SUCCESS_AMOUNT'])
+                if item['PAYER_CUSTOMER_SIGNEDNAME'] not in d_1_payer_customer_to_success_amount:
+                    d_1_payer_customer_to_success_amount[item['PAYER_CUSTOMER_SIGNEDNAME']] = 0
+                d_1_payer_customer_to_success_amount[item['PAYER_CUSTOMER_SIGNEDNAME']] += float(item['SUCCESS_AMOUNT'])
             for item in d_2_data:
                 payer_customer_list.add(item['PAYER_CUSTOMER_SIGNEDNAME'])
-                d_2_payer_customer_to_success_amount[item['PAYER_CUSTOMER_SIGNEDNAME']] = float(item['SUCCESS_AMOUNT'])
+                if item['PAYER_CUSTOMER_SIGNEDNAME'] not in d_2_payer_customer_to_success_amount:
+                    d_2_payer_customer_to_success_amount[item['PAYER_CUSTOMER_SIGNEDNAME']] = 0
+                d_2_payer_customer_to_success_amount[item['PAYER_CUSTOMER_SIGNEDNAME']] += float(item['SUCCESS_AMOUNT'])
 
             print(f'监控三开始获取{payer_sales_name}的付方签约名成功！')
         except Exception as e:
