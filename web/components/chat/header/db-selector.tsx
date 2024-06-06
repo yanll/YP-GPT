@@ -68,6 +68,9 @@ function DBSelector() {
         {process.env.NODE_ENV !== "development" && <Select.Option key={'dp_dws_dw_event_trx_pay'}>
           dp_dws_dw_event_trx_pay
         </Select.Option>}
+        {process.env.NODE_ENV !== "development" && <Select.Option key={'DM_BI_DAILYTRXSTAT_PANEL_PAYER_VIEW_HC_DBVIEW'}>
+          DM_BI_DAILYTRXSTAT_PANEL_PAYER_VIEW_HC_DBVIEW
+        </Select.Option>}
       </Select>
 
     </>
