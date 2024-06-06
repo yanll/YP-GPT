@@ -158,8 +158,9 @@ class ClickhouseConnector(RDBMSConnector):
             tmp.append(values)
             cur_token_size += len(values)
             fields[0][idx] = tuple(tmp)
-            if cur_token_size >= max_limit_token_size:
-                break
+            
+            # if cur_token_size >= max_limit_token_size:
+            #     break
         # end for
         
         return [
@@ -201,7 +202,7 @@ class ClickhouseConnector(RDBMSConnector):
                 FROM {self.get_current_db_name()}.{envutils.getenv("CK_TABLE_NAME")}
                 GROUP BY {field}
                 ORDER BY frequency DESC
-                LIMIT 10
+                LIMIT 15
             )
             SELECT {field}
             FROM Temp;
