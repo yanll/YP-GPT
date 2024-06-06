@@ -152,7 +152,8 @@ class ClickhouseConnector(RDBMSConnector):
                 break
             # comment: 
             values = ""
-            if field[1] == "String":
+            logger.info(field[0],field[4])
+            if field[1] == "String" and ("NAME" in field[0] or "BUSSINESS" in field[0]):
                 values = self.get_field_values(field=field[0])
             tmp = list(field)
             tmp.append(values)
