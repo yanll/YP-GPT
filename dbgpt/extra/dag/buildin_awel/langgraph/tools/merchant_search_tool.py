@@ -183,6 +183,8 @@ class MerchantSearchTool(BaseTool):
                     if "data" in j:
                         d = j["data"]["data"]
                         for e in d:
+                            if e['SALESNAME'] is None:
+                                e['SALESNAME'] = ""
                             cus_name = e['CUSTOMER_NAME']
                             si_name = e['SIGNEDNAME']
                             if si_name != cus_name:
