@@ -114,7 +114,7 @@ class MerchantSearchTool(BaseTool):
                         lines.add(item["permission"])
             success = "false"
             message = "没有对应商户的查询权限！"
-            if en_name != "" and len(lines) <= 0:
+            if en_name != "":
                 url = envutils.getenv("BIZ_APP_ENDPOINT") + "/biz_org/get_biz_orgs"
                 headers = {
                     'Content-Type': 'application/json; charset=utf-8',
@@ -136,6 +136,9 @@ class MerchantSearchTool(BaseTool):
                             sales.add(item["biz_name"])
                         if item["director"] == en_name:
                             sales.add(item["biz_name"])
+
+                        if item["sub_type"] == "OPERATOR":
+                            print("用户：", str(item))
                         if item["sub_type"] == "OPERATOR" and (
                                 item["biz_key"] == en_name or item["biz_name"] == cn_name):
                             lines.add(item["industry"])
@@ -180,6 +183,8 @@ class MerchantSearchTool(BaseTool):
                     if "data" in j:
                         d = j["data"]["data"]
                         for e in d:
+                            if e['SALESNAME'] is None:
+                                e['SALESNAME'] = ""
                             cus_name = e['CUSTOMER_NAME']
                             si_name = e['SIGNEDNAME']
                             if si_name != cus_name:

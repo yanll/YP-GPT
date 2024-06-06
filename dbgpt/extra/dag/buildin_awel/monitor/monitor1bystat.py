@@ -100,9 +100,10 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                     
                 if sales_stat_dict[sale_stat_key]['scn_dimension'].get(sale_stat_scn_key) is None:
                     sales_stat_dict[sale_stat_key]['scn_dimension'][sale_stat_scn_key] = {
-                       'd_1_data': {'SUCCESS_COUNT': 0, 'SUCCESS_AMOUNT':0},
-                       'd_2_data': {'SUCCESS_COUNT': 0, 'SUCCESS_AMOUNT':0},
-                       'd_1_d_45_data': {'SUCCESS_COUNT': 0, 'SUCCESS_AMOUNT':0},
+                        'd_1_data': {'SUCCESS_COUNT': 0, 'SUCCESS_AMOUNT':0},
+                        'd_2_data': {'SUCCESS_COUNT': 0, 'SUCCESS_AMOUNT':0},
+                        'd_1_d_45_data': {'SUCCESS_COUNT': 0, 'SUCCESS_AMOUNT':0},
+                        'd_1_d_7_data': {'SUCCESS_COUNT': 0, 'SUCCESS_AMOUNT': 0},
                     }
                     
                 if sales_stat_dict[sale_stat_key]['scn_product_dimension'].get(sale_stat_scn__prod_key) is None:
@@ -143,6 +144,12 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                     
                     sales_stat_dict[sale_stat_key]['d_1_d_7_data']['SUCCESS_COUNT'] += success_count
                     sales_stat_dict[sale_stat_key]['d_1_d_7_data']['SUCCESS_AMOUNT'] += success_amount
+
+                    # 增加用户___商户___商编的总额（7天）
+                    sales_stat_dict[sale_stat_key]['scn_dimension'][sale_stat_scn_key]['d_1_d_7_data'][
+                        'SUCCESS_COUNT'] += success_count
+                    sales_stat_dict[sale_stat_key]['scn_dimension'][sale_stat_scn_key]['d_1_d_7_data'][
+                        'SUCCESS_AMOUNT'] += success_amount
                 
                 # 最近15天
                 if trx_data in self.d_1_d_15_trx_date:
@@ -284,7 +291,7 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
 
                     print(f'监控一{sales_name}的商户签约名为{customer}的数据异常条件满足')
 
-                    reason1, reason1_text = self.find_reason1(sales_name, customer, scn_dimension)
+                    reason1, reason1_text = self.find_reason1(sales_name, customer, scn_dimension, True)
                     reason2, reason2_text = self.find_reason2(sales_name, customer, scn_product_dimension)
                     reason3, reason3_text = self.find_reason3(sales_name, customer)
 
@@ -312,7 +319,7 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                         return
                     if customer_success_count >= 0:
                         return
-                    reason1, reason1_text = self.find_reason1(sales_name, customer, scn_dimension)
+                    reason1, reason1_text = self.find_reason1(sales_name, customer, scn_dimension, False)
                     reason2, reason2_text = self.find_reason2(sales_name, customer, scn_product_dimension)
                     reason3, reason3_text = self.find_reason3(sales_name, customer)
 
@@ -335,7 +342,7 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
         except Exception as e:
             print(f'监控一开始处理{sales_name}的商户签约名为{customer}的数据失败')
 
-    def find_reason1(self, sales_name, customer, scn_dimension) -> list:
+    def find_reason1(self, sales_name, customer, scn_dimension, is_long_term:bool) -> list:
         print(f'监控一处理{sales_name}的商户签约名为{customer}的数据异常归因1')
         reason1 = []
         reason1_text = []
@@ -356,6 +363,7 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
             d_1_data = []
             d_2_data = []
             d_1_d_45_data = []
+            d_1_d_7_data = []
             for k in ks:
                 d = k.split('___')
                 d_1_data.append({
@@ -373,6 +381,12 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                 d_1_d_45_data.append({
                     "SUCCESS_COUNT": scn_dimension[k]['d_1_d_45_data']['SUCCESS_COUNT'],
                     "SUCCESS_AMOUNT": scn_dimension[k]['d_1_d_45_data']['SUCCESS_AMOUNT'],
+                    "STAT_CUSTOMER_NO": d[2]
+                })
+
+                d_1_d_7_data.append({
+                    "SUCCESS_COUNT": scn_dimension[k]['d_1_d_7_data']['SUCCESS_COUNT'],
+                    "SUCCESS_AMOUNT": scn_dimension[k]['d_1_d_7_data']['SUCCESS_AMOUNT'],
                     "STAT_CUSTOMER_NO": d[2]
                 })
             
@@ -399,15 +413,25 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                         d_1_success_count = float(d_1_item['SUCCESS_COUNT'])
                         break
                 if abs(d_1_success_amount - d_2_success_amount) >= 100000:
-                    d_1_d_45_success_count = 0
-                    for d_1_d_45_item in d_1_d_45_data:
+                    if is_long_term:
+                        d_1_d_45_success_count = 0
+                        for d_1_d_45_item in d_1_d_45_data:
 
-                        if d_1_d_45_item['STAT_CUSTOMER_NO'] == d_2_item['STAT_CUSTOMER_NO']:
-                            d_1_d_45_success_count = float(d_1_d_45_item['SUCCESS_COUNT'])
-                            break
-                    if d_1_d_45_success_count == 0:
-                        continue
-                    difference = d_1_success_count / d_1_d_45_success_count - 1
+                            if d_1_d_45_item['STAT_CUSTOMER_NO'] == d_2_item['STAT_CUSTOMER_NO']:
+                                d_1_d_45_success_count = float(d_1_d_45_item['SUCCESS_COUNT'])
+                                break
+                        if d_1_d_45_success_count == 0:
+                            continue
+                        difference = d_1_success_count / (d_1_d_45_success_count/45) - 1
+                    else:
+                        d_1_d_7_success_count = 0
+                        for d_1_d_7_item in d_1_d_45_data:
+                            if d_1_d_7_item['STAT_CUSTOMER_NO'] == d_2_item['STAT_CUSTOMER_NO']:
+                                d_1_d_7_success_count = float(d_1_d_7_item['SUCCESS_COUNT'])
+                                break
+                        if d_1_d_7_success_count == 0:
+                            continue
+                        difference = d_1_success_count / (d_1_d_7_success_count/7) - 1
                     orig_scene = self.get_original_scene_by_merchant_no(
                         self.original_scene_dict,
                         d_2_item["STAT_CUSTOMER_NO"]
