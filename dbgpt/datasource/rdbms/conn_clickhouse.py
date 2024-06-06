@@ -154,7 +154,12 @@ class ClickhouseConnector(RDBMSConnector):
             values = ""
             print(field[0],field[4],field[1])
             if "String" in field[1] and ("NAME" in field[0] or "PRODUCT" in field[0]):
-                values = self.get_field_values(field=field[0])
+                try:
+                    # comment: 
+                    values = self.get_field_values(field=field[0])
+                except Exception as e:
+                    print(e)
+                # end try
             tmp = list(field)
             tmp.append(values)
             print(values)
