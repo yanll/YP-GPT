@@ -50,17 +50,24 @@ class Dailypushmessagetool(BaseTool):
 
             yesterday_change_rate = data.get("昨天相对于前天的同比变化率", "")
             weekly_change_rate_formatted = data.get("上周同一时间的毛利变化率", "")
+            yesterday777_change_rate_formatted = data.get("昨日同比7日平均变化率", "")
 
             # 颜色判断和富文本信息生成
             numeric_change_rate_yesterday = float(yesterday_change_rate.strip('%'))
             numeric_change_rate_weekly = float(weekly_change_rate_formatted.strip('%'))
+            numeric_change_rate_yesterday777 = float(yesterday777_change_rate_formatted.strip('%'))
 
             colour_yesterday_change_rate = "green" if numeric_change_rate_yesterday > 0 else "red"
             up_and_down_yesterday = "↑" if colour_yesterday_change_rate == "green" else "↓"
             value_colour_yesterday_change_rate = f"<text_tag color={colour_yesterday_change_rate}>{yesterday_change_rate}{up_and_down_yesterday}</text_tag>"
+
             colour_weekly_change_rate = "green" if numeric_change_rate_weekly > 0 else "red"
             up_and_down_weekly = "↑" if colour_weekly_change_rate == "green" else "↓"
             value_colour_weekly_change_rate = f"<text_tag color={colour_weekly_change_rate}>{weekly_change_rate_formatted}{up_and_down_weekly}</text_tag>"
+
+            colour_yesterday777_change_rate = "green" if numeric_change_rate_yesterday777 > 0 else "red"
+            up_and_down_yesterday = "↑" if colour_yesterday777_change_rate == "green" else "↓"
+            value_colour_yesterday777_change_rate = f"<text_tag color={colour_yesterday777_change_rate}>{yesterday777_change_rate_formatted}{up_and_down_yesterday}</text_tag>"
 
             print("昨日的颜色", value_colour_yesterday_change_rate)
             print("上周的颜色", value_colour_weekly_change_rate)
@@ -132,6 +139,8 @@ class Dailypushmessagetool(BaseTool):
                 weekly_change_rate_formatted = m.get("上周同一时间的毛利变化率", "")
                 profit_day7_before_yesterday = m.get("前7天的毛利总额", "")
                 average_day7_before_yesterday = m.get("前7天的平均毛利", "")
+                yesterday777_change_rate_formatted = m.get("昨日同比7日平均变化率", "")
+
 
                 list.append({
                     "profit_yesterday": profit_yesterday if profit_yesterday is not None else "",
@@ -140,6 +149,7 @@ class Dailypushmessagetool(BaseTool):
                     "weekly_change_rate_formatted": weekly_change_rate_formatted if weekly_change_rate_formatted is not None else "",
                     "profit_day7_before_yesterday": profit_day7_before_yesterday if profit_day7_before_yesterday is not None else "",
                     "average_day7_before_yesterday": average_day7_before_yesterday if average_day7_before_yesterday is not None else "",
+                    "yesterday777_change_rate_formatted": yesterday777_change_rate_formatted if yesterday777_change_rate_formatted is not None else "",
 
                 })
 
@@ -159,7 +169,8 @@ class Dailypushmessagetool(BaseTool):
                     "formatted_date": formatted_date,
 
                     "value_colour_yesterday_change_rate": value_colour_yesterday_change_rate,
-                    "value_colour_weekly_change_rate": value_colour_weekly_change_rate
+                    "value_colour_weekly_change_rate": value_colour_weekly_change_rate,
+                    "value_colour_yesterday777_change_rate": value_colour_yesterday777_change_rate
 
                 }
             }

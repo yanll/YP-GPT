@@ -111,9 +111,8 @@ class RequestHandleOperator(MapOperator[None, List[Dict]]):
 
                             "formatted_date": data["formatted_date"],
                             "value_colour_yesterday_change_rate": data["value_colour_yesterday_change_rate"],
-                            "value_colour_weekly_change_rate": data["value_colour_weekly_change_rate"]
-
-
+                            "value_colour_weekly_change_rate": data["value_colour_weekly_change_rate"],
+                            "value_colour_yesterday777_change_rate": data["value_colour_yesterday777_change_rate"]
 
                         }
                     )
