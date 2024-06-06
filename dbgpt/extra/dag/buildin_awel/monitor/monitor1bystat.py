@@ -510,14 +510,14 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                 )
                 if abs(d_1_success_amount - d_2_success_amount) > 10000 and d_1_success_amount / d_2_success_amount - 1 > 1.5:
                     reason2.append(
-                        f'归因二:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene},产品:{d_2_item["PRODUCT"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升<text_tag color= green >{(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
+                        f'{customer},{d_2_item["STAT_CUSTOMER_NO"]},{orig_scene}场景,{d_2_item["PRODUCT"]}产品，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升<text_tag color= green >{(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
                     reason2_text.append(
-                        f'归因二:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene},产品:{d_2_item["PRODUCT"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升{(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
+                        f'{customer},{d_2_item["STAT_CUSTOMER_NO"]},{orig_scene}场景,{d_2_item["PRODUCT"]}产品，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升{(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
                 if abs(d_1_success_amount - d_2_success_amount) > 10000 and d_1_success_amount / d_2_success_amount - 1 < -0.5:
                     reason2.append(
-                        f'归因二:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene},产品:{d_2_item["PRODUCT"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降<text_tag color=  red  >{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
+                        f'{customer},{d_2_item["STAT_CUSTOMER_NO"]},{orig_scene}场景,{d_2_item["PRODUCT"]}产品，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降<text_tag color=  red  >{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
                     reason2_text.append(
-                        f'归因二:商户签约名:{customer},商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene},产品:{d_2_item["PRODUCT"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
+                        f'{customer},{d_2_item["STAT_CUSTOMER_NO"]},{orig_scene}场景,{d_2_item["PRODUCT"]}产品，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
 
 
         except Exception as e:
