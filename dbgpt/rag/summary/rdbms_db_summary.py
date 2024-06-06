@@ -144,7 +144,8 @@ def _parse_table_summary(
     # ]
     fields_examples = ''
     columns = []
-    for column in conn.get_columns(table_name):
+    table_columns = conn.get_columns(table_name)
+    for column in table_columns:
         if column.get("comment"):
             columns.append(f"{column['name']} ({column.get('comment')})")
         else:
@@ -152,7 +153,7 @@ def _parse_table_summary(
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
         if column.get('sample'):
             fields_examples += f"\n{column['name']}: {column.get('sample')}"
-    # for column in conn.get_columns(table_name):
+    # for column in conn.table_columns:
     #     if column.get("comment"):
     #         col = f"{column['name']} ({column.get('comment')}"
     #         if column.get('sample'):
@@ -222,7 +223,7 @@ def _parse_table_summary(
     
     _prompt_table_schema.append("所有列信息:")
     
-    for column in conn.get_columns(table_name):
+    for column in table_columns:
         
         field_schema = [
             f"- 列名称: [{column['name']}]",

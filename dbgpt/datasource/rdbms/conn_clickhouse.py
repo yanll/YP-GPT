@@ -152,12 +152,12 @@ class ClickhouseConnector(RDBMSConnector):
                 break
             # comment: 
             values = ""
-            logger.info(field[0],field[4])
-            if field[1] == "String" and ("NAME" in field[0] or "BUSSINESS" in field[0]):
+            print(field[0],field[4],field[1])
+            if "String" in field[1] and ("NAME" in field[0] or "PRODUCT" in field[0]):
                 values = self.get_field_values(field=field[0])
             tmp = list(field)
             tmp.append(values)
-            logger.info(values)
+            print(values)
             cur_token_size += len(values)
             fields[0][idx] = tuple(tmp)
             
@@ -165,7 +165,7 @@ class ClickhouseConnector(RDBMSConnector):
             #     break
         # end for
         
-        logger.info(fields[0])
+        print(fields[0])
         return [
             {"name": name, "comment": comment, "type": column_type, "sample": rest[0] if len(rest) > 0 else None}
             for name, column_type, _, _, comment,*rest in fields[0]
