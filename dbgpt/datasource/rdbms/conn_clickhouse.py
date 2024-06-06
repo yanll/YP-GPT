@@ -156,7 +156,7 @@ class ClickhouseConnector(RDBMSConnector):
             if "String" in field[1] and ("NAME" in field[0] or "PRODUCT" in field[0]):
                 try:
                     # comment: 
-                    values = self.get_field_values(field=field[0])
+                    values = self.get_field_values(field=field[0],table_name=table_name)
                 except Exception as e:
                     print(e)
                 # end try
@@ -195,7 +195,7 @@ class ClickhouseConnector(RDBMSConnector):
             fields = [block for block in stream]  # noqa
             return fields
         
-    def get_field_values(self, field:str):
+    def get_field_values(self, field:str,table_name:str):
         session = self.client
         # _query_sql = f"""
         #     SELECT {field}, COUNT(*) AS frequency
@@ -208,7 +208,7 @@ class ClickhouseConnector(RDBMSConnector):
         _query_sql = f"""
             WITH Temp AS (
                 SELECT {field}, COUNT(*) AS frequency
-                FROM {self.get_current_db_name()}.{envutils.getenv("CK_TABLE_NAME")}
+                FROM {self.get_current_db_name()}.{table_name}
                 GROUP BY {field}
                 ORDER BY frequency DESC
                 LIMIT 15
