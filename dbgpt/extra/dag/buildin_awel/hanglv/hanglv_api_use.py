@@ -71,7 +71,11 @@ def get_user_open_id(name):
         # 请求失败，返回None或错误信息
         return {'error': f'Request failed with status code {response.status_code}'}
 
-# result = get_user_open_id(name='宋岩')
+# result = get_user_open_id(name='苏杨生')
 #
 # print(result)
 # #ou_9d42bb88ec8940baf3ad183755131881
+# #{'feng.gao@yeepay.com': 'ou_dd02cefd5b0d267928a80bedfd3d2100'}
+# #{'wei.huang-1@yeepay.com': 'ou_7acf1ad58a4faa8c60c75d195a9ac220'}
+# #{'yangsheng.su@yeepay.com': 'ou_079964d3b15f58fc330058a629b8ed41'}
+#

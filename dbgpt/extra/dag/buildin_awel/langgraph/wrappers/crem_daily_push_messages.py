@@ -544,6 +544,7 @@ def shujuqingk(open_id):
         average_day7_before_yesterday = "数据为空，你不是销售" # 前七天平均
         yesterday_change_rate_formatted = "数据为空，你不是销售"
         weekly_change_rate_formatted = "数据为空，你不是销售"
+        yesterday777_change_rate_formatted = "数据为空，你不是销售"
     else:
         # 提取毛利数据并格式化
         profit_yesterday = format_profit(result_yesterday)
@@ -552,6 +553,7 @@ def shujuqingk(open_id):
 
         # 计算前7天平均每日毛利
         average_day7_before_yesterday = format_profit(result_day7_before_yesterday / 7)
+        average_day7_before_yesterday_before = result_day7_before_yesterday / 7
 
         # 计算昨天相对于前天的同比变化率
         if result_day_before_yesterday != 0:
@@ -569,6 +571,15 @@ def shujuqingk(open_id):
         else:
             weekly_change_rate_formatted = "数据为空"
 
+        # 计算昨日同比7日平均变化率
+        if average_day7_before_yesterday_before != 0:
+            yesterday777_change_rate = ((result_yesterday - average_day7_before_yesterday_before) / average_day7_before_yesterday_before) * 100
+            print("昨天的毛利++++++++++++",result_yesterday)
+            print("七日平均毛利++++++++++++",average_day7_before_yesterday_before)
+            yesterday777_change_rate_formatted = "{:.2f}%".format(yesterday777_change_rate)
+        else:
+            yesterday777_change_rate_formatted = "数据为空"
+
     # 返回数据字典
     return {
         '昨天的毛利': profit_yesterday,
@@ -576,10 +587,11 @@ def shujuqingk(open_id):
         '昨天相对于前天的同比变化率': yesterday_change_rate_formatted,
         '上周同一时间的毛利变化率': weekly_change_rate_formatted,
         '前7天的毛利总额': profit_day7_before_yesterday,
-        '前7天的平均毛利': average_day7_before_yesterday
+        '前7天的平均毛利': average_day7_before_yesterday,
+        '昨日同比7日平均变化率': yesterday777_change_rate_formatted
     }
 
 # #调用示例
-# result = shujuqingk(open_id='ou_7acf1ad58a4faa8c60c75d195a9ac220')
+# result = shujuqingk(open_id='ou_9d42bb88ec8940baf3ad183755131881')
 # print(result)
 

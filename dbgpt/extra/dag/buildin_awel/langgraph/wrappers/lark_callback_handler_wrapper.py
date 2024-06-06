@@ -5,7 +5,7 @@ from typing import Dict
 
 from dbgpt.extra.dag.buildin_awel.langgraph.tools import sales_details_daily
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import Day_30_TrxTre_card_tool, crem_30DaysTrx_text, \
-    crem_30DaysTrx_text_two, lark_book_meeting_room, crem_hanglv_sales_8DaysTrx, crem_hanglv_boos_8DaysTrx
+    crem_30DaysTrx_text_two, lark_book_meeting_room, crem_hanglv_sales_8DaysTrx
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_customer_visit
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import crem_api_wrapper, card_send_daily_report_search
 from dbgpt.extra.dag.buildin_awel.langgraph.wrappers import lark_project_api_wrapper
@@ -171,6 +171,8 @@ async def a_call(app_chat_service, event: Dict):
         # 检查 query_str 的值
         if query_str in ['高峰', '黄伟-1']:
             query_str = '宋岩'
+        if query_str in ['苏杨生']:
+            query_str = '段超'
 
 
 

@@ -56,7 +56,7 @@ def get_crem_hanglv_sales_8DaysTrx_card(open_id,nickname):
         {
             "trxDate": entry["trxDate"],
             "type": entry["type"],
-            "profit": round(entry["profit"] / 10000, 4)  # 将利润转换为万元并保留四位小数
+            "profit": round(entry["profit"] / 10000, 2)  # 将利润转换为万元并保留四位小数
         }
         for entry in api_data["data"]["data"]
     ]
@@ -135,7 +135,7 @@ def get_crem_hanglv_sales_8DaysTrx_card(open_id,nickname):
 
 
 
-# get_crem_hanglv_sales_8DaysTrx_card("ou_9d42bb88ec8940baf3ad183755131881")
+# get_crem_hanglv_sales_8DaysTrx_card("ou_079964d3b15f58fc330058a629b8ed41","段超")
 
 
 
@@ -173,7 +173,7 @@ def get_crem_hanglv_boos_8DaysTrx_card(open_id,nickname):
         {
             "trxDate": entry["trxDate"],
             "type": entry["type"],
-            "profit": round(entry["profit"] / 10000, 4)  # 将利润转换为万元并保留四位小数
+            "profit": round(entry["profit"] / 10000, 2)  # 将利润转换为万元并保留四位小数
         }
         for entry in api_data["data"]["data"]
     ]
@@ -229,6 +229,66 @@ def get_crem_hanglv_boos_8DaysTrx_card(open_id,nickname):
                             "strokeWidth": 2
                         }
                     }
+                },
+                {
+                    "tag": "column_set",
+                    "flex_mode": "none",
+                    "background_style": "default",
+                    "horizontal_spacing": "0px",
+                    "horizontal_align": "left",
+                    "columns": [
+                        {
+                            "tag": "column",
+                            "width": "weighted",
+                            "vertical_align": "top",
+                            "vertical_spacing": "8px",
+                            "background_style": "default",
+                            "elements": [
+                                {
+                                    "tag": "button",
+                                    "text": {
+                                        "tag": "plain_text",
+                                        "content": ""
+                                    },
+                                    "type": "primary_text",
+                                    "complex_interaction": "true",
+                                    "width": "default",
+                                    "size": "medium",
+                                    "icon": {
+                                        "tag": "standard_icon",
+                                        "token": "add-bold_outlined"
+                                    },
+                                    "hover_tips": {
+                                        "tag": "plain_text",
+                                        "content": "新会话"
+                                    },
+                                    "value": {
+                                        "event_type": "new_chat"
+                                    }
+                                }
+                            ],
+                            "weight": 5
+                        },
+                        {
+                            "tag": "column",
+                            "width": "weighted",
+                            "vertical_align": "top",
+                            "vertical_spacing": "8px",
+                            "background_style": "default",
+                            "elements": [],
+                            "weight": 1
+                        },
+                        {
+                            "tag": "column",
+                            "width": "weighted",
+                            "vertical_align": "top",
+                            "vertical_spacing": "8px",
+                            "background_style": "default",
+                            "elements": [],
+                            "weight": 1
+                        }
+                    ],
+                    "margin": "16px 0px 0px 0px"
                 }
             ]
         },
@@ -240,7 +300,7 @@ def get_crem_hanglv_boos_8DaysTrx_card(open_id,nickname):
         content=var
     )
 
-# get_crem_hanglv_boos_8DaysTrx_card("ou_9d42bb88ec8940baf3ad183755131881","张华雪")
+# get_crem_hanglv_boos_8DaysTrx_card("ou_dd02cefd5b0d267928a80bedfd3d2100","宋岩")
 
 
 
