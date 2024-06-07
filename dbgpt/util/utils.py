@@ -7,6 +7,8 @@ import logging.handlers
 import os
 from typing import Any, List, Optional, cast
 
+import ecs_logging
+
 from dbgpt.configs.model_config import LOGDIR
 
 try:
@@ -87,10 +89,12 @@ def _build_logger(
 ):
     global handler
 
-    formatter = logging.Formatter(
-        fmt="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    )
+    # formatter = logging.Formatter(
+    #     fmt="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+    #     datefmt="%Y-%m-%d %H:%M:%S",
+    # )
+    
+    formatter = ecs_logging.StdlibFormatter(extra={'tag_name':'dbgpt','app_name':'dbgpt'})
 
     # Set the format of root handlers
     if not logging.getLogger().handlers:
@@ -101,9 +105,10 @@ def _build_logger(
     if handler is None and logger_filename:
         os.makedirs(LOGDIR, exist_ok=True)
         filename = os.path.join(LOGDIR, logger_filename)
-        handler = logging.handlers.TimedRotatingFileHandler(
-            filename, when="D", utc=True
-        )
+        # handler = logging.handlers.TimedRotatingFileHandler(
+        #     filename, when="D", utc=True
+        # )
+        handler = logging.FileHandler('./logs/log.log')
         handler.setFormatter(formatter)
 
         for name, item in logging.root.manager.loggerDict.items():
