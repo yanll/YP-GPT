@@ -292,8 +292,8 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                     print(f'监控一{sales_name}的商户签约名为{customer}的数据异常条件满足')
 
                     reason1, reason1_text = self.find_reason1(sales_name, customer, scn_dimension, True)
-                    reason2, reason2_text = self.find_reason2(sales_name, customer, scn_product_dimension)
-                    reason3, reason3_text = self.find_reason3(sales_name, customer)
+                    reason2, reason2_text, reason2_data = self.find_reason2(sales_name, customer, scn_product_dimension)
+                    reason3, reason3_text, reason3_data = self.find_reason3(sales_name, customer)
 
                     self.alert_list.append({
                         'title': '交易笔数波动异常',
@@ -307,6 +307,24 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                         'reason2_text': '\n'.join(reason2_text),
                         'reason3': '\n'.join(reason3),
                         'reason3_text': '\n'.join(reason3_text),
+                        'data': {
+                            'monitor_type': '1.1',
+                            'fluctuation_type': '长期波动',
+                            'stat_displaydignedname': customer,
+                            'sales_name': sales_name,
+                            'd_1_success_amount': float(d_1_data['SUCCESS_AMOUNT']),
+                            'd_1_d_45_avg_success_amount': float(d_1_d_45_data['SUCCESS_AMOUNT']) / 45,
+                            'd_1_success_count': float(d_1_data['SUCCESS_COUNT']),
+                            'd_1_d_45_avg_success_count': float(d_1_d_45_data['SUCCESS_COUNT']) / 45,
+                            'd_1_industry_line_success_count': float(self.d_1_industry_line_data['SUCCESS_COUNT']),
+                            'd_1_d_45_avg_industry_line_success_count': float(
+                                self.d_1_d_45_industry_line_data['SUCCESS_COUNT']) / 45,
+                            'proportion_type': "上升" if customer_success_count > 0 else "下降",
+                            'customer_success_count_proportion': customer_success_count,
+                            'remarks': '昨日交易金额是d_1_success_amount；环比上升或下降类型是proportion_type；环比上升或下降的值是customer_success_count_proportion',
+                            'reason_2_data': reason2_data,
+                            'reason_3_data': reason3_data,
+                        },
                     })
 
             def judge_short_term():
@@ -346,7 +364,7 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                             'd_1_success_count': float(d_1_data['SUCCESS_COUNT']),
                             'd_1_d_7_avg_success_count': float(d_1_d_7_data['SUCCESS_COUNT']) / 7,
                             'd_1_industry_line_success_count': float(self.d_1_industry_line_data['SUCCESS_COUNT']),
-                            'd_1_d_7_avg_industry_line_success_count': float(self.d_1_industry_line_data['SUCCESS_COUNT']) / 7,
+                            'd_1_d_7_avg_industry_line_success_count': float(self.d_1_d_7_industry_line_data['SUCCESS_COUNT']) / 7,
                             'proportion_type': "上升" if customer_success_count > 0 else "下降",
                             'customer_success_count_proportion': customer_success_count,
                             'remarks': '昨日交易金额是d_1_success_amount；环比上升或下降类型是proportion_type；环比上升或下降的值是customer_success_count_proportion',
