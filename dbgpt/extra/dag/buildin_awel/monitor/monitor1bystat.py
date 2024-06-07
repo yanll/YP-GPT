@@ -554,7 +554,7 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                     continue
                 d_1_success_amount = 0
                 for d_1_item in d_1_data:
-                    if d_1_item['PAYER_CUSTOMER_SIGNEDNAME'] == d_2_item['PAYER_CUSTOMER_SIGNEDNAME'] and d_1_item['STAT_CUSTOMER_NO'] == d_2_item['STAT_CUSTOMER_NO']:
+                    if d_1_item['PAYER_DISPAYSIGNEDNAME'] == d_2_item['PAYER_DISPAYSIGNEDNAME'] and d_1_item['STAT_CUSTOMER_NO'] == d_2_item['STAT_CUSTOMER_NO']:
                         d_1_success_amount = float(d_1_item['SUCCESS_AMOUNT'])
                         break
                 differece = d_1_success_amount / d_2_success_amount - 1
@@ -565,17 +565,17 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                 if abs(d_1_success_amount - d_2_success_amount) > 100000 and differece > 1.5:
                     reason3.append((
                         differece,
-                        f'归因三:商户签约名:{customer}，商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene}，主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升<text_tag color=green>{differece:.2f}%</text_tag>'))
+                        f'归因三:商户签约名:{customer}，商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene}，主要影响的付款方签约名:{d_2_item["PAYER_DISPAYSIGNEDNAME"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升<text_tag color=green>{differece:.2f}%</text_tag>'))
                     reason3_text.append((
                         differece,
-                        f'归因三:商户签约名:{customer}，商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene}，主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升{differece:.2f}%'))
+                        f'归因三:商户签约名:{customer}，商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene}，主要影响的付款方签约名:{d_2_item["PAYER_DISPAYSIGNEDNAME"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升{differece:.2f}%'))
                 if abs(d_1_success_amount - d_2_success_amount) > 100000 and differece < -0.5:
                     reason3.append((
                         differece,
-                        f'归因三:商户签约名:{customer}，商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene}，主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降<text_tag color=red>{abs(differece):.2f}%</text_tag>'))
+                        f'归因三:商户签约名:{customer}，商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene}，主要影响的付款方签约名:{d_2_item["PAYER_DISPAYSIGNEDNAME"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降<text_tag color=red>{abs(differece):.2f}%</text_tag>'))
                     reason3_text.append((
                         differece,
-                        f'归因三:商户签约名:{customer}，商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene}，主要影响的付款方签约名:{d_2_item["PAYER_CUSTOMER_SIGNEDNAME"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降{abs(differece):.2f}%'))
+                        f'归因三:商户签约名:{customer}，商户编号:{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene}，主要影响的付款方签约名:{d_2_item["PAYER_DISPAYSIGNEDNAME"]}，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降{abs(differece):.2f}%'))
 
             reason3.sort(key=lambda x: abs(x[0]), reverse=True)
             reason3_text.sort(key=lambda x: abs(x[0]), reverse=True)

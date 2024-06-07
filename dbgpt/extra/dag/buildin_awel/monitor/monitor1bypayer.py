@@ -89,7 +89,7 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
         
         for d in reason4_datas:  # looping through row
             payer_sales_name = d['PAYER_SALES_NAME'],
-            payer_customer_signedname = d['PAYER_CUSTOMER_SIGNEDNAME']
+            payer_customer_signedname = d['PAYER_DISPAYSIGNEDNAME']
             product = d['PRODUCT']
             trx_date = d['TRX_DATE'].split(" ")[0]
             sc = int(d['SUCCESS_COUNT'])
@@ -119,7 +119,7 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
         
         for d in reason5_datas:  # looping through row
             payer_sales_name = d['PAYER_SALES_NAME'],
-            payer_customer_signedname = d['PAYER_CUSTOMER_SIGNEDNAME']
+            payer_customer_signedname = d['PAYER_DISPAYSIGNEDNAME']
             product = d['PRODUCT']
             trx_date = d['TRX_DATE'].split(" ")[0]
             sc = int(d['SUCCESS_COUNT'])
@@ -161,7 +161,7 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
                 d1_d30_datas,
                 d1_d45_datas,
                 d['PAYER_SALES_NAME'],
-                d['PAYER_CUSTOMER_SIGNEDNAME']
+                d['PAYER_DISPAYSIGNEDNAME']
             )
         # end for
         
@@ -239,9 +239,9 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
             )
         print(f'监控一({days_type})构造条数: {len(d_n_datas)}！')
         for rec in d_n_datas:
-            if rec["PAYER_SALES_NAME"] is None or rec["PAYER_CUSTOMER_SIGNEDNAME"] is None:
+            if rec["PAYER_SALES_NAME"] is None or rec["PAYER_DISPAYSIGNEDNAME"] is None:
                 continue
-            k = str(rec["PAYER_SALES_NAME"]) + '#_#' + str(rec["PAYER_CUSTOMER_SIGNEDNAME"])
+            k = str(rec["PAYER_SALES_NAME"]) + '#_#' + str(rec["PAYER_DISPAYSIGNEDNAME"])
             result[k] = rec
         return result
 
