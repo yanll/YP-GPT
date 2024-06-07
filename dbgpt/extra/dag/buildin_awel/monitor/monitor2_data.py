@@ -33,7 +33,7 @@ class Monitor2DataProvider(AirlineMonitorDataProvider):
         if payer_sales_name:
             parameters['PAYER_SALES_NAME'] = payer_sales_name
         if payer_customer_signedname:
-            parameters['PAYER_CUSTOMER_SIGNEDNAME'] = payer_customer_signedname
+            parameters['PAYER_DISPAYSIGNEDNAME'] = payer_customer_signedname
         try:
             resp = self.dmall_client.post(
                 api_name="get_data_by_payer_in_montor2",
