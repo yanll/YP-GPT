@@ -244,7 +244,7 @@ def create_merchant_list_card_content(template_variable: Dict):
 def create_merchant_list_card_content_2(template_variable: Dict):
     """商户查询"""
     template_id = "AAq3hcTqxp7Xl"
-    template_version_name = "1.0.15"
+    template_version_name = "1.0.17"
 
     card = {
         "type": "template",
@@ -412,7 +412,7 @@ def crem_sales_details_content(template_variable: Dict):
 def travel_report_content1(template_variable: Dict):
     """航旅波动检测归因-监控1.1"""
     template_id = "AAq3x4lBPjbC8"
-    template_version_name = "1.0.16"
+    template_version_name = "1.0.22"
 
     card = {
         "type": "template",

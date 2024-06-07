@@ -299,8 +299,8 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                         'title': '交易笔数波动异常',
                         'name': sales_name,
                         'customer_no': customer,
-                        'content': f'【长期波动】{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，交易笔数7日环比{"上升" if customer_success_count > 0 else "下降"}**<font color={"green" if customer_success_count > 0 else "red"} >{customer_success_count * 100:.2f}%</font>（商户交易笔数环比）',
-                        'content_text': f'【长期波动】{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，交易笔数7日环比{"上升" if customer_success_count > 0 else "下降"}{customer_success_count * 100:.2f}%（商户交易笔数环比）',
+                        'content': f'【长期波动】{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，交易笔数7日环比{"上升" if customer_success_count > 0 else "下降"}**<font color={"green" if customer_success_count > 0 else "red"} >{customer_success_count * 100:.2f}%</font>**',
+                        'content_text': f'【长期波动】{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，交易笔数7日环比{"上升" if customer_success_count > 0 else "下降"}{customer_success_count * 100:.2f}%',
                         'reason1': '\n'.join(reason1),
                         'reason1_text': '\n'.join(reason1_text),
                         'reason2': '\n'.join(reason2),
@@ -328,8 +328,8 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                         'title': '交易笔数波动异常',
                         'name': sales_name,
                         'customer_no': customer,
-                        'content': f'【短期波动】商户签约名:{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，环比{"上升" if customer_success_count > 0 else "下降"}<text_tag color={"green" if customer_success_count > 0 else "red"} >{customer_success_count * 100:.2f}%</text_tag>（商户交易笔数环比）',
-                        'content_text': f'【短期波动】商户签约名:{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，环比{"上升" if customer_success_count > 0 else "下降"}{customer_success_count * 100:.2f}%（商户交易笔数环比）',
+                        'content': f'【短期波动】{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，交易笔数环比{"上升" if customer_success_count > 0 else "下降"}**<font color={"green" if customer_success_count > 0 else "red"} >{customer_success_count * 100:.2f}%</font>**',
+                        'content_text': f'【短期波动】{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，交易笔数环比{"上升" if customer_success_count > 0 else "下降"}{customer_success_count * 100:.2f}%',
                         'reason1': '\n'.join(reason1),
                         'reason1_text': '\n'.join(reason1_text),
                         'reason2': '\n'.join(reason2),
@@ -512,12 +512,12 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                 )
                 if abs(d_1_success_amount - d_2_success_amount) > 10000 and d_1_success_amount / d_2_success_amount - 1 > 1.5:
                     reason2.append(
-                        f'{customer},{d_2_item["STAT_CUSTOMER_NO"]},{orig_scene}场景,{d_2_item["PRODUCT"]}产品，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升<text_tag color= green >{(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
+                        f'{customer},{d_2_item["STAT_CUSTOMER_NO"]},{orig_scene}场景,{d_2_item["PRODUCT"]}产品，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升**<font color= green >{(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</font>**')
                     reason2_text.append(
                         f'{customer},{d_2_item["STAT_CUSTOMER_NO"]},{orig_scene}场景,{d_2_item["PRODUCT"]}产品，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升{(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
                 if abs(d_1_success_amount - d_2_success_amount) > 10000 and d_1_success_amount / d_2_success_amount - 1 < -0.5:
                     reason2.append(
-                        f'{customer},{d_2_item["STAT_CUSTOMER_NO"]},{orig_scene}场景,{d_2_item["PRODUCT"]}产品，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降<text_tag color=  red  >{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
+                        f'{customer},{d_2_item["STAT_CUSTOMER_NO"]},{orig_scene}场景,{d_2_item["PRODUCT"]}产品，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降**<font color=  red  >{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</font>**')
                     reason2_text.append(
                         f'{customer},{d_2_item["STAT_CUSTOMER_NO"]},{orig_scene}场景,{d_2_item["PRODUCT"]}产品，昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
 
