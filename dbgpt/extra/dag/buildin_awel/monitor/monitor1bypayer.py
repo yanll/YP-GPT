@@ -342,8 +342,8 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
 
                     print(f'监控一{payer_sales_name}的付方签约名为{customer}的数据异常条件满足[长期波动]')
 
-                    reason4, reason4_text = self.find_reason4(payer_sales_name, customer)
-                    reason5, reason5_text = self.find_reason5(payer_sales_name, customer)
+                    reason4, reason4_text, reason4_data = self.find_reason4(payer_sales_name, customer)
+                    reason5, reason5_text, reason5_data = self.find_reason5(payer_sales_name, customer)
 
                     self.alert_list.append({
                         'title': '交易笔数波动异常',
@@ -355,6 +355,24 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
                         'reason4_text': '\n'.join(reason4_text),
                         'reason5': '\n'.join(reason5),
                         'reason5_text': '\n'.join(reason5_text),
+                        'data': {
+                            'monitor_type': '1.2',
+                            'fluctuation_type': '长期波动',
+                            'payer_displaydignedname': customer,
+                            'payer_sales_name': payer_sales_name,
+                            'd_1_success_amount': float(d_1_data['SUCCESS_AMOUNT']),
+                            'd_1_d_45_avg_success_amount': float(d_1_d_45_data['SUCCESS_AMOUNT']) / 45,
+                            'd_1_success_count': float(d_1_data['SUCCESS_COUNT']),
+                            'd_1_d_45_avg_success_count': float(d_1_d_45_data['SUCCESS_COUNT']) / 45,
+                            'd_1_industry_line_success_count': float(self.d_1_industry_line_data['SUCCESS_COUNT']),
+                            'd_1_d_45_avg_industry_line_success_count': float(
+                                self.d_1_d_45_industry_line_data['SUCCESS_COUNT']) / 45,
+                            'proportion_type': "上升" if customer_success_count > 0 else "下降",
+                            'payer_customer_success_count_proportion': customer_success_count,
+                            'remarks': '昨日交易金额是d_1_success_amount；环比上升或下降类型是proportion_type；环比上升或下降的值是customer_success_count_proportion',
+                            'reason_4_data': reason4_data,
+                            'reason_5_data': reason5_data,
+                        }
                     })
 
             def judge_short_term():
@@ -371,8 +389,8 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
                     if customer_success_count >= 0:
                         return
 
-                    reason4, reason4_text = self.find_reason4(payer_sales_name, customer)
-                    reason5, reason5_text = self.find_reason5(payer_sales_name, customer)
+                    reason4, reason4_text, reason4_data = self.find_reason4(payer_sales_name, customer)
+                    reason5, reason5_text, reason5_data = self.find_reason5(payer_sales_name, customer)
 
                     self.alert_list.append({
                         'title': '交易笔数波动异常',
@@ -384,6 +402,24 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
                         'reason4_text': '\n'.join(reason4_text),
                         'reason5': '\n'.join(reason5),
                         'reason5_text': '\n'.join(reason5_text),
+                        'data': {
+                            'monitor_type': '1.2',
+                            'fluctuation_type': '短期波动',
+                            'payer_displaydignedname': customer,
+                            'payer_sales_name': payer_sales_name,
+                            'd_1_success_amount': float(d_1_data['SUCCESS_AMOUNT']),
+                            'd_1_d_7_avg_success_amount': float(d_1_d_7_data['SUCCESS_AMOUNT']) / 7,
+                            'd_1_success_count': float(d_1_data['SUCCESS_COUNT']),
+                            'd_1_d_7_avg_success_count': float(d_1_d_7_data['SUCCESS_COUNT']) / 7,
+                            'd_1_industry_line_success_count': float(self.d_1_industry_line_data['SUCCESS_COUNT']),
+                            'd_1_d_7_avg_industry_line_success_count': float(
+                                self.d_1_d_7_industry_line_data['SUCCESS_COUNT']) / 7,
+                            'proportion_type': "上升" if customer_success_count > 0 else "下降",
+                            'payer_customer_success_count_proportion': customer_success_count,
+                            'remarks': '昨日交易金额是d_1_success_amount；环比上升或下降类型是proportion_type；环比上升或下降的值是customer_success_count_proportion',
+                            'reason_4_data': reason4_data,
+                            'reason_5_data': reason5_data,
+                        }
                     })
 
             judge_short_term()
@@ -396,6 +432,7 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
         print(f'监控一处理{payer_sales_name}的付方签约名为{customer}的数据异常归因4')
         reason4 = []
         reason4_text = []
+        reason4_data = []
         '''
         1、产品交易波动异常
         归因④【付款方签约名+产品】
@@ -439,16 +476,34 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
                             f'付方签约名:{customer},产品:{d_2_item["PRODUCT"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升<text_tag color= green >{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
                         reason4_text.append(
                             f'付方签约名:{customer},产品:{d_2_item["PRODUCT"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
+                        reason4_data.append({
+                            'product': d_2_item["PRODUCT"],
+                            'd_1_success_amount': d_1_success_amount,
+                            'd_2_success_amount': d_2_success_amount,
+                            'proportion_type': '上升',
+                            'proportion_value': d_1_success_amount / d_2_success_amount - 1,
+                            'remarks': '产品是product，昨日交易量是d_1_success_amount，环比类型是proportion_type，环比数值是proportion_value'
+
+                        })
                     if d_1_success_amount / d_2_success_amount - 1 < -0.5:
                         reason4.append(
                             f'付方签约名:{customer},产品:{d_2_item["PRODUCT"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降<text_tag color= red >{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%</text_tag>')
                         reason4_text.append(
                             f'付方签约名:{customer},产品:{d_2_item["PRODUCT"]},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降{abs(d_1_success_amount / d_2_success_amount - 1) * 100:.2f}%')
+                        reason4_data.append({
+                            'product': d_2_item["PRODUCT"],
+                            'd_1_success_amount': d_1_success_amount,
+                            'd_2_success_amount': d_2_success_amount,
+                            'proportion_type': '下降',
+                            'proportion_value': d_1_success_amount / d_2_success_amount - 1,
+                            'remarks': '产品是product，昨日交易量是d_1_success_amount，环比类型是proportion_type，环比数值是proportion_value'
+
+                        })
 
         except Exception as e:
             print('归因4处理错误')
 
-        return reason4, reason4_text
+        return reason4, reason4_text, reason4_data
 
     def find_reason5(self, payer_sales_name, customer) -> list:
         '''
@@ -462,7 +517,7 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
         print(f'监控一处理{payer_sales_name}的付方签约名为{customer}的数据异常归因5')
         reason5 = []
         reason5_text = []
-
+        reason5_data = []
         # 归因5
         try:
             tk = f"{payer_sales_name}#_#{customer}"
@@ -502,6 +557,17 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
                         reason5_text.append((
                             difference,
                             f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},商户编号{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比上升{abs(difference) * 100:.2f}%'))
+                        reason5_data.append({
+                            'customer_no': d_2_item['STAT_CUSTOMER_NO'],
+                            'customer_name': d_2_item["STAT_DISPAYSIGNEDNAME"],
+                            'orig_scene': orig_scene,
+                            'd_1_success_amount': d_1_success_amount,
+                            'd_2_success_amount': d_2_success_amount,
+                            'proportion_type': '上升',
+                            'proportion_value': d_1_success_amount / d_2_success_amount - 1,
+                            'remarks': '收方商户签约名是customer_name，商编是customer_no，场景是orig_scene，昨日交易量是d_1_success_amount，环比类型是proportion_type，环比数值是proportion_value'
+
+                        })
                     if difference < -0.5:
                         reason5.append((
                             difference,
@@ -509,6 +575,18 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
                         reason5_text.append((
                             difference,
                             f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},商户编号{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降{abs(difference) * 100:.2f}%'))
+
+                    reason5_data.append({
+                        'customer_no': d_2_item['STAT_CUSTOMER_NO'],
+                        'orig_scene': orig_scene,
+                        'payer_signedname': d_2_item['PAYER_DISPAYSIGNEDNAME'],
+                        'd_1_success_amount': d_1_success_amount,
+                        'd_2_success_amount': d_2_success_amount,
+                        'proportion_type': '下降',
+                        'proportion_value': d_1_success_amount / d_2_success_amount - 1,
+                        'remarks': '商编是customer_no，场景是orig_scene，付款签约名是payer_signedname，昨日交易量是d_1_success_amount，环比类型是proportion_type，环比数值是proportion_value'
+
+                    })
 
             reason5.sort(key=lambda x: abs(x[0]), reverse=True)
             reason5_text.sort(key=lambda x: abs(x[0]), reverse=True)
@@ -522,7 +600,7 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
         reason5 = [reason[1] for reason in reason5]
         reason5_text = [reason_text[1] for reason_text in reason5_text]
 
-        return reason5, reason5_text
+        return reason5, reason5_text, reason5_data
 
 # if __name__ == "__main__":
 #     a = Monitor1ByPayer()
