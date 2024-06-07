@@ -5,6 +5,7 @@ import asyncio
 import logging
 import logging.handlers
 import os
+from pathlib import Path
 from typing import Any, List, Optional, cast
 
 import ecs_logging
@@ -108,7 +109,11 @@ def _build_logger(
         # handler = logging.handlers.TimedRotatingFileHandler(
         #     filename, when="D", utc=True
         # )
-        handler = logging.FileHandler('./logs/log.log')
+        current_working_directory = Path(os.path.abspath(__file__))
+        
+        print(current_working_directory)
+        log_path = current_working_directory / '../../../logs/log.log'
+        handler = logging.FileHandler(log_path)
         handler.setFormatter(formatter)
 
         for name, item in logging.root.manager.loggerDict.items():
