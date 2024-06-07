@@ -101,7 +101,16 @@ class Monitor2(AirlineMonitorDataHandler):
                     'customer_name': f'<font color=green>{payer_customer}</font>',
                     'customer_name_text': payer_customer,
                     'content': f'昨日退款率{float(d_1_data["REFUND_COUNT"]) / float(d_1_data["SUCCESS_COUNT"]) * 100:.2f}%,请关注',
-                    'content_rich': f"昨日退款率**<font color= orange>{float(d_1_data['REFUND_COUNT']) / float(d_1_data['SUCCESS_COUNT']) * 100:.2f}%</font>**，请关注。"
+                    'content_rich': f"昨日退款率**<font color= orange>{float(d_1_data['REFUND_COUNT']) / float(d_1_data['SUCCESS_COUNT']) * 100:.2f}%</font>**，请关注。",
+                    'data':{
+                        'type': '付方',
+                        'customer_name': payer_customer,
+                        'sales_name': payer_sales_name,
+                        'd_1_success_count': d_1_data['SUCCESS_COUNT'],
+                        'd_1_refund_count': d_1_data['REFUND_COUNT'],
+                        'd_1_refund_rate': float(d_1_data['REFUND_COUNT']) / float(d_1_data['SUCCESS_COUNT']),
+                        'remarks': '以收方还是付方维度是type，付方签约名是customer_name，销售名是payer_sales_name，d-1交易笔数是d_1_success_count，d-1退款笔数是d_1_success_count,d-1退款率是d_1_refund_rate',
+                    }
 
                 })
 
@@ -188,7 +197,16 @@ class Monitor2(AirlineMonitorDataHandler):
                     'customer_name': f'<font color=green>{customer}</font>',
                     'customer_name_text': customer,
                     'content': f'昨日退款率{float(d_1_data["REFUND_COUNT"]) / float(d_1_data["SUCCESS_COUNT"]) * 100:.2f}%,请关注',
-                    'content_rich': f"昨日退款率**<font color= orange>{float(d_1_data['REFUND_COUNT']) / float(d_1_data['SUCCESS_COUNT']) * 100:.2f}%</font>**，请关注。"
+                    'content_rich': f"昨日退款率**<font color= orange>{float(d_1_data['REFUND_COUNT']) / float(d_1_data['SUCCESS_COUNT']) * 100:.2f}%</font>**，请关注。",
+                    'data': {
+                        'type': '收方',
+                        'customer_name': customer,
+                        'sales_name': sales_name,
+                        'd_1_success_count': d_1_data['SUCCESS_COUNT'],
+                        'd_1_refund_count': d_1_data['REFUND_COUNT'],
+                        'd_1_refund_rate': float(d_1_data['REFUND_COUNT']) / float(d_1_data['SUCCESS_COUNT']),
+                        'remarks': '以收方还是付方维度是type，付方签约名是customer_name，销售名是payer_sales_name，d-1交易笔数是d_1_success_count，d-1退款笔数是d_1_success_count,d-1退款率是d_1_refund_rate',
+                    }
 
                 })
 
