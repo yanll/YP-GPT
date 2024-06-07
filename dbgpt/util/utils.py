@@ -5,7 +5,10 @@ import asyncio
 import logging
 import logging.handlers
 import os
+from pathlib import Path
 from typing import Any, List, Optional, cast
+
+import ecs_logging
 
 from dbgpt.configs.model_config import LOGDIR
 
@@ -87,10 +90,12 @@ def _build_logger(
 ):
     global handler
 
-    formatter = logging.Formatter(
-        fmt="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    )
+    # formatter = logging.Formatter(
+    #     fmt="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+    #     datefmt="%Y-%m-%d %H:%M:%S",
+    # )
+    
+    formatter = ecs_logging.StdlibFormatter(extra={'tag_name':'dbgpt','app_name':'dbgpt'})
 
     # Set the format of root handlers
     if not logging.getLogger().handlers:
@@ -101,9 +106,14 @@ def _build_logger(
     if handler is None and logger_filename:
         os.makedirs(LOGDIR, exist_ok=True)
         filename = os.path.join(LOGDIR, logger_filename)
-        handler = logging.handlers.TimedRotatingFileHandler(
-            filename, when="D", utc=True
-        )
+        # handler = logging.handlers.TimedRotatingFileHandler(
+        #     filename, when="D", utc=True
+        # )
+        current_working_directory = Path(os.path.abspath(__file__))
+        
+        print(current_working_directory)
+        log_path = current_working_directory / '../../../logs/log.log'
+        handler = logging.FileHandler(log_path)
         handler.setFormatter(formatter)
 
         for name, item in logging.root.manager.loggerDict.items():

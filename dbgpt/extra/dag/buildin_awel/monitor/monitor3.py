@@ -267,7 +267,7 @@ class Monitor3(AirlineMonitorDataHandler):
                     'customer_name': f'<font color=green>{customer}</font>',
                     'customer_name_text': customer,
                     'content': f'交易无明显波动，但{product}产品结构有变化，变化值为{difference * 100:.2f}%，请关注。',
-                    'content_rich': f"交易无明显波动，但{product}产品结构有变化，变化值为<text_tag color={'orange' if difference < 1 else 'carmine'}>{difference * 100:.2f}%</text_tag>，请关注。",
+                    'content_rich': f"交易无明显波动，但{product}产品结构有变化，变化值为**<font color={'orange' if difference < 1 else 'carmine'}>{difference * 100:.2f}%</font>**，请关注。",
                     'type': f'<font color=green>收方</font>',
                     'type_text': '收方',
 
@@ -472,7 +472,7 @@ class Monitor3(AirlineMonitorDataHandler):
                     'customer_name': f'<font color=green>{payer_customer}</font>',
                     'customer_name_text': payer_customer,
                     'content': f'交易无明显波动，但{payer_product}产品结构有变化，变化值为{difference * 100:.2f}%，请关注。',
-                    'content_rich': f"交易无明显波动，但{payer_product}产品结构有变化，变化值为<text_tag color={'orange' if difference < 1 else 'carmine'}>{difference * 100:.2f}%</text_tag>，请关注。",
+                    'content_rich': f"交易无明显波动，但{payer_product}产品结构有变化，变化值为**<font color={'orange' if difference < 1 else 'carmine'}>{difference * 100:.2f}%</font>**，请关注。",
 
                     'type': f'<font color=green>付方</font>',
                     'type_text': '付方',

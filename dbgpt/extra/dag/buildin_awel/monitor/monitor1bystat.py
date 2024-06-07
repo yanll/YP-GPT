@@ -298,8 +298,9 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                     self.alert_list.append({
                         'title': '交易笔数波动异常',
                         'name': sales_name,
-                        'content': f'【长期下滑】商户签约名:{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，环比{"上升" if customer_success_count > 0 else "下降"}<text_tag color={"green" if customer_success_count > 0 else "red"} >{customer_success_count * 100:.2f}%</text_tag>（商户交易笔数环比）',
-                        'content_text': f'【长期下滑】商户签约名:{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，环比{"上升" if customer_success_count > 0 else "下降"}{customer_success_count * 100:.2f}%（商户交易笔数环比）',
+                        'customer_no': customer,
+                        'content': f'【长期波动】{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，交易笔数7日环比{"上升" if customer_success_count > 0 else "下降"}**<font color={"green" if customer_success_count > 0 else "red"} >{customer_success_count * 100:.2f}%</font>（商户交易笔数环比）',
+                        'content_text': f'【长期波动】{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，交易笔数7日环比{"上升" if customer_success_count > 0 else "下降"}{customer_success_count * 100:.2f}%（商户交易笔数环比）',
                         'reason1': '\n'.join(reason1),
                         'reason1_text': '\n'.join(reason1_text),
                         'reason2': '\n'.join(reason2),
@@ -326,6 +327,7 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
                     self.alert_list.append({
                         'title': '交易笔数波动异常',
                         'name': sales_name,
+                        'customer_no': customer,
                         'content': f'【短期波动】商户签约名:{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，环比{"上升" if customer_success_count > 0 else "下降"}<text_tag color={"green" if customer_success_count > 0 else "red"} >{customer_success_count * 100:.2f}%</text_tag>（商户交易笔数环比）',
                         'content_text': f'【短期波动】商户签约名:{customer}，昨日交易金额{float(d_1_data["SUCCESS_AMOUNT"]) / 10000:.2f}万元，环比{"上升" if customer_success_count > 0 else "下降"}{customer_success_count * 100:.2f}%（商户交易笔数环比）',
                         'reason1': '\n'.join(reason1),

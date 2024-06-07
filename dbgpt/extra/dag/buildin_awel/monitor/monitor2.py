@@ -101,7 +101,7 @@ class Monitor2(AirlineMonitorDataHandler):
                     'customer_name': f'<font color=green>{payer_customer}</font>',
                     'customer_name_text': payer_customer,
                     'content': f'昨日退款率{float(d_1_data["REFUND_COUNT"]) / float(d_1_data["SUCCESS_COUNT"]) * 100:.2f}%,请关注',
-                    'content_rich': f"昨日退款率<text_tag color= orange>{float(d_1_data['REFUND_COUNT']) / float(d_1_data['SUCCESS_COUNT']) * 100:.2f}%</text_tag>，请关注。"
+                    'content_rich': f"昨日退款率**<font color= orange>{float(d_1_data['REFUND_COUNT']) / float(d_1_data['SUCCESS_COUNT']) * 100:.2f}%</font>**，请关注。"
 
                 })
 
@@ -188,7 +188,7 @@ class Monitor2(AirlineMonitorDataHandler):
                     'customer_name': f'<font color=green>{customer}</font>',
                     'customer_name_text': customer,
                     'content': f'昨日退款率{float(d_1_data["REFUND_COUNT"]) / float(d_1_data["SUCCESS_COUNT"]) * 100:.2f}%,请关注',
-                    'content_rich': f"昨日退款率<text_tag color= orange>{float(d_1_data['REFUND_COUNT']) / float(d_1_data['SUCCESS_COUNT']) * 100:.2f}%</text_tag>，请关注。"
+                    'content_rich': f"昨日退款率**<font color= orange>{float(d_1_data['REFUND_COUNT']) / float(d_1_data['SUCCESS_COUNT']) * 100:.2f}%</font>**，请关注。"
 
                 })
 
