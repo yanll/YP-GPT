@@ -88,8 +88,8 @@ class Monitor4(AirlineMonitorDataHandler):
                 rec["SALES_NAME"] = "None"
             if rec["STAT_DISPAYSIGNEDNAME"] is None:
                 rec["STAT_DISPAYSIGNEDNAME"] = "None"
-            if rec["PAYER_CUSTOMER_SIGNEDNAME"] is None:
-                rec["PAYER_CUSTOMER_SIGNEDNAME"] = "None"
+            if rec["PAYER_DISPAYSIGNEDNAME"] is None:
+                rec["PAYER_DISPAYSIGNEDNAME"] = "None"
         result_sales = defaultdict(list)
         result_sales_custom = defaultdict(list)
         result_sales_custom_produc = defaultdict(list)
@@ -101,7 +101,7 @@ class Monitor4(AirlineMonitorDataHandler):
             result_sales_custom[k].append(rec)
         for rec in d_n_datas:
             k = str(rec["SALES_NAME"]) + '#_#' + str(rec["STAT_DISPAYSIGNEDNAME"]) + '#_#' + str(
-                rec["PAYER_CUSTOMER_SIGNEDNAME"])
+                rec["PAYER_DISPAYSIGNEDNAME"])
             result_sales_custom_produc[k].append(rec)
         return result_sales, result_sales_custom, result_sales_custom_produc
 
@@ -188,9 +188,9 @@ class Monitor4(AirlineMonitorDataHandler):
             # )
 
             for item in d_1_d_7_data:
-                payer_list.add(item['PAYER_CUSTOMER_SIGNEDNAME'])
+                payer_list.add(item['PAYER_DISPAYSIGNEDNAME'])
             for item in d_8_d_14_data:
-                payer_list.add(item['PAYER_CUSTOMER_SIGNEDNAME'])
+                payer_list.add(item['PAYER_DISPAYSIGNEDNAME'])
 
         except Exception as e:
             print(f'监控四开始获取{sales_name}的商户签约名为{customer}的数据失败')

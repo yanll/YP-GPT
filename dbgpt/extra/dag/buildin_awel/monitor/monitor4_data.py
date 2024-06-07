@@ -14,7 +14,7 @@ class Monitor4DataProvider(AirlineMonitorDataProvider):
         if stat_dispaysignedname:
             parameters['STAT_DISPAYSIGNEDNAME'] = stat_dispaysignedname
         if payer:
-            parameters['PAYER_CUSTOMER_SIGNEDNAME'] = payer
+            parameters['PAYER_DISPAYSIGNEDNAME'] = payer
         try:
             resp = self.dmall_client.post(
                 api_name="get_data_by_stat_in_montor4",
