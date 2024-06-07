@@ -270,7 +270,18 @@ class Monitor3(AirlineMonitorDataHandler):
                     'content_rich': f"交易无明显波动，但{product}产品结构有变化，变化值为**<font color={'orange' if difference < 1 else 'carmine'}>{difference * 100:.2f}%</font>**，请关注。",
                     'type': f'<font color=green>收方</font>',
                     'type_text': '收方',
-
+                    'data':{
+                        'type': '收方',
+                        'customer_name': customer,
+                        'sales_name': sales_name,
+                        'product': product,
+                        'd_1_product_success_amount': d_1_product_success_amount,
+                        'd_2_product_success_amount': d_2_product_success_amount,
+                        'd_2_customer_success_amount': d_2_customer_success_amount,
+                        'd_1_customer_success_amount': d_1_customer_success_amount,
+                        'proportion_value': difference,
+                        'remarks': '收方还是付方是type，签约名是customer_name，销售名是sales_name，产品名是product，变化值是proportion_value'
+                    }
                 })
         except Exception as e:
             print(f'监控三开始处理{sales_name}的商户签约名为{customer}的产品为{product}数据失败')
@@ -464,7 +475,7 @@ class Monitor3(AirlineMonitorDataHandler):
                 d_2_payer_product_success_amount = float(d_2_data[0]['SUCCESS_AMOUNT'])
 
             difference = (d_1_payer_product_success_amount / d_1_payer_customer_success_amount) - (
-                    d_2_payer_product_success_amount / d_2_payer_customer_success_amount)
+                    d_2_payer_product_success_amount / d_1_payer_customer_success_amount)
             if abs(difference) > 0.6 and abs(d_1_payer_product_success_amount - d_2_payer_product_success_amount) > 100000:
                 self.alert_list.append({
                     'name': payer_sales_name,
@@ -476,6 +487,19 @@ class Monitor3(AirlineMonitorDataHandler):
 
                     'type': f'<font color=green>付方</font>',
                     'type_text': '付方',
+                    'data': {
+                        'type': '付方',
+                        'customer_name': payer_customer,
+                        'sales_name': payer_sales_name,
+                        'product': payer_product,
+                        'd_1_product_success_amount': d_1_payer_product_success_amount,
+                        'd_2_product_success_amount': d_2_payer_product_success_amount,
+
+                        'd_2_customer_success_amount': d_1_payer_customer_success_amount,
+                        'd_1_customer_success_amount': d_1_payer_customer_success_amount,
+                        'proportion_value': difference,
+                        'remarks': '收方还是付方是type，签约名是customer_name，销售名是sales_name，产品名是product，变化值是proportion_value'
+                    }
 
                 })
 
