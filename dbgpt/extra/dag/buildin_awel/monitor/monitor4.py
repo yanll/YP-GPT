@@ -67,6 +67,12 @@ class Monitor4(AirlineMonitorDataHandler):
                 d8d14_result_sales_custom_produc,
                 sales_name
             )
+        def custom_sort(data):
+            if data['data']['proportion_type'] == '下降':
+                return (0, data['data']['sales_name'], data['data']['proportion_value'])
+            return (1, data['data']['sales_name'], -data['data']['proportion_value'])
+
+        self.alert_list = sorted(self.alert_list, key=custom_sort)
 
         return self.alert_list
 
