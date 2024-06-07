@@ -20,6 +20,11 @@ class Monitor2(AirlineMonitorDataHandler):
         self.prepare_data()
         self.run_by_stat()
         self.run_by_payer()
+
+        def custom_sort(data):
+            return (data['data']['type'], data['data']['sales_name'], -data['data']['d_1_refund_rate'])
+
+        self.alert_list = sorted(self.alert_list, key=custom_sort)
         return self.alert_list
 
     def run_by_payer(self):

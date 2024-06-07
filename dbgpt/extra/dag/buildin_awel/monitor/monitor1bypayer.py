@@ -501,9 +501,9 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
                         })
             def custom_sort(reason):
                 if reason['proportion_type'] == '上升':
-                    return (1, -reason['proportion_value'])  # 第一部分条件，年龄小于30的放前面，第二部分按年龄升序
+                    return (1, -reason['proportion_value'])
                 else:
-                    return (0, reason['proportion_value'])  # 第一部分条件，年龄大于等于30的放后面，第二部分按年龄升序
+                    return (0, reason['proportion_value'])
 
             reason4_data = sorted(reason4_data, key=custom_sort)
 
@@ -603,9 +603,9 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
 
             def custom_sort(reason):
                 if reason['proportion_type'] == '上升':
-                    return (1, -reason['proportion_value'])  # 第一部分条件，年龄小于30的放前面，第二部分按年龄升序
+                    return (1, -reason['proportion_value'])
                 else:
-                    return (0, reason['proportion_value'])  # 第一部分条件，年龄大于等于30的放后面，第二部分按年龄升序
+                    return (0, reason['proportion_value'])
 
             reason5_data = sorted(reason5_data, key=custom_sort)
 
