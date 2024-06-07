@@ -107,7 +107,7 @@ def get_crem_hanglv_merchant_8days_transaction_search_card(open_id,nickname,cust
                     "chart_spec": {
                         "type": "area",
                         "title": {
-                            "text": "近8天交易表现"
+                            "text": "近8天交易表现" + "——交易净额——" +customer_no
                         },
                         "data": {
                             "values":
@@ -215,7 +215,7 @@ def get_crem_hanglv_merchant_8days_transaction_search_card(open_id,nickname,cust
                     "chart_spec": {
                         "type": "area",
                         "title": {
-                            "text": "近8天交易表现"
+                            "text": "近8天交易表现" + "——毛利——" +customer_no
                         },
                         "data": {
                             "values":
@@ -326,7 +326,7 @@ def get_crem_hanglv_merchant_8days_transaction_search_card(open_id,nickname,cust
 #get_crem_hanglv_merchant_8days_search_card("ou_079964d3b15f58fc330058a629b8ed41","段超")
 
 
-def get_crem_hanglv_merchant_31days_transaction_search_card(open_id,nickname):
+def get_crem_hanglv_merchant_31days_transaction_search_card(open_id,nickname,customer_no):
     num_day8_before_yesterday,num_day31_before_yesterday = get_previous_dates()
 
     url = (envutils.getenv("CREM_ENDPOINT_PROD") +
@@ -345,9 +345,9 @@ def get_crem_hanglv_merchant_31days_transaction_search_card(open_id,nickname):
             "parameters": {
                 "TRX_DATE": num_day31_before_yesterday,
                 "TYPE": "全部",
-                "SUPERIOR_NAME": "段超",
-                "STAT_SALES_NAME": "段超",
-                "STAT_DISPAYSIGNEDNAME": "CA"
+                "SUPERIOR_NAME": nickname,
+                "STAT_SALES_NAME": nickname,
+                "STAT_DISPAYSIGNEDNAME": customer_no
             },
             "url": "productline_pcd_hl_zt_sh8daystrx",
             "version": "V1.0"
@@ -408,7 +408,7 @@ def get_crem_hanglv_merchant_31days_transaction_search_card(open_id,nickname):
                     "chart_spec": {
                         "type": "area",
                         "title": {
-                            "text": "近31天交易表现"
+                            "text": "近31天交易表现" + "——交易净额——" +customer_no
                         },
                         "data": {
                             "values":
@@ -516,7 +516,7 @@ def get_crem_hanglv_merchant_31days_transaction_search_card(open_id,nickname):
                     "chart_spec": {
                         "type": "area",
                         "title": {
-                            "text": "近31天交易表现"
+                            "text": "近31天交易表现" + "——毛利——" +customer_no
                         },
                         "data": {
                             "values":
@@ -631,7 +631,7 @@ def get_crem_hanglv_merchant_31days_transaction_search_card(open_id,nickname):
 
 
 
-def get_crem_hanglv_merchant_8days_product_search_card(open_id,nickname):
+def get_crem_hanglv_merchant_8days_product_search_card(open_id,nickname,customer_no):
     num_day8_before_yesterday,num_day31_before_yesterday = get_previous_dates()
     url = (envutils.getenv("CREM_ENDPOINT_PROD") +
            '/threeParty/wrap/apis/agg/productline_pcd_sh8daystrx')
@@ -651,9 +651,9 @@ def get_crem_hanglv_merchant_8days_product_search_card(open_id,nickname):
                             "TRX_DATE": num_day8_before_yesterday,
                             "TYPE": "全部",
                             "PRODUCTTYPE": "会员,旗舰店,收单,航旅快捷",
-                            "SUPERIOR_NAME": "段超",
-                            "STAT_SALES_NAME": "段超",
-                            "STAT_DISPAYSIGNEDNAME": "CA"
+                            "SUPERIOR_NAME": nickname,
+                            "STAT_SALES_NAME": nickname,
+                            "STAT_DISPAYSIGNEDNAME": customer_no
                         },
                         "url": "productline_pcd_hl_zt_sh8daystrx",
                         "version": "V1.0"
@@ -708,7 +708,7 @@ def get_crem_hanglv_merchant_8days_product_search_card(open_id,nickname):
                     "chart_spec": {
                         "type": "area",
                         "title": {
-                            "text": "近8天毛利情况"
+                            "text": "近8天产品表现"+"——毛利——"+customer_no
                         },
                         "data": {
                             "values":
@@ -815,7 +815,7 @@ def get_crem_hanglv_merchant_8days_product_search_card(open_id,nickname):
 
 #get_crem_hanglv_merchant_8days_product_search_card("ou_9d42bb88ec8940baf3ad183755131881","段超")
 
-def get_crem_hanglv_merchant_31days_product_search_card(open_id,nickname):
+def get_crem_hanglv_merchant_31days_product_search_card(open_id,nickname,customer_no):
     num_day8_before_yesterday,num_day31_before_yesterday = get_previous_dates()
     url = (envutils.getenv("CREM_ENDPOINT_PROD") +
            '/threeParty/wrap/apis/agg/productline_pcd_sh8daystrx')
@@ -835,9 +835,9 @@ def get_crem_hanglv_merchant_31days_product_search_card(open_id,nickname):
                             "TRX_DATE": num_day31_before_yesterday,
                             "TYPE": "全部",
                             "PRODUCTTYPE": "会员,旗舰店,收单,航旅快捷",
-                            "SUPERIOR_NAME": "段超",
-                            "STAT_SALES_NAME": "段超",
-                            "STAT_DISPAYSIGNEDNAME": "CA"
+                            "SUPERIOR_NAME": nickname,
+                            "STAT_SALES_NAME": nickname,
+                            "STAT_DISPAYSIGNEDNAME": customer_no
                         },
                         "url": "productline_pcd_hl_zt_sh8daystrx",
                         "version": "V1.0"
@@ -892,7 +892,7 @@ def get_crem_hanglv_merchant_31days_product_search_card(open_id,nickname):
                     "chart_spec": {
                         "type": "area",
                         "title": {
-                            "text": "近31天毛利情况"
+                            "text": "近31天产品表现"+"——毛利——"+customer_no
                         },
                         "data": {
                             "values":

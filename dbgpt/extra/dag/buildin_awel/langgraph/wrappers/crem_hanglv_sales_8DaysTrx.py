@@ -187,7 +187,7 @@ def get_crem_hanglv_sales_8DaysTrx_card(open_id,nickname):
     }
 
     lark_message_util.send_card_message(
-        receive_id="ou_9d42bb88ec8940baf3ad183755131881",
+        receive_id=open_id,
         content=var
     )
 
