@@ -152,16 +152,25 @@ class ClickhouseConnector(RDBMSConnector):
                 break
             # comment: 
             values = ""
-            if field[1] == "String":
-                values = self.get_field_values(field=field[0])
+            print(field[0],field[4],field[1])
+            if "String" in field[1] and ("NAME" in field[0] or "PRODUCT" in field[0]):
+                try:
+                    # comment: 
+                    values = self.get_field_values(field=field[0],table_name=table_name)
+                except Exception as e:
+                    print(e)
+                # end try
             tmp = list(field)
             tmp.append(values)
+            print(values)
             cur_token_size += len(values)
             fields[0][idx] = tuple(tmp)
-            if cur_token_size >= max_limit_token_size:
-                break
+            
+            # if cur_token_size >= max_limit_token_size:
+            #     break
         # end for
         
+        print(fields[0])
         return [
             {"name": name, "comment": comment, "type": column_type, "sample": rest[0] if len(rest) > 0 else None}
             for name, column_type, _, _, comment,*rest in fields[0]
@@ -186,7 +195,7 @@ class ClickhouseConnector(RDBMSConnector):
             fields = [block for block in stream]  # noqa
             return fields
         
-    def get_field_values(self, field:str):
+    def get_field_values(self, field:str,table_name:str):
         session = self.client
         # _query_sql = f"""
         #     SELECT {field}, COUNT(*) AS frequency
@@ -195,19 +204,20 @@ class ClickhouseConnector(RDBMSConnector):
         #     ORDER BY frequency DESC
         #     LIMIT 10;
         # """
+        logger.info(field)
         _query_sql = f"""
             WITH Temp AS (
                 SELECT {field}, COUNT(*) AS frequency
-                FROM {self.get_current_db_name()}.{envutils.getenv("CK_TABLE_NAME")}
+                FROM {self.get_current_db_name()}.{table_name}
                 GROUP BY {field}
                 ORDER BY frequency DESC
-                LIMIT 10
+                LIMIT 15
             )
             SELECT {field}
             FROM Temp;
         """
         
-        # logger.info(_query_sql)
+        logger.info(_query_sql)
         
         result = session.command(_query_sql).replace('\n',',')
         

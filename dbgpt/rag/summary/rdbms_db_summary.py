@@ -33,10 +33,9 @@ prompt_template = """
 {table_schema}
 
 ===回复指南
-1. 你应当只根据提供的信息撰写总结。
+1. 你应当只根据提供的信息撰写总结。要求有清晰的表名称，列名称，列的含义，以及列的可能值。
 2. 不要使用任何形容词来描述表格。例如，表格的重要性、其全面性或其是否关键，或谁可能使用它。例如，你可以说表格包含某些类型的数据，但不能说表格包含“大量”的数据，或说它是“全面的”。
 3. 不要提及示例查询。只客观地谈论表格包含的数据类型及其可能的用途。
-4. 请全部写出来每一列对应的可能的值。
 """
 # 5. 请同时多包含一些表格的潜在使用案例，例如该表格可以回答哪些类型的问题，可以进行哪些类型的分析等。
 
@@ -144,7 +143,8 @@ def _parse_table_summary(
     # ]
     fields_examples = ''
     columns = []
-    for column in conn.get_columns(table_name):
+    table_columns = conn.get_columns(table_name)
+    for column in table_columns:
         if column.get("comment"):
             columns.append(f"{column['name']} ({column.get('comment')})")
         else:
@@ -152,7 +152,7 @@ def _parse_table_summary(
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
         if column.get('sample'):
             fields_examples += f"\n{column['name']}: {column.get('sample')}"
-    # for column in conn.get_columns(table_name):
+    # for column in conn.table_columns:
     #     if column.get("comment"):
     #         col = f"{column['name']} ({column.get('comment')}"
     #         if column.get('sample'):
@@ -222,7 +222,7 @@ def _parse_table_summary(
     
     _prompt_table_schema.append("所有列信息:")
     
-    for column in conn.get_columns(table_name):
+    for column in table_columns:
         
         field_schema = [
             f"- 列名称: [{column['name']}]",

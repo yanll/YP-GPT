@@ -46,7 +46,7 @@ class Monitor2(AirlineMonitorDataHandler):
             data = self.monitor2_data.get_data_by_payer_in_monitor2(trx_date=self.d_1_date,
                                                                     payer_sales_name=payer_sales_name)
             for item in data:
-                payer_customer_list.add(item['PAYER_CUSTOMER_SIGNEDNAME'])
+                payer_customer_list.add(item['PAYER_DISPAYSIGNEDNAME'])
         except Exception as e:
             print(f'监控二开始获取{payer_sales_name}的付方签约名失败！')
             return
@@ -64,9 +64,9 @@ class Monitor2(AirlineMonitorDataHandler):
             )
         print(f'监控二({days_type})构造条数: {len(d_n_datas)}！')
         for rec in d_n_datas:
-            if rec["PAYER_SALES_NAME"] is None or rec["PAYER_CUSTOMER_SIGNEDNAME"] is None:
+            if rec["PAYER_SALES_NAME"] is None or rec["PAYER_DISPAYSIGNEDNAME"] is None:
                 continue
-            k = str(rec["PAYER_SALES_NAME"]) + '#_#' + str(rec["PAYER_CUSTOMER_SIGNEDNAME"])
+            k = str(rec["PAYER_SALES_NAME"]) + '#_#' + str(rec["PAYER_DISPAYSIGNEDNAME"])
             result[k] = rec
         return result
 
