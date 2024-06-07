@@ -154,9 +154,11 @@ async def a_call(app_chat_service, event: Dict):
             conv_id=open_id)
 
 
-    if event_type == 'new_merchant_detail':
+    if event_type == 'new_merchant_detail_8days_transaction':
         salesname = action_value['salesname']
         customer_no = action_value['customer_no']
+        salesname = "段超"
+        customer_no = "CA"
         print('查询商户的名称', customer_no)
         return crem_hanglv_merchant_search.get_crem_hanglv_merchant_8days_transaction_search_card(
 
@@ -164,7 +166,42 @@ async def a_call(app_chat_service, event: Dict):
             nickname = salesname,
             customer_no=customer_no,
            )
+    if event_type == 'new_merchant_detail_31days_transaction':
+        salesname = action_value['salesname']
+        customer_no = action_value['customer_no']
+        salesname = "段超"
+        customer_no = "CA"
+        print('查询商户的名称', customer_no)
+        return crem_hanglv_merchant_search.get_crem_hanglv_merchant_31days_transaction_search_card(
 
+            open_id=open_id,
+            nickname = salesname,
+            customer_no=customer_no,
+           )
+    if event_type == 'new_merchant_detail_8days_product':
+        salesname = action_value['salesname']
+        customer_no = action_value['customer_no']
+        salesname = "段超"
+        customer_no = "CA"
+        print('查询商户的名称', customer_no)
+        return crem_hanglv_merchant_search.get_crem_hanglv_merchant_8days_product_search_card(
+
+            open_id=open_id,
+            nickname = salesname,
+            customer_no=customer_no,
+           )
+    if event_type == 'new_merchant_detail_31days_product':
+        salesname = action_value['salesname']
+        customer_no = action_value['customer_no']
+        salesname = "段超"
+        customer_no = "CA"
+        print('查询商户的名称', customer_no)
+        return crem_hanglv_merchant_search.get_crem_hanglv_merchant_31days_product_search_card(
+
+            open_id=open_id,
+            nickname = salesname,
+            customer_no=customer_no,
+           )
     if event_type == 'hanglv_detail':
         #customerNo = action_value['customerNo']
         customerNo = "KA2022-A09150004"
