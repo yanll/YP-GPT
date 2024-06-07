@@ -103,6 +103,7 @@ class Monitor2(AirlineMonitorDataHandler):
                     'content': f'昨日退款率{float(d_1_data["REFUND_COUNT"]) / float(d_1_data["SUCCESS_COUNT"]) * 100:.2f}%,请关注',
                     'content_rich': f"昨日退款率**<font color= orange>{float(d_1_data['REFUND_COUNT']) / float(d_1_data['SUCCESS_COUNT']) * 100:.2f}%</font>**，请关注。",
                     'data':{
+                        'monitor_type': '2',
                         'type': '付方',
                         'customer_name': payer_customer,
                         'sales_name': payer_sales_name,
@@ -199,6 +200,7 @@ class Monitor2(AirlineMonitorDataHandler):
                     'content': f'昨日退款率{float(d_1_data["REFUND_COUNT"]) / float(d_1_data["SUCCESS_COUNT"]) * 100:.2f}%,请关注',
                     'content_rich': f"昨日退款率**<font color= orange>{float(d_1_data['REFUND_COUNT']) / float(d_1_data['SUCCESS_COUNT']) * 100:.2f}%</font>**，请关注。",
                     'data': {
+                        'monitor_type': '2',
                         'type': '收方',
                         'customer_name': customer,
                         'sales_name': sales_name,

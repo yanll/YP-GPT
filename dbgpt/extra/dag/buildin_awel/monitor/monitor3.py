@@ -271,6 +271,7 @@ class Monitor3(AirlineMonitorDataHandler):
                     'type': f'<font color=green>收方</font>',
                     'type_text': '收方',
                     'data':{
+                        'monitor_type': '3',
                         'type': '收方',
                         'customer_name': customer,
                         'sales_name': sales_name,
@@ -488,6 +489,7 @@ class Monitor3(AirlineMonitorDataHandler):
                     'type': f'<font color=green>付方</font>',
                     'type_text': '付方',
                     'data': {
+                        'monitor_type': '3',
                         'type': '付方',
                         'customer_name': payer_customer,
                         'sales_name': payer_sales_name,
