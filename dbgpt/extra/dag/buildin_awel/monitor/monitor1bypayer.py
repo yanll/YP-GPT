@@ -499,6 +499,13 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
                             'remarks': '产品是product，昨日交易量是d_1_success_amount，环比类型是proportion_type，环比数值是proportion_value'
 
                         })
+            def custom_sort(reason):
+                if reason['proportion_type'] == '上升':
+                    return (1, -reason['proportion_value'])  # 第一部分条件，年龄小于30的放前面，第二部分按年龄升序
+                else:
+                    return (0, reason['proportion_value'])  # 第一部分条件，年龄大于等于30的放后面，第二部分按年龄升序
+
+            reason4_data = sorted(reason4_data, key=custom_sort)
 
         except Exception as e:
             print('归因4处理错误')
@@ -576,23 +583,31 @@ class Monitor1ByPayer(AirlineMonitorDataHandler):
                             difference,
                             f'主要影响的收方商户签约名:{d_2_item["STAT_DISPAYSIGNEDNAME"]},商户编号{d_2_item["STAT_CUSTOMER_NO"]},原始场景:{orig_scene},昨日交易金额{d_1_success_amount / 10000:.2f}万元，环比下降{abs(difference) * 100:.2f}%'))
 
-                    reason5_data.append({
-                        'customer_no': d_2_item['STAT_CUSTOMER_NO'],
-                        'orig_scene': orig_scene,
-                        'payer_signedname': d_2_item['PAYER_DISPAYSIGNEDNAME'],
-                        'd_1_success_amount': d_1_success_amount,
-                        'd_2_success_amount': d_2_success_amount,
-                        'proportion_type': '下降',
-                        'proportion_value': d_1_success_amount / d_2_success_amount - 1,
-                        'remarks': '商编是customer_no，场景是orig_scene，付款签约名是payer_signedname，昨日交易量是d_1_success_amount，环比类型是proportion_type，环比数值是proportion_value'
+                        reason5_data.append({
+                            'customer_no': d_2_item['STAT_CUSTOMER_NO'],
+                            'customer_name': d_2_item["STAT_DISPAYSIGNEDNAME"],
+                            'orig_scene': orig_scene,
+                            'd_1_success_amount': d_1_success_amount,
+                            'd_2_success_amount': d_2_success_amount,
+                            'proportion_type': '下降',
+                            'proportion_value': d_1_success_amount / d_2_success_amount - 1,
+                            'remarks': '收方商户签约名是customer_name，商编是customer_no，场景是orig_scene，昨日交易量是d_1_success_amount，环比类型是proportion_type，环比数值是proportion_value'
 
-                    })
+                        })
 
             reason5.sort(key=lambda x: abs(x[0]), reverse=True)
             reason5_text.sort(key=lambda x: abs(x[0]), reverse=True)
             if len(reason5) > 3:
                 reason5 = reason5[:3]
                 reason5_text = reason5_text[:3]
+
+            def custom_sort(reason):
+                if reason['proportion_type'] == '上升':
+                    return (1, -reason['proportion_value'])  # 第一部分条件，年龄小于30的放前面，第二部分按年龄升序
+                else:
+                    return (0, reason['proportion_value'])  # 第一部分条件，年龄大于等于30的放后面，第二部分按年龄升序
+
+            reason5_data = sorted(reason5_data, key=custom_sort)
 
         except Exception as e:
             print('归因5处理错误')
