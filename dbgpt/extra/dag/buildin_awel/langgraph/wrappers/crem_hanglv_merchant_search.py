@@ -798,7 +798,7 @@ def get_crem_hanglv_merchant_8days_product_search_card(open_id,nickname,customer
     )
 
 
-get_crem_hanglv_merchant_8days_product_search_card("ou_9d42bb88ec8940baf3ad183755131881","段超","CA")
+# get_crem_hanglv_merchant_8days_product_search_card("ou_9d42bb88ec8940baf3ad183755131881","段超","CA")
 
 def get_crem_hanglv_merchant_31days_product_search_card(open_id,nickname,customer_no):
     num_day8_before_yesterday,num_day31_before_yesterday = get_previous_dates()
@@ -977,7 +977,7 @@ def get_crem_hanglv_merchant_31days_product_search_card(open_id,nickname,custome
     }
 
     lark_message_util.send_card_message(
-        receive_id="ou_9d42bb88ec8940baf3ad183755131881",
+        receive_id=open_id,
         content=var
     )
 
