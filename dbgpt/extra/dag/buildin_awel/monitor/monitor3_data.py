@@ -36,7 +36,7 @@ class Monitor3DataProvider(AirlineMonitorDataProvider):
         if payer_sales_name:
             parameters['PAYER_SALES_NAME'] = payer_sales_name
         if payer_customer_signedname:
-            parameters['PAYER_CUSTOMER_SIGNEDNAME'] = payer_customer_signedname
+            parameters['PAYER_DISPAYSIGNEDNAME'] = payer_customer_signedname
         if product:
             parameters['PRODUCT'] = product
         try:
