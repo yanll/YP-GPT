@@ -578,7 +578,13 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
 
                     })
 
+            def custom_sort(reason2):
+                if reason2['proportion_type'] == '上升':
+                    return (1, -reason2['proportion_value'])
+                else:
+                    return (0, reason2['proportion_value'])
 
+            reason2_data = sorted(reason2_data, key=custom_sort)
 
         except Exception as e:
             print('归因2处理错误')
@@ -664,6 +670,14 @@ class Monitor1ByStat(AirlineMonitorDataHandler):
             if len(reason3) > 3:
                 reason3 = reason3[:3]
                 reason3_text = reason3_text[:3]
+
+            def custom_sort(reason3):
+                if reason3['proportion_type'] == '上升':
+                    return (1, -reason3['proportion_value'])
+                else:
+                    return (0, reason3['proportion_value'])
+
+            reason3_data = sorted(reason3_data, key=custom_sort)
 
         except Exception as e:
             print('归因3处理错误')
