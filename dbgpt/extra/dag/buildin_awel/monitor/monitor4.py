@@ -305,6 +305,20 @@ class Monitor4(AirlineMonitorDataHandler):
                             'customer_no': item1["CUSTOMER_NO"],
                             'payer_business_scene': orig_scene,
                             'sub_content_rich': subcontent,
+                            'data': {
+                                'monitor_type': '4',
+                                'sales_name': sales_name,
+                                'customer_name': customer,
+                                'customer_no': item1['CUSTOMER_NO'],
+                                'payer_customer_name': payer,
+                                'orig_scene': orig_scene,
+                                'd_1_d_7_payer_success_amount': d_1_d_7_payer_success_amount,
+                                'proportion_type': '上升' if difference > 0 else '下降',
+                                'proportion_value': difference,
+                                'fluctuation_type': '高于' if fluctuation > 0 else '低于',
+                                'fluctuation_value': fluctuation,
+                                'remarks': '付方签约名是payer_customer_name，航司是customer_name，场景是orig_scene,近7天充值金额是d_1_d_7_payer_success_amount，环比值是proportion_value，相比于大盘是fluctuation_value'
+                            }
                         })
 
         except Exception as e:
