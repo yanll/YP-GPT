@@ -10,19 +10,19 @@ def get_previous_dates():
     today = datetime.now()  #今天
     yesterday_all = today - timedelta(days=1) #昨天
     yesterday = yesterday_all.strftime('%Y-%m-%d')
-    print("昨天", yesterday)
+    #print("昨天", yesterday)
     day8_before_yesterday_all = today - timedelta(days=8)#8天前
     day8_before_yesterday = day8_before_yesterday_all.strftime('%Y-%m-%d')
-    print("昨天的8天前",day8_before_yesterday)
+   # print("昨天的8天前",day8_before_yesterday)
     num_day8_before_yesterday = f"{day8_before_yesterday},{yesterday}"
-    print("近8天", num_day8_before_yesterday)
+    #print("近8天", num_day8_before_yesterday)
     ''''''
 
     day31_before_yesterday_all = today - timedelta(days=31)  # 8天前
     day31_before_yesterday = day31_before_yesterday_all.strftime('%Y-%m-%d')
-    print("昨天的31天前", day31_before_yesterday)
+    #print("昨天的31天前", day31_before_yesterday)
     num_day31_before_yesterday = f"{day31_before_yesterday},{yesterday}"
-    print("近31天", num_day31_before_yesterday)
+   # print("近31天", num_day31_before_yesterday)
     return num_day8_before_yesterday ,num_day31_before_yesterday
 
 
@@ -614,12 +614,10 @@ def get_crem_hanglv_merchant_31days_transaction_search_card(open_id,nickname,cus
 
 
 
-
-
-def get_crem_hanglv_merchant_8days_product_search_card(open_id,nickname,customer_no):
+def get_huiyuan_card(open_id,nickname,customer_no):
     num_day8_before_yesterday,num_day31_before_yesterday = get_previous_dates()
     url = (envutils.getenv("CREM_ENDPOINT_PROD") +
-           '/threeParty/wrap/apis/agg/productline_pcd_sh8daystrx')
+           '/aggScript/wrap/apis/receive/handleApplicationMarketplace/dealSizeLook')
     headers = {
         'yuiassotoken': ssoutil.get_sso_credential(open_id),
         'Content-Type': 'application/json',
@@ -628,61 +626,276 @@ def get_crem_hanglv_merchant_8days_product_search_card(open_id,nickname,customer
     }
 
     data = {
-                "tenant": "default",
-                "procDefKey": "15a8350f65a303736ebe606e3d30e5beM5",
-                "data": {
-                    "dmallReq": {
-                        "parameters": {
-                            "TRX_DATE": num_day8_before_yesterday,
-                            "TYPE": "全部",
-                            "PRODUCTTYPE": "会员,旗舰店,收单,航旅快捷",
-                            "SUPERIOR_NAME": nickname,
-                            "STAT_SALES_NAME": nickname,
-                            "STAT_DISPAYSIGNEDNAME": customer_no
-                        },
-                        "url": "productline_pcd_hl_zt_sh8daystrx",
-                        "version": "V1.0"
-                    }
-                }
-            }
-
-
-
-
+    "parameters": {
+        "STAT_SALES_NAME": nickname,
+        "TYPE": "航司,渠道,酒旅出行",
+        "TRX_DATE": num_day8_before_yesterday,
+        "SCALE_TYPE": "DAY",
+        "products": "会员",
+        "STAT_DISPAYSIGNEDNAME": customer_no
+    },
+    "strategyKey": "saleOrdinaryApplicationMarketExecutor"
+}
 
     # 发出 POST 请求
-    response = requests.post(url, headers=headers, json=data, timeout=consts.request_time_out)
+    response = requests.post(url, headers=headers, json=data)
 
     # 处理 API 响应数据
     api_data = json.loads(response.text)
     print("原始数据",api_data)
 
     # 将利润转换为万元并格式化数据
-    formatted_data = [
+    formatted_data_1 = [
         {
-            "type": entry["PRODUCTTYPE"],
-            "trxDate": entry["TRX_DATE"],
-            "profit": round(float(entry["TRX_PROFIT"]) / 10000, 2)  # 将利润转换为万元并保留两位小数
+            "type": entry["type"],
+            "trxDate": entry["trxDate"],
+            "profit": round(float(entry["profit"]) / 10000, 2)  # 将利润转换为万元并保留两位小数
         }
         for entry in api_data["data"]["data"]
     ]
+    return formatted_data_1
+def get_qijiandian_card(open_id,nickname,customer_no):
+    num_day8_before_yesterday,num_day31_before_yesterday = get_previous_dates()
+    url = (envutils.getenv("CREM_ENDPOINT_PROD") +
+           '/aggScript/wrap/apis/receive/handleApplicationMarketplace/dealSizeLook')
+    headers = {
+        'yuiassotoken': ssoutil.get_sso_credential(open_id),
+        'Content-Type': 'application/json',
+        'pageType': 'cemPortal'
+
+    }
+
+    data = {
+    "parameters": {
+        "STAT_SALES_NAME": nickname,
+        "TYPE": "航司,渠道,酒旅出行",
+        "TRX_DATE": num_day8_before_yesterday,
+        "SCALE_TYPE": "DAY",
+        "products": "旗舰店",
+        "STAT_DISPAYSIGNEDNAME": customer_no
+    },
+    "strategyKey": "saleOrdinaryApplicationMarketExecutor"
+}
+
+    # 发出 POST 请求
+    response = requests.post(url, headers=headers, json=data)
+
+    # 处理 API 响应数据
+    api_data = json.loads(response.text)
+    print("原始数据",api_data)
+
+    # 将利润转换为万元并格式化数据
+    formatted_data_2 = [
+        {
+            "type": entry["type"],
+            "trxDate": entry["trxDate"],
+            "profit": round(float(entry["profit"]) / 10000, 2)  # 将利润转换为万元并保留两位小数
+        }
+        for entry in api_data["data"]["data"]
+    ]
+    return formatted_data_2
+def get_shoudan_card(open_id,nickname,customer_no):
+    num_day8_before_yesterday,num_day31_before_yesterday = get_previous_dates()
+    url = (envutils.getenv("CREM_ENDPOINT_PROD") +
+           '/aggScript/wrap/apis/receive/handleApplicationMarketplace/dealSizeLook')
+    headers = {
+        'yuiassotoken': ssoutil.get_sso_credential(open_id),
+        'Content-Type': 'application/json',
+        'pageType': 'cemPortal'
+
+    }
+
+    data = {
+    "parameters": {
+        "STAT_SALES_NAME": nickname,
+        "TYPE": "航司,渠道,酒旅出行",
+        "TRX_DATE": num_day8_before_yesterday,
+        "SCALE_TYPE": "DAY",
+        "products": "出款,境内VCC,境外VCC,无卡,网银,聚合,银行卡POS,非支付",
+        "STAT_DISPAYSIGNEDNAME": customer_no
+    },
+    "strategyKey": "saleOrdinaryApplicationMarketExecutor"
+}
+
+    # 发出 POST 请求
+    response = requests.post(url, headers=headers, json=data)
+
+    # 处理 API 响应数据
+    api_data = json.loads(response.text)
+    print("原始数据",api_data)
+
+    # 将利润转换为万元并格式化数据
+    formatted_data_3 = [
+        {
+            "type": entry["type"],
+            "trxDate": entry["trxDate"],
+            "profit": round(float(entry["profit"]) / 10000, 2)  # 将利润转换为万元并保留两位小数
+        }
+        for entry in api_data["data"]["data"]
+    ]
+    return formatted_data_3
+
+
+
+def get_huiyuan_card_31(open_id,nickname,customer_no):
+    num_day8_before_yesterday,num_day31_before_yesterday = get_previous_dates()
+    url = (envutils.getenv("CREM_ENDPOINT_PROD") +
+           '/aggScript/wrap/apis/receive/handleApplicationMarketplace/dealSizeLook')
+    headers = {
+        'yuiassotoken': ssoutil.get_sso_credential(open_id),
+        'Content-Type': 'application/json',
+        'pageType': 'cemPortal'
+
+    }
+
+    data = {
+    "parameters": {
+        "STAT_SALES_NAME": nickname,
+        "TYPE": "航司,渠道,酒旅出行",
+        "TRX_DATE": num_day31_before_yesterday,
+        "SCALE_TYPE": "DAY",
+        "products": "会员",
+        "STAT_DISPAYSIGNEDNAME": customer_no
+    },
+    "strategyKey": "saleOrdinaryApplicationMarketExecutor"
+}
+
+    # 发出 POST 请求
+    response = requests.post(url, headers=headers, json=data)
+
+    # 处理 API 响应数据
+    api_data = json.loads(response.text)
+    print("原始数据",api_data)
+
+    # 将利润转换为万元并格式化数据
+    formatted_data_1 = [
+        {
+            "type": entry["type"],
+            "trxDate": entry["trxDate"],
+            "profit": round(float(entry["profit"]) / 10000, 2)  # 将利润转换为万元并保留两位小数
+        }
+        for entry in api_data["data"]["data"]
+    ]
+    return formatted_data_1
+def get_qijiandian_card_31(open_id,nickname,customer_no):
+    num_day8_before_yesterday,num_day31_before_yesterday = get_previous_dates()
+    url = (envutils.getenv("CREM_ENDPOINT_PROD") +
+           '/aggScript/wrap/apis/receive/handleApplicationMarketplace/dealSizeLook')
+    headers = {
+        'yuiassotoken': ssoutil.get_sso_credential(open_id),
+        'Content-Type': 'application/json',
+        'pageType': 'cemPortal'
+
+    }
+
+    data = {
+    "parameters": {
+        "STAT_SALES_NAME": nickname,
+        "TYPE": "航司,渠道,酒旅出行",
+        "TRX_DATE": num_day31_before_yesterday,
+        "SCALE_TYPE": "DAY",
+        "products": "旗舰店",
+        "STAT_DISPAYSIGNEDNAME": customer_no
+    },
+    "strategyKey": "saleOrdinaryApplicationMarketExecutor"
+}
+
+    # 发出 POST 请求
+    response = requests.post(url, headers=headers, json=data)
+
+    # 处理 API 响应数据
+    api_data = json.loads(response.text)
+    print("原始数据",api_data)
+
+    # 将利润转换为万元并格式化数据
+    formatted_data_2 = [
+        {
+            "type": entry["type"],
+            "trxDate": entry["trxDate"],
+            "profit": round(float(entry["profit"]) / 10000, 2)  # 将利润转换为万元并保留两位小数
+        }
+        for entry in api_data["data"]["data"]
+    ]
+    return formatted_data_2
+def get_shoudan_card_31(open_id,nickname,customer_no):
+    num_day8_before_yesterday,num_day31_before_yesterday = get_previous_dates()
+    url = (envutils.getenv("CREM_ENDPOINT_PROD") +
+           '/aggScript/wrap/apis/receive/handleApplicationMarketplace/dealSizeLook')
+    headers = {
+        'yuiassotoken': ssoutil.get_sso_credential(open_id),
+        'Content-Type': 'application/json',
+        'pageType': 'cemPortal'
+
+    }
+
+    data = {
+    "parameters": {
+        "STAT_SALES_NAME": nickname,
+        "TYPE": "航司,渠道,酒旅出行",
+        "TRX_DATE": num_day31_before_yesterday,
+        "SCALE_TYPE": "DAY",
+        "products": "出款,境内VCC,境外VCC,无卡,网银,聚合,银行卡POS,非支付",
+        "STAT_DISPAYSIGNEDNAME": customer_no
+    },
+    "strategyKey": "saleOrdinaryApplicationMarketExecutor"
+}
+
+    # 发出 POST 请求
+    response = requests.post(url, headers=headers, json=data)
+
+    # 处理 API 响应数据
+    api_data = json.loads(response.text)
+    print("原始数据",api_data)
+
+    # 将利润转换为万元并格式化数据
+    formatted_data_3 = [
+        {
+            "type": entry["type"],
+            "trxDate": entry["trxDate"],
+            "profit": round(float(entry["profit"]) / 10000, 2)  # 将利润转换为万元并保留两位小数
+        }
+        for entry in api_data["data"]["data"]
+    ]
+    return formatted_data_3
+
+
+
+
+
+
+
+
+def get_crem_hanglv_merchant_8days_product_search_card(open_id,nickname,customer_no):
+    formatted_data_1 = get_huiyuan_card(open_id, nickname, customer_no)
+    print("会员数据",formatted_data_1)
+    formatted_data_2 = get_qijiandian_card(open_id, nickname, customer_no)
+    print("旗舰店",formatted_data_2)
+    formatted_data_3 = get_shoudan_card(open_id, nickname, customer_no)
+    print("收单",formatted_data_3)
+
+
+
 
     # 生成完整的数据
     complete_data = [
                         # 会员
                         {"trxDate": entry["trxDate"], "type": "会员", "profit": entry["profit"]}
-                        for entry in formatted_data if entry["type"] == "会员"
+                        for entry in formatted_data_1 if entry["type"] == "会员"
                     ] + [
                         # 旗舰店
                         {"trxDate": entry["trxDate"], "type": "旗舰店", "profit": entry["profit"]}
-                        for entry in formatted_data if entry["type"] == "旗舰店"
+                        for entry in formatted_data_2 if entry["type"] == "旗舰店"
                     ] + [
                         # 航旅快捷
-                        {"trxDate": entry["trxDate"], "type": "航旅快捷", "profit": entry["profit"]}
-                        for entry in formatted_data if entry["type"] == "航旅快捷"
+                        {"trxDate": entry["trxDate"], "type": "收单", "profit": entry["profit"]}
+                        for entry in formatted_data_3 if entry["type"] == "收单"
                     ]
 
-    print("完整的数据格式是",complete_data)
+    # 按日期排序
+    complete_data.sort(key=lambda x: datetime.strptime(x["trxDate"], "%Y-%m-%d"))
+
+    print("完整的数据格式是", complete_data)
+
 
     var = {
         "config": {},
@@ -798,75 +1011,39 @@ def get_crem_hanglv_merchant_8days_product_search_card(open_id,nickname,customer
     )
 
 
-# get_crem_hanglv_merchant_8days_product_search_card("ou_9d42bb88ec8940baf3ad183755131881","段超","CA")
+#get_crem_hanglv_merchant_8days_product_search_card("ou_9d42bb88ec8940baf3ad183755131881","段超","CA")
 
 def get_crem_hanglv_merchant_31days_product_search_card(open_id,nickname,customer_no):
-    num_day8_before_yesterday,num_day31_before_yesterday = get_previous_dates()
-    url = (envutils.getenv("CREM_ENDPOINT_PROD") +
-           '/threeParty/wrap/apis/agg/productline_pcd_sh8daystrx')
-    headers = {
-        'yuiassotoken': ssoutil.get_sso_credential(open_id),
-        'Content-Type': 'application/json',
-        'pageType': 'cemPortal'
-
-    }
-
-    data = {
-                "tenant": "default",
-                "procDefKey": "15a8350f65a303736ebe606e3d30e5beM5",
-                "data": {
-                    "dmallReq": {
-                        "parameters": {
-                            "TRX_DATE": num_day31_before_yesterday,
-                            "TYPE": "全部",
-                            "PRODUCTTYPE": "会员,旗舰店,收单,航旅快捷",
-                            "SUPERIOR_NAME": nickname,
-                            "STAT_SALES_NAME": nickname,
-                            "STAT_DISPAYSIGNEDNAME": customer_no
-                        },
-                        "url": "productline_pcd_hl_zt_sh8daystrx",
-                        "version": "V1.0"
-                    }
-                }
-            }
+    formatted_data_1 = get_huiyuan_card_31(open_id, nickname, customer_no)
+    print("会员数据",formatted_data_1)
+    formatted_data_2 = get_qijiandian_card_31(open_id, nickname, customer_no)
+    print("旗舰店",formatted_data_2)
+    formatted_data_3 = get_shoudan_card_31(open_id, nickname, customer_no)
+    print("收单",formatted_data_3)
 
 
 
-
-
-    # 发出 POST 请求
-    response = requests.post(url, headers=headers, json=data, timeout=consts.request_time_out)
-
-    # 处理 API 响应数据
-    api_data = json.loads(response.text)
-    print("原始数据",api_data)
-
-    # 将利润转换为万元并格式化数据
-    formatted_data = [
-        {
-            "type": entry["PRODUCTTYPE"],
-            "trxDate": entry["TRX_DATE"],
-            "profit": round(float(entry["TRX_PROFIT"]) / 10000, 2)  # 将利润转换为万元并保留两位小数
-        }
-        for entry in api_data["data"]["data"]
-    ]
 
     # 生成完整的数据
     complete_data = [
                         # 会员
                         {"trxDate": entry["trxDate"], "type": "会员", "profit": entry["profit"]}
-                        for entry in formatted_data if entry["type"] == "会员"
+                        for entry in formatted_data_1 if entry["type"] == "会员"
                     ] + [
                         # 旗舰店
                         {"trxDate": entry["trxDate"], "type": "旗舰店", "profit": entry["profit"]}
-                        for entry in formatted_data if entry["type"] == "旗舰店"
+                        for entry in formatted_data_2 if entry["type"] == "旗舰店"
                     ] + [
                         # 航旅快捷
-                        {"trxDate": entry["trxDate"], "type": "航旅快捷", "profit": entry["profit"]}
-                        for entry in formatted_data if entry["type"] == "航旅快捷"
+                        {"trxDate": entry["trxDate"], "type": "收单", "profit": entry["profit"]}
+                        for entry in formatted_data_3 if entry["type"] == "收单"
                     ]
 
-    print("完整的数据格式是",complete_data)
+    # 按日期排序
+    complete_data.sort(key=lambda x: datetime.strptime(x["trxDate"], "%Y-%m-%d"))
+
+    print("完整的数据格式是", complete_data)
+
 
     var = {
         "config": {},
