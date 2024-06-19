@@ -70,8 +70,6 @@ class ChatWithDbAutoExecute(BaseChat):
                     raise Exception("not found table infos")
         except Exception as e:
             print("db summary find error!" + str(e))
-        if not table_infos:
-            print("db summary find error!" + str(e))
             # table_infos = await blocking_func_to_async(
             #     self._executor, self.database.table_simple_info
             # )
