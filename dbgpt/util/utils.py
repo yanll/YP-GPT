@@ -28,7 +28,7 @@ handler = None
 
 
 def _get_logging_level() -> str:
-    return os.getenv("DBGPT_LOG_LEVEL", "INFO")
+    return os.getenv("DBGPT_LOG_LEVEL", "DEBUG")
 
 
 def setup_logging_level(

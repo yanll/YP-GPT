@@ -79,6 +79,8 @@ class RAGApiClient(object):
         data = {
             "conversation_id": conversation_id,
             "messages": messages,
+            "stream":False,
+            "quote":True
         }
         resp = requests.request('POST', headers=headers, url=url, data=json.dumps(data), timeout=30)
         return resp
@@ -230,7 +232,7 @@ def generate_rag_response_card(origin_res):
         "i18n_header": {}
     }
     response = origin_res['data']['answer']
-    all_chunks = origin_res['data']['reference']['chunks']
+    chunks = origin_res['data']['reference']['doc_aggs']
     
     pattern = r"##(.*?)\$\$"
     matches = re.findall(pattern, response)
@@ -239,16 +241,12 @@ def generate_rag_response_card(origin_res):
     res_card["i18n_elements"]['zh_cn'][0]['content'] = response
     
     matches = list(dict.fromkeys(matches))
-    chunks = []
-    
-    for idx_str in matches:
-        chunks.append(all_chunks[int(idx_str)])
     
     cache_files = []
     reduce_count = 0
     for idx, chunk in enumerate(chunks):
                 
-        name = chunk['docnm_kwd']
+        name = chunk['doc_name']
         # name = '产品能力全貌（标准）$$_$$老板管账$$_$$老板管账API接口能力梳理.pdf'
         names = name.split("$$_$$")
         file_name = names[len(names) - 1]
@@ -266,8 +264,10 @@ def generate_rag_response_card(origin_res):
             
         file_dict = {
             'name': file_name,
-            'imgs': [chunk['img_id']],
-            'chunks_content':[chunk['content_ltks']],
+            # 'imgs': [chunk['img_id']],
+            'imgs': [chunk['img_id']]  if 'img_id' in chunk else [],
+            # 'chunks_content':[chunk['content_ltks']],
+            'chunks_content':[chunk['content_ltks']] if 'content_ltks' in chunk else [],
             'url': ''
         }
         
