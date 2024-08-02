@@ -1,11 +1,11 @@
 """Rerank module for RAG retriever."""
 
-import asyncio
 from abc import ABC, abstractmethod
 from typing import Callable, List, Optional
 
 from dbgpt.core import Chunk, RerankEmbeddings
 from dbgpt.core.awel.flow import Parameter, ResourceCategory, register_resource
+from dbgpt.util.executor_utils import blocking_func_to_async_no_executor
 from dbgpt.util.i18n_utils import _
 
 RANK_FUNC = Callable[[List[Chunk]], List[Chunk]]
@@ -54,8 +54,8 @@ class Ranker(ABC):
         Return:
             List[Chunk]
         """
-        return await asyncio.get_running_loop().run_in_executor(
-            None, self.rank, candidates_with_scores, query
+        return await blocking_func_to_async_no_executor(
+            self.rank, candidates_with_scores, query
         )
 
     def _filter(self, candidates_with_scores: List) -> List[Chunk]:
@@ -244,8 +244,8 @@ class CrossEncoderRanker(Ranker):
         contents = [candidate.content for candidate in candidates_with_scores]
         query_content_pairs = [
             [
-                query,
-                content,
+                query if query is not None else "",
+                content if content is not None else "",
             ]
             for content in contents
         ]

@@ -3,7 +3,7 @@ The call of multi-model services is compatible with the OpenAI interface, and th
 
 :::info note
 
-⚠️ Before using this project, you must first deploy the model service, which can be deployed through the [cluster deployment tutorial](/docs/latest/installation/model_service/cluster/).
+⚠️ Before using this project, you must first deploy the model service, which can be deployed through the [cluster deployment tutorial](../model_service/cluster.md).
 :::
 
 
@@ -38,7 +38,7 @@ Chat
 curl http://127.0.0.1:8100/api/v1/chat/completions \
 -H "Authorization: Bearer EMPTY" \
 -H "Content-Type: application/json" \
--d '{"model": "vicuna-13b-v1.5", "messages": [{"role": "user", "content": "hello"}]}'
+-d '{"model": "glm-4-9b-chat", "messages": [{"role": "user", "content": "hello"}]}'
 ```
 
 :::tip
@@ -61,7 +61,7 @@ curl http://127.0.0.1:8100/api/v1/embeddings \
 import openai
 openai.api_key = "EMPTY"
 openai.api_base = "http://127.0.0.1:8100/api/v1"
-model = "vicuna-13b-v1.5"
+model = "glm-4-9b-chat"
 
 completion = openai.ChatCompletion.create(
   model=model,

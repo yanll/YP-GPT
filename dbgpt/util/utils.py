@@ -1,11 +1,9 @@
-#!/usr/bin/env python3
-# -*- coding:utf-8 -*-
-
 import asyncio
 import logging
 import logging.handlers
 import os
 from pathlib import Path
+import sys
 from typing import Any, List, Optional, cast
 
 import ecs_logging
@@ -49,10 +47,11 @@ def setup_logging(
     logger_name: str,
     logging_level: Optional[str] = None,
     logger_filename: Optional[str] = None,
+    redirect_stdio: bool = False,
 ):
     if not logging_level:
         logging_level = _get_logging_level()
-    logger = _build_logger(logger_name, logging_level, logger_filename)
+    logger = _build_logger(logger_name, logging_level, logger_filename, redirect_stdio)
     try:
         import coloredlogs
 
@@ -71,7 +70,6 @@ def get_gpu_memory(max_gpus=None):
         if max_gpus is None
         else min(max_gpus, torch.cuda.device_count())
     )
-
     for gpu_id in range(num_gpus):
         with torch.cuda.device(gpu_id):
             device = torch.cuda.current_device()
@@ -87,6 +85,7 @@ def _build_logger(
     logger_name,
     logging_level: Optional[str] = None,
     logger_filename: Optional[str] = None,
+    redirect_stdio: bool = False,
 ):
     global handler
 
@@ -116,12 +115,37 @@ def _build_logger(
         handler = logging.FileHandler(log_path)
         handler.setFormatter(formatter)
 
+        # Ensure the handler level is set correctly
+        if logging_level is not None:
+            handler.setLevel(logging_level)
+        logging.getLogger().addHandler(handler)
         for name, item in logging.root.manager.loggerDict.items():
             if isinstance(item, logging.Logger):
                 item.addHandler(handler)
-    # Get logger
+                item.propagate = True
+                logging.getLogger(name).debug(f"Added handler to logger: {name}")
+            else:
+                logging.getLogger(name).debug(f"Skipping non-logger: {name}")
+
+        if redirect_stdio:
+            stdout_handler = logging.StreamHandler(sys.stdout)
+            stdout_handler.setFormatter(formatter)
+            stderr_handler = logging.StreamHandler(sys.stderr)
+            stderr_handler.setFormatter(formatter)
+
+            root_logger = logging.getLogger()
+            root_logger.addHandler(stdout_handler)
+            root_logger.addHandler(stderr_handler)
+            logging.getLogger().debug("Added stdout and stderr handlers to root logger")
     logger = logging.getLogger(logger_name)
+
     setup_logging_level(logging_level=logging_level, logger_name=logger_name)
+
+    # Debugging to print all handlers
+    logging.getLogger(logger_name).debug(
+        f"Logger {logger_name} handlers: {logger.handlers}"
+    )
+    logging.getLogger(logger_name).debug(f"Global handler: {handler}")
 
     return logger
 
@@ -182,7 +206,7 @@ def setup_http_service_logging(exclude_paths: Optional[List[str]] = None):
     """
     if not exclude_paths:
         # Not show heartbeat log
-        exclude_paths = ["/api/controller/heartbeat"]
+        exclude_paths = ["/api/controller/heartbeat", "/api/health"]
     uvicorn_logger = logging.getLogger("uvicorn.access")
     if uvicorn_logger:
         for path in exclude_paths:

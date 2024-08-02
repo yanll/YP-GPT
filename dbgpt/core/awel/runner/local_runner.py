@@ -2,16 +2,18 @@
 
 This runner will run the workflow in the current process.
 """
+
 import asyncio
 import logging
 import traceback
 from typing import Any, Dict, List, Optional, Set, cast
 
 from dbgpt.component import SystemApp
+from dbgpt.util.tracer import root_tracer
 
 from ..dag.base import DAGContext, DAGVar
 from ..operators.base import CALL_DATA, BaseOperator, WorkflowRunner
-from ..operators.common_operator import BranchOperator, JoinOperator
+from ..operators.common_operator import BranchOperator
 from ..task.base import SKIP_DATA, TaskContext, TaskState
 from ..task.task_impl import DefaultInputContext, DefaultTaskContext, SimpleTaskOutput
 from .job_manager import JobManager
@@ -89,9 +91,20 @@ class DefaultWorkflowRunner(WorkflowRunner):
             # Save dag context
             await node.dag._save_dag_ctx(dag_ctx)
         await job_manager.before_dag_run()
-        await self._execute_node(
-            job_manager, node, dag_ctx, node_outputs, skip_node_ids, system_app
-        )
+
+        with root_tracer.start_span(
+            "dbgpt.awel.workflow.run_workflow",
+            metadata={
+                "exist_dag_ctx": exist_dag_ctx is not None,
+                "event_loop_task_id": event_loop_task_id,
+                "streaming_call": streaming_call,
+                "awel_node_id": node.node_id,
+                "awel_node_name": node.node_name,
+            },
+        ):
+            await self._execute_node(
+                job_manager, node, dag_ctx, node_outputs, skip_node_ids, system_app
+            )
         if not streaming_call and node.dag and exist_dag_ctx is None:
             # streaming call not work for dag end
             # if exist_dag_ctx is not None, it means current dag is a sub dag
@@ -157,9 +170,23 @@ class DefaultWorkflowRunner(WorkflowRunner):
             if system_app is not None and node.system_app is None:
                 node.set_system_app(system_app)
 
-            await node._run(dag_ctx, task_ctx.log_id)
-            node_outputs[node.node_id] = dag_ctx.current_task_context
-            task_ctx.set_current_state(TaskState.SUCCESS)
+            run_metadata = {
+                "awel_node_id": node.node_id,
+                "awel_node_name": node.node_name,
+                "awel_node_type": str(node),
+                "state": TaskState.RUNNING.value,
+                "task_log_id": task_ctx.log_id,
+            }
+            with root_tracer.start_span(
+                "dbgpt.awel.workflow.run_operator", metadata=run_metadata
+            ) as span:
+                await node._run(dag_ctx, task_ctx.log_id)
+                node_outputs[node.node_id] = dag_ctx.current_task_context
+                task_ctx.set_current_state(TaskState.SUCCESS)
+
+                run_metadata["skip_node_ids"] = ",".join(skip_node_ids)
+                run_metadata["state"] = TaskState.SUCCESS.value
+                span.metadata = run_metadata
 
             if isinstance(node, BranchOperator):
                 skip_nodes = task_ctx.metadata.get("skip_node_names", [])
@@ -184,14 +211,14 @@ def _skip_current_downstream_by_node_name(
         return
     for child in branch_node.downstream:
         child = cast(BaseOperator, child)
-        if child.node_name in skip_nodes:
+        if child.node_name in skip_nodes or child.node_id in skip_node_ids:
             logger.info(f"Skip node name {child.node_name}, node id {child.node_id}")
             _skip_downstream_by_id(child, skip_node_ids)
 
 
 def _skip_downstream_by_id(node: BaseOperator, skip_node_ids: Set[str]):
-    if isinstance(node, JoinOperator):
-        # Not skip join node
+    if not node.can_skip_in_branch():
+        # Current node can not skip, so skip its downstream
         return
     skip_node_ids.add(node.node_id)
     for child in node.downstream:

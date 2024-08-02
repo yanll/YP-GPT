@@ -49,8 +49,8 @@ class DBSummaryClient:
 
     def get_db_summary(self, dbname, query, topk):
         """Get user query related tables info."""
+        from dbgpt.serve.rag.connector import VectorStoreConnector
         from dbgpt.storage.vector_store.base import VectorStoreConfig
-        from dbgpt.storage.vector_store.connector import VectorStoreConnector
 
         logger.info(f"向量库查找DB SUMMARY：{dbname}_profile")
         vector_store_config = VectorStoreConfig(name=dbname + "_profile")
@@ -62,7 +62,7 @@ class DBSummaryClient:
         from dbgpt.rag.retriever.db_schema import DBSchemaRetriever
 
         retriever = DBSchemaRetriever(
-            top_k=topk, vector_store_connector=vector_connector
+            top_k=topk, index_store=vector_connector.index_client
         )
         table_docs = retriever.retrieve(query)
         ans = [d.content for d in table_docs]
@@ -91,8 +91,8 @@ class DBSummaryClient:
         dbname(str): dbname
         """
         vector_store_name = dbname + "_profile"
+        from dbgpt.serve.rag.connector import VectorStoreConnector
         from dbgpt.storage.vector_store.base import VectorStoreConfig
-        from dbgpt.storage.vector_store.connector import VectorStoreConnector
 
         vector_store_config = VectorStoreConfig(name=vector_store_name)
         vector_connector = VectorStoreConnector.from_default(
@@ -102,11 +102,14 @@ class DBSummaryClient:
         )
         if not vector_connector.vector_name_exists():
             from dbgpt.rag.assembler.db_schema import DBSchemaAssembler
-            chunk_parameters = ChunkParameters(chunk_strategy="CHUNK_BY_SIZE",chunk_size=6144)
+            chunk_parameters = ChunkParameters(chunk_strategy="CHUNK_BY_SIZE", chunk_size=6144)
 
             db_assembler = DBSchemaAssembler.load_from_connection(
-                connector=db_summary_client.db, vector_store_connector=vector_connector,chunk_parameters=chunk_parameters
+                connector=db_summary_client.db,
+                chunk_parameters=chunk_parameters,
+                index_store=vector_connector.index_client,
             )
+
             if len(db_assembler.get_chunks()) > 0:
                 db_assembler.persist()
         else:
@@ -116,8 +119,8 @@ class DBSummaryClient:
     def delete_db_profile(self, dbname):
         """Delete db profile."""
         vector_store_name = dbname + "_profile"
+        from dbgpt.serve.rag.connector import VectorStoreConnector
         from dbgpt.storage.vector_store.base import VectorStoreConfig
-        from dbgpt.storage.vector_store.connector import VectorStoreConnector
 
         vector_store_config = VectorStoreConfig(name=vector_store_name)
         vector_connector = VectorStoreConnector.from_default(

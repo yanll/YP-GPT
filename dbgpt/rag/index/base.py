@@ -2,13 +2,16 @@
 import logging
 import time
 from abc import ABC, abstractmethod
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import Executor, ThreadPoolExecutor
 from typing import Any, Dict, List, Optional
 
 from dbgpt._private.pydantic import BaseModel, ConfigDict, Field, model_to_dict
 from dbgpt.core import Chunk, Embeddings
 from dbgpt.storage.vector_store.filters import MetadataFilters
-from dbgpt.util.executor_utils import blocking_func_to_async
+from dbgpt.util.executor_utils import (
+    blocking_func_to_async,
+    blocking_func_to_async_no_executor,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +50,7 @@ class IndexStoreConfig(BaseModel):
 class IndexStoreBase(ABC):
     """Index store base class."""
 
-    def __init__(self, executor: Optional[ThreadPoolExecutor] = None):
+    def __init__(self, executor: Optional[Executor] = None):
         """Init index store."""
         self._executor = executor or ThreadPoolExecutor()
 
@@ -63,7 +66,7 @@ class IndexStoreBase(ABC):
         """
 
     @abstractmethod
-    def aload_document(self, chunks: List[Chunk]) -> List[str]:
+    async def aload_document(self, chunks: List[Chunk]) -> List[str]:
         """Load document in index database.
 
         Args:
@@ -94,7 +97,7 @@ class IndexStoreBase(ABC):
         """
 
     @abstractmethod
-    def delete_by_ids(self, ids: str):
+    def delete_by_ids(self, ids: str) -> List[str]:
         """Delete docs.
 
         Args:
@@ -195,4 +198,6 @@ class IndexStoreBase(ABC):
         filters: Optional[MetadataFilters] = None,
     ) -> List[Chunk]:
         """Aynsc similar_search_with_score in vector database."""
-        return self.similar_search_with_scores(doc, topk, score_threshold, filters)
+        return await blocking_func_to_async_no_executor(
+            self.similar_search_with_scores, doc, topk, score_threshold, filters
+        )

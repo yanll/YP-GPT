@@ -9,6 +9,7 @@ from dbgpt._private.pydantic import EXTRA_FORBID, BaseModel, ConfigDict, Field
 from dbgpt.core import Embeddings
 from dbgpt.core.awel.flow import Parameter, ResourceCategory, register_resource
 from dbgpt.util.i18n_utils import _
+from dbgpt.util.tracer import DBGPT_TRACER_SPAN_ID, root_tracer
 
 DEFAULT_MODEL_NAME = "sentence-transformers/all-mpnet-base-v2"
 DEFAULT_INSTRUCT_MODEL = "hkunlp/instructor-large"
@@ -90,9 +91,9 @@ class HuggingFaceEmbeddings(BaseModel, Embeddings):
             ) from exc
 
         kwargs["client"] = sentence_transformers.SentenceTransformer(
-            kwargs.get("model_name"),
+            kwargs.get("model_name") or DEFAULT_MODEL_NAME,
             cache_folder=kwargs.get("cache_folder"),
-            **kwargs.get("model_kwargs"),
+            **(kwargs.get("model_kwargs") or {}),
         )
         super().__init__(**kwargs)
 
@@ -294,7 +295,7 @@ class HuggingFaceBgeEmbeddings(BaseModel, Embeddings):
         kwargs["client"] = sentence_transformers.SentenceTransformer(
             kwargs.get("model_name"),
             cache_folder=kwargs.get("cache_folder"),
-            **kwargs.get("model_kwargs"),
+            **(kwargs.get("model_kwargs") or {}),
         )
 
         super().__init__(**kwargs)
@@ -655,6 +656,9 @@ class OpenAPIEmbeddings(BaseModel, Embeddings):
     timeout: int = Field(
         default=60, description="The timeout for the request in seconds."
     )
+    pass_trace_id: bool = Field(
+        default=True, description="Whether to pass the trace ID to the API."
+    )
 
     session: Optional[requests.Session] = None
 
@@ -688,10 +692,16 @@ class OpenAPIEmbeddings(BaseModel, Embeddings):
                 corresponds to a single input text.
         """
         # Call OpenAI Embedding API
+        headers = {}
+        current_span_id = root_tracer.get_current_span_id()
+        if self.pass_trace_id and current_span_id:
+            # Set the trace ID if available
+            headers[DBGPT_TRACER_SPAN_ID] = current_span_id
         res = self.session.post(  # type: ignore
             self.api_url,
             json={"input": texts, "model": self.model_name},
             timeout=self.timeout,
+            headers=headers,
         )
         return _handle_request_result(res)
 
@@ -717,6 +727,10 @@ class OpenAPIEmbeddings(BaseModel, Embeddings):
                 List[float] corresponds to a single input text.
         """
         headers = {"Authorization": f"Bearer {self.api_key}"}
+        current_span_id = root_tracer.get_current_span_id()
+        if self.pass_trace_id and current_span_id:
+            # Set the trace ID if available
+            headers[DBGPT_TRACER_SPAN_ID] = current_span_id
         async with aiohttp.ClientSession(
             headers=headers, timeout=aiohttp.ClientTimeout(total=self.timeout)
         ) as session:
@@ -744,6 +758,8 @@ class OllamaEmbeddings(BaseModel, Embeddings):
     It requires a proxy server url `api_url` and a model name `model_name`.
     The default model name is "llama2".
     """
+
+    model_config = ConfigDict(arbitrary_types_allowed=True, protected_namespaces=())
 
     api_url: str = Field(
         default="http://localhost:11434",
@@ -826,3 +842,83 @@ class OllamaEmbeddings(BaseModel, Embeddings):
             return embedding["embedding"]
         except ollama.ResponseError as e:
             raise ValueError(f"**Ollama Response Error, Please CheckErrorInfo.**: {e}")
+
+
+class TongYiEmbeddings(BaseModel, Embeddings):
+    """The tongyi embeddings.
+
+    import dashscope
+    from http import HTTPStatus
+    from dashscope import TextEmbedding
+
+    dashscope.api_key = ''
+    def embed_with_list_of_str():
+        resp = TextEmbedding.call(
+            model=TextEmbedding.Models.text_embedding_v1,
+            # 最多支持10条，每条最长支持2048tokens
+            input=['风急天高猿啸哀', '渚清沙白鸟飞回', '无边落木萧萧下', '不尽长江滚滚来']
+        )
+        if resp.status_code == HTTPStatus.OK:
+            print(resp)
+        else:
+            print(resp)
+
+    if __name__ == '__main__':
+        embed_with_list_of_str()
+    """
+
+    model_config = ConfigDict(arbitrary_types_allowed=True, protected_namespaces=())
+    api_key: Optional[str] = Field(
+        default=None, description="The API key for the embeddings API."
+    )
+    model_name: str = Field(
+        default="text-embedding-v1", description="The name of the model to use."
+    )
+
+    def __init__(self, **kwargs):
+        """Initialize the OpenAPIEmbeddings."""
+        try:
+            import dashscope  # type: ignore
+        except ImportError as exc:
+            raise ValueError(
+                "Could not import python package: dashscope "
+                "Please install dashscope by command `pip install dashscope"
+            ) from exc
+        dashscope.TextEmbedding.api_key = kwargs.get("api_key")
+        super().__init__(**kwargs)
+        self._api_key = kwargs.get("api_key")
+
+    def embed_documents(self, texts: List[str]) -> List[List[float]]:
+        """Get the embeddings for a list of texts.
+
+        Args:
+            texts (Documents): A list of texts to get embeddings for.
+
+        Returns:
+            Embedded texts as List[List[float]], where each inner List[float]
+                corresponds to a single input text.
+        """
+        from dashscope import TextEmbedding
+
+        # 最多支持10条，每条最长支持2048tokens
+        resp = TextEmbedding.call(
+            model=self.model_name, input=texts, api_key=self._api_key
+        )
+        if "output" not in resp:
+            raise RuntimeError(resp["message"])
+
+        embeddings = resp["output"]["embeddings"]
+        sorted_embeddings = sorted(embeddings, key=lambda e: e["text_index"])
+
+        return [result["embedding"] for result in sorted_embeddings]
+
+    def embed_query(self, text: str) -> List[float]:
+        """Compute query embeddings using a OpenAPI embedding model.
+
+        Args:
+            text: The text to embed.
+
+        Returns:
+            Embeddings for the text.
+        """
+        return self.embed_documents([text])[0]

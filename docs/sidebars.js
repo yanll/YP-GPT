@@ -227,6 +227,10 @@ const sidebars = {
               type: 'doc',
               id: 'installation/model_service/cluster',
             },
+            {
+              type: 'doc',
+              id: 'installation/model_service/cluster_ha',
+            },
           ],
         },
         {
@@ -296,6 +300,9 @@ const sidebars = {
             {
               type: 'doc',
               id: 'application/started_tutorial/chat_dashboard',
+            },{
+              type: 'doc',
+              id: 'application/started_tutorial/chat_financial_report',
             },
             {
               type: "category",
@@ -340,6 +347,10 @@ const sidebars = {
             {
               type: 'doc',
               id: 'application/advanced_tutorial/api',
+            },
+            {
+              type: 'doc',
+              id: 'application/advanced_tutorial/observability',
             },
             {
               type: 'doc',
@@ -455,19 +466,139 @@ const sidebars = {
           label: 'Agents',
           items: [
             {
-              type: "category",
-              label: "Cookbook",
-              items: [
-                {
-                  type: "doc",
-                  id: "agents/cookbook/calculator_with_agents"
-                },
-              ],
+              type: 'doc',
+              id: "agents/introduction/introduction"
             },
             {
               type: 'doc',
-              id: 'agents/custom_agents',
-            }
+              id: "agents/introduction/tools"
+            },
+            {
+              type: 'doc',
+              id: "agents/introduction/database"
+            },
+            {
+              type: 'doc',
+              id: "agents/introduction/planning"
+            },
+            {
+              type: 'doc',
+              id: "agents/introduction/conversation"
+            },
+            {
+              type: 'doc',
+              id: "agents/introduction/custom_agents"
+            },
+            // {
+            //   type: "category",
+            //   label: "Cookbook",
+            //   items: [
+            //     {
+            //       type: "doc",
+            //       id: "agents/cookbook/calculator_with_agents"
+            //     },
+            //   ],
+            // },
+            {
+              type: "category",
+              label: "Modules",
+              items: [
+                {
+                  type: "category",
+                  label: "Profile",
+                  items: [
+                    {
+                      type: "doc",
+                      id: "agents/modules/profile/profile"
+                    },
+                    {
+                      type: "doc",
+                      id: "agents/modules/profile/profile_creation"
+                    },
+                    {
+                      type: "doc",
+                      id: "agents/modules/profile/profile_to_prompt"
+                    },
+                    {
+                      type: "doc",
+                      id: "agents/modules/profile/profile_dynamic"
+                    },
+                  ]
+                },
+                {
+                  type: "category",
+                  label: "Memory",
+                  items: [
+                    {
+                      type: "doc",
+                      id: "agents/modules/memory/memory"
+                    },
+                    {
+                      type: "doc",
+                      id: "agents/modules/memory/sensory_memory"
+                    },
+                    {
+                      type: "doc",
+                      id: "agents/modules/memory/short_term_memory"
+                    },
+                    {
+                      type: "doc",
+                      id: "agents/modules/memory/long_term_memory"
+                    },
+                    {
+                      type: "doc",
+                      id: "agents/modules/memory/hybrid_memory"
+                    },
+                  ]
+                },
+                {
+                  type: "category",
+                  label: "Plan",
+                  items: [
+                    {
+                      type: "doc",
+                      id: "agents/modules/plan/plan"
+                    },
+                  ]
+                },
+                {
+                  type: "category",
+                  label: "Action",
+                  items: [
+                    {
+                      type: "doc",
+                      id: "agents/modules/action/action"
+                    },
+                  ]
+                },
+                {
+                  type: "category",
+                  label: "Resource",
+                  items: [
+                    {
+                      type: "doc",
+                      id: "agents/modules/resource/resource"
+                    },
+                    {
+                      type: "doc",
+                      id: "agents/modules/resource/tools"
+                    },
+                    {
+                      type: "doc",
+                      id: "agents/modules/resource/database"
+                    },
+                    {
+                      type: "doc",
+                      id: "agents/modules/resource/knowledge"
+                    },
+                    {
+                      type: "doc",
+                      id: "agents/modules/resource/pack"
+                    },
+                  ]
+                },
+              ],
+            },
           ],
         },
         {
@@ -477,7 +608,10 @@ const sidebars = {
             {
               type: 'doc',
               id: 'cookbook/rag/graph_rag_app_develop',
-            }
+            },{
+              type: 'doc',
+              id: 'cookbook/rag/keyword_rag_app_develop',
+            },
           ],
         },
         {
@@ -490,6 +624,16 @@ const sidebars = {
             }
           ],
         },
+        {
+          type: "category",
+          label: "dbgpts",
+          items: [
+            {
+              type: "doc",
+              id: 'dbgpts/introduction',
+            }
+          ]
+        }
       ],
 
     },

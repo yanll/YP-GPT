@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 from datetime import datetime
 
 from dbgpt._private.config import Config
@@ -12,7 +13,6 @@ from dbgpt.app.knowledge.request.request import (
     ChunkQueryRequest,
     DocumentQueryRequest,
     DocumentSummaryRequest,
-    DocumentSyncRequest,
     KnowledgeDocumentRequest,
     KnowledgeSpaceRequest,
     SpaceArgumentRequest,
@@ -23,20 +23,20 @@ from dbgpt.app.knowledge.request.response import (
     SpaceQueryResponse,
 )
 from dbgpt.component import ComponentType
+from dbgpt.configs import DOMAIN_TYPE_FINANCIAL_REPORT
 from dbgpt.configs.model_config import EMBEDDING_MODEL_CONFIG
-from dbgpt.core import Chunk, LLMClient
+from dbgpt.core import LLMClient
 from dbgpt.model import DefaultLLMClient
 from dbgpt.model.cluster import WorkerManagerFactory
-from dbgpt.rag.assembler.embedding import EmbeddingAssembler
 from dbgpt.rag.assembler.summary import SummaryAssembler
 from dbgpt.rag.chunk_manager import ChunkParameters
 from dbgpt.rag.embedding.embedding_factory import EmbeddingFactory
 from dbgpt.rag.knowledge.base import KnowledgeType
 from dbgpt.rag.knowledge.factory import KnowledgeFactory
+from dbgpt.serve.rag.connector import VectorStoreConnector
 from dbgpt.serve.rag.models.models import KnowledgeSpaceDao, KnowledgeSpaceEntity
 from dbgpt.serve.rag.service.service import SyncStatus
 from dbgpt.storage.vector_store.base import VectorStoreConfig
-from dbgpt.storage.vector_store.connector import VectorStoreConnector
 from dbgpt.util.executor_utils import ExecutorFactory, blocking_func_to_async
 from dbgpt.util.tracer import root_tracer, trace
 
@@ -81,6 +81,10 @@ class KnowledgeService:
         )
         if request.vector_type == "VectorStore":
             request.vector_type = CFG.VECTOR_STORE_TYPE
+        if request.vector_type == "KnowledgeGraph":
+            knowledge_space_name_pattern = r"^[a-zA-Z0-9\u4e00-\u9fa5]+$"
+            if not re.match(knowledge_space_name_pattern, request.name):
+                raise Exception(f"space name:{request.name} invalid")
         spaces = knowledge_space_dao.get_knowledge_space(query)
         if len(spaces) > 0:
             raise Exception(f"space name:{request.name} have already named")
@@ -130,6 +134,7 @@ class KnowledgeService:
             res.id = space.id
             res.name = space.name
             res.vector_type = space.vector_type
+            res.domain_type = space.domain_type
             res.desc = space.desc
             res.owner = space.owner
             res.gmt_created = space.gmt_created
@@ -222,9 +227,14 @@ class KnowledgeService:
             document.status not in [SyncStatus.RUNNING.name]
             and len(chunk_entities) == 0
         ):
-            self._sync_knowledge_document(
-                space_name=document.space,
-                doc=document,
+            from dbgpt.serve.rag.service.service import Service
+
+            rag_service = Service.get_instance(CFG.SYSTEM_APP)
+            space = rag_service.get({"name": document.space})
+            document_vo = KnowledgeDocumentEntity.to_document_vo(documents)
+            await rag_service._sync_knowledge_document(
+                space_id=space.id,
+                doc_vo=document_vo[0],
                 chunk_parameters=chunk_parameters,
             )
         knowledge = KnowledgeFactory.create(
@@ -291,6 +301,10 @@ class KnowledgeService:
             llm_client=self.llm_client,
             model_name=None,
         )
+        if space.domain_type == DOMAIN_TYPE_FINANCIAL_REPORT:
+            conn_manager = CFG.local_db_manager
+            conn_manager.delete_db(f"{space.name}_fin_report")
+
         vector_store_connector = VectorStoreConnector(
             vector_store_type=space.vector_type, vector_store_config=config
         )

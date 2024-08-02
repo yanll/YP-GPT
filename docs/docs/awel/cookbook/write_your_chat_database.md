@@ -37,7 +37,7 @@ pip install "dbgpt[rag]>=0.5.3rc0" -U
 ### Prepare Embedding Model
 
 First, you need to prepare the embedding model, you can provide an embedding model 
-according [Prepare Embedding Model](docs/latest/awel/cookbook/first_rag_with_awel#prepare-embedding-model).
+according [Prepare Embedding Model](./first_rag_with_awel.md#prepare-embedding-model).
 
 Here we use OpenAI's embedding model.
 
@@ -84,19 +84,17 @@ import shutil
 from dbgpt.core.awel import DAG, InputOperator
 from dbgpt.rag import ChunkParameters
 from dbgpt.rag.operators import DBSchemaAssemblerOperator
-from dbgpt.storage.vector_store.chroma_store import ChromaVectorConfig
-from dbgpt.storage.vector_store.connector import VectorStoreConnector
+from dbgpt.storage.vector_store.chroma_store import ChromaVectorConfig, ChromaStore
 
 # Delete old vector store directory(/tmp/awel_with_data_vector_store)
 shutil.rmtree("/tmp/awel_with_data_vector_store", ignore_errors=True)
 
-vector_connector = VectorStoreConnector.from_default(
-    "Chroma",
-    vector_store_config=ChromaVectorConfig(
-        name="db_schema_vector_store",
-        persist_path="/tmp/awel_with_data_vector_store",
-    ),
-    embedding_fn=embeddings
+vector_store = ChromaStore(
+    ChromaVectorConfig(
+        persist_path="/tmp/tmp_ltm_vector_store",
+        name="ltm_vector_store",
+        embedding_fn=embeddings,
+    )
 )
 
 with DAG("load_schema_dag") as load_schema_dag:
@@ -104,7 +102,7 @@ with DAG("load_schema_dag") as load_schema_dag:
     # Load database schema to vector store
     assembler_task = DBSchemaAssemblerOperator(
         connector=db_conn,
-        vector_store_connector=vector_connector,
+        index_store=vector_store,
         chunk_parameters=ChunkParameters(chunk_strategy="CHUNK_BY_SIZE")
     )
     input_task >> assembler_task
@@ -124,7 +122,7 @@ with DAG("retrieve_schema_dag") as retrieve_schema_dag:
     # Retrieve database schema from vector store
     retriever_task = DBSchemaRetrieverOperator(
         top_k=1,
-        vector_store_connector=vector_connector,
+        index_store=vector_store,
     )
     input_task >> retriever_task
 
@@ -137,7 +135,7 @@ print("Retrieved schema:\n", chunks)
 
 ### Prepare LLM
 We use LLM to generate SQL queries. Here we use OpenAI's LLM model, you can replace it 
-with other models according to [Prepare LLM](/docs/latest/awel/cookbook/first_rag_with_awel#prepare-llm).
+with other models according to [Prepare LLM](./first_rag_with_awel.md#prepare-llm).
 
 ```python
 from dbgpt.model.proxy import OpenAILLMClient
@@ -244,7 +242,7 @@ with DAG("chat_data_dag") as chat_data_dag:
     input_task = InputOperator(input_source=InputSource.from_callable())
     retriever_task = DBSchemaRetrieverOperator(
         top_k=1,
-        vector_store_connector=vector_connector,
+        index_store=vector_store,
     )
     content_task = MapOperator(lambda cks: [c.content for c in cks]) 
     merge_task = JoinOperator(lambda table_info, ext_dict: {"table_info": table_info, **ext_dict}) 
@@ -456,8 +454,7 @@ from dbgpt.model.proxy import OpenAILLMClient
 from dbgpt.rag import ChunkParameters
 from dbgpt.rag.embedding import DefaultEmbeddingFactory
 from dbgpt.rag.operators import DBSchemaAssemblerOperator, DBSchemaRetrieverOperator
-from dbgpt.storage.vector_store.chroma_store import ChromaVectorConfig
-from dbgpt.storage.vector_store.connector import VectorStoreConnector
+from dbgpt.storage.vector_store.chroma_store import ChromaVectorConfig, ChromaStore
 
 # Delete old vector store directory(/tmp/awel_with_data_vector_store)
 shutil.rmtree("/tmp/awel_with_data_vector_store", ignore_errors=True)
@@ -488,13 +485,12 @@ db_conn.create_temp_tables(
     }
 )
 
-vector_connector = VectorStoreConnector.from_default(
-    "Chroma",
-    vector_store_config=ChromaVectorConfig(
+vector_store = ChromaStore(
+    ChromaVectorConfig(
+        embedding_fn=embeddings,
         name="db_schema_vector_store",
         persist_path="/tmp/awel_with_data_vector_store",
-    ),
-    embedding_fn=embeddings,
+    )
 )
 
 antv_charts = [
@@ -627,7 +623,7 @@ with DAG("load_schema_dag") as load_schema_dag:
     # Load database schema to vector store
     assembler_task = DBSchemaAssemblerOperator(
         connector=db_conn,
-        vector_store_connector=vector_connector,
+        index_store=vector_store,
         chunk_parameters=ChunkParameters(chunk_strategy="CHUNK_BY_SIZE"),
     )
     input_task >> assembler_task
@@ -635,12 +631,11 @@ with DAG("load_schema_dag") as load_schema_dag:
 chunks = asyncio.run(assembler_task.call())
 print(chunks)
 
-
 with DAG("chat_data_dag") as chat_data_dag:
     input_task = InputOperator(input_source=InputSource.from_callable())
     retriever_task = DBSchemaRetrieverOperator(
         top_k=1,
-        vector_store_connector=vector_connector,
+        index_store=vector_store,
     )
     content_task = MapOperator(lambda cks: [c.content for c in cks])
     merge_task = JoinOperator(
@@ -653,11 +648,11 @@ with DAG("chat_data_dag") as chat_data_dag:
     db_query_task = DatasourceOperator(connector=db_conn)
 
     (
-        input_task
-        >> MapOperator(lambda x: x["user_input"])
-        >> retriever_task
-        >> content_task
-        >> merge_task
+            input_task
+            >> MapOperator(lambda x: x["user_input"])
+            >> retriever_task
+            >> content_task
+            >> merge_task
     )
     input_task >> merge_task
     merge_task >> prompt_task >> req_build_task >> llm_task >> sql_parse_task

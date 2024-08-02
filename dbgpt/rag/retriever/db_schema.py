@@ -1,15 +1,18 @@
 """DBSchema retriever."""
+
 from functools import reduce
 from typing import List, Optional, cast
 
 from dbgpt.core import Chunk
 from dbgpt.datasource.base import BaseConnector
+from dbgpt.rag.index.base import IndexStoreBase
 from dbgpt.rag.retriever.base import BaseRetriever
 from dbgpt.rag.retriever.rerank import DefaultRanker, Ranker
 from dbgpt.rag.summary.rdbms_db_summary import _parse_db_summary
-from dbgpt.storage.vector_store.connector import VectorStoreConnector
 from dbgpt.storage.vector_store.filters import MetadataFilters
 from dbgpt.util.chat_util import run_async_tasks
+from dbgpt.util.executor_utils import blocking_func_to_async_no_executor
+from dbgpt.util.tracer import root_tracer
 
 
 class DBSchemaRetriever(BaseRetriever):
@@ -17,7 +20,7 @@ class DBSchemaRetriever(BaseRetriever):
 
     def __init__(
         self,
-        vector_store_connector: VectorStoreConnector,
+        index_store: IndexStoreBase,
         top_k: int = 4,
         connector: Optional[BaseConnector] = None,
         query_rewrite: bool = False,
@@ -27,7 +30,7 @@ class DBSchemaRetriever(BaseRetriever):
         """Create DBSchemaRetriever.
 
         Args:
-            vector_store_connector (VectorStoreConnector): vector store connector
+            index_store(IndexStore): index connector
             top_k (int): top k
             connector (Optional[BaseConnector]): RDBMSConnector.
             query_rewrite (bool): query rewrite
@@ -67,18 +70,22 @@ class DBSchemaRetriever(BaseRetriever):
 
 
                 connector = _create_temporary_connection()
-                vector_store_config = ChromaVectorConfig(name="vector_store_name")
-                embedding_model_path = "{your_embedding_model_path}"
                 embedding_fn = embedding_factory.create(model_name=embedding_model_path)
-                vector_connector = VectorStoreConnector.from_default(
-                    "Chroma",
-                    vector_store_config=vector_store_config,
-                    embedding_fn=embedding_fn,
+                config = ChromaVectorConfig(
+                    persist_path=PILOT_PATH,
+                    name="dbschema_rag_test",
+                    embedding_fn=DefaultEmbeddingFactory(
+                        default_model_name=os.path.join(
+                            MODEL_PATH, "text2vec-large-chinese"
+                        ),
+                    ).create(),
                 )
+
+                vector_store = ChromaStore(config)
                 # get db struct retriever
                 retriever = DBSchemaRetriever(
                     top_k=3,
-                    vector_store_connector=vector_connector,
+                    index_store=vector_store,
                     connector=connector,
                 )
                 chunks = retriever.retrieve("show columns from table")
@@ -88,9 +95,9 @@ class DBSchemaRetriever(BaseRetriever):
         self._top_k = top_k
         self._connector = connector
         self._query_rewrite = query_rewrite
-        self._vector_store_connector = vector_store_connector
+        self._index_store = index_store
         self._need_embeddings = False
-        if self._vector_store_connector:
+        if self._index_store:
             self._need_embeddings = True
         self._rerank = rerank or DefaultRanker(self._top_k)
 
@@ -109,7 +116,7 @@ class DBSchemaRetriever(BaseRetriever):
         if self._need_embeddings:
             queries = [query]
             candidates = [
-                self._vector_store_connector.similar_search(query, self._top_k, filters)
+                self._index_store.similar_search(query, self._top_k, filters)
                 for query in queries
             ]
             return cast(List[Chunk], reduce(lambda x, y: x + y, candidates))
@@ -151,20 +158,28 @@ class DBSchemaRetriever(BaseRetriever):
         """
         if self._need_embeddings:
             queries = [query]
-            candidates = [self._similarity_search(query, filters) for query in queries]
+            candidates = [
+                self._similarity_search(
+                    query, filters, root_tracer.get_current_span_id()
+                )
+                for query in queries
+            ]
             result_candidates = await run_async_tasks(
                 tasks=candidates, concurrency_limit=1
             )
-            return result_candidates
+            return cast(List[Chunk], reduce(lambda x, y: x + y, result_candidates))
         else:
             from dbgpt.rag.summary.rdbms_db_summary import (  # noqa: F401
                 _parse_db_summary,
             )
 
             table_summaries = await run_async_tasks(
-                tasks=[self._aparse_db_summary()], concurrency_limit=1
+                tasks=[self._aparse_db_summary(root_tracer.get_current_span_id())],
+                concurrency_limit=1,
             )
-            return [Chunk(content=table_summary) for table_summary in table_summaries]
+            return [
+                Chunk(content=table_summary) for table_summary in table_summaries[0]
+            ]
 
     async def _aretrieve_with_score(
         self,
@@ -182,15 +197,33 @@ class DBSchemaRetriever(BaseRetriever):
         return await self._aretrieve(query, filters)
 
     async def _similarity_search(
-        self, query, filters: Optional[MetadataFilters] = None
+        self,
+        query,
+        filters: Optional[MetadataFilters] = None,
+        parent_span_id: Optional[str] = None,
     ) -> List[Chunk]:
         """Similar search."""
-        return self._vector_store_connector.similar_search(query, self._top_k, filters)
+        with root_tracer.start_span(
+            "dbgpt.rag.retriever.db_schema._similarity_search",
+            parent_span_id,
+            metadata={"query": query},
+        ):
+            return await blocking_func_to_async_no_executor(
+                self._index_store.similar_search, query, self._top_k, filters
+            )
 
-    async def _aparse_db_summary(self) -> List[str]:
+    async def _aparse_db_summary(
+        self, parent_span_id: Optional[str] = None
+    ) -> List[str]:
         """Similar search."""
         from dbgpt.rag.summary.rdbms_db_summary import _parse_db_summary
 
         if not self._connector:
             raise RuntimeError("RDBMSConnector connection is required.")
-        return _parse_db_summary(self._connector)
+        with root_tracer.start_span(
+            "dbgpt.rag.retriever.db_schema._aparse_db_summary",
+            parent_span_id,
+        ):
+            return await blocking_func_to_async_no_executor(
+                _parse_db_summary, self._connector
+            )

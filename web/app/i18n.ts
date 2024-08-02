@@ -19,7 +19,8 @@ const en = {
   Description: 'Description',
   Storage: 'Storage',
   Please_input_the_description: 'Please input the description',
-  Please_select_the_storage:'Please select the storage',
+  Please_select_the_storage: 'Please select the storage',
+  Please_select_the_domain_type: 'Please select the domain type',
   Next: 'Next',
   the_name_can_only_contain: 'the name can only contain numbers, letters, Chinese characters, "-" and "_"',
   Text: 'Text',
@@ -223,6 +224,7 @@ const en = {
   Chinese: 'Chinese',
   English: 'English',
   refreshSuccess: 'Refresh Success',
+  Download: 'Download'
 } as const;
 
 export type I18nKeys = keyof typeof en;
@@ -248,8 +250,10 @@ const zh: Resources['translation'] = {
   Please_select_file: '请至少选择一个文件',
   Description: '描述',
   Storage: '存储类型',
+  Domain: '领域类型',
   Please_input_the_description: '请输入描述',
-  Please_select_the_storage:'请选择存储类型',
+  Please_select_the_storage: '请选择存储类型',
+  Please_select_the_domain_type: '请选择领域类型',
   Next: '下一步',
   the_name_can_only_contain: '名称只能包含数字、字母、中文字符、-或_',
   Text: '文本',
@@ -452,6 +456,7 @@ const zh: Resources['translation'] = {
   Chinese: '中文',
   English: '英文',
   refreshSuccess: '刷新成功',
+  Download: '下载',
 } as const;
 
 i18n.use(initReactI18next).init({

@@ -116,7 +116,9 @@ class DefaultModelWorker(ModelWorker):
             self.model, self.tokenizer = self.ml.loader_with_params(
                 model_params, self.llm_adapter
             )
-            model_max_length = _parse_model_max_length(self.model, self.tokenizer)
+            model_max_length = self.llm_adapter.parse_max_length(
+                self.model, self.tokenizer
+            )
             if model_max_length:
                 logger.info(
                     f"Parse model max length {model_max_length} from model {self.model_name}."
@@ -318,17 +320,16 @@ class DefaultModelWorker(ModelWorker):
                 map(lambda m: m.dict(), span_params["messages"])
             )
 
-        model_span = root_tracer.start_span(
-            span_operation_name,
-            metadata={
-                "prompt": str_prompt,
-                "params": span_params,
-                "is_async_func": self.support_async(),
-                "llm_adapter": str(self.llm_adapter),
-                "generate_stream_func": generate_stream_func_str_name,
-                "model_context": model_context,
-            },
-        )
+        metadata = {
+            "is_async_func": self.support_async(),
+            "llm_adapter": str(self.llm_adapter),
+            "generate_stream_func": generate_stream_func_str_name,
+        }
+        metadata.update(span_params)
+        metadata.update(model_context)
+        metadata["prompt"] = str_prompt
+
+        model_span = root_tracer.start_span(span_operation_name, metadata=metadata)
 
         return params, model_context, generate_stream_func, model_span
 

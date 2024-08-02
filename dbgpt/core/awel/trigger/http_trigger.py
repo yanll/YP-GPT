@@ -1,4 +1,5 @@
 """Http trigger for AWEL."""
+
 import json
 import logging
 from enum import Enum
@@ -24,6 +25,7 @@ from dbgpt._private.pydantic import (
     model_to_dict,
 )
 from dbgpt.util.i18n_utils import _
+from dbgpt.util.tracer import root_tracer
 
 from ..dag.base import DAG
 from ..flow import (
@@ -41,7 +43,7 @@ from ..operators.base import BaseOperator
 from ..operators.common_operator import MapOperator
 from ..util._typing_util import _parse_bool
 from ..util.http_util import join_paths
-from .base import Trigger
+from .base import Trigger, TriggerMetadata
 
 if TYPE_CHECKING:
     from fastapi import APIRouter, FastAPI
@@ -78,6 +80,17 @@ def _default_streaming_predict_func(body: "CommonRequestType") -> bool:
         return False
     streaming = body.get("streaming") or body.get("stream")
     return _parse_bool(streaming)
+
+
+class HttpTriggerMetadata(TriggerMetadata):
+    """Trigger metadata."""
+
+    path: str = Field(..., description="The path of the trigger")
+    methods: List[str] = Field(..., description="The methods of the trigger")
+
+    trigger_type: Optional[str] = Field(
+        default="http", description="The type of the trigger"
+    )
 
 
 class BaseHttpBody(BaseModel):
@@ -442,7 +455,7 @@ class HttpTrigger(Trigger):
 
     def mount_to_router(
         self, router: "APIRouter", global_prefix: Optional[str] = None
-    ) -> None:
+    ) -> HttpTriggerMetadata:
         """Mount the trigger to a router.
 
         Args:
@@ -464,8 +477,11 @@ class HttpTrigger(Trigger):
         )(dynamic_route_function)
 
         logger.info(f"Mount http trigger success, path: {path}")
+        return HttpTriggerMetadata(path=path, methods=self._methods)
 
-    def mount_to_app(self, app: "FastAPI", global_prefix: Optional[str] = None) -> None:
+    def mount_to_app(
+        self, app: "FastAPI", global_prefix: Optional[str] = None
+    ) -> HttpTriggerMetadata:
         """Mount the trigger to a FastAPI app.
 
         TODO: The performance of this method is not good, need to be optimized.
@@ -496,6 +512,7 @@ class HttpTrigger(Trigger):
         app.openapi_schema = None
         app.middleware_stack = None
         logger.info(f"Mount http trigger success, path: {path}")
+        return HttpTriggerMetadata(path=path, methods=self._methods)
 
     def remove_from_app(
         self, app: "FastAPI", global_prefix: Optional[str] = None
@@ -650,12 +667,21 @@ async def _trigger_dag(
     from fastapi import BackgroundTasks
     from fastapi.responses import StreamingResponse
 
+    span_id = root_tracer._parse_span_id(body)
+
     leaf_nodes = dag.leaf_nodes
     if len(leaf_nodes) != 1:
         raise ValueError("HttpTrigger just support one leaf node in dag")
     end_node = cast(BaseOperator, leaf_nodes[0])
+    metadata = {
+        "awel_node_id": end_node.node_id,
+        "awel_node_name": end_node.node_name,
+    }
     if not streaming_response:
-        return await end_node.call(call_data=body)
+        with root_tracer.start_span(
+            "dbgpt.core.trigger.http.run_dag", span_id, metadata=metadata
+        ):
+            return await end_node.call(call_data=body)
     else:
         headers = response_headers
         media_type = response_media_type if response_media_type else "text/event-stream"
@@ -666,7 +692,10 @@ async def _trigger_dag(
                 "Connection": "keep-alive",
                 "Transfer-Encoding": "chunked",
             }
-        generator = await end_node.call_stream(call_data=body)
+        _generator = await end_node.call_stream(call_data=body)
+        trace_generator = root_tracer.wrapper_async_stream(
+            _generator, "dbgpt.core.trigger.http.run_dag", span_id, metadata=metadata
+        )
 
         async def _after_dag_end():
             await dag._after_dag_end(end_node.current_event_loop_task_id)
@@ -674,7 +703,7 @@ async def _trigger_dag(
         background_tasks = BackgroundTasks()
         background_tasks.add_task(_after_dag_end)
         return StreamingResponse(
-            generator,
+            trace_generator,
             headers=headers,
             media_type=media_type,
             background=background_tasks,

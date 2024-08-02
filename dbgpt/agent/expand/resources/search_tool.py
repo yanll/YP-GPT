@@ -19,13 +19,28 @@ def baidu_search(
 
     Please set number of results not less than 8 for rich search results.
     """
-    import requests
-    from bs4 import BeautifulSoup
+    try:
+        import requests
+    except ImportError:
+        raise ImportError(
+            "`requests` is required for baidu_search tool, please run "
+            "`pip install requests` to install it."
+        )
+    try:
+        from bs4 import BeautifulSoup
+    except ImportError:
+        raise ImportError(
+            "`beautifulsoup4` is required for baidu_search tool, please run "
+            "`pip install beautifulsoup4` to install it."
+        )
 
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:112.0) "
         "Gecko/20100101 Firefox/112.0"
     }
+    num_results = int(num_results)
+    if num_results < 8:
+        num_results = 8
     url = f"https://www.baidu.com/s?wd={query}&rn={num_results}"
     response = requests.get(url, headers=headers)
     response.encoding = "utf-8"
